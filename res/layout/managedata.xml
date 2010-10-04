@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<Button android:id="@+id/exportdbtosdbutton"
+		android:layout_width="200dp" android:layout_height="wrap_content"
+		android:layout_marginTop="20dp" android:layout_gravity="center_horizontal"
+		android:text="Export DB to SD card" />
+
+	<Button android:id="@+id/exportdbxmltosdbutton"
+		android:layout_width="200dp" android:layout_height="wrap_content"
+		android:layout_marginTop="20dp" android:layout_gravity="center_horizontal"
+		android:text="Export DB as XML to SD card" />
+
+
+<TextView android:text="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/Output"></TextView>
+</LinearLayout>

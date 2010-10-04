@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android" android:enabled="true">
+
+
+
+<PreferenceCategory android:title="User Settings"><CheckBoxPreference android:selectable="true" android:enabled="true" android:defaultValue="false" android:title="Start at Boot?" android:summaryOff="Program and service will not start at boot" android:summaryOn="Program and service will start at boot" android:key="bootstart"></CheckBoxPreference></PreferenceCategory>
+</PreferenceScreen>
