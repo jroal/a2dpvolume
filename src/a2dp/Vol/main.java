@@ -355,6 +355,7 @@ public class main extends Activity {
 	    	}
     	}
     	
+    	// the section below is for testing only.  Comment out before building the application for use.
     	btDevice bt = new btDevice();
     	bt.setBluetoothDevice("Device 1", "Porsche", "00:22:33:44:55:66:77", 15);
     	vec.add(bt);
@@ -373,7 +374,7 @@ public class main extends Activity {
         for (String name : names) {
            sb.append(name + "\n");
         }
-        
+        // end of testing code
         
         
 	return i;
