@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:title="Preferences" android:id="@+id/prefs" android:menuCategory="container" android:orderInCategory="1"></item>
+<item android:enabled="true" android:checked="true" android:checkable="true" android:menuCategory="container" android:orderInCategory="2" android:visible="true" android:title="Delete Data" android:id="@+id/DelData"></item>
+
+<item android:enabled="true" android:orderInCategory="4" android:menuCategory="container" android:visible="true" android:title="Manage Data" android:id="@+id/Manage_data"></item>
+<item android:title="Save Data" android:orderInCategory="4" android:id="@+id/Save" android:menuCategory="container" android:enabled="true" android:visible="true"></item>
+</menu>
