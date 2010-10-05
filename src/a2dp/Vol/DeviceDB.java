@@ -4,6 +4,7 @@
 
 package a2dp.Vol;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,25 +23,24 @@ public class DeviceDB {
    private Context context;
    private SQLiteDatabase db;
    private SQLiteStatement insertStmt;
-   private SQLiteStatement updatebt;
    private static final String INSERT = "insert into "
       + TABLE_NAME + "(desc1, desc2, mac, maxv, setv) values (?, ?, ?, ?, ?)";
-   private static final String UPDATE = "update "
-	   + TABLE_NAME + " set (desc2) = (?), (maxv) = (?), (setv) = (?) where (mac) = (?)";
-
+  
    public DeviceDB(Context context) {
       this.context = context;
       OpenHelper openHelper = new OpenHelper(this.context);
       this.db = openHelper.getWritableDatabase();
       this.insertStmt = this.db.compileStatement(INSERT);
-      this.updatebt = this.db.compileStatement(UPDATE);
+      //this.updatebt = this.db.compileStatement(UPDATE);
    }
    public void update(btDevice bt){
-	   this.updatebt.bindString(1, bt.desc2);
-	   this.updatebt.bindLong(2, (long)bt.getDefVol());
-	   this.updatebt.bindLong(3, (long)bt.islSetV());
-	   this.updatebt.bindString(4, bt.mac);
-	   this.updatebt.execute();
+	   ContentValues vals = new ContentValues();
+	   vals.put("desc2", bt.getDesc2());
+	   vals.put("maxv", (long)bt.getDefVol());
+	   vals.put("setv", bt.islSetV());
+	   
+	   this.db.update(TABLE_NAME, vals, "WHERE mac =" + bt.mac,null);
+	   
    }
    
    public long insert(btDevice btd) {
