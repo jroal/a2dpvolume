@@ -22,15 +22,27 @@ public class DeviceDB {
    private Context context;
    private SQLiteDatabase db;
    private SQLiteStatement insertStmt;
+   private SQLiteStatement updatebt;
    private static final String INSERT = "insert into "
       + TABLE_NAME + "(desc1, desc2, mac, maxv, setv) values (?, ?, ?, ?, ?)";
+   private static final String UPDATE = "update "
+	   + TABLE_NAME + " set (desc2) = (?), (maxv) = (?), (setv) = (?) where (mac) = (?)";
 
    public DeviceDB(Context context) {
       this.context = context;
       OpenHelper openHelper = new OpenHelper(this.context);
       this.db = openHelper.getWritableDatabase();
       this.insertStmt = this.db.compileStatement(INSERT);
+      this.updatebt = this.db.compileStatement(UPDATE);
    }
+   public void update(btDevice bt){
+	   this.updatebt.bindString(1, bt.desc2);
+	   this.updatebt.bindLong(2, (long)bt.getDefVol());
+	   this.updatebt.bindLong(3, (long)bt.islSetV());
+	   this.updatebt.bindString(4, bt.mac);
+	   this.updatebt.execute();
+   }
+   
    public long insert(btDevice btd) {
 	   this.insertStmt.bindString(1, btd.desc1);
       this.insertStmt.bindString(2, btd.desc2);
@@ -88,7 +100,7 @@ public class DeviceDB {
       @Override
       public void onCreate(SQLiteDatabase db) {
          db.execSQL("CREATE TABLE " + TABLE_NAME + 
-        		 "(desc1 TEXT, desc2 TEXT, mac TEXT, maxv INTEGER, setv INTEGER)");
+        		 "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER)");
       }
       @Override
       public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

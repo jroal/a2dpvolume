@@ -12,6 +12,7 @@ import a2dp.Vol.R.menu;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
@@ -23,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.ContentProviderOperation.Builder;
 import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioManager;
@@ -201,24 +203,35 @@ public class main extends Activity {
                   builder.setPositiveButton("OK", null);
                   builder.setNeutralButton("Edit", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						setContentView(R.layout.editdata);
-					     
-					     final Button savei = (Button) findViewById(R.id.SaveItem);
-					     final TextView t1 = (TextView) findViewById(R.id.Textd1);
-					     final TextView tmac = (TextView) findViewById(R.id.Textmac);
-					     final EditText t2 = (EditText) findViewById(R.id.EditText01);
-					     final CheckBox dv = (CheckBox) findViewById(R.id.DoVol);							
+						Dialog dl = new Dialog(a2dp.Vol.main.this);
+						dl.setContentView(R.layout.editdata);
+						dl.setCancelable(true);
+					     final Button savei = (Button) dl.findViewById(R.id.SaveItem);
+					     final TextView t1 = (TextView) dl.findViewById(R.id.Textd1);
+					     final TextView tmac = (TextView) dl.findViewById(R.id.Textmac);
+					     final EditText t2 = (EditText) dl.findViewById(R.id.EditText01);
+					     final CheckBox dv = (CheckBox) dl.findViewById(R.id.DoVol);							
 						t1.setText(bt.getDesc1());
 						tmac.setText(bt.getMac());
 						t2.setText(bt.getDesc2());
 						dv.setChecked(bt.isSetV());
+						dl.setOnDismissListener(new OnDismissListener(){
+							public void onDismiss(DialogInterface dialog) {
+								bt.setDesc2(t2.getText().toString());
+								bt.setSetV(dv.isChecked());
+								myDB.update(bt);
+							}
+							
+						});
+						dl.show(); 
+									
 						
-					     savei.setOnClickListener(new View.OnClickListener() {	
+					     /*savei.setOnClickListener(new View.OnClickListener() {	
 							public void onClick(View v) {
 								bt.setDesc2(t2.getText().toString());
 								bt.setSetV(dv.isChecked());
 							}
-						});
+						});*/
 						
 						/*Intent k = new Intent(a2dp.Vol.main.this, Editbt.class);
 						k.putExtra(a2dp.Vol.Editbt.mac, bt.mac);
@@ -294,7 +307,7 @@ public class main extends Activity {
 			}
 		}); 
     }
-
+  
 
 	private void Locationbtn()
     {
@@ -338,7 +351,6 @@ public class main extends Activity {
 	    	    		{	 
 	    	    		btDevice bt = new btDevice();    	    		
 	    	    		str2 += "\n" + device.getName()+ "  " + device.getAddress() + "\n"; 
-	    	    		//lv_arr2[i] = device.getName() + "  " + device.getAddress();
 	    	    		i++;
 
 		    	    	bt.setBluetoothDevice(device, device.getName(), am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
