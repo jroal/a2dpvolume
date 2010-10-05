@@ -31,15 +31,16 @@ public class DeviceDB {
       OpenHelper openHelper = new OpenHelper(this.context);
       this.db = openHelper.getWritableDatabase();
       this.insertStmt = this.db.compileStatement(INSERT);
-      //this.updatebt = this.db.compileStatement(UPDATE);
    }
    public void update(btDevice bt){
 	   ContentValues vals = new ContentValues();
 	   vals.put("desc2", bt.getDesc2());
 	   vals.put("maxv", (long)bt.getDefVol());
 	   vals.put("setv", bt.islSetV());
-	   
-	   this.db.update(TABLE_NAME, vals, "WHERE mac =" + bt.mac,null);
+	   String where = "WHERE (mac) = " ;
+	   String[] args = new String[1];
+	   args[0] = bt.mac;
+	   this.db.update(TABLE_NAME, vals, where ,args);
 	   
    }
    
