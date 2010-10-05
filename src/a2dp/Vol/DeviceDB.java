@@ -37,11 +37,7 @@ public class DeviceDB {
 	   vals.put("desc2", bt.getDesc2());
 	   vals.put("maxv", (long)bt.getDefVol());
 	   vals.put("setv", bt.islSetV());
-	   String where = "WHERE (mac) = " ;
-	   String[] args = new String[1];
-	   args[0] = bt.mac;
-	   this.db.update(TABLE_NAME, vals, where ,args);
-	   
+	   this.db.update(TABLE_NAME, vals, "mac='" + bt.mac + "'", null);
    }
    
    public long insert(btDevice btd) {
