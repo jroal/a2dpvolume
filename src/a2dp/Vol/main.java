@@ -62,6 +62,7 @@ public class main extends Activity {
 	private MyApplication application;
 	SharedPreferences preferences;
 	public static final String PREFS_NAME = "btVol";
+	String[] lstring = null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,6 +90,7 @@ public class main extends Activity {
             
         case R.id.DelData:
         	myDB.deleteAll();
+        	refreshList(loadFromDB());
         	return true;
         }
         return false;
@@ -116,8 +118,11 @@ public class main extends Activity {
         tx1 = (TextView) findViewById(R.id.TextView01); 
         final ListView lvl = (ListView)findViewById(R.id.ListView01);
         this.myDB = new DeviceDB(this);
-        this.myDB.deleteAll();
-                
+        //this.myDB.deleteAll();
+        lstring = new String[] {"no data"};
+		lvl.setAdapter(new ArrayAdapter<String>(application, android.R.layout.simple_list_item_1 , lstring));
+             
+		
 	    tx1.setText("List Devices");
 	    btn.setText("Find A2DP Devices");
 	    try{
@@ -155,14 +160,16 @@ public class main extends Activity {
 				
 				int test = getBtDevices();
 				if(test > 0){
-					String[] lstring = new String[test];
+					lstring = new String[test];
 					for(int i =0;i<test;i++)
 					{
 						lstring[i] = vec.get(i).toString();
 					}
 				
-				lvl.setAdapter(new ArrayAdapter<String>(a2dp.Vol.main.this, android.R.layout.simple_list_item_1 , lstring));
+					refreshList(loadFromDB());
+				lvl.setAdapter(new ArrayAdapter<String>(application, android.R.layout.simple_list_item_1 , lstring));
 	        	//lvl.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+				lvl.invalidateViews();
 				lvl.forceLayout();
 				
 				}
@@ -206,7 +213,7 @@ public class main extends Activity {
 						Dialog dl = new Dialog(a2dp.Vol.main.this);
 						dl.setContentView(R.layout.editdata);
 						dl.setCancelable(true);
-					     final Button savei = (Button) dl.findViewById(R.id.SaveItem);
+					    
 					     final TextView t1 = (TextView) dl.findViewById(R.id.Textd1);
 					     final TextView tmac = (TextView) dl.findViewById(R.id.Textmac);
 					     final EditText t2 = (EditText) dl.findViewById(R.id.EditText01);
@@ -220,28 +227,17 @@ public class main extends Activity {
 								bt.setDesc2(t2.getText().toString());
 								bt.setSetV(dv.isChecked());
 								myDB.update(bt);
+						        refreshList(loadFromDB());
+								/*lvl.setAdapter(new ArrayAdapter<String>(a2dp.Vol.main.this, android.R.layout.simple_list_item_1 , lstring));
+								lvl.invalidateViews();
+								lvl.forceLayout();*/
 							}
 							
 						});
-						dl.show(); 
-									
-						
-					     /*savei.setOnClickListener(new View.OnClickListener() {	
-							public void onClick(View v) {
-								bt.setDesc2(t2.getText().toString());
-								bt.setSetV(dv.isChecked());
-							}
-						});*/
-						
-						/*Intent k = new Intent(a2dp.Vol.main.this, Editbt.class);
-						k.putExtra(a2dp.Vol.Editbt.mac, bt.mac);
-			            startActivity(k);	*/			
+						dl.show(); 		
 					}
                   });
-
-                  builder.show();   	
-                  
-                  
+                  builder.show();   	              
                 }       
         });
         
@@ -305,7 +301,12 @@ public class main extends Activity {
 				servrun = true;
 				}
 			}
-		}); 
+		});
+        
+        refreshList(loadFromDB());
+		lvl.setAdapter(new ArrayAdapter<String>(application, android.R.layout.simple_list_item_1 , lstring));
+		lvl.invalidateViews();
+		lvl.forceLayout();
     }
   
 
@@ -370,16 +371,28 @@ public class main extends Activity {
     	// the section below is for testing only.  Comment out before building the application for use.
     	btDevice bt = new btDevice();
     	bt.setBluetoothDevice("Device 1", "Porsche", "00:22:33:44:55:66:77", 15);
-    	vec.add(bt);
-    	a2dp.Vol.main.this.myDB.insert(bt);
     	i = 1;
-    	
+    	btDevice btx = myDB.getBTD(bt.mac);	
+		if(btx.mac == null)
+		{
+			a2dp.Vol.main.this.myDB.insert(bt);	    	    			    	    			
+			vec.add(bt);
+		}
+		else
+			vec.add(btx);
+		
     	btDevice bt2 = new btDevice();
     	bt2.setBluetoothDevice("Device 2", "Jaguar", "33:44:55:66:77:00:22", 14);
-    	vec.add(bt2);
-    	a2dp.Vol.main.this.myDB.insert(bt2);
+    	btDevice bty = myDB.getBTD(bt2.mac);	
     	i = 2;
- 
+		if(bty.mac == null)
+		{
+			a2dp.Vol.main.this.myDB.insert(bt2);	    	    			    	    			
+			vec.add(bt2);
+		}
+		else
+			vec.add(bty);
+		
         List<String> names = this.myDB.selectAll();
         StringBuilder sb = new StringBuilder();
         sb.append("Names in database:\n");
@@ -388,7 +401,8 @@ public class main extends Activity {
         }
         // end of testing code
         
-        
+    	refreshList(loadFromDB());
+
 	return i;
 	}
     
@@ -420,5 +434,23 @@ public class main extends Activity {
       // Commit the edits!
       editor.commit();
     }
-
+    
+    private void refreshList(int test){
+		if(test > 0){
+			lstring = new String[test];
+			for(int i =0;i<test;i++)
+			{
+				lstring[i] = vec.get(i).toString();
+			}
+			// somehow I need to update the listview here but I can't from a thread that is not on the UI
+		}
+		else 
+		Toast.makeText(this, "No data", Toast.LENGTH_LONG);
+    }
+    
+    private int loadFromDB(){
+    	vec = myDB.selectAlldb();
+    	
+    	return vec.size();
+    }
 }

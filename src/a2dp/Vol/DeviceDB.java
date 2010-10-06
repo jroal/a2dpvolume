@@ -14,6 +14,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class DeviceDB {
 
@@ -37,11 +38,7 @@ public class DeviceDB {
 	   vals.put("desc2", bt.getDesc2());
 	   vals.put("maxv", (long)bt.getDefVol());
 	   vals.put("setv", bt.islSetV());
-	   String where = "WHERE (mac) = " ;
-	   String[] args = new String[1];
-	   args[0] = bt.mac;
-	   this.db.update(TABLE_NAME, vals, where ,args);
-	   
+	   this.db.update(TABLE_NAME, vals, "mac='" + bt.mac + "'", null);
    }
    
    public long insert(btDevice btd) {
@@ -74,6 +71,9 @@ public class DeviceDB {
 	      return this.db;
 	   }
 
+   public int getLength(){
+	   return selectAll().size();
+   }
    
    public List<String> selectAll() {
       List<String> list = new ArrayList<String>();
@@ -94,6 +94,27 @@ public class DeviceDB {
       return list;
    }
 
+   public Vector<btDevice> selectAlldb() {
+	      Vector<btDevice> list = new Vector<btDevice>();
+	      Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1", "desc2", "mac", "maxv", "setv" },
+	        null, null, null, null, "desc1");
+	      if (cursor.moveToFirst()) {
+	         do {
+	        	 btDevice bt = new btDevice();
+	        	 bt.setDesc1(cursor.getString(0));
+	        	 bt.setDesc2(cursor.getString(1));
+	        	 bt.setMac(cursor.getString(2));
+	        	 bt.setSetV(cursor.getInt(4));
+	        	 bt.setDefVol(cursor.getInt(3));
+	        	 list.add(bt);
+	         } while (cursor.moveToNext());
+	      }
+	      if (cursor != null && !cursor.isClosed()) {
+	         cursor.close();
+	      }
+	      return list;
+	   }
+   
    private static class OpenHelper extends SQLiteOpenHelper {
       OpenHelper(Context context) {
          super(context, DATABASE_NAME, null, DATABASE_VERSION);

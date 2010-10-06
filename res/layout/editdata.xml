@@ -9,8 +9,7 @@
 
 
 
-<TableRow android:id="@+id/TableRow04" android:layout_height="wrap_content" android:layout_width="match_parent">
-<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/SaveItem" android:text="Save"></Button></TableRow>
+
 
 
 
