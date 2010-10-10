@@ -13,4 +13,6 @@
 
 
 
+<TableRow android:id="@+id/TableRow04" android:layout_width="wrap_content" android:layout_height="wrap_content"><SeekBar android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/DefVolBar"></SeekBar></TableRow>
+
 </TableLayout>

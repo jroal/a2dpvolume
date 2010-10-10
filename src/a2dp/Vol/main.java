@@ -177,7 +177,7 @@ public class main extends Activity {
 				}
 
 				btn.setText(str);
-	    	    tx1.setText("Current Volume:" + OldVol + " Devices found=" + test + "\n");
+	    	    tx1.setText("Volume:" + OldVol + " Devices=" + test +  "\n");
 	    	    
 	    	    }
 		});
@@ -214,7 +214,7 @@ public class main extends Activity {
 						Dialog dl = new Dialog(a2dp.Vol.main.this);
 						dl.setContentView(R.layout.editdata);
 						dl.setCancelable(true);
-					    
+					     final SeekBar b1 = (SeekBar) dl.findViewById(R.id.DefVolBar);
 					     final TextView t1 = (TextView) dl.findViewById(R.id.Textd1);
 					     final TextView tmac = (TextView) dl.findViewById(R.id.Textmac);
 					     final EditText t2 = (EditText) dl.findViewById(R.id.EditText01);
@@ -223,10 +223,13 @@ public class main extends Activity {
 						tmac.setText(bt.getMac());
 						t2.setText(bt.getDesc2());
 						dv.setChecked(bt.isSetV());
+						b1.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+						b1.setProgress(bt.getDefVol());
 						dl.setOnDismissListener(new OnDismissListener(){
 							public void onDismiss(DialogInterface dialog) {
 								bt.setDesc2(t2.getText().toString());
 								bt.setSetV(dv.isChecked());
+								bt.setDefVol(b1.getProgress());
 								myDB.update(bt);
 						        refreshList(loadFromDB());
 							}
@@ -351,6 +354,7 @@ public class main extends Activity {
 	    	    		i++;
 		    	    	bt.setBluetoothDevice(device, device.getName(), am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 	    	    		btDevice bt2 = myDB.getBTD(bt.mac);	
+	    	    		
 	    	    		if(bt2.mac == null)
 	    	    		{
 	    	    			a2dp.Vol.main.this.myDB.insert(bt);	    	    			    	    			
@@ -359,14 +363,13 @@ public class main extends Activity {
 	    	    		else
 	    	    			vec.add(bt2);
 	    	    		}
-	    	    
 	    	    }
 	    	    str2 += " " + i;
 	    	}
     	}
     	
     	// the section below is for testing only.  Comment out before building the application for use.
-    	btDevice bt = new btDevice();
+    	/*btDevice bt = new btDevice();
     	bt.setBluetoothDevice("Device 1", "Porsche", "00:22:33:44:55:66:77", 15);
     	i = 1;
     	btDevice btx = myDB.getBTD(bt.mac);	
@@ -395,7 +398,7 @@ public class main extends Activity {
         sb.append("Names in database:\n");
         for (String name : names) {
            sb.append(name + "\n");
-        }
+        }*/
         // end of testing code
         
     	refreshList(loadFromDB());
