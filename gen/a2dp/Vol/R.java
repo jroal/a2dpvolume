@@ -17,6 +17,7 @@ public final class R {
     public static final class id {
         public static final int AbsoluteLayout01=0x7f07000b;
         public static final int Button01=0x7f070010;
+        public static final int DefVolBar=0x7f07000a;
         public static final int DelData=0x7f070017;
         public static final int DoVol=0x7f070008;
         public static final int Downbtn=0x7f07000f;
@@ -26,7 +27,6 @@ public final class R {
         public static final int Manage_data=0x7f070018;
         public static final int Output=0x7f070015;
         public static final int Save=0x7f070019;
-        public static final int SaveItem=0x7f07000a;
         public static final int ServButton=0x7f070011;
         public static final int TableLayout01=0x7f070000;
         public static final int TableRow01=0x7f070001;
