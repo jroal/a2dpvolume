@@ -17,6 +17,8 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -334,8 +336,9 @@ public class main extends Activity {
     	str2 = "No devices found";
     	int i = 0;
     	vec.clear();
-
+    	
     	BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
+   	
     	if(mBTA != null)
     	{
 	    	Set<BluetoothDevice> pairedDevices = mBTA.getBondedDevices();
