@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import android.app.Service;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -70,11 +71,12 @@ public class service extends Service {
 	        public void onReceive(Context context, Intent intent) {
 	            if(true) // here is where I need to check to see if this is an a2dp device
 	            {
-	        	getOldvol();
+	        	
+	            getOldvol();
 	        	setVolume(am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC), a2dp.Vol.service.this);	            	
 	            }
 	        	
-	             }
+	          }
 	        };
 	    
 	    private final BroadcastReceiver mReceiver2 = new BroadcastReceiver() {
