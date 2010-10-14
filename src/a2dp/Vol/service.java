@@ -28,6 +28,7 @@ public class service extends Service {
 	static Integer OldVol2 = 5;
 	public static boolean run = false;
     LocationManager lm2 = null;
+    public static BluetoothDevice btConn = null;
     
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -71,8 +72,10 @@ public class service extends Service {
 	        public void onReceive(Context context, Intent intent) {
 	            if(true) // here is where I need to check to see if this is an a2dp device
 	            {
-	        	
-	            getOldvol();
+	        	BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(BluetoothDevice.EXTRA_DEVICE);
+	            btConn = bt;
+	        	//Toast.makeText(context, bt.getName() + bt.getAddress(), Toast.LENGTH_LONG).show();
+	        	getOldvol();
 	        	setVolume(am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC), a2dp.Vol.service.this);	            	
 	            }
 	        	
