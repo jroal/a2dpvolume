@@ -25,6 +25,8 @@ import android.content.SharedPreferences;
 import android.content.ContentProviderOperation.Builder;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
+import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioManager;
@@ -55,40 +57,43 @@ public class main extends Activity {
 	static Integer OldVol = 5;
 	static AudioManager am = (AudioManager) null;
 	boolean servrun = false;
-	ListView lvl = null;
-	Vector<btDevice> vec;
-	private DeviceDB myDB;
+	ListView lvl = null;  // listview used on main screen showing devices
+	Vector<btDevice> vec;  // vector of bluetooth devices
+	private DeviceDB myDB;  // database of device data stored in SQlite
 	String activebt = null;
 	private MyApplication application;
 	SharedPreferences preferences;
 	public static final String PREFS_NAME = "btVol";
-
+	String[] lstring = null; // string array used for the listview
+	ArrayAdapter<String> ladapt;  // listview adapter
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	MenuInflater inflater = getMenuInflater();
     	inflater.inflate(R.menu.menu, menu);
     	return true;
     }
-    /* Handles item selections */
+    /* Handles item selections for the options menu*/
     public boolean onOptionsItemSelected(MenuItem item) {
  
         switch (item.getItemId()) {
-        case R.id.Manage_data:
+        case R.id.Manage_data:  // used to export the data
         	Intent i = new Intent(a2dp.Vol.main.this, ManageData.class);
             startActivity(i);
             return true;
             
         case R.id.Save:
-        	
+        	// does nothing.  need to dump this I guess
             return true;
             
-        case R.id.prefs:
+        case R.id.prefs: // set preferences
         	Intent j = new Intent(a2dp.Vol.main.this, Preferences.class);
             startActivity(j);
             return true;
             
-        case R.id.DelData:
+        case R.id.DelData:  // clears the database of all devices and settings.
         	myDB.deleteAll();
+        	refreshList(loadFromDB());
         	return true;
         }
         return false;
@@ -100,7 +105,7 @@ public class main extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-    	//preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
     	preferences = getSharedPreferences(PREFS_NAME,0);
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE) ;
         final Button btn = (Button) findViewById(R.id.Button01);
@@ -114,12 +119,19 @@ public class main extends Activity {
 
         vec = new Vector<btDevice>();
         tx1 = (TextView) findViewById(R.id.TextView01); 
-        final ListView lvl = (ListView)findViewById(R.id.ListView01);
+        
         this.myDB = new DeviceDB(this);
-        this.myDB.deleteAll();
-                
+        
+        lstring = new String[] {"no data"};
+        
+        this.ladapt = new ArrayAdapter<String>(application, android.R.layout.simple_list_item_1 , lstring);
+        this.lvl = (ListView)findViewById(R.id.ListView01);
+		this.lvl.setAdapter(ladapt);          
+		
 	    tx1.setText("List Devices");
 	    btn.setText("Find A2DP Devices");
+	    
+	    // toggle the service button depending on the state of the service
 	    try{
 	    	if(a2dp.Vol.service.run)
 	    	{
@@ -137,7 +149,7 @@ public class main extends Activity {
 		    serv.setText("Start Service");
 	    }
     
-	    // capture original volume
+	    // capture original media volume to be used when returning from bluetooth connection
 		if(OldVol < am.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
 		{
 			OldVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -150,34 +162,31 @@ public class main extends Activity {
 		
 		tx1.setText("Stored Volume:" + OldVol + "\n" + str2);
 		
+		// find bonded audio devices and load into the database and listview
         btn.setOnClickListener(new View.OnClickListener() {			
 			public void onClick(View v) {
 				
 				int test = getBtDevices();
 				if(test > 0){
-					String[] lstring = new String[test];
+					lstring = new String[test];
 					for(int i =0;i<test;i++)
 					{
 						lstring[i] = vec.get(i).toString();
-					}
-				
-				lvl.setAdapter(new ArrayAdapter<String>(a2dp.Vol.main.this, android.R.layout.simple_list_item_1 , lstring));
-	        	//lvl.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-				lvl.forceLayout();
-				
+					}		
+					refreshList(loadFromDB());					
 				}
 
 				btn.setText(str);
-	    	    tx1.setText("Current Volume:" + OldVol + " Devices found=" + test + "\n");
+	    	    tx1.setText("Volume:" + OldVol + " Devices=" + test +  "\n");
 	    	    
 	    	    }
 		});
         
+        // don't really need this.  It shows the list element details from the vector instead of the database
         lvl.setOnItemLongClickListener(new OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                 int position, long id) {
-              // When clicked, show a toast with the TextView text
-              //Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+ 
               btDevice bt = new btDevice();
               bt = vec.get(position);
               android.app.AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.main.this);
@@ -190,11 +199,10 @@ public class main extends Activity {
             }       
           });
 
+        // display the selected item and allow editing
         lvl.setOnItemClickListener(new OnItemClickListener(){
         	public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
-                  // When clicked, show a toast with the TextView text
-                  //Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
                   final btDevice bt = vec.get(position);
                   btDevice bt2 = myDB.getBTD(bt.mac);
                   android.app.AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.main.this);
@@ -206,7 +214,7 @@ public class main extends Activity {
 						Dialog dl = new Dialog(a2dp.Vol.main.this);
 						dl.setContentView(R.layout.editdata);
 						dl.setCancelable(true);
-					     final Button savei = (Button) dl.findViewById(R.id.SaveItem);
+					     final SeekBar b1 = (SeekBar) dl.findViewById(R.id.DefVolBar);
 					     final TextView t1 = (TextView) dl.findViewById(R.id.Textd1);
 					     final TextView tmac = (TextView) dl.findViewById(R.id.Textmac);
 					     final EditText t2 = (EditText) dl.findViewById(R.id.EditText01);
@@ -215,36 +223,25 @@ public class main extends Activity {
 						tmac.setText(bt.getMac());
 						t2.setText(bt.getDesc2());
 						dv.setChecked(bt.isSetV());
+						b1.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+						b1.setProgress(bt.getDefVol());
 						dl.setOnDismissListener(new OnDismissListener(){
 							public void onDismiss(DialogInterface dialog) {
 								bt.setDesc2(t2.getText().toString());
 								bt.setSetV(dv.isChecked());
+								bt.setDefVol(b1.getProgress());
 								myDB.update(bt);
+						        refreshList(loadFromDB());
 							}
-							
 						});
-						dl.show(); 
-									
-						
-					     /*savei.setOnClickListener(new View.OnClickListener() {	
-							public void onClick(View v) {
-								bt.setDesc2(t2.getText().toString());
-								bt.setSetV(dv.isChecked());
-							}
-						});*/
-						
-						/*Intent k = new Intent(a2dp.Vol.main.this, Editbt.class);
-						k.putExtra(a2dp.Vol.Editbt.mac, bt.mac);
-			            startActivity(k);	*/			
+						dl.show(); 		
 					}
                   });
-
-                  builder.show();   	
-                  
-                  
+                  builder.show();   	              
                 }       
         });
         
+        // simple media volume adjusters.  They also reset the default volume
         uptn.setOnClickListener(new View.OnClickListener() {			
 			public void onClick(View v) {
 				btn.setText(str);
@@ -265,7 +262,7 @@ public class main extends Activity {
 	    	    }
 		});
         
-        
+        // long click opens the most accurate location
         locbtn.setOnLongClickListener(new View.OnLongClickListener() {
 			
 			public boolean onLongClick(View v) {
@@ -288,6 +285,7 @@ public class main extends Activity {
 			}
 		}) ;
         
+        // toggle the service ON or OFF and change the button text to reflect the new state
         serv.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
@@ -305,7 +303,9 @@ public class main extends Activity {
 				servrun = true;
 				}
 			}
-		}); 
+		});
+        // load the list from the database
+		refreshList(loadFromDB());
     }
   
 
@@ -328,12 +328,13 @@ public class main extends Activity {
 		}		
     }
     
+	// function to get all bonded audio devices, load into database, and load the vector and listview.
     private int getBtDevices(){
      	
     	str2 = "No devices found";
     	int i = 0;
     	vec.clear();
-    	//a2dp.Vol.main.this.myDB.deleteAll();
+
     	BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
     	if(mBTA != null)
     	{
@@ -342,7 +343,7 @@ public class main extends Activity {
 	    	
 	    	if (pairedDevices.size() > 0) 
 	    	{
-					str2 = "Devices: ";	    	    
+					str2 = "Devices found: ";	    	    
 					// Loop through paired devices
 	    	    for (BluetoothDevice device : pairedDevices) 
 	    	    {  	    	
@@ -350,11 +351,10 @@ public class main extends Activity {
 	    	    	if(device.getBluetoothClass().hasService(BluetoothClass.Service.AUDIO))
 	    	    		{	 
 	    	    		btDevice bt = new btDevice();    	    		
-	    	    		str2 += "\n" + device.getName()+ "  " + device.getAddress() + "\n"; 
 	    	    		i++;
-
 		    	    	bt.setBluetoothDevice(device, device.getName(), am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 	    	    		btDevice bt2 = myDB.getBTD(bt.mac);	
+	    	    		
 	    	    		if(bt2.mac == null)
 	    	    		{
 	    	    			a2dp.Vol.main.this.myDB.insert(bt);	    	    			    	    			
@@ -364,34 +364,49 @@ public class main extends Activity {
 	    	    			vec.add(bt2);
 	    	    		}
 	    	    }
+	    	    str2 += " " + i;
 	    	}
     	}
     	
     	// the section below is for testing only.  Comment out before building the application for use.
-    	btDevice bt = new btDevice();
+    	/*btDevice bt = new btDevice();
     	bt.setBluetoothDevice("Device 1", "Porsche", "00:22:33:44:55:66:77", 15);
-    	vec.add(bt);
-    	a2dp.Vol.main.this.myDB.insert(bt);
     	i = 1;
-    	
+    	btDevice btx = myDB.getBTD(bt.mac);	
+		if(btx.mac == null)
+		{
+			a2dp.Vol.main.this.myDB.insert(bt);	    	    			    	    			
+			vec.add(bt);
+		}
+		else
+			vec.add(btx);
+		
     	btDevice bt2 = new btDevice();
     	bt2.setBluetoothDevice("Device 2", "Jaguar", "33:44:55:66:77:00:22", 14);
-    	vec.add(bt2);
-    	a2dp.Vol.main.this.myDB.insert(bt2);
+    	btDevice bty = myDB.getBTD(bt2.mac);	
     	i = 2;
- 
+		if(bty.mac == null)
+		{
+			a2dp.Vol.main.this.myDB.insert(bt2);	    	    			    	    			
+			vec.add(bt2);
+		}
+		else
+			vec.add(bty);
+		
         List<String> names = this.myDB.selectAll();
         StringBuilder sb = new StringBuilder();
         sb.append("Names in database:\n");
         for (String name : names) {
            sb.append(name + "\n");
-        }
+        }*/
         // end of testing code
         
-        
+    	refreshList(loadFromDB());
+
 	return i;
 	}
     
+    // This function handles the media volume adjustments.
     private static int setVolume(int inputVol, Context sender)
     {
        	int outVol;
@@ -420,5 +435,31 @@ public class main extends Activity {
       // Commit the edits!
       editor.commit();
     }
-
+    
+    // this is called to update the list from the database
+    private void refreshList(int test){
+		if(test > 0){
+			lstring = new String[test];
+			for(int i =0;i<test;i++)
+			{
+				lstring[i] = vec.get(i).toString();
+			}
+		}
+		else 
+		{
+			lstring = new String[] {"no data"};
+		//Toast.makeText(this, "No data", Toast.LENGTH_LONG);
+		}
+			a2dp.Vol.main.this.lvl.setAdapter(new ArrayAdapter<String>(application, android.R.layout.simple_list_item_1 , lstring));
+			a2dp.Vol.main.this.lvl.invalidateViews();
+			a2dp.Vol.main.this.lvl.forceLayout();        
+    }
+    
+    // this just loads the bluetooth device array from the database
+    private int loadFromDB(){
+    	vec = myDB.selectAlldb();
+    	
+    	return vec.size();
+    }
+    
 }
