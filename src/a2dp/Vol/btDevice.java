@@ -56,7 +56,7 @@ public class btDevice  {
 	}
 
 	/**
-	 * @return the mac
+	 * @return the mac address of the bluetooth device
 	 */
 	public String getMac() {
 		return mac;

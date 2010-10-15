@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import android.app.Service;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,7 +29,8 @@ public class service extends Service {
 	static Integer OldVol2 = 5;
 	public static boolean run = false;
     LocationManager lm2 = null;
-    public static BluetoothDevice btConn = null;
+    static BluetoothDevice btConn = null;
+    private DeviceDB DB;  // database of device data stored in SQlite
     
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -70,13 +72,31 @@ public class service extends Service {
 	   private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 	        @Override
 	        public void onReceive(Context context, Intent intent) {
-	            if(true) // here is where I need to check to see if this is an a2dp device
+	        	int maxvol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+	        	boolean setvol = true;
+		        getOldvol();        	
+		        BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(BluetoothDevice.EXTRA_DEVICE);
+	            btConn = bt;	            
+	            
+	            if(true) 
 	            {
-	        	BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(BluetoothDevice.EXTRA_DEVICE);
-	            btConn = bt;
-	        	//Toast.makeText(context, bt.getName() + bt.getAddress(), Toast.LENGTH_LONG).show();
-	        	getOldvol();
-	        	setVolume(am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC), a2dp.Vol.service.this);	            	
+	            	btDevice bt2;
+					try {
+						String addres = btConn.getAddress();
+						bt2 = DB.getBTD(addres);
+	            	Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG).show();					
+	            	} catch (Exception e) {
+	            		Toast.makeText(context, btConn.getAddress() + "\n" + e.getMessage(), Toast.LENGTH_LONG);
+						bt2 = null;
+					}
+
+		        	if(bt2 != null)
+		        	{
+		        		maxvol = bt2.getDefVol();
+		        		setvol = bt2.isSetV();
+		        	}
+
+		        	if(setvol) setVolume(maxvol, a2dp.Vol.service.this);	            	
 	            }
 	        	
 	          }
@@ -180,7 +200,7 @@ public class service extends Service {
 							"(My Car " + t.format("%D, %r") + " acc=" + df.format(gloc[2]) + ")";
 					fos.write(temp.getBytes());
 					fos.close();
-	            	Toast.makeText(a2dp.Vol.service.this, temp, Toast.LENGTH_LONG).show();
+	            	//Toast.makeText(a2dp.Vol.service.this, temp, Toast.LENGTH_LONG).show();
 				} 
 	            catch (FileNotFoundException e) {
 	            	Toast.makeText(a2dp.Vol.service.this, "FileNotFound", Toast.LENGTH_LONG).show();
@@ -199,7 +219,7 @@ public class service extends Service {
 							"(My Car " + t.format("%D, %r") + " acc=" + df.format(gloc[6]) + ")";
 					fos.write(temp.getBytes());
 					fos.close();
-	            	Toast.makeText(a2dp.Vol.service.this, temp, Toast.LENGTH_LONG).show();
+	            	//Toast.makeText(a2dp.Vol.service.this, temp, Toast.LENGTH_LONG).show();
 				} 
 	            catch (FileNotFoundException e) {
 	            	Toast.makeText(a2dp.Vol.service.this, "FileNotFound", Toast.LENGTH_LONG).show();
