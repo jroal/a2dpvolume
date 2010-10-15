@@ -19,6 +19,7 @@ import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.bluetooth.BluetoothClass.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -71,7 +72,7 @@ public class main extends Activity {
 	String[] lstring = null; // string array used for the listview
 	ArrayAdapter<String> ladapt;  // listview adapter
 	BluetoothDevice btCon;
-    
+	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	MenuInflater inflater = getMenuInflater();
@@ -222,6 +223,12 @@ public class main extends Activity {
                   builder.setTitle(bt.toString()); 
                   builder.setMessage(bt2.desc1 + "\n" + bt2.desc2  + "\n" + bt2.mac  + "\nConnected Volume: " + bt2.defVol  + "\nTrigger: " + bt2.setV);
                   builder.setPositiveButton("OK", null);
+                  builder.setNegativeButton("Delete", new OnClickListener(){
+                	  public void onClick(DialogInterface dialog, int which) {
+                		  BluetoothDevice bdelete = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(bt.mac);
+                		  
+                	  }
+                  });
                   builder.setNeutralButton("Edit", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						Dialog dl = new Dialog(a2dp.Vol.main.this);
