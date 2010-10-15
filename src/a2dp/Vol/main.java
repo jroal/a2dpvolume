@@ -19,10 +19,12 @@ import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.ContentProviderOperation.Builder;
 import android.content.DialogInterface.OnClickListener;
@@ -68,6 +70,7 @@ public class main extends Activity {
 	public static final String PREFS_NAME = "btVol";
 	String[] lstring = null; // string array used for the listview
 	ArrayAdapter<String> ladapt;  // listview adapter
+	BluetoothDevice btCon;
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,6 +121,14 @@ public class main extends Activity {
         // get "Application" object for shared state or creating of expensive resources - like DataHelper
         // (this is not recreated as often as each Activity)
         this.application = (MyApplication) this.getApplication();
+        
+        // create intent filter for a bluetooth stream connection
+        IntentFilter filter = new IntentFilter(android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED);
+        this.registerReceiver(mReceiver3, filter);
+        
+        // create intent filter for a bluetooth stream disconnection
+        IntentFilter filter2 = new IntentFilter(android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(mReceiver4, filter2);
 
         vec = new Vector<btDevice>();
         tx1 = (TextView) findViewById(R.id.TextView01); 
@@ -222,7 +233,13 @@ public class main extends Activity {
 					     final EditText t2 = (EditText) dl.findViewById(R.id.EditText01);
 					     final CheckBox dv = (CheckBox) dl.findViewById(R.id.DoVol);							
 						t1.setText(bt.getDesc1());
-						tmac.setText(bt.getMac());
+						if(btCon != null)
+						{
+							if(bt.getMac().equalsIgnoreCase(btCon.getAddress()) )
+								tmac.setText(bt.getMac() + " **");
+						}
+						else
+							tmac.setText(bt.getMac());
 						t2.setText(bt.getDesc2());
 						dv.setChecked(bt.isSetV());
 						b1.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
@@ -446,6 +463,8 @@ public class main extends Activity {
 			for(int i =0;i<test;i++)
 			{
 				lstring[i] = vec.get(i).toString();
+				if(btCon != null)
+					if(vec.get(i).getMac().equalsIgnoreCase(btCon.getAddress())) lstring[i] += " **";
 			}
 		}
 		else 
@@ -465,4 +484,22 @@ public class main extends Activity {
     	return vec.size();
     }
     
+	   private final BroadcastReceiver mReceiver3 = new BroadcastReceiver() {
+	        @Override
+	        public void onReceive(Context context, Intent intent) {
+	        	BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(BluetoothDevice.EXTRA_DEVICE);
+	            btCon = bt;	           
+	            //Toast.makeText(context, bt.getName() + " " + bt.getAddress(), Toast.LENGTH_LONG).show();
+	            refreshList(vec.size());
+	          }
+	        };
+	    
+	    private final BroadcastReceiver mReceiver4 = new BroadcastReceiver() {
+	        @Override
+	        public void onReceive(Context context2, Intent intent2) {
+	        	
+	            btCon = null;
+	            refreshList(vec.size());	            
+	            }
+	        };
 }
