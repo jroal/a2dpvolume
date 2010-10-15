@@ -51,7 +51,7 @@ public class service extends Service {
 	    // capture original volume
         am2 = (AudioManager) getSystemService(Context.AUDIO_SERVICE) ;
         run = true;
-        
+        this.DB = new DeviceDB(this);
 
         Toast.makeText(this, "A2DP Vol Service Started", Toast.LENGTH_LONG).show();
 	}
@@ -80,7 +80,7 @@ public class service extends Service {
 	            
 	            if(true) 
 	            {
-	            	btDevice bt2;
+	            	btDevice bt2 = null;
 					try {
 						String addres = btConn.getAddress();
 						bt2 = DB.getBTD(addres);
