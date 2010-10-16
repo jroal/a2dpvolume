@@ -34,7 +34,8 @@ public class service extends Service {
     private LocationManager locationManager;
     private Location location2;
 
-    float MAX_ACC = 20;
+    float MAX_ACC = 20; // worst acceptable location in meters
+    long MAX_TIME = 10000;  // worst acceptable time in milliseconds
     
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -214,7 +215,7 @@ public class service extends Service {
 	        		gps[6] = l3.getAccuracy();
 	        		gps[7] = l3.getTime();
 	        	if(locationListener != null){
-	        		if(location2.getAccuracy() < MAX_ACC && (System.currentTimeMillis() - l.getTime()) < 10000)
+	        		if(location2.getAccuracy() < MAX_ACC && (System.currentTimeMillis() - location2.getTime()) < MAX_TIME)
 	        			clearLoc();
 	        	}
 					
@@ -270,6 +271,7 @@ public class service extends Service {
 			    public void onLocationChanged(Location location) {
 			      // Called when a new location is found by the network location provider.
 			      location2 = location;
+			      // since we know this is a new location, just check the accuracy
 			      if(location.getAccuracy() < MAX_ACC){
 			    	  grabGPS();
 			      }
