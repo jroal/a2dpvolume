@@ -19,6 +19,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.text.format.Time;
 import android.widget.Toast;
@@ -68,6 +69,7 @@ public class service extends Service {
 	@Override
 	public void onDestroy() {
         run = false;
+        clearLoc();
 		Toast.makeText(this, "A2DP Vol Service Stopped", Toast.LENGTH_LONG).show();
 	}
 	
@@ -76,8 +78,6 @@ public class service extends Service {
 		getOldvol();
 		run = true;
 		
-
-
 	}
 	
 	
@@ -119,7 +119,28 @@ public class service extends Service {
 	        public void onReceive(Context context2, Intent intent2) {
 	        	
 	            setVolume(OldVol2,  a2dp.Vol.service.this);
+	            // make sure we turn OFF the location listener if we don't get a loc in 15s
+	            new CountDownTimer(15000, 5000) {
 
+	                public void onTick(long millisUntilFinished) {
+	                	//Toast.makeText(a2dp.Vol.service.this, "Time left: " + millisUntilFinished / 1000, Toast.LENGTH_LONG).show();
+	                }
+
+	                public void onFinish() {
+	                    clearLoc();
+	                }
+	             }.start();
+	             
+	            // start location provider GPS 
+		         // Register the listener with the Location Manager to receive location updates
+	             if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+		            {
+		            	locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+		            	//Toast.makeText(this, " Location Manager stated", Toast.LENGTH_LONG).show();
+		            	
+		            }
+	             
+	             // get best location and store it
 	            grabGPS();
 	            
 	            }
@@ -151,13 +172,6 @@ public class service extends Service {
 	        }
 	        
 	        private double[] getGPS2()  {
-		         // Register the listener with the Location Manager to receive location updates
-	            if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-	            {
-	            	locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-	            	//Toast.makeText(this, " Location Manager stated", Toast.LENGTH_LONG).show();
-	            	
-	            }
 	        	
 	        	LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);  
 	        	List<String> providers = lm.getProviders(true);
@@ -203,7 +217,7 @@ public class service extends Service {
 	        		gps[6] = l3.getAccuracy();
 	        		gps[7] = l3.getTime();
 	        	if(locationListener != null){
-	        		if(location2.getAccuracy() < MAX_ACC)
+	        		if(location2.getAccuracy() < MAX_ACC && (System.currentTimeMillis() - l.getTime()) < 10000)
 	        			clearLoc();
 	        	}
 					
@@ -278,7 +292,7 @@ public class service extends Service {
 			  
 			  private void clearLoc(){
 					locationManager.removeUpdates(locationListener);
-					Toast.makeText(a2dp.Vol.service.this, " Location Manager stopped", Toast.LENGTH_LONG).show();
+					//Toast.makeText(a2dp.Vol.service.this, " Location Manager stopped", Toast.LENGTH_LONG).show();
 			  }
 			  
 }
