@@ -5,10 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Timer;
-
 import android.app.Service;
-import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -36,7 +33,7 @@ public class service extends Service {
     private DeviceDB DB;  // database of device data stored in SQlite
     private LocationManager locationManager;
     private Location location2;
-    private Timer tx;
+
     float MAX_ACC = 20;
     
 	@Override

@@ -3,42 +3,29 @@ package a2dp.Vol;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-
-import a2dp.Vol.R.menu;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
-import android.bluetooth.BluetoothClass.Service;
 import android.content.BroadcastReceiver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.ContentProviderOperation.Builder;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
-import android.database.Cursor;
-import android.database.DataSetObserver;
-import android.location.Location;
-import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -46,12 +33,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
@@ -225,7 +209,7 @@ public class main extends Activity {
                   builder.setPositiveButton("OK", null);
                   builder.setNegativeButton("Delete", new OnClickListener(){
                 	  public void onClick(DialogInterface dialog, int which) {
-                		  BluetoothDevice bdelete = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(bt.mac);
+                		//  BluetoothDevice bdelete = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(bt.mac);
                 		  
                 	  }
                   });
