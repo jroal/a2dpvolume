@@ -17,7 +17,7 @@
 
 </activity>
 
-<activity android:name="Preferences" android:launchMode="standard" android:enabled="true"></activity>
+<activity android:name="Preferences" android:launchMode="standard" android:enabled="true" android:label="@xml/preferences"></activity>
 
 </application>
 

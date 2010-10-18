@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -33,10 +34,13 @@ public class service extends Service {
     private DeviceDB DB;  // database of device data stored in SQlite
     private LocationManager locationManager;
     private Location location2;
+    private Location location_old;
 
+    public static final String PREFS_NAME = "btVol";
     float MAX_ACC = 20; // worst acceptable location in meters
     long MAX_TIME = 10000;  // worst acceptable time in milliseconds
-    
+ 	SharedPreferences preferences;   
+ 		
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -45,6 +49,11 @@ public class service extends Service {
 
 	@Override
 	public void onCreate() {
+
+		//preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		preferences = getSharedPreferences(PREFS_NAME,0);
+		MAX_ACC = preferences.getFloat("gpsDistance", MAX_ACC);
+		MAX_TIME = preferences.getLong("gpsTime", MAX_TIME);
 		
         // create intent filter for a bluetooth stream connection
         IntentFilter filter = new IntentFilter(android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED);
@@ -75,7 +84,8 @@ public class service extends Service {
 	public void onStart() {
 		getOldvol();
 		run = true;
-		
+		MAX_ACC = preferences.getFloat("gpsDistance", MAX_ACC);
+		MAX_TIME = preferences.getLong("gpsTime", MAX_TIME);
 	}
 	
 	
@@ -182,39 +192,54 @@ public class service extends Service {
         		long olddt = 9999999;
         		float oldacc = 999999;
         		
-	        	for (int i=providers.size()-1; i>=0; i--) {
-	        		l2 = lm.getLastKnownLocation(providers.get(i));
-
-	        		if (l2 != null) 
-	        		{
-						if(l2.hasAccuracy()) // if we have accuracy, capture the best
-						{
-							if(l2.getAccuracy() < oldacc)
-								{
-								l3 = l2;
-								oldacc = l2.getAccuracy();
-								}
-						}
-	            		olddt = deltat;	
-	            		deltat = System.currentTimeMillis() - l2.getTime() ;
-	        			if( deltat < olddt) // get the most recent update
-	            			{      			
-	            			l = l2;
-	            			}      		
-	        		}
+	        	if(!providers.isEmpty()){
+	        		for (int i=providers.size()-1; i>=0; i--) {
+		        		l2 = lm.getLastKnownLocation(providers.get(i));
+	
+		        		if (l2 != null) 
+		        		{
+							if(l2.hasAccuracy()) // if we have accuracy, capture the best
+							{
+								if(l2.getAccuracy() < oldacc)
+									{
+									l3 = l2;
+									oldacc = l2.getAccuracy();
+									}
+							}
+		            		olddt = deltat;	
+		            		deltat = System.currentTimeMillis() - l2.getTime() ;
+		        			if( deltat < olddt) // get the most recent update
+		            			{      			
+		            			l = l2;
+		            			}      		
+		        		}
+		        	}
 	        	}
+	        	else 
+	        		return null;
 	        	
 	        	double[] gps = new double[8];
-
+	        	
+	        	if(l != null){
 	        		gps[0] = l.getLatitude();
 	        		gps[1] = l.getLongitude();
 	        		gps[2] = l.getAccuracy();
 	        		gps[3] = l.getTime();
+	        		location_old = l;
+	        	}
+	        	else
+	        		return null;
+	        	
+	        	if(l3 != null){
 	        		gps[4] = l3.getLatitude();
 	        		gps[5] = l3.getLongitude();
 	        		gps[6] = l3.getAccuracy();
 	        		gps[7] = l3.getTime();
-	        	if(locationListener != null){
+	        	}
+	        	else 
+	        		return null;
+	        	
+	        	if(locationListener != null && l != null){
 	        		if(location2.getAccuracy() < MAX_ACC && (System.currentTimeMillis() - location2.getTime()) < MAX_TIME)
 	        			clearLoc();
 	        	}
@@ -224,45 +249,53 @@ public class service extends Service {
 	        
 	        void grabGPS()
 	        {        
-	        	double[] gloc = getGPS2();	            
-					DecimalFormat df = new DecimalFormat("#.#"); 				
+	        	double[] gloc;
+				try {
+					gloc = getGPS2();
+				} catch (Exception e1) {
+					return;
+				}	            
+					
+	        	DecimalFormat df = new DecimalFormat("#.#"); 				
 
-				try {
-					FileOutputStream fos = openFileOutput("My_Last_Location", Context.MODE_WORLD_READABLE);
-					Time t = new Time();
-					t.set((long)gloc[3]);
-					String temp = "http://maps.google.com/maps?q=" + gloc[0] + "," + gloc[1] + "+" +
-							"(My Car " + t.format("%D, %r") + " acc=" + df.format(gloc[2]) + ")";
-					fos.write(temp.getBytes());
-					fos.close();
-	            	//Toast.makeText(a2dp.Vol.service.this, temp, Toast.LENGTH_LONG).show();
-				} 
-	            catch (FileNotFoundException e) {
-	            	Toast.makeText(a2dp.Vol.service.this, "FileNotFound", Toast.LENGTH_LONG).show();
-					e.printStackTrace();
-				} 
-	            catch (IOException e) {
-	            	Toast.makeText(a2dp.Vol.service.this, "IOException", Toast.LENGTH_LONG).show();
-	            	e.printStackTrace();
-				}
-	            
-				try {
-					FileOutputStream fos = openFileOutput("My_Last_Location2", Context.MODE_WORLD_READABLE);
-					Time t = new Time();
-					t.set((long)gloc[7]);
-					String temp = "http://maps.google.com/maps?q=" + gloc[4] + "," + gloc[5] + "+" +
-							"(My Car " + t.format("%D, %r") + " acc=" + df.format(gloc[6]) + ")";
-					fos.write(temp.getBytes());
-					fos.close();
-	            	//Toast.makeText(a2dp.Vol.service.this, temp, Toast.LENGTH_LONG).show();
-				} 
-	            catch (FileNotFoundException e) {
-	            	Toast.makeText(a2dp.Vol.service.this, "FileNotFound", Toast.LENGTH_LONG).show();
-					e.printStackTrace();
-				} 
-	            catch (IOException e) {
-	            	Toast.makeText(a2dp.Vol.service.this, "IOException", Toast.LENGTH_LONG).show();
-	            	e.printStackTrace();
+				if(gloc != null){
+					try {
+						FileOutputStream fos = openFileOutput("My_Last_Location", Context.MODE_WORLD_READABLE);
+						Time t = new Time();
+						t.set((long)gloc[3]);
+						String temp = "http://maps.google.com/maps?q=" + gloc[0] + "," + gloc[1] + "+" +
+								"(My Car " + t.format("%D, %r") + " acc=" + df.format(gloc[2]) + ")";
+						fos.write(temp.getBytes());
+						fos.close();
+		            	//Toast.makeText(a2dp.Vol.service.this, temp, Toast.LENGTH_LONG).show();
+					} 
+		            catch (FileNotFoundException e) {
+		            	Toast.makeText(a2dp.Vol.service.this, "FileNotFound", Toast.LENGTH_LONG).show();
+						e.printStackTrace();
+					} 
+		            catch (IOException e) {
+		            	Toast.makeText(a2dp.Vol.service.this, "IOException", Toast.LENGTH_LONG).show();
+		            	e.printStackTrace();
+					}
+		            
+					try {
+						FileOutputStream fos = openFileOutput("My_Last_Location2", Context.MODE_WORLD_READABLE);
+						Time t = new Time();
+						t.set((long)gloc[7]);
+						String temp = "http://maps.google.com/maps?q=" + gloc[4] + "," + gloc[5] + "+" +
+								"(My Car " + t.format("%D, %r") + " acc=" + df.format(gloc[6]) + ")";
+						fos.write(temp.getBytes());
+						fos.close();
+		            	//Toast.makeText(a2dp.Vol.service.this, temp, Toast.LENGTH_LONG).show();
+					} 
+		            catch (FileNotFoundException e) {
+		            	Toast.makeText(a2dp.Vol.service.this, "FileNotFound", Toast.LENGTH_LONG).show();
+						e.printStackTrace();
+					} 
+		            catch (IOException e) {
+		            	Toast.makeText(a2dp.Vol.service.this, "IOException", Toast.LENGTH_LONG).show();
+		            	e.printStackTrace();
+					}
 				}
 	        }
 	        
@@ -272,7 +305,11 @@ public class service extends Service {
 			      // Called when a new location is found by the network location provider.
 			      location2 = location;
 			      // since we know this is a new location, just check the accuracy
-			      if(location.getAccuracy() < MAX_ACC){
+			      float acc = location.getAccuracy();
+			      float acc2 = acc;
+			      if(location_old.hasAccuracy())acc2 = location_old.getAccuracy();
+			      
+			      if((acc < MAX_ACC || acc < acc2) && acc != 0){
 			    	  grabGPS();
 			      }
 
