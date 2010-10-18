@@ -2,17 +2,19 @@
 <resources>
     <string name="hello">Hello World, main!</string>
     <string name="app_name">A2DP Volume</string>
-<string-array name="gpsDistance"><item>5m</item>
+<string-array name="gpsDistance"><item>2m</item><item>5m</item>
 <item>10m</item>
 <item>15m</item>
 <item>20m</item>
 <item>30m</item>
+
 </string-array>
-<string-array name="gpsDistance_items"><item>5</item>
+<string-array name="gpsDistance_items"><item>2</item><item>5</item>
 <item>10</item>
 <item>15</item>
 <item>20</item>
 <item>30</item>
+
 </string-array>
 <string-array name="gpsTimeout"><item>5s</item>
 <item>10s</item>
@@ -20,10 +22,10 @@
 <item>20s</item>
 <item>30s</item>
 </string-array>
-<string-array name="gpsTimeout_items"><item>5</item>
-<item>10</item>
-<item>15</item>
-<item>20</item>
-<item>30</item>
+<string-array name="gpsTimeout_items"><item>5000</item>
+<item>10000</item>
+<item>15000</item>
+<item>20000</item>
+<item>30000</item>
 </string-array>
 </resources>
