@@ -10,9 +10,9 @@ package a2dp.Vol;
 public final class R {
     public static final class array {
         public static final int gpsDistance=0x7f060000;
-        public static final int gpsDistance_items=0x7f060001;
-        public static final int gpsTimeout=0x7f060002;
-        public static final int gpsTimeout_items=0x7f060003;
+        public static final int gpsDistance_items=0x7f060003;
+        public static final int gpsTimeout=0x7f060001;
+        public static final int gpsTimeout_items=0x7f060002;
     }
     public static final class attr {
     }
@@ -28,11 +28,11 @@ public final class R {
         public static final int DoVol=0x7f080008;
         public static final int Downbtn=0x7f08000f;
         public static final int EditText01=0x7f080006;
+        public static final int Exit=0x7f080019;
         public static final int ListView01=0x7f080012;
         public static final int Locationbtn=0x7f08000d;
         public static final int Manage_data=0x7f080018;
         public static final int Output=0x7f080015;
-        public static final int Save=0x7f080019;
         public static final int ServButton=0x7f080011;
         public static final int TableLayout01=0x7f080000;
         public static final int TableRow01=0x7f080001;

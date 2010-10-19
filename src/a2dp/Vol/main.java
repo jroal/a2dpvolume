@@ -72,8 +72,8 @@ public class main extends Activity {
             startActivity(i);
             return true;
             
-        case R.id.Save:
-        	// does nothing.  need to dump this I guess
+        case R.id.Exit:
+        	a2dp.Vol.main.this.finish();
             return true;
             
         case R.id.prefs: // set preferences
@@ -96,7 +96,7 @@ public class main extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-    	preferences = getSharedPreferences(PREFS_NAME,0);
+    	preferences = getSharedPreferences(PREFS_NAME,1);
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE) ;
         final Button btn = (Button) findViewById(R.id.Button01);
         final Button uptn = (Button) findViewById(R.id.Upbtn);

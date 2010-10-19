@@ -19,6 +19,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.widget.Toast;
 
@@ -40,7 +41,8 @@ public class service extends Service {
     float MAX_ACC = 20; // worst acceptable location in meters
     long MAX_TIME = 10000;  // worst acceptable time in milliseconds
  	SharedPreferences preferences;   
- 		
+ 	private MyApplication application;
+
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -50,10 +52,16 @@ public class service extends Service {
 	@Override
 	public void onCreate() {
 
-		//preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		preferences = getSharedPreferences(PREFS_NAME,0);
-		MAX_ACC = preferences.getFloat("gpsDistance", MAX_ACC);
-		MAX_TIME = preferences.getLong("gpsTime", MAX_TIME);
+		this.application = (MyApplication) this.getApplication();
+		
+		preferences = PreferenceManager.getDefaultSharedPreferences(this.application);
+		
+		//preferences = getSharedPreferences(PREFS_NAME,1);
+		Float xxx = new Float(preferences.getString("gpsDistance", "20"));
+		MAX_ACC = xxx;
+		
+		Long yyy = new Long(preferences.getString("gpsTime", "15"));
+		MAX_TIME = yyy;
 		
         // create intent filter for a bluetooth stream connection
         IntentFilter filter = new IntentFilter(android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED);
@@ -65,7 +73,8 @@ public class service extends Service {
 	    // capture original volume
         am2 = (AudioManager) getSystemService(Context.AUDIO_SERVICE) ;
         run = true;
-        this.DB = new DeviceDB(this);
+		getOldvol();
+		this.DB = new DeviceDB(this);
      // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         location2 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -84,8 +93,7 @@ public class service extends Service {
 	public void onStart() {
 		getOldvol();
 		run = true;
-		MAX_ACC = preferences.getFloat("gpsDistance", MAX_ACC);
-		MAX_TIME = preferences.getLong("gpsTime", MAX_TIME);
+
 	}
 	
 	
@@ -128,10 +136,10 @@ public class service extends Service {
 	        	
 	            setVolume(OldVol2,  a2dp.Vol.service.this);
 	            // make sure we turn OFF the location listener if we don't get a loc in 15s
-	            new CountDownTimer(15000, 5000) {
+	            new CountDownTimer(MAX_TIME, 5000) {
 
 	                public void onTick(long millisUntilFinished) {
-	                	//Toast.makeText(a2dp.Vol.service.this, "Time left: " + millisUntilFinished / 1000, Toast.LENGTH_LONG).show();
+	                	Toast.makeText(a2dp.Vol.service.this, "Time left: " + millisUntilFinished / 1000, Toast.LENGTH_LONG).show();
 	                }
 
 	                public void onFinish() {
