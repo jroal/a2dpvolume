@@ -54,7 +54,7 @@ public class ManageData extends Activity {
       this.exportDbXmlToSdButton.setOnClickListener(new OnClickListener() {
          public void onClick(final View v) {
             if (ManageData.this.isExternalStorageAvail()) {
-               new ExportDataAsXmlTask().execute("exampledb", "exampledata");
+               new ExportDataAsXmlTask().execute("devices", "BluetoothVol");
             } else {
                Toast.makeText(ManageData.this, "External storage is not available, unable to export data.",
                         Toast.LENGTH_SHORT).show();
@@ -94,9 +94,8 @@ public class ManageData extends Activity {
       // automatically done on worker thread (separate from UI thread)
       protected Boolean doInBackground(final String... args) {
 
-         File dbFile =
-                  new File(Environment.getDataDirectory() + "/data/com.totsp.androidexamples/databases/example.db");
-
+         //File dbFile = new File(Environment.getDataDirectory() + "/data/a2dp.vol/databases/btdevices.db");
+         File dbFile = new File(application.getDeviceDB().getDb().getPath());
          File exportDir = new File(Environment.getExternalStorageDirectory(), "BluetoothVol");
          if (!exportDir.exists()) {
             exportDir.mkdirs();

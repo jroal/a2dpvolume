@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, main!</string>
+    
     <string name="app_name">A2DP Volume</string>
 <string-array name="gpsDistance"><item>2m</item><item>5m</item>
 <item>10m</item>
@@ -15,12 +15,14 @@
 <item>15s</item>
 <item>20s</item>
 <item>30s</item>
+<item>45s</item>
 </string-array>
 <string-array name="gpsTimeout_items"><item>5000</item>
 <item>10000</item>
 <item>15000</item>
 <item>20000</item>
 <item>30000</item>
+<item>45000</item>
 </string-array>
 <string-array name="gpsDistance_items"><item>2</item>
 <item>5</item>

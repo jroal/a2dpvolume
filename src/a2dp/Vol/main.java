@@ -3,6 +3,7 @@ package a2dp.Vol;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -380,7 +381,7 @@ public class main extends Activity {
     	}
     	
     	// the section below is for testing only.  Comment out before building the application for use.
-    	/*btDevice bt = new btDevice();
+    	btDevice bt = new btDevice();
     	bt.setBluetoothDevice("Device 1", "Porsche", "00:22:33:44:55:66:77", 15);
     	i = 1;
     	btDevice btx = myDB.getBTD(bt.mac);	
@@ -389,8 +390,7 @@ public class main extends Activity {
 			a2dp.Vol.main.this.myDB.insert(bt);	    	    			    	    			
 			vec.add(bt);
 		}
-		else
-			vec.add(btx);
+		else vec.add(btx);
 		
     	btDevice bt2 = new btDevice();
     	bt2.setBluetoothDevice("Device 2", "Jaguar", "33:44:55:66:77:00:22", 14);
@@ -401,15 +401,14 @@ public class main extends Activity {
 			a2dp.Vol.main.this.myDB.insert(bt2);	    	    			    	    			
 			vec.add(bt2);
 		}
-		else
-			vec.add(bty);
+		else	vec.add(bty);
 		
         List<String> names = this.myDB.selectAll();
         StringBuilder sb = new StringBuilder();
         sb.append("Names in database:\n");
         for (String name : names) {
            sb.append(name + "\n");
-        }*/
+        } 	    	    str2 += " " + i;
         // end of testing code
         
     	refreshList(loadFromDB());

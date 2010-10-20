@@ -31,7 +31,7 @@ import java.nio.channels.FileChannel;
  */
 public class DataXmlExporter {
 
-   private static final String DATASUBDIRECTORY = "btvol";
+   private static final String DATASUBDIRECTORY = "BluetoothVol";
 
    private SQLiteDatabase db;
    private XmlBuilder xmlBuilder;
@@ -55,15 +55,20 @@ public class DataXmlExporter {
             String tableName = c.getString(c.getColumnIndex("name"));
             Log.d(MyApplication.APP_NAME, "table name " + tableName);
 
-            // skip metadata, sequence, and uidx (unique indexes)
+            // skip metadata, sequence, any sqlite tables and uidx (unique indexes)
             if (!tableName.equals("android_metadata") && !tableName.equals("sqlite_sequence")
-                     && !tableName.startsWith("uidx")) {
+                     && !tableName.startsWith("uidx") && !tableName.startsWith("sqlite")) {
                this.exportTable(tableName);
             }
          } while (c.moveToNext());
       }
       String xmlString = this.xmlBuilder.end();
-      this.writeToFile(xmlString, exportFileNamePrefix + ".xml");
+      try {
+		this.writeToFile(xmlString, exportFileNamePrefix + ".xml");
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
       Log.i(MyApplication.APP_NAME, "exporting database complete");
    }
 
