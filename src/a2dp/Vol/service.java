@@ -135,7 +135,7 @@ public class service extends Service {
 	        public void onReceive(Context context2, Intent intent2) {
 	        	
 	            setVolume(OldVol2,  a2dp.Vol.service.this);
-	            // make sure we turn OFF the location listener if we don't get a loc in 15s
+	            // make sure we turn OFF the location listener if we don't get a loc in MAX_TIME
 	            new CountDownTimer(MAX_TIME, 5000) {
 
 	                public void onTick(long millisUntilFinished) {
@@ -247,6 +247,7 @@ public class service extends Service {
 	        	else 
 	        		return null;
 	        	
+	        	// If we have a good location, turn OFF the gps listener.
 	        	if(locationListener != null && l != null){
 	        		if(location2.getAccuracy() < MAX_ACC && (System.currentTimeMillis() - location2.getTime()) < MAX_TIME)
 	        			clearLoc();
