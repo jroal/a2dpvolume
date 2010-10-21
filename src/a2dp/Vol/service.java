@@ -73,7 +73,7 @@ public class service extends Service {
 	    // capture original volume
         am2 = (AudioManager) getSystemService(Context.AUDIO_SERVICE) ;
         run = true;
-		getOldvol();
+		//getOldvol();
 		this.DB = new DeviceDB(this);
      // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -91,7 +91,7 @@ public class service extends Service {
 	
 
 	public void onStart() {
-		getOldvol();
+		//getOldvol();
 		run = true;
 
 	}

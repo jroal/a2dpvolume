@@ -74,6 +74,7 @@ public class main extends Activity {
             return true;
             
         case R.id.Exit:
+        	stopService(new Intent(a2dp.Vol.main.this, service.class));
         	a2dp.Vol.main.this.finish();
             return true;
             
@@ -203,7 +204,7 @@ public class main extends Activity {
         	public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
                   final btDevice bt = vec.get(position);
-                  btDevice bt2 = myDB.getBTD(bt.mac);
+                  final btDevice bt2 = myDB.getBTD(bt.mac);
                   android.app.AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.main.this);
                   builder.setTitle(bt.toString()); 
                   builder.setMessage(bt2.desc1 + "\n" + bt2.desc2  + "\n" + bt2.mac  + "\nConnected Volume: " + bt2.defVol  + "\nTrigger: " + bt2.setV);
@@ -211,7 +212,8 @@ public class main extends Activity {
                   builder.setNegativeButton("Delete", new OnClickListener(){
                 	  public void onClick(DialogInterface dialog, int which) {
                 		//  BluetoothDevice bdelete = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(bt.mac);
-                		  
+                		  myDB.delete(bt2);
+                		  refreshList(loadFromDB());
                 	  }
                   });
                   builder.setNeutralButton("Edit", new OnClickListener() {
@@ -381,7 +383,7 @@ public class main extends Activity {
     	}
     	
     	// the section below is for testing only.  Comment out before building the application for use.
-    	btDevice bt = new btDevice();
+/*    	btDevice bt = new btDevice();
     	bt.setBluetoothDevice("Device 1", "Porsche", "00:22:33:44:55:66:77", 15);
     	i = 1;
     	btDevice btx = myDB.getBTD(bt.mac);	
@@ -408,7 +410,7 @@ public class main extends Activity {
         sb.append("Names in database:\n");
         for (String name : names) {
            sb.append(name + "\n");
-        } 	    	    str2 += " " + i;
+        } 	    	    str2 += " " + i;*/
         // end of testing code
         
     	refreshList(loadFromDB());

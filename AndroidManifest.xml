@@ -11,7 +11,8 @@
             </intent-filter>
         </activity>
 
-    <service android:enabled="true" android:name="service"></service>
+    <service android:enabled="true" android:name="service">
+</service>
 
 <activity android:name="ManageData" android:enabled="true" android:launchMode="standard">
 
