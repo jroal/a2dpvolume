@@ -41,6 +41,10 @@ public class DeviceDB {
 	   this.db.update(TABLE_NAME, vals, "mac='" + bt.mac + "'", null);
    }
    
+   public void delete(btDevice bt){
+	   this.db.delete(TABLE_NAME, "mac='" + bt.mac + "'", null);
+   }
+   
    public long insert(btDevice btd) {
 	   this.insertStmt.bindString(1, btd.desc1);
       this.insertStmt.bindString(2, btd.desc2);

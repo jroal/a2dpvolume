@@ -5,9 +5,9 @@
 
 
 <PreferenceCategory android:title="Location Capture Settings" android:enabled="true">
-<ListPreference android:enabled="true" android:title="GPS Listener Timeout" android:key="gpsTime" android:entries="@array/gpsTimeout" android:entryValues="@array/gpsTimeout_items" android:defaultValue="15s"></ListPreference>
-<ListPreference android:title="GPS Max Accuracy to Stop Listener" android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:defaultValue="20m"></ListPreference>
-</PreferenceCategory><PreferenceCategory android:title="User Settings"><CheckBoxPreference android:selectable="true" android:enabled="true" android:defaultValue="false" android:title="Start at Boot?" android:summaryOff="Program and service will not start at boot" android:summaryOn="Program and service will start at boot" android:key="bootstart"></CheckBoxPreference>
+<ListPreference android:enabled="true" android:title="GPS Listener Timeout" android:key="gpsTime" android:entries="@array/gpsTimeout" android:entryValues="@array/gpsTimeout_items" android:defaultValue="15s" android:summary="The maximum time the GPS listener will be allowed to run looking for a better GPS location"></ListPreference>
+<ListPreference android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:defaultValue="20m" android:title="GPS Max Accuracy " android:summary="GPS maximum inaccuracy in meters before listener will stop looking for a better value"></ListPreference>
+</PreferenceCategory><PreferenceCategory android:title="General Settings"><CheckBoxPreference android:selectable="true" android:enabled="true" android:defaultValue="false" android:title="Start at Boot?" android:summaryOff="Program and service will not start at boot" android:summaryOn="Program and service will start at boot" android:key="bootstart"></CheckBoxPreference>
 
 </PreferenceCategory>
 </PreferenceScreen>
