@@ -25,6 +25,8 @@ public class ManageData extends Activity {
    private Button exportDbToSdButton;
    private Button exportDbXmlToSdButton;
    private TextView output = (TextView) null;
+   private TextView path = (TextView) null;
+   private String pathstr;
 
    @Override
    public void onCreate(final Bundle savedInstanceState) {
@@ -35,6 +37,7 @@ public class ManageData extends Activity {
       this.setContentView(R.layout.managedata);
       
       this.output = (TextView) findViewById(R.id.Output);
+      this.path = (TextView)findViewById(R.id.Path);
    // initially populate "output" view from database
       new SelectDataTask().execute();
 
@@ -61,6 +64,7 @@ public class ManageData extends Activity {
             }
          }
       });
+
    }
 
    @Override
@@ -97,11 +101,12 @@ public class ManageData extends Activity {
          //File dbFile = new File(Environment.getDataDirectory() + "/data/a2dp.vol/databases/btdevices.db");
          File dbFile = new File(application.getDeviceDB().getDb().getPath());
          File exportDir = new File(Environment.getExternalStorageDirectory(), "BluetoothVol");
+
          if (!exportDir.exists()) {
             exportDir.mkdirs();
          }
          File file = new File(exportDir, dbFile.getName());
-
+         pathstr = file.getPath();
          try {
             file.createNewFile();
             this.copyFile(dbFile, file);
@@ -118,9 +123,11 @@ public class ManageData extends Activity {
             this.dialog.dismiss();
          }
          if (success) {
-            Toast.makeText(ManageData.this, "Export successful!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ManageData.this, "Export successful!", Toast.LENGTH_SHORT).show();       
+			ManageData.this.path.setText("Exported to: " + pathstr);
          } else {
             Toast.makeText(ManageData.this, "Export failed", Toast.LENGTH_SHORT).show();
+			ManageData.this.path.setText("Export Failed");
          }
       }
 
@@ -155,6 +162,7 @@ public class ManageData extends Activity {
             String dbName = args[0];
             String exportFileName = args[1];
             dm.export(dbName, exportFileName);
+            pathstr = Environment.getExternalStorageDirectory() + "/BluetoothVol/"+ exportFileName + ".xml";
          } catch (IOException e) {
             Log.e(MyApplication.APP_NAME, e.getMessage(), e);
             return e.getMessage();
@@ -169,8 +177,10 @@ public class ManageData extends Activity {
          }
          if (errMsg == null) {
             Toast.makeText(ManageData.this, "Export successful!", Toast.LENGTH_SHORT).show();
+			ManageData.this.path.setText("Exported to: " + pathstr);
          } else {
             Toast.makeText(ManageData.this, "Export failed - " + errMsg, Toast.LENGTH_SHORT).show();
+			ManageData.this.path.setText("Export Failed");
          }
       }
    }
