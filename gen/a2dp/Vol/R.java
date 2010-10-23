@@ -24,15 +24,16 @@ public final class R {
         public static final int AbsoluteLayout01=0x7f08000b;
         public static final int Button01=0x7f080010;
         public static final int DefVolBar=0x7f08000a;
-        public static final int DelData=0x7f080017;
+        public static final int DelData=0x7f080018;
         public static final int DoVol=0x7f080008;
         public static final int Downbtn=0x7f08000f;
         public static final int EditText01=0x7f080006;
-        public static final int Exit=0x7f080019;
+        public static final int Exit=0x7f08001a;
         public static final int ListView01=0x7f080012;
         public static final int Locationbtn=0x7f08000d;
-        public static final int Manage_data=0x7f080018;
-        public static final int Output=0x7f080015;
+        public static final int Manage_data=0x7f080019;
+        public static final int Output=0x7f080016;
+        public static final int Path=0x7f080015;
         public static final int ServButton=0x7f080011;
         public static final int TableLayout01=0x7f080000;
         public static final int TableRow01=0x7f080001;
@@ -46,7 +47,7 @@ public final class R {
         public static final int Upbtn=0x7f08000e;
         public static final int exportdbtosdbutton=0x7f080013;
         public static final int exportdbxmltosdbutton=0x7f080014;
-        public static final int prefs=0x7f080016;
+        public static final int prefs=0x7f080017;
     }
     public static final class layout {
         public static final int editdata=0x7f030000;
