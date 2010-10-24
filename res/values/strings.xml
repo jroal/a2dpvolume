@@ -10,19 +10,21 @@
 
 </string-array>
 
-<string-array name="gpsTimeout"><item>5s</item>
+<string-array name="gpsTimeout"><item>Disable GPS Listener</item><item>5s</item>
 <item>10s</item>
 <item>15s</item>
 <item>20s</item>
 <item>30s</item>
 <item>45s</item>
+
 </string-array>
-<string-array name="gpsTimeout_items"><item>5000</item>
+<string-array name="gpsTimeout_items"><item>0</item><item>5000</item>
 <item>10000</item>
 <item>15000</item>
 <item>20000</item>
 <item>30000</item>
 <item>45000</item>
+
 </string-array>
 <string-array name="gpsDistance_items"><item>2</item>
 <item>5</item>

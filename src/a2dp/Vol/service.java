@@ -136,6 +136,8 @@ public class service extends Service {
 	        	
 	            setVolume(OldVol2,  a2dp.Vol.service.this);
 	            // make sure we turn OFF the location listener if we don't get a loc in MAX_TIME
+	            if(MAX_TIME > 0)
+	            {
 	            new CountDownTimer(MAX_TIME, 5000) {
 
 	                public void onTick(long millisUntilFinished) {
@@ -147,6 +149,7 @@ public class service extends Service {
 	                }
 	             }.start();
 	             
+	             
 	            // start location provider GPS 
 		         // Register the listener with the Location Manager to receive location updates
 	             if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
@@ -155,10 +158,10 @@ public class service extends Service {
 		            	//Toast.makeText(this, " Location Manager stated", Toast.LENGTH_LONG).show();
 		            	
 		            }
+	            }
 	             
-	             // get best location and store it
-	            grabGPS();
-	            
+	            // get best location and store it
+	            grabGPS();	            
 	            }
 	        };
 	        
