@@ -64,7 +64,7 @@ public class main extends Activity {
     	inflater.inflate(R.menu.menu, menu);
     	return true;
     }
-    /* Handles item selections for the options menu*/
+    /* Handles item selections for the options menu */
     public boolean onOptionsItemSelected(MenuItem item) {
  
         switch (item.getItemId()) {
@@ -86,6 +86,11 @@ public class main extends Activity {
         case R.id.DelData:  // clears the database of all devices and settings.
         	myDB.deleteAll();
         	refreshList(loadFromDB());
+        	return true;
+        	
+        case R.id.help:  // launches help website
+			String st = "http://code.google.com/p/a2dpvolume/";
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(st) ));
         	return true;
         }
         return false;

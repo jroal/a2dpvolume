@@ -6,4 +6,7 @@
 
 <item android:enabled="true" android:orderInCategory="4" android:menuCategory="container" android:visible="true" android:title="Manage Data" android:id="@+id/Manage_data"></item>
 <item android:orderInCategory="4" android:menuCategory="container" android:enabled="true" android:visible="true" android:title="Exit" android:id="@+id/Exit"></item>
+
+
+<item android:enabled="true" android:visible="true" android:menuCategory="container" android:title="Help" android:id="@+id/help" android:orderInCategory="5"></item>
 </menu>

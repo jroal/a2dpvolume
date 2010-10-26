@@ -47,6 +47,7 @@ public final class R {
         public static final int Upbtn=0x7f08000e;
         public static final int exportdbtosdbutton=0x7f080013;
         public static final int exportdbxmltosdbutton=0x7f080014;
+        public static final int help=0x7f08001b;
         public static final int prefs=0x7f080017;
     }
     public static final class layout {
