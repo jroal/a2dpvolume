@@ -26,11 +26,10 @@ public final class R {
         public static final int DefVolBar=0x7f08000a;
         public static final int DelData=0x7f080018;
         public static final int DoVol=0x7f080008;
-        public static final int Downbtn=0x7f08000f;
         public static final int EditText01=0x7f080006;
         public static final int Exit=0x7f08001a;
         public static final int ListView01=0x7f080012;
-        public static final int Locationbtn=0x7f08000d;
+        public static final int Locationbtn=0x7f08000f;
         public static final int Manage_data=0x7f080019;
         public static final int Output=0x7f080016;
         public static final int Path=0x7f080015;
@@ -44,7 +43,8 @@ public final class R {
         public static final int TextView01=0x7f08000c;
         public static final int Textd1=0x7f080002;
         public static final int Textmac=0x7f080004;
-        public static final int Upbtn=0x7f08000e;
+        public static final int VolSeekBar=0x7f08000e;
+        public static final int VolumeText=0x7f08000d;
         public static final int exportdbtosdbutton=0x7f080013;
         public static final int exportdbxmltosdbutton=0x7f080014;
         public static final int help=0x7f08001b;
