@@ -39,13 +39,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class main extends Activity {
-	String str = "Find A2DP Devices";  
 	static String str2 = "No data";
     static TextView tx1 = (TextView) null; 
 	static Integer OldVol = 5;
 	static AudioManager am = (AudioManager) null;
+	static SeekBar VolSeek;
 	boolean servrun = false;
 	ListView lvl = null;  // listview used on main screen showing devices
 	Vector<btDevice> vec;  // vector of bluetooth devices
@@ -89,7 +90,7 @@ public class main extends Activity {
         	return true;
         	
         case R.id.help:  // launches help website
-			String st = "http://code.google.com/p/a2dpvolume/";
+			String st = "http://code.google.com/p/a2dpvolume/wiki/Manual";
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(st) ));
         	return true;
         }
@@ -106,8 +107,8 @@ public class main extends Activity {
     	preferences = getSharedPreferences(PREFS_NAME,1);
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE) ;
         final Button btn = (Button) findViewById(R.id.Button01);
-        final Button uptn = (Button) findViewById(R.id.Upbtn);
-        final Button dntn = (Button) findViewById(R.id.Downbtn);
+        final SeekBar VolSeek = (SeekBar) findViewById(R.id.VolSeekBar);
+
         final Button locbtn = (Button) findViewById(R.id.Locationbtn);
         final Button serv = (Button) findViewById(R.id.ServButton);
         // get "Application" object for shared state or creating of expensive resources - like DataHelper
@@ -124,6 +125,7 @@ public class main extends Activity {
 
         vec = new Vector<btDevice>();
         tx1 = (TextView) findViewById(R.id.TextView01); 
+        VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         
         this.myDB = new DeviceDB(this);
         
@@ -132,9 +134,6 @@ public class main extends Activity {
         this.ladapt = new ArrayAdapter<String>(application, android.R.layout.simple_list_item_1 , lstring);
         this.lvl = (ListView)findViewById(R.id.ListView01);
 		this.lvl.setAdapter(ladapt);          
-		
-	    tx1.setText("List Devices");
-	    btn.setText("Find A2DP Devices");
 	    
 	    // toggle the service button depending on the state of the service
 	    try{
@@ -164,8 +163,8 @@ public class main extends Activity {
 			OldVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		}
 	    
-		
-		tx1.setText("Stored Volume:" + OldVol + "\n" + str2);
+		tx1.setText("Stored Volume:" + OldVol + " " + str2);
+		VolSeek.setProgress(OldVol);
 		
 		// find bonded audio devices and load into the database and listview
         btn.setOnClickListener(new View.OnClickListener() {			
@@ -181,8 +180,7 @@ public class main extends Activity {
 					refreshList(loadFromDB());					
 				}
 
-				btn.setText(str);
-	    	    tx1.setText("Volume:" + OldVol + " Devices=" + test +  "\n");
+	    	    tx1.setText("Volume:" + OldVol + " Devices=" + test +  "  ");
 	    	    
 	    	    }
 		});
@@ -192,14 +190,14 @@ public class main extends Activity {
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                 int position, long id) {
  
-              btDevice bt = new btDevice();
+              /*btDevice bt = new btDevice();
               bt = vec.get(position);
               android.app.AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.main.this);
               builder.setTitle(bt.toString()); 
               builder.setMessage(bt.desc1 + "\n" + bt.desc2  + "\n" + bt.mac  + "\nConnected Volume: " + bt.defVol  + "\nTrigger: " + bt.setV);
               builder.setPositiveButton("OK", null);
               builder.setNeutralButton("Edit", null);
-              builder.show();
+              builder.show();*/
 			return servrun;			
             }       
           });
@@ -208,6 +206,7 @@ public class main extends Activity {
         lvl.setOnItemClickListener(new OnItemClickListener(){
         	public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
+        		if(vec.isEmpty())return;
                   final btDevice bt = vec.get(position);
                   final btDevice bt2 = myDB.getBTD(bt.mac);
                   android.app.AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.main.this);
@@ -260,19 +259,28 @@ public class main extends Activity {
         });
         
         // simple media volume adjusters.  They also reset the default volume
-        uptn.setOnClickListener(new View.OnClickListener() {			
-			public void onClick(View v) {
-				btn.setText(str);
-				OldVol = setVolume(OldVol + 1, a2dp.Vol.main.this);				
-	    	    }
-		});
+
         
-        dntn.setOnClickListener(new View.OnClickListener() {			
-			public void onClick(View v) {
-				btn.setText(str);
-				OldVol = setVolume(OldVol - 1, a2dp.Vol.main.this);	
-	    	    }
-		});
+        VolSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				OldVol = setVolume(progress, a2dp.Vol.main.this);
+				
+			}
+
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+        	
+        });
+        
         
         locbtn.setOnClickListener(new View.OnClickListener() {			
 			public void onClick(View v) {
@@ -433,7 +441,7 @@ public class main extends Activity {
        	
 		am.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, 0);
 		outVol = am.getStreamVolume(AudioManager.STREAM_MUSIC); 
-		tx1.setText("Old Volume:" + OldVol + "  New Volume:" + outVol + "\n");
+		tx1.setText("Old Volume:" + OldVol + "  New Volume:" + outVol + "  ");
 		
 		//Toast.makeText(sender, "Stored Volume:" + OldVol + "  New Volume:" + outVol, Toast.LENGTH_LONG).show();
 		return outVol;
