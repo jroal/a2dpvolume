@@ -23,8 +23,6 @@ import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.widget.Toast;
 
-
-
 public class service extends Service {
 
 	static AudioManager am2 = (AudioManager) null;
@@ -54,14 +52,21 @@ public class service extends Service {
 
 		this.application = (MyApplication) this.getApplication();
 		
-		preferences = PreferenceManager.getDefaultSharedPreferences(this.application);
+		// get and load preferences
 		
-		//preferences = getSharedPreferences(PREFS_NAME,1);
-		Float xxx = new Float(preferences.getString("gpsDistance", "20"));
-		MAX_ACC = xxx;
-		
-		Long yyy = new Long(preferences.getString("gpsTime", "15"));
-		MAX_TIME = yyy;
+		try {
+			preferences = PreferenceManager.getDefaultSharedPreferences(this.application);
+			
+			Float xxx = new Float(preferences.getString("gpsDistance", "20"));
+			MAX_ACC = xxx;
+			
+			Long yyy = new Long(preferences.getString("gpsTime", "15"));
+			MAX_TIME = yyy;
+		} catch (NumberFormatException e) {
+			MAX_ACC = 20;
+			MAX_TIME = 10000;
+			e.printStackTrace();
+		}
 		
         // create intent filter for a bluetooth stream connection
         IntentFilter filter = new IntentFilter(android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED);
@@ -72,31 +77,35 @@ public class service extends Service {
         this.registerReceiver(mReceiver2, filter2);
 	    // capture original volume
         am2 = (AudioManager) getSystemService(Context.AUDIO_SERVICE) ;
+        // set run flag to true.  This is used for the GUI
         run = true;
-		//getOldvol();
+		// open database instance
 		this.DB = new DeviceDB(this);
-     // Acquire a reference to the system Location Manager
+		// Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         location2 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
+        // if all the above works, let the user know it is started
         Toast.makeText(this, "A2DP Vol Service Started", Toast.LENGTH_LONG).show();
 	}
 	
 	@Override
 	public void onDestroy() {
-        run = false;
+        // let the GUI know we closed
+		run = false;
+		// in case the location listener is running, stop it
         clearLoc();
+        // let the user know the service stopped
 		Toast.makeText(this, "A2DP Vol Service Stopped", Toast.LENGTH_LONG).show();
 	}
 	
 
 	public void onStart() {
-		//getOldvol();
+		
 		run = true;
 
 	}
 	
-	
+		// a bluetooth device has just connected.  Do the on connect stuff
 	   private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 	        @Override
 	        public void onReceive(Context context, Intent intent) {
@@ -165,6 +174,7 @@ public class service extends Service {
 	            }
 	        };
 	        
+	        // makes the volume adjustment
 	        public static int setVolume(int inputVol, Context sender)
 	        {
 	           	int outVol;
@@ -179,6 +189,7 @@ public class service extends Service {
 	    		return outVol;
 	        }
 	        
+	        // captures the media volume so it can be later restored
 	        private void getOldvol(){
 	    		if(OldVol2 < am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
 	    		{
@@ -188,8 +199,15 @@ public class service extends Service {
 	    		{
 	    			OldVol2 = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 	    		}
+	    		try {
+					main.OldVol = OldVol2;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	        }
 	        
+	        // finds the most recent and most accurate locations
 	        private double[] getGPS2()  {
 	        	
 	        	LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);  
@@ -259,6 +277,7 @@ public class service extends Service {
 	        	return gps;
 	        	}
 	        
+	        // get the location and write it to a file.
 	        void grabGPS()
 	        {        
 	        	double[] gloc;
@@ -338,6 +357,7 @@ public class service extends Service {
 				}
 			  };
 			  
+			  // just kills the location listener
 			  private void clearLoc(){
 					locationManager.removeUpdates(locationListener);
 					//Toast.makeText(a2dp.Vol.service.this, " Location Manager stopped", Toast.LENGTH_LONG).show();

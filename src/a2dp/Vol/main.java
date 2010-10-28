@@ -42,9 +42,9 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class main extends Activity {
-	static String str2 = "No data";
+	static String str2 = "";
     static TextView tx1 = (TextView) null; 
-	static Integer OldVol = 5;
+	public static Integer OldVol = 5;
 	static AudioManager am = (AudioManager) null;
 	static SeekBar VolSeek;
 	boolean servrun = false;
@@ -164,6 +164,8 @@ public class main extends Activity {
 		}
 	    
 		tx1.setText("Stored Volume:" + OldVol + " " + str2);
+		
+		// set the seek bar position for media volume
 		VolSeek.setProgress(OldVol);
 		
 		// find bonded audio devices and load into the database and listview
@@ -185,19 +187,41 @@ public class main extends Activity {
 	    	    }
 		});
         
-        // don't really need this.  It shows the list element details from the vector instead of the database
+        // This shows the details of the bluetooth device
         lvl.setOnItemLongClickListener(new OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                 int position, long id) {
- 
-              /*btDevice bt = new btDevice();
-              bt = vec.get(position);
-              android.app.AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.main.this);
-              builder.setTitle(bt.toString()); 
-              builder.setMessage(bt.desc1 + "\n" + bt.desc2  + "\n" + bt.mac  + "\nConnected Volume: " + bt.defVol  + "\nTrigger: " + bt.setV);
-              builder.setPositiveButton("OK", null);
-              builder.setNeutralButton("Edit", null);
-              builder.show();*/
+            	
+            	if(vec.isEmpty())return false;
+            	BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
+            	if(mBTA != null)
+            	{
+            		Set<BluetoothDevice> pairedDevices = mBTA.getBondedDevices();
+            		
+	              btDevice bt = new btDevice();
+	              bt = vec.get(position);
+	              BluetoothDevice btd = null;
+	              for (BluetoothDevice device : pairedDevices) 
+		    	    {  	    	
+		    	    	if(device.getAddress().equalsIgnoreCase(bt.mac))
+		    	    	{
+		    	    		btd = device;
+		    	    	}
+		    	    }
+	              if(btd != null)
+	              {
+	              android.app.AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.main.this);
+	              builder.setTitle(bt.toString()); 
+	              String mesg = bt.desc1 + "\n" + bt.mac  + "\n";
+	              mesg += "Bonded = " + btd.getBondState();
+	              mesg += "\nClass = " + getBTClassDev(btd);
+	              mesg += "\nMajor Class = " + getBTClassDevMaj(btd);
+	              mesg += "\nService Classes = " + getBTClassServ(btd);
+	              builder.setMessage(mesg);
+	              builder.setPositiveButton("OK", null);
+	              builder.show();
+	              }
+            	}
 			return servrun;			
             }       
           });
@@ -475,6 +499,7 @@ public class main extends Activity {
 		else 
 		{
 			lstring = new String[] {"no data"};
+			
 		//Toast.makeText(this, "No data", Toast.LENGTH_LONG);
 		}
 			a2dp.Vol.main.this.lvl.setAdapter(new ArrayAdapter<String>(application, android.R.layout.simple_list_item_1 , lstring));
@@ -507,4 +532,115 @@ public class main extends Activity {
 	            refreshList(vec.size());	            
 	            }
 	        };
+	        
+	        // Returns the bluetooth services supported as a string
+	        private String getBTClassServ(BluetoothDevice btd){
+	        		String temp = "";
+	        	    if(btd.getBluetoothClass().hasService(BluetoothClass.Service.AUDIO)) 
+	        	         temp = "Audio, ";
+	        	    if(btd.getBluetoothClass().hasService(BluetoothClass.Service.TELEPHONY))
+	        	        temp += "Telophony, ";
+	        	    if(btd.getBluetoothClass().hasService(BluetoothClass.Service.INFORMATION))
+	        	        temp += "Information, ";
+	        	    if(btd.getBluetoothClass().hasService(BluetoothClass.Service.LIMITED_DISCOVERABILITY))
+	        	        temp += "Limited Discoverability, ";
+	        	    if(btd.getBluetoothClass().hasService(BluetoothClass.Service.NETWORKING))
+	        	        temp += "Networking, ";
+	        	    if(btd.getBluetoothClass().hasService(BluetoothClass.Service.OBJECT_TRANSFER))
+	        	        temp += "Object Transfer, ";
+	        	    if(btd.getBluetoothClass().hasService(BluetoothClass.Service.POSITIONING))
+	        	        temp += "Positioning, ";
+	        	    if(btd.getBluetoothClass().hasService(BluetoothClass.Service.RENDER))
+	        	        temp += "Render, ";
+	        	    if(btd.getBluetoothClass().hasService(BluetoothClass.Service.CAPTURE))
+	        	        temp += "Capture, ";
+	        	    // trim off the extra comma and space
+	        	    if(temp.length() > 5)temp = temp.substring(0, temp.length()-2);
+	        	    // return the list of supported service classes
+	        	        return temp;      	    
+	        }
+	        
+	        // Get the bluetooth device classes we care about most.  Not an exhaustive list.
+	        private String getBTClassDev(BluetoothDevice btd){
+        		String temp = "";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_CAR_AUDIO) 
+        	         temp = "Car Audio, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_HANDSFREE)
+        	        temp += "Handsfree, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_HEADPHONES)
+        	        temp += "Headphones, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_HIFI_AUDIO)
+        	        temp += "HiFi Audio, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_LOUDSPEAKER)
+        	        temp += "Loudspeaker, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_PORTABLE_AUDIO)
+        	        temp += "Portable Audio, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_CAMCORDER)
+        	        temp += "Camcorder, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_SET_TOP_BOX)
+        	        temp += "Set Top Box, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_VIDEO_DISPLAY_AND_LOUDSPEAKER)
+        	        temp += "A/V Display/Speaker, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_VIDEO_MONITOR)
+        	        temp += "Video Monitor, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_VCR)
+        	        temp += "VCR, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.PHONE_CELLULAR)
+        	        temp += "Cellular Phone, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.PHONE_SMART)
+        	        temp += "Smart Phone, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET)
+        	        temp += "Wearable Headset, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_UNCATEGORIZED)
+        	        temp += "Uncategorized A/V, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.PHONE_UNCATEGORIZED)
+        	        temp += "Uncategorized Phone, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.TOY_UNCATEGORIZED)
+        	        temp += "Incategorized Toy, ";
+        	    
+        	    // trim off the extra comma and space.  If the class was not found, return other.
+        	    if(temp.length() > 5)
+        	    	temp = temp.substring(0, temp.length()-2);
+        	    else
+        	    	temp = "other";
+        	    
+        	    // return device class
+        	        return temp;      	    
+        }
+	        
+	        // Get the bluetooth major device classes we care about most.  Not an exhaustive list.
+	        private String getBTClassDevMaj(BluetoothDevice btd){
+        		String temp = "";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.AUDIO_VIDEO) 
+        	         temp = "Audio Video, ";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.COMPUTER) 
+       	         temp += "Computer, ";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.HEALTH) 
+       	         temp += "Health, ";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.MISC) 
+       	         temp += "Misc, ";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.NETWORKING) 
+       	         temp += "Networking, ";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.PERIPHERAL) 
+       	         temp += "Peripheral, ";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.PHONE) 
+       	         temp += "Phone, ";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.UNCATEGORIZED) 
+       	         temp += "Uncategorized, ";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.WEARABLE) 
+       	         temp += "Wearable, ";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.TOY) 
+       	         temp += "Toy, ";
+        	    if(btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.IMAGING) 
+       	         temp += "Imaging, ";
+        	    
+        	    // trim off the extra comma and space.  If the class was not found, return other.
+        	    if(temp.length() >= 3)
+        	    	temp = temp.substring(0, temp.length()-2);
+        	    else
+        	    	temp = "other";
+        	    
+        	    // return device class
+        	        return temp;      	    
+        }
 }
