@@ -24,6 +24,7 @@ public class ManageData extends Activity {
 
    private Button exportDbToSdButton;
    private Button exportDbXmlToSdButton;
+   private Button importDB;
    private TextView output = (TextView) null;
    private TextView path = (TextView) null;
    private String pathstr;
@@ -65,6 +66,18 @@ public class ManageData extends Activity {
          }
       });
 
+      this.importDB = (Button) this.findViewById(R.id.ImportDBButton);
+      this.importDB.setOnClickListener(new OnClickListener() {
+         public void onClick(final View v) {
+            if (ManageData.this.isExternalStorageAvail()) {
+               new ImportDatabaseFileTask().execute("devices", "BluetoothVol");
+            } else {
+               Toast.makeText(ManageData.this, "External storage is not available, unable to import data.",
+                        Toast.LENGTH_SHORT).show();
+            }
+         }
+      });
+      
    }
 
    @Override
@@ -213,4 +226,70 @@ public class ManageData extends Activity {
           ManageData.this.output.setText(result);
        }
     }
+   
+   // import database
+   private class ImportDatabaseFileTask extends AsyncTask<String, Void, Boolean> {
+	      private final ProgressDialog dialog = new ProgressDialog(ManageData.this);
+		
+
+	      // can use UI thread here
+	      protected void onPreExecute() {
+	         this.dialog.setMessage("Importing database...");
+	         this.dialog.show();
+	      }
+
+	      // automatically done on worker thread (separate from UI thread)
+	      protected Boolean doInBackground(final String... args) {
+
+	         //File dbFile = new File(Environment.getDataDirectory() + "/data/a2dp.vol/databases/btdevices.db");
+	         File dbFile = new File(application.getDeviceDB().getDb().getPath());
+	         //application.getDeviceDB().getDb().close();
+	         File exportDir = new File(Environment.getExternalStorageDirectory(), "BluetoothVol");
+
+	         if (!exportDir.exists()) {
+	            exportDir.mkdirs();
+	         }
+	         File file = new File(exportDir, dbFile.getName());
+	         pathstr = file.getPath();
+	         try {
+	            file.createNewFile();
+	            this.copyFile(file, dbFile);
+	            return true;
+	         } catch (IOException e) {
+	            Log.e(MyApplication.APP_NAME, e.getMessage(), e);
+	            return false;
+	         }
+	      }
+
+	      // can use UI thread here
+	      protected void onPostExecute(final Boolean success) {
+	         if (this.dialog.isShowing()) {
+	            this.dialog.dismiss();
+	         }
+	         if (success) {
+	            Toast.makeText(ManageData.this, "Import successful!", Toast.LENGTH_SHORT).show();       
+				ManageData.this.path.setText("Imported from: " + pathstr); 
+				//need a way to reopen the database at this point
+				
+	         } else {
+	            Toast.makeText(ManageData.this, "Import failed", Toast.LENGTH_SHORT).show();
+				ManageData.this.path.setText("Import Failed");
+	         }
+	      }
+
+	      void copyFile(File src, File dst) throws IOException {
+	         FileChannel inChannel = new FileInputStream(src).getChannel();
+	         FileChannel outChannel = new FileOutputStream(dst).getChannel();
+	         try {
+	            inChannel.transferTo(0, inChannel.size(), outChannel);
+	         } finally {
+	            if (inChannel != null)
+	               inChannel.close();
+	            if (outChannel != null)
+	               outChannel.close();
+	         }
+	      }
+
+	   }
+
 }

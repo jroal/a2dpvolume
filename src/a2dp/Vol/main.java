@@ -72,6 +72,7 @@ public class main extends Activity {
         case R.id.Manage_data:  // used to export the data
         	Intent i = new Intent(a2dp.Vol.main.this, ManageData.class);
             startActivity(i);
+            refreshList(loadFromDB());
             return true;
             
         case R.id.Exit:
@@ -122,7 +123,7 @@ public class main extends Activity {
         // create intent filter for a bluetooth stream disconnection
         IntentFilter filter2 = new IntentFilter(android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(mReceiver4, filter2);
-
+        
         vec = new Vector<btDevice>();
         tx1 = (TextView) findViewById(R.id.TextView01); 
         VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
@@ -213,7 +214,22 @@ public class main extends Activity {
 	              android.app.AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.main.this);
 	              builder.setTitle(bt.toString()); 
 	              String mesg = bt.desc1 + "\n" + bt.mac  + "\n";
-	              mesg += "Bonded = " + btd.getBondState();
+	              
+	              switch(btd.getBondState()){
+	              case BluetoothDevice.BOND_BONDED:
+	            	  mesg += "Bonded = Bonded";
+	            	  break;
+	              case BluetoothDevice.BOND_BONDING:
+	            	  mesg += "Bonded = Bonding";
+	            	  break;
+	              case BluetoothDevice.BOND_NONE:
+	            	  mesg += "Bonded = None";
+	            	  break;
+	              case BluetoothDevice.ERROR:
+	            	  mesg += "Bonded = Error";
+	            	  break;
+	              }
+	              
 	              mesg += "\nClass = " + getBTClassDev(btd);
 	              mesg += "\nMajor Class = " + getBTClassDevMaj(btd);
 	              mesg += "\nService Classes = " + getBTClassServ(btd);
@@ -235,7 +251,8 @@ public class main extends Activity {
                   final btDevice bt2 = myDB.getBTD(bt.mac);
                   android.app.AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.main.this);
                   builder.setTitle(bt.toString()); 
-                  builder.setMessage(bt2.desc1 + "\n" + bt2.desc2  + "\n" + bt2.mac  + "\nConnected Volume: " + bt2.defVol  + "\nTrigger: " + bt2.setV);
+                  builder.setMessage(bt2.desc1 + "\n" + bt2.desc2  + "\n" + bt2.mac  + "\nConnected Volume: " + bt2.defVol  
+                		  + "\nTrigger Volume: " + bt2.setV + "\nGet Location: "+bt2.getLoc);
                   builder.setPositiveButton("OK", null);
                   builder.setNegativeButton("Delete", new OnClickListener(){
                 	  public void onClick(DialogInterface dialog, int which) {
@@ -253,7 +270,10 @@ public class main extends Activity {
 					     final TextView t1 = (TextView) dl.findViewById(R.id.Textd1);
 					     final TextView tmac = (TextView) dl.findViewById(R.id.Textmac);
 					     final EditText t2 = (EditText) dl.findViewById(R.id.EditText01);
-					     final CheckBox dv = (CheckBox) dl.findViewById(R.id.DoVol);							
+					     final CheckBox dv = (CheckBox) dl.findViewById(R.id.DoVol);
+					     final CheckBox gl = (CheckBox) dl.findViewById(R.id.getLocBox);
+					     final Button endedit = (Button)dl.findViewById(R.id.DoneButton);
+					     
 						t1.setText(bt.getDesc1());
 						if(btCon != null)
 						{
@@ -266,15 +286,33 @@ public class main extends Activity {
 						dv.setChecked(bt.isSetV());
 						b1.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 						b1.setProgress(bt.getDefVol());
-						dl.setOnDismissListener(new OnDismissListener(){
+						gl.setChecked(bt.isGetLoc());
+						
+						endedit.setOnClickListener(new View.OnClickListener() {
+							
+							public void onClick(View v) {
+								bt.setDesc2(t2.getText().toString());
+								bt.setSetV(dv.isChecked());
+								bt.setDefVol(b1.getProgress());
+								bt.setGetLoc(gl.isChecked());
+								myDB.update(bt);
+						        refreshList(loadFromDB());
+						        
+							}
+							
+						});
+						
+						
+						/*dl.setOnDismissListener(new OnDismissListener(){
 							public void onDismiss(DialogInterface dialog) {
 								bt.setDesc2(t2.getText().toString());
 								bt.setSetV(dv.isChecked());
 								bt.setDefVol(b1.getProgress());
+								bt.setGetLoc(gl.isChecked());
 								myDB.update(bt);
 						        refreshList(loadFromDB());
 							}
-						});
+						});*/
 						dl.show(); 		
 					}
                   });
@@ -509,6 +547,8 @@ public class main extends Activity {
     
     // this just loads the bluetooth device array from the database
     private int loadFromDB(){
+    	if(!myDB.getDb().isOpen()) main.this.myDB = new DeviceDB(main.this);  // this doesn't really work
+    	
     	vec = myDB.selectAlldb();
     	
     	return vec.size();
@@ -532,6 +572,7 @@ public class main extends Activity {
 	            refreshList(vec.size());	            
 	            }
 	        };
+	        
 	        
 	        // Returns the bluetooth services supported as a string
 	        private String getBTClassServ(BluetoothDevice btd){
@@ -589,6 +630,14 @@ public class main extends Activity {
         	        temp += "Cellular Phone, ";
         	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.PHONE_SMART)
         	        temp += "Smart Phone, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.PHONE_CORDLESS)
+        	        temp += "Cordless Phone, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.PHONE_ISDN)
+        	        temp += "ISDN Phone, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.PHONE_MODEM_OR_GATEWAY)
+        	        temp += "Phone Modem/Gateway, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.PHONE_UNCATEGORIZED)
+        	        temp += "Other Phone, ";
         	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET)
         	        temp += "Wearable Headset, ";
         	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_UNCATEGORIZED)
@@ -597,9 +646,22 @@ public class main extends Activity {
         	        temp += "Uncategorized Phone, ";
         	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.TOY_UNCATEGORIZED)
         	        temp += "Incategorized Toy, ";
-        	    
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.COMPUTER_DESKTOP)
+        	        temp += "Desktop PC, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.COMPUTER_HANDHELD_PC_PDA)
+        	        temp += "Handheld PC, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.COMPUTER_LAPTOP)
+        	        temp += "Laptop PC, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.COMPUTER_PALM_SIZE_PC_PDA)
+        	        temp += "Palm Sized PC/PDA, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.COMPUTER_WEARABLE)
+        	        temp += "Wearable PC, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.COMPUTER_SERVER)
+        	        temp += "Server PC, ";
+        	    if(btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.COMPUTER_UNCATEGORIZED)
+        	        temp += "Computer, ";
         	    // trim off the extra comma and space.  If the class was not found, return other.
-        	    if(temp.length() > 5)
+        	    if(temp.length() > 3)
         	    	temp = temp.substring(0, temp.length()-2);
         	    else
         	    	temp = "other";

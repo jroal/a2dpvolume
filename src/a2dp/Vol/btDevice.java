@@ -10,6 +10,31 @@ public class btDevice  {
 		public String mac; // mac address of the bluetooth device
 		public boolean setV; // whether to adjust volume on this device or not
 		public int defVol; // default volume to set to when connected.  Normally this is just max (15)
+		public boolean getLoc; // this sets whether to capture location info for this device
+		
+	/**
+		 * @return the getLoc
+		 */
+		public boolean isGetLoc() {
+			return getLoc;
+		}
+		
+		public long islGetLoc(){
+			if(getLoc) return 1;
+			else return 0;
+		}
+
+		/**
+		 * @param getLoc the getLoc to set
+		 */
+		public void setGetLoc(boolean getLoc) {
+			this.getLoc = getLoc;
+		}
+
+		public void setGetLoc(int g){
+			if(g>=1) this.getLoc = true;
+			else this.getLoc = false;
+		}
 		
 	public btDevice() {
 		// TODO Auto-generated constructor stub
@@ -115,6 +140,7 @@ public class btDevice  {
 		this.mac = btd.getAddress();
 		this.setV = true;
 		this.defVol = vol;
+		this.getLoc = true;
 	}
 
 	public void setBluetoothDevice(String s1, String s2, String mac, int vol){
@@ -123,5 +149,6 @@ public class btDevice  {
 		this.mac = mac;
 		this.setV = true;
 		this.defVol = vol;
+		this.getLoc = true;
 	}
 }
