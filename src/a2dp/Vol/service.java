@@ -144,33 +144,50 @@ public class service extends Service {
 	        public void onReceive(Context context2, Intent intent2) {
 	        	
 	            setVolume(OldVol2,  a2dp.Vol.service.this);
-	            // make sure we turn OFF the location listener if we don't get a loc in MAX_TIME
-	            if(MAX_TIME > 0)
-	            {
-	            new CountDownTimer(MAX_TIME, 5000) {
+		        BluetoothDevice bt = (BluetoothDevice) intent2.getExtras().get(BluetoothDevice.EXTRA_DEVICE);
+	            btConn = bt;
+	            
+            	btDevice bt2 = null;
+				try {
+					String addres = btConn.getAddress();
+					bt2 = DB.getBTD(addres);				
+            	} catch (Exception e) {
+            		Toast.makeText(context2, btConn.getAddress() + "\n" + e.getMessage(), Toast.LENGTH_LONG);
+					bt2 = null;
+				}
+	            
+	            if (bt2 != null && bt2.isGetLoc()) {
+					// make sure we turn OFF the location listener if we don't get a loc in MAX_TIME
+					if (MAX_TIME > 0) {
+						new CountDownTimer(MAX_TIME, 5000) {
 
-	                public void onTick(long millisUntilFinished) {
-	                	Toast.makeText(a2dp.Vol.service.this, "Time left: " + millisUntilFinished / 1000, Toast.LENGTH_LONG).show();
-	                }
+							public void onTick(long millisUntilFinished) {
+								Toast.makeText(
+										a2dp.Vol.service.this,
+										"Time left: " + millisUntilFinished
+												/ 1000, Toast.LENGTH_LONG)
+										.show();
+							}
 
-	                public void onFinish() {
-	                    clearLoc();
-	                }
-	             }.start();
-	             
-	             
-	            // start location provider GPS 
-		         // Register the listener with the Location Manager to receive location updates
-	             if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-		            {
-		            	locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-		            	//Toast.makeText(this, " Location Manager stated", Toast.LENGTH_LONG).show();
-		            	
-		            }
-	            }
-	             
-	            // get best location and store it
-	            grabGPS();	            
+							public void onFinish() {
+								clearLoc();
+							}
+						}.start();
+
+						// start location provider GPS 
+						// Register the listener with the Location Manager to receive location updates
+						if (locationManager
+								.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+							locationManager.requestLocationUpdates(
+									LocationManager.GPS_PROVIDER, 0, 0,
+									locationListener);
+							//Toast.makeText(this, " Location Manager stated", Toast.LENGTH_LONG).show();
+
+						}
+					}
+					// get best location and store it
+					grabGPS();
+				}	            
 	            }
 	        };
 	        
