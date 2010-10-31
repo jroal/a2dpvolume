@@ -1,6 +1,7 @@
 package a2dp.Vol;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -267,9 +268,16 @@ public class ManageData extends Activity {
 	            this.dialog.dismiss();
 	         }
 	         if (success) {
-	            Toast.makeText(ManageData.this, "Import successful!", Toast.LENGTH_SHORT).show();       
+	            //Toast.makeText(ManageData.this, "Import successful!", Toast.LENGTH_SHORT).show();       
 				ManageData.this.path.setText("Imported from: " + pathstr); 
 				//need a way to reopen the database at this point
+				android.app.AlertDialog.Builder builder = new AlertDialog.Builder(ManageData.this);
+				builder.setTitle("Import Complete");
+				builder.setMessage("You must now close this program and reopen it for the new database to take affect. " +
+						"Click the back key twice to return to the main screen and then click menu and exit.  " +
+						"Doing anything else will cause a force close!");
+				builder.show();
+				
 				
 	         } else {
 	            Toast.makeText(ManageData.this, "Import failed", Toast.LENGTH_SHORT).show();
