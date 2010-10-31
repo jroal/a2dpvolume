@@ -246,7 +246,9 @@ public class main extends Activity {
         lvl.setOnItemClickListener(new OnItemClickListener(){
         	public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
-        		if(vec.isEmpty())return;
+        		
+        		  if(vec.isEmpty())return;
+        		  
                   final btDevice bt = vec.get(position);
                   final btDevice bt2 = myDB.getBTD(bt.mac);
                   android.app.AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.main.this);
@@ -259,11 +261,11 @@ public class main extends Activity {
                 		//  BluetoothDevice bdelete = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(bt.mac);
                 		  myDB.delete(bt2);
                 		  refreshList(loadFromDB());
-                	  }
-                  });
+	                	  }
+	                  });
                   builder.setNeutralButton("Edit", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						Dialog dl = new Dialog(a2dp.Vol.main.this);
+						final Dialog dl = new Dialog(a2dp.Vol.main.this);
 						dl.setContentView(R.layout.editdata);
 						dl.setCancelable(true);
 					     final SeekBar b1 = (SeekBar) dl.findViewById(R.id.DefVolBar);
@@ -288,7 +290,7 @@ public class main extends Activity {
 						b1.setProgress(bt.getDefVol());
 						gl.setChecked(bt.isGetLoc());
 						
-						endedit.setOnClickListener(new View.OnClickListener() {
+						android.view.View.OnClickListener saveandexit = new View.OnClickListener() {
 							
 							public void onClick(View v) {
 								bt.setDesc2(t2.getText().toString());
@@ -297,23 +299,17 @@ public class main extends Activity {
 								bt.setGetLoc(gl.isChecked());
 								myDB.update(bt);
 						        refreshList(loadFromDB());
-						        
+						        endedit.setText("Save Complete");
+						        dl.dismiss();
 							}
+
 							
-						});
+						};
+						endedit.setOnClickListener( saveandexit);
 						
-						
-						/*dl.setOnDismissListener(new OnDismissListener(){
-							public void onDismiss(DialogInterface dialog) {
-								bt.setDesc2(t2.getText().toString());
-								bt.setSetV(dv.isChecked());
-								bt.setDefVol(b1.getProgress());
-								bt.setGetLoc(gl.isChecked());
-								myDB.update(bt);
-						        refreshList(loadFromDB());
-							}
-						});*/
-						dl.show(); 		
+						dl.show(); 
+					
+
 					}
                   });
                   builder.show();   	              
