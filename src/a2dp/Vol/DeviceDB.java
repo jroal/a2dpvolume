@@ -87,7 +87,7 @@ public class DeviceDB {
    public List<String> selectAll() {
       List<String> list = new ArrayList<String>();
       Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1", "desc2" },
-        null, null, null, null, "desc1");
+        null, null, null, null, "desc2");
       if (cursor.moveToFirst()) {
          do {
         	 String t = cursor.getString(1);
@@ -106,7 +106,7 @@ public class DeviceDB {
    public Vector<btDevice> selectAlldb() {
 	      Vector<btDevice> list = new Vector<btDevice>();
 	      Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1", "desc2", "mac", "maxv", "setv", "getl"},
-	        null, null, null, null, "desc1");
+	        null, null, null, null, "desc2");
 	      if (cursor.moveToFirst()) {
 	         do {
 	        	 btDevice bt = new btDevice();

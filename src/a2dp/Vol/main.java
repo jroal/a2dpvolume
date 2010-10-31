@@ -293,13 +293,17 @@ public class main extends Activity {
 						android.view.View.OnClickListener saveandexit = new View.OnClickListener() {
 							
 							public void onClick(View v) {
-								bt.setDesc2(t2.getText().toString());
+								if(t2.length()<1)
+									bt.setDesc2(bt.desc1);
+								else
+									bt.setDesc2(t2.getText().toString());
+								
 								bt.setSetV(dv.isChecked());
 								bt.setDefVol(b1.getProgress());
 								bt.setGetLoc(gl.isChecked());
 								myDB.update(bt);
-						        refreshList(loadFromDB());
 						        endedit.setText("Save Complete");
+						        refreshList(loadFromDB());
 						        dl.dismiss();
 							}
 
