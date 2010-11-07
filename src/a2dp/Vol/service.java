@@ -113,6 +113,9 @@ public class service extends Service {
 
 	// a bluetooth device has just connected. Do the on connect stuff
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+		/* (non-Javadoc)
+		 * @see android.content.BroadcastReceiver#onReceive(android.content.Context, android.content.Intent)
+		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int maxvol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -148,6 +151,10 @@ public class service extends Service {
 	};
 
 	private final BroadcastReceiver mReceiver2 = new BroadcastReceiver() {
+		/* (non-Javadoc)
+		 * @see android.content.BroadcastReceiver#onReceive(android.content.Context, android.content.Intent)
+		 * Triggered on bluetooth disconnect
+		 */
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
 
