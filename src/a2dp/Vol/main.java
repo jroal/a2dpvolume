@@ -21,6 +21,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -273,14 +274,12 @@ public class main extends Activity {
 				builder.setNeutralButton("Edit", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						final Dialog dl = new Dialog(a2dp.Vol.main.this);
+						
 						dl.setContentView(R.layout.editdata);
+							
 						dl.setCancelable(true);
 						final SeekBar b1 = (SeekBar) dl
 								.findViewById(R.id.DefVolBar);
-						final TextView t1 = (TextView) dl
-								.findViewById(R.id.Textd1);
-						final TextView tmac = (TextView) dl
-								.findViewById(R.id.Textmac);
 						final EditText t2 = (EditText) dl
 								.findViewById(R.id.EditText01);
 						final CheckBox dv = (CheckBox) dl
@@ -289,14 +288,7 @@ public class main extends Activity {
 								.findViewById(R.id.getLocBox);
 						final Button endedit = (Button) dl
 								.findViewById(R.id.DoneButton);
-
-						t1.setText(bt.getDesc1());
-						if (btCon != null) {
-							if (bt.getMac()
-									.equalsIgnoreCase(btCon.getAddress()))
-								tmac.setText(bt.getMac() + " **");
-						} else
-							tmac.setText(bt.getMac());
+						dl.setTitle("Edit Device");
 						t2.setText(bt.getDesc2());
 						dv.setChecked(bt.isSetV());
 						b1.setMax(am

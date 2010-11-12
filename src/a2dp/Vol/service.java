@@ -30,6 +30,7 @@ public class service extends Service {
 	public static boolean run = false;
 	LocationManager lm2 = null;
 	static BluetoothDevice btConn = null;
+	static btDevice btdConn = null;
 	private DeviceDB DB; // database of device data stored in SQlite
 	private LocationManager locationManager;
 	private Location location2;
@@ -37,7 +38,7 @@ public class service extends Service {
 
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
-	long MAX_TIME = 10000; // worst acceptable time in milliseconds
+	long MAX_TIME = 10000; // gps listener timout time in milliseconds and oldest acceptable time
 	SharedPreferences preferences;
 	private MyApplication application;
 
@@ -130,6 +131,7 @@ public class service extends Service {
 				try {
 					String addres = btConn.getAddress();
 					bt2 = DB.getBTD(addres);
+					btdConn = bt2;
 					Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG)
 							.show();
 				} catch (Exception e) {
@@ -299,8 +301,9 @@ public class service extends Service {
 			return null;
 
 		// If we have a good location, turn OFF the gps listener.
-		if (locationListener != null && l != null) {
-			if (location2.getAccuracy() < MAX_ACC
+		if (locationListener != null && l != null && location2 != null) {
+			float x = location2.getAccuracy();
+			if (x < MAX_ACC && x > 0 
 					&& (System.currentTimeMillis() - location2.getTime()) < MAX_TIME)
 				clearLoc();
 		}
@@ -311,6 +314,7 @@ public class service extends Service {
 	// get the location and write it to a file.
 	void grabGPS() {
 		double[] gloc;
+		String car = "My Car";
 		try {
 			gloc = getGPS2();
 		} catch (Exception e1) {
@@ -320,13 +324,16 @@ public class service extends Service {
 		DecimalFormat df = new DecimalFormat("#.#");
 
 		if (gloc != null) {
+			if(btdConn != null){
+				car = btdConn.getDesc2();
+			}
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location",
 						Context.MODE_WORLD_READABLE);
 				Time t = new Time();
 				t.set((long) gloc[3]);
 				String temp = "http://maps.google.com/maps?q=" + gloc[0] + ","
-						+ gloc[1] + "+" + "(My Car " + t.format("%D, %r")
+						+ gloc[1] + "+" + "(" + car + " " + t.format("%D, %r")
 						+ " acc=" + df.format(gloc[2]) + ")";
 				fos.write(temp.getBytes());
 				fos.close();
@@ -348,7 +355,7 @@ public class service extends Service {
 				Time t = new Time();
 				t.set((long) gloc[7]);
 				String temp = "http://maps.google.com/maps?q=" + gloc[4] + ","
-						+ gloc[5] + "+" + "(My Car " + t.format("%D, %r")
+						+ gloc[5] + "+" + "(" + car + " " + t.format("%D, %r")
 						+ " acc=" + df.format(gloc[6]) + ")";
 				fos.write(temp.getBytes());
 				fos.close();
@@ -369,14 +376,19 @@ public class service extends Service {
 	// Define a listener that responds to location updates
 	LocationListener locationListener = new LocationListener() {
 		public void onLocationChanged(Location location) {
-			// Called when a new location is found by the network location
+			// Called when a new location is found by the gps location
 			// provider.
 			location2 = location;
 			// since we know this is a new location, just check the accuracy
 			float acc = location.getAccuracy();
 			float acc2 = acc;
-			if (location_old.hasAccuracy())
-				acc2 = location_old.getAccuracy();
+			
+			// if we have an old location then use it to compare with the new one.
+			if(location_old != null){
+				if (location_old.hasAccuracy())
+					acc2 = location_old.getAccuracy();
+			}
+			
 
 			if ((acc < MAX_ACC || acc < acc2) && acc != 0) {
 				grabGPS();
