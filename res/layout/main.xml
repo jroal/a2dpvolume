@@ -16,7 +16,7 @@
 
 
 
-<ListView android:id="@+id/ListView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="true"></ListView>
+<ListView android:id="@+id/ListView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="true" android:contentDescription="@string/ListName"></ListView>
 
 
 </LinearLayout>

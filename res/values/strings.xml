@@ -33,4 +33,5 @@
 <item>20</item>
 <item>30</item>
 </string-array>
+<string name="ListName">Bluetooth Devices</string>
 </resources>
