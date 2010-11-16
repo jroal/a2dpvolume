@@ -35,6 +35,7 @@ public class service extends Service {
 	private LocationManager locationManager;
 	private Location location2;
 	private Location location_old;
+	private boolean carMode = true;
 
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
@@ -64,6 +65,8 @@ public class service extends Service {
 
 			Long yyy = new Long(preferences.getString("gpsTime", "15"));
 			MAX_TIME = yyy;
+			
+			carMode = preferences.getBoolean("car_mode", true);
 		} catch (NumberFormatException e) {
 			MAX_ACC = 20;
 			MAX_TIME = 10000;
@@ -79,6 +82,14 @@ public class service extends Service {
 		IntentFilter filter2 = new IntentFilter(
 				android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED);
 		this.registerReceiver(mReceiver2, filter2);
+		
+		if (carMode) {
+			// Create listener to grab GPS if car mode disconnects
+			IntentFilter filter3 = new IntentFilter(
+					android.app.UiModeManager.ACTION_EXIT_CAR_MODE);
+			this.registerReceiver(mReceiver3, filter3);
+		}
+		
 		// capture original volume
 		am2 = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		// set run flag to true. This is used for the GUI
@@ -125,8 +136,7 @@ public class service extends Service {
 			BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(
 					BluetoothDevice.EXTRA_DEVICE);
 			btConn = bt;
-
-			if (true) {
+			
 				btDevice bt2 = null;
 				try {
 					String addres = btConn.getAddress();
@@ -147,8 +157,6 @@ public class service extends Service {
 
 				if (setvol)
 					setVolume(maxvol, a2dp.Vol.service.this);
-			}
-
 		}
 	};
 
@@ -195,14 +203,12 @@ public class service extends Service {
 					// start location provider GPS
 					// Register the listener with the Location Manager to
 					// receive location updates
+
 					if (locationManager
 							.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 						locationManager.requestLocationUpdates(
 								LocationManager.GPS_PROVIDER, 0, 0,
 								locationListener);
-						// Toast.makeText(this, " Location Manager stated",
-						// Toast.LENGTH_LONG).show();
-
 					}
 				}
 				// get best location and store it
@@ -211,6 +217,45 @@ public class service extends Service {
 		}
 	};
 
+	private final BroadcastReceiver mReceiver3 = new BroadcastReceiver() {
+		/* (non-Javadoc)
+		 * @see android.content.BroadcastReceiver#onReceive(android.content.Context, android.content.Intent)
+		 * Triggered car mode exit
+		 */
+		@Override
+		public void onReceive(Context context3, Intent intent3) {		
+				// make sure we turn OFF the location listener if we don't get a
+				// loc in MAX_TIME
+				if (MAX_TIME > 0) {
+					new CountDownTimer(MAX_TIME, 5000) {
+
+						public void onTick(long millisUntilFinished) {
+							Toast.makeText(a2dp.Vol.service.this,
+									"Time left: " + millisUntilFinished / 1000,
+									Toast.LENGTH_LONG).show();
+						}
+
+						public void onFinish() {
+							clearLoc();
+						}
+					}.start();
+
+					// start location provider GPS
+					// Register the listener with the Location Manager to
+					// receive location updates
+					if (locationManager
+							.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+						locationManager.requestLocationUpdates(
+								LocationManager.GPS_PROVIDER, 0, 0,
+								locationListener);
+					}			
+				// get best location and store it
+				grabGPS();
+			}
+		}
+	};
+
+	
 	// makes the volume adjustment
 	public static int setVolume(int inputVol, Context sender) {
 		int outVol;
