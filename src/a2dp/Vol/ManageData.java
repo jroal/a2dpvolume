@@ -20,8 +20,8 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 /**
- * @author Leverage from an example, modified by Jim Roal 
- *	This activity manages the database used to store devices
+ * @author Leverage from an example, modified by Jim Roal This activity manages
+ *         the database used to store devices
  */
 public class ManageData extends Activity {
 

@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 /**
- * @author Jim Roal
- *	This is the preference activity.  It loads and saves the preferences
+ * @author Jim Roal This is the preference activity. It loads and saves the
+ *         preferences
  */
 public class Preferences extends PreferenceActivity {
 

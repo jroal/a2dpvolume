@@ -37,7 +37,8 @@ public class DeviceDB {
 	}
 
 	/**
-	 * @param bt is the bluetooth btDevice device to update in the database
+	 * @param bt
+	 *            is the bluetooth btDevice device to update in the database
 	 */
 	public void update(btDevice bt) {
 		ContentValues vals = new ContentValues();
@@ -49,16 +50,18 @@ public class DeviceDB {
 	}
 
 	/**
-	 * @param bt is the bluetooth btDevice to remove fromt he database
+	 * @param bt
+	 *            is the bluetooth btDevice to remove fromt he database
 	 */
 	public void delete(btDevice bt) {
 		this.db.delete(TABLE_NAME, "mac='" + bt.mac + "'", null);
 	}
 
 	/**
-	 * @param btd is the bluetooth btDevice to add to the database
-	 * @return
-	 * 		the row ID of the last row inserted, if this insert is successful. -1 otherwise.
+	 * @param btd
+	 *            is the bluetooth btDevice to add to the database
+	 * @return the row ID of the last row inserted, if this insert is
+	 *         successful. -1 otherwise.
 	 */
 	public long insert(btDevice btd) {
 		this.insertStmt.bindString(1, btd.desc1);
@@ -71,7 +74,9 @@ public class DeviceDB {
 	}
 
 	/**
-	 * @param imac is the mac address of the bluetooth btDevice you want to retrieve from the database
+	 * @param imac
+	 *            is the mac address of the bluetooth btDevice you want to
+	 *            retrieve from the database
 	 * @return the btDevice from the database
 	 */
 	public btDevice getBTD(String imac) {
@@ -108,8 +113,9 @@ public class DeviceDB {
 	}
 
 	/**
-	 * @return a List of the database btDevice descriptions sorted by the user entered description.
-	 * The user entered description defaults to the device name if blank. 
+	 * @return a List of the database btDevice descriptions sorted by the user
+	 *         entered description. The user entered description defaults to the
+	 *         device name if blank.
 	 */
 	public List<String> selectAll() {
 		List<String> list = new ArrayList<String>();

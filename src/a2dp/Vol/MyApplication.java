@@ -4,8 +4,8 @@ import android.app.Application;
 import android.util.Log;
 
 /**
- * @author Jim Roal
- *	This is used to manage the application as a single application context
+ * @author Jim Roal This is used to manage the application as a single
+ *         application context
  */
 public class MyApplication extends Application {
 
