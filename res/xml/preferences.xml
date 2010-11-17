@@ -7,7 +7,8 @@
 <PreferenceCategory android:title="Location Capture Settings" android:enabled="true">
 <ListPreference android:enabled="true" android:title="GPS Listener Timeout" android:key="gpsTime" android:entries="@array/gpsTimeout" android:entryValues="@array/gpsTimeout_items" android:defaultValue="15s" android:summary="The maximum time the GPS listener will be allowed to run looking for a better GPS location after bluetooth disconnect"></ListPreference>
 <ListPreference android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:defaultValue="20m" android:summary="GPS maximum inaccuracy in meters before listener will stop looking for a better value" android:title="GPS Max Inaccuracy "></ListPreference>
-<CheckBoxPreference android:summaryOff="Does not also capture location when switching from Car Mode" android:summaryOn="Also capture location when switching from Car Mode" android:key="car_mode" android:title="Car mode disconnect" android:enabled="true" android:selectable="true" android:defaultValue="true"></CheckBoxPreference>
+<CheckBoxPreference android:key="car_mode" android:title="Car mode disconnect" android:enabled="true" android:selectable="true" android:defaultValue="true" android:summaryOn="Also capture location when exiting Car Mode" android:summaryOff="Does not also capture location when exiting Car Mode"></CheckBoxPreference>
+
 </PreferenceCategory><PreferenceCategory android:title="General Settings"><CheckBoxPreference android:selectable="true" android:enabled="true" android:defaultValue="false" android:title="Start at Boot?" android:key="bootstart" android:summaryOn="The service will start at boot" android:summaryOff="The service will not start at boot"></CheckBoxPreference>
 
 </PreferenceCategory>

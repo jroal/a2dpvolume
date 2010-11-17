@@ -43,7 +43,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class main extends Activity {
-	
 
 	static String str2 = "";
 	static TextView tx1 = (TextView) null;
@@ -274,9 +273,9 @@ public class main extends Activity {
 				builder.setNeutralButton("Edit", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						final Dialog dl = new Dialog(a2dp.Vol.main.this);
-						
+
 						dl.setContentView(R.layout.editdata);
-							
+
 						dl.setCancelable(true);
 						final SeekBar b1 = (SeekBar) dl
 								.findViewById(R.id.DefVolBar);
@@ -498,8 +497,10 @@ public class main extends Activity {
 
 	// This function handles the media volume adjustments.
 	/**
-	 * @param inputVol is the media volume to set to
-	 * @param sender is who called this function
+	 * @param inputVol
+	 *            is the media volume to set to
+	 * @param sender
+	 *            is who called this function
 	 * @return
 	 */
 	private static int setVolume(int inputVol, Context sender) {
@@ -557,7 +558,7 @@ public class main extends Activity {
 	private int loadFromDB() {
 		if (!myDB.getDb().isOpen())
 			main.this.myDB = new DeviceDB(main.this); // this doesn't really
-														// work
+		// work
 
 		vec = myDB.selectAlldb();
 
@@ -565,7 +566,8 @@ public class main extends Activity {
 	}
 
 	/**
-	 * Triggered when a bluetooth device connects.  Retrieves the device that connected.
+	 * Triggered when a bluetooth device connects. Retrieves the device that
+	 * connected.
 	 */
 	private final BroadcastReceiver mReceiver3 = new BroadcastReceiver() {
 		@Override
@@ -628,7 +630,8 @@ public class main extends Activity {
 	// Get the bluetooth device classes we care about most. Not an exhaustive
 	// list.
 	/**
-	 * @param btd is the BluetoothDevice to check
+	 * @param btd
+	 *            is the BluetoothDevice to check
 	 * @return a list of the bluetooth services this device supports
 	 */
 	private String getBTClassDev(BluetoothDevice btd) {
@@ -703,7 +706,8 @@ public class main extends Activity {
 	// Get the bluetooth major device classes we care about most. Not an
 	// exhaustive list.
 	/**
-	 * @param btd the bluetooth device to test.
+	 * @param btd
+	 *            the bluetooth device to test.
 	 * @return the major bluetooth device type
 	 */
 	private String getBTClassDevMaj(BluetoothDevice btd) {

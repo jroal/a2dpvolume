@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 /**
- * @author Jim Roal
- *	This broadcast receiver just listens to the BOOT_COMPLETE intent and starts the service if the preference is set to do so 
+ * @author Jim Roal This broadcast receiver just listens to the BOOT_COMPLETE
+ *         intent and starts the service if the preference is set to do so
  */
 public class Starter extends BroadcastReceiver {
 	SharedPreferences preferences;

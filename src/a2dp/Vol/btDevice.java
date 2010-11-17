@@ -3,8 +3,8 @@ package a2dp.Vol;
 import android.bluetooth.BluetoothDevice;
 
 /**
- * @author Jim Roal
- * This is the class used to store and manipulate bluetooth devices
+ * @author Jim Roal This is the class used to store and manipulate bluetooth
+ *         devices
  */
 
 public class btDevice {
@@ -14,12 +14,14 @@ public class btDevice {
 	public String mac; // mac address of the bluetooth device
 	public boolean setV; // whether to adjust volume on this device or not
 	public int defVol; // default volume to set to when connected. Normally this
-						// is just max (15)
+	// is just max (15)
 	public boolean getLoc; // this sets whether to capture location info for
-							// this device
+
+	// this device
 
 	/**
-	 * @return the getLoc.  This is the flag used to determine if location should be stored for this device
+	 * @return the getLoc. This is the flag used to determine if location should
+	 *         be stored for this device
 	 */
 	public boolean isGetLoc() {
 		return getLoc;
@@ -33,8 +35,9 @@ public class btDevice {
 	}
 
 	/**
-	 * @param getLoc   This is the flag used to determine if location should be stored for this device
-	 *            the getLoc to set
+	 * @param getLoc
+	 *            This is the flag used to determine if location should be
+	 *            stored for this device the getLoc to set
 	 */
 	public void setGetLoc(boolean getLoc) {
 		this.getLoc = getLoc;
@@ -133,8 +136,9 @@ public class btDevice {
 	}
 
 	/**
-	 * @param sV is an integer 0 = no, 1 = yes
-	 * This function is used to set the boolean setV variable using an integer
+	 * @param sV
+	 *            is an integer 0 = no, 1 = yes This function is used to set the
+	 *            boolean setV variable using an integer
 	 */
 	public void setSetV(int sV) {
 		if (sV > 0)
@@ -159,10 +163,14 @@ public class btDevice {
 	}
 
 	/**
-	 * @param btd is the bluetooth device
-	 * @param name is the friendly name typed in by the user to describe this device
-	 * @param vol is the volume to set to when this device is connected
-	 * This is the main function to use to create a new btDevice object
+	 * @param btd
+	 *            is the bluetooth device
+	 * @param name
+	 *            is the friendly name typed in by the user to describe this
+	 *            device
+	 * @param vol
+	 *            is the volume to set to when this device is connected This is
+	 *            the main function to use to create a new btDevice object
 	 */
 	public void setBluetoothDevice(BluetoothDevice btd, String name, int vol) {
 		this.desc1 = btd.getName();
@@ -174,11 +182,16 @@ public class btDevice {
 	}
 
 	/**
-	 * @param s1 is the default device name
-	 * @param s2 is the user entered friendly name of this device
-	 * @param mac is the mac address of this device
-	 * @param vol is the default volume when this device is connected
-	 * This function is really only used to create dummy devices for testing
+	 * @param s1
+	 *            is the default device name
+	 * @param s2
+	 *            is the user entered friendly name of this device
+	 * @param mac
+	 *            is the mac address of this device
+	 * @param vol
+	 *            is the default volume when this device is connected This
+	 *            function is really only used to create dummy devices for
+	 *            testing
 	 */
 	public void setBluetoothDevice(String s1, String s2, String mac, int vol) {
 		this.desc1 = s1;
