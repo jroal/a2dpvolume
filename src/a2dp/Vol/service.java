@@ -25,11 +25,21 @@ import android.widget.Toast;
 
 public class service extends Service {
 
+	/* (non-Javadoc)
+	 * @see android.app.Service#onStartCommand(android.content.Intent, int, int)
+	 */
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		
+		//return super.onStartCommand(intent, flags, startId);
+		return START_STICKY;
+	}
+
 	static AudioManager am2 = (AudioManager) null;
 	static Integer OldVol2 = 5;
 	public static boolean run = false;
 	LocationManager lm2 = null;
-	static BluetoothDevice btConn = null;
+	public static BluetoothDevice btConn = null;
 	static btDevice btdConn = null;
 	private DeviceDB DB; // database of device data stored in SQlite
 	private LocationManager locationManager;
@@ -249,6 +259,8 @@ public class service extends Service {
 				// get best location and store it
 				grabGPS();
 			}
+			else
+				if(!gettingLoc)btConn = null;
 		}
 	};
 
@@ -497,6 +509,7 @@ public class service extends Service {
 	// just kills the location listener
 	private void clearLoc() {
 		locationManager.removeUpdates(locationListener);
+		btConn = null;
 		gettingLoc = false;
 		// Toast.makeText(a2dp.Vol.service.this, " Location Manager stopped",
 		// Toast.LENGTH_LONG).show();
