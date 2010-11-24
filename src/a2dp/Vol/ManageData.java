@@ -20,7 +20,7 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 /**
- * @author Leverage from an example, modified by Jim Roal This activity manages
+ * @author Leveraged from an example, modified by Jim Roal This activity manages
  *         the database used to store devices
  */
 public class ManageData extends Activity {
@@ -30,6 +30,7 @@ public class ManageData extends Activity {
 	private Button exportDbToSdButton;
 	private Button exportDbXmlToSdButton;
 	private Button importDB;
+	private Button exportLoc;
 	private TextView output = (TextView) null;
 	private TextView path = (TextView) null;
 	private String pathstr;
@@ -91,6 +92,22 @@ public class ManageData extends Activity {
 							.makeText(
 									ManageData.this,
 									"External storage is not available, unable to import data.",
+									Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
+
+		this.exportLoc = (Button) this.findViewById(R.id.ExportLoc);
+		this.exportLoc.setOnClickListener(new OnClickListener() {
+			public void onClick(final View v) {
+				if (ManageData.this.isExternalStorageAvail()) {
+					new ExportLocationTask().execute("My_Last_Location",
+							"BluetoothVol");
+				} else {
+					Toast
+							.makeText(
+									ManageData.this,
+									"External storage is not available, unable to export data.",
 									Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -319,6 +336,74 @@ public class ManageData extends Activity {
 				Toast.makeText(ManageData.this, "Import failed",
 						Toast.LENGTH_SHORT).show();
 				ManageData.this.path.setText("Import Failed");
+			}
+		}
+
+		void copyFile(File src, File dst) throws IOException {
+			FileChannel inChannel = new FileInputStream(src).getChannel();
+			FileChannel outChannel = new FileOutputStream(dst).getChannel();
+			try {
+				inChannel.transferTo(0, inChannel.size(), outChannel);
+			} finally {
+				if (inChannel != null)
+					inChannel.close();
+				if (outChannel != null)
+					outChannel.close();
+			}
+		}
+
+	}
+
+	// export location
+	private class ExportLocationTask extends AsyncTask<String, Void, Boolean> {
+		private final ProgressDialog dialog = new ProgressDialog(
+				ManageData.this);
+
+		// can use UI thread here
+		protected void onPreExecute() {
+			this.dialog.setMessage("Exporting location data...");
+			this.dialog.show();
+		}
+
+		// automatically done on worker thread (separate from UI thread)
+		protected Boolean doInBackground(final String... args) {
+
+			File LocFile = application.getFileStreamPath(args[0]);
+
+			File exportDir = new File(
+					Environment.getExternalStorageDirectory(), "BluetoothVol");
+
+			if (!exportDir.exists()) {
+				exportDir.mkdirs();
+			}
+			File file = new File(exportDir, LocFile.getName());
+			pathstr = file.getPath();
+			try {
+				file.createNewFile();
+				this.copyFile(LocFile, file);
+				return true;
+			} catch (IOException e) {
+				Log.e(MyApplication.APP_NAME, e.getMessage(), e);
+				return false;
+			}
+		}
+
+		// can use UI thread here
+		protected void onPostExecute(final Boolean success) {
+			if (this.dialog.isShowing()) {
+				this.dialog.dismiss();
+			}
+			if (success) {
+
+				ManageData.this.path.setText("Exported to: " + pathstr);
+
+				Toast.makeText(ManageData.this, "Location data exported",
+						Toast.LENGTH_LONG).show();
+
+			} else {
+				Toast.makeText(ManageData.this, "Export failed",
+						Toast.LENGTH_SHORT).show();
+				ManageData.this.path.setText("Export Failed");
 			}
 		}
 

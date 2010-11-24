@@ -22,9 +22,12 @@ import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Configuration;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,6 +52,7 @@ public class main extends Activity {
 	public static Integer OldVol = 5;
 	static AudioManager am = (AudioManager) null;
 	static SeekBar VolSeek;
+	static Button serv;
 	boolean servrun = false;
 	ListView lvl = null; // listview used on main screen showing devices
 	Vector<btDevice> vec; // vector of bluetooth devices
@@ -117,7 +121,7 @@ public class main extends Activity {
 		final SeekBar VolSeek = (SeekBar) findViewById(R.id.VolSeekBar);
 
 		final Button locbtn = (Button) findViewById(R.id.Locationbtn);
-		final Button serv = (Button) findViewById(R.id.ServButton);
+		serv = (Button) findViewById(R.id.ServButton);
 		// get "Application" object for shared state or creating of expensive
 		// resources - like DataHelper
 		// (this is not recreated as often as each Activity)
@@ -133,6 +137,15 @@ public class main extends Activity {
 				android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED);
 		this.registerReceiver(mReceiver4, filter2);
 
+		// these 2 intents are sent from the service to inform us of the running
+		// state
+		IntentFilter filter3 = new IntentFilter("a2dp.vol.service.RUNNING");
+		this.registerReceiver(sRunning, filter3);
+
+		IntentFilter filter4 = new IntentFilter(
+				"a2dp.vol.service.STOPPED_RUNNING");
+		this.registerReceiver(sRunning, filter4);
+
 		vec = new Vector<btDevice>();
 		tx1 = (TextView) findViewById(R.id.TextView01);
 		VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
@@ -146,19 +159,11 @@ public class main extends Activity {
 		this.lvl = (ListView) findViewById(R.id.ListView01);
 		this.lvl.setAdapter(ladapt);
 
-		// toggle the service button depending on the state of the service
-		try {
-			if (a2dp.Vol.service.run) {
-				servrun = true;
-				serv.setText("Kill Service");
-			} else {
-				servrun = false;
-				serv.setText("Start Service");
-			}
-		} catch (Exception x) {
-			servrun = false;
-			serv.setText("Start Service");
-		}
+		serv.setText(R.string.StartService);
+		// start the service. The intent will report when the service has
+		// started and toggle button text
+		startService(new Intent(a2dp.Vol.main.this, service.class));
+		servrun = true;
 
 		// capture original media volume to be used when returning from
 		// bluetooth connection
@@ -392,15 +397,49 @@ public class main extends Activity {
 
 				if (servrun) {
 					stopService(new Intent(a2dp.Vol.main.this, service.class));
-					serv.setText("Start Service");
-					servrun = false;
+					// serv.setText(R.string.StartService);
+					// servrun = false;
 				} else {
 					startService(new Intent(a2dp.Vol.main.this, service.class));
-					serv.setText("Kill Service");
-					servrun = true;
+					// serv.setText(R.string.StopService);
+					// servrun = true;
 				}
 			}
 		});
+
+		new CountDownTimer(2000, 1000) {
+
+			public void onTick(long millisUntilFinished) {
+				try {
+					if (a2dp.Vol.service.run) {
+						servrun = true;
+						serv.setText(R.string.StopService);
+					} else {
+						servrun = false;
+						serv.setText(R.string.StartService);
+					}
+				} catch (Exception x) {
+					servrun = false;
+					serv.setText(R.string.StartService);
+				}
+			}
+
+			public void onFinish() {
+				try {
+					if (a2dp.Vol.service.run) {
+						servrun = true;
+						serv.setText(R.string.StopService);
+					} else {
+						servrun = false;
+						serv.setText(R.string.StartService);
+					}
+				} catch (Exception x) {
+					servrun = false;
+					serv.setText(R.string.StartService);
+				}
+			}
+		}.start();
+
 		// load the list from the database
 		refreshList(loadFromDB());
 	}
@@ -408,7 +447,7 @@ public class main extends Activity {
 	/**
 	 * Retrieves the last stored location and sends it as a URL
 	 */
-	private void Locationbtn() {
+	public void Locationbtn() {
 		try {
 			byte[] buff = new byte[250];
 			FileInputStream fs = openFileInput("My_Last_Location");
@@ -593,6 +632,28 @@ public class main extends Activity {
 		}
 	};
 
+	private final BroadcastReceiver sRunning = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context arg0, Intent arg1) {
+			// toggle the service button depending on the state of the service
+			try {
+				if (a2dp.Vol.service.run) {
+					servrun = true;
+					serv.setText(R.string.StopService);
+				} else {
+					servrun = false;
+					serv.setText(R.string.StartService);
+				}
+			} catch (Exception x) {
+				servrun = false;
+				serv.setText(R.string.StartService);
+			}
+
+		}
+
+	};
+
 	// Returns the bluetooth services supported as a string
 	private String getBTClassServ(BluetoothDevice btd) {
 		String temp = "";
@@ -744,5 +805,44 @@ public class main extends Activity {
 
 		// return device class
 		return temp;
+	}
+
+	private Location captureLocation() {
+		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		List<String> providers = lm.getProviders(true);
+
+		Location l = null;
+		Location l2 = null;
+		Location l3 = null;
+
+		long deltat = 9999999;
+		long olddt = 9999999;
+		float oldacc = 999999;
+
+		if (!providers.isEmpty()) {
+			for (int i = providers.size() - 1; i >= 0; i--) {
+				l2 = lm.getLastKnownLocation(providers.get(i));
+
+				if (l2 != null) {
+					if (l2.hasAccuracy()) // if we have accuracy, capture the
+					// best
+					{
+						if (l2.getAccuracy() < oldacc) {
+							l3 = l2;
+							oldacc = l2.getAccuracy();
+						}
+					}
+					olddt = deltat;
+					deltat = System.currentTimeMillis() - l2.getTime();
+					if (deltat < olddt) // get the most recent update
+					{
+						l = l2;
+					}
+				}
+			}
+		} else
+			return null;
+
+		return l;
 	}
 }

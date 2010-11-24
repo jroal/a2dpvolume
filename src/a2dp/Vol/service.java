@@ -37,11 +37,12 @@ public class service extends Service {
 	private Location location_old;
 	private boolean carMode = true;
 	private boolean gettingLoc = false;
+	private boolean toasts = true;
 
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
-							// oldest acceptable time
+	// oldest acceptable time
 	SharedPreferences preferences;
 	private MyApplication application;
 
@@ -69,6 +70,7 @@ public class service extends Service {
 			MAX_TIME = yyy;
 
 			carMode = preferences.getBoolean("car_mode", true);
+			toasts = preferences.getBoolean("toasts", true);
 		} catch (NumberFormatException e) {
 			MAX_ACC = 20;
 			MAX_TIME = 10000;
@@ -103,9 +105,17 @@ public class service extends Service {
 				.getSystemService(Context.LOCATION_SERVICE);
 		location2 = locationManager
 				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+		// Tell the world we are running
+		final String IRun = "a2dp.vol.service.RUNNING";
+		Intent i = new Intent();
+		i.setAction(IRun);
+		this.application.sendBroadcast(i);
+
 		// if all the above works, let the user know it is started
-		Toast.makeText(this, "A2DP Vol Service Started", Toast.LENGTH_LONG)
-				.show();
+		if (toasts)
+			Toast.makeText(this, R.string.ServiceStarted, Toast.LENGTH_LONG)
+					.show();
 	}
 
 	@Override
@@ -114,9 +124,16 @@ public class service extends Service {
 		run = false;
 		// in case the location listener is running, stop it
 		clearLoc();
+		// Tell the world we are running
+		final String IStop = "a2dp.vol.service.STOPPED_RUNNING";
+		Intent i = new Intent();
+		i.setAction(IStop);
+		this.application.sendBroadcast(i);
+
 		// let the user know the service stopped
-		Toast.makeText(this, "A2DP Vol Service Stopped", Toast.LENGTH_LONG)
-				.show();
+		if (toasts)
+			Toast.makeText(this, R.string.ServiceStopped, Toast.LENGTH_LONG)
+					.show();
 	}
 
 	public void onStart() {
@@ -148,10 +165,13 @@ public class service extends Service {
 				String addres = btConn.getAddress();
 				bt2 = DB.getBTD(addres);
 				btdConn = bt2;
-				Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG).show();
+				if (toasts)
+					Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG)
+							.show();
 			} catch (Exception e) {
-				Toast.makeText(context, btConn.getAddress() + "\n"
-						+ e.getMessage(), Toast.LENGTH_LONG);
+				if (toasts)
+					Toast.makeText(context, btConn.getAddress() + "\n"
+							+ e.getMessage(), Toast.LENGTH_LONG);
 				bt2 = null;
 			}
 
@@ -186,8 +206,9 @@ public class service extends Service {
 				String addres = btConn.getAddress();
 				bt2 = DB.getBTD(addres);
 			} catch (Exception e) {
-				Toast.makeText(context2, btConn.getAddress() + "\n"
-						+ e.getMessage(), Toast.LENGTH_LONG);
+				if (toasts)
+					Toast.makeText(context2, btConn.getAddress() + "\n"
+							+ e.getMessage(), Toast.LENGTH_LONG);
 				bt2 = null;
 			}
 
@@ -199,21 +220,25 @@ public class service extends Service {
 					new CountDownTimer(MAX_TIME, 5000) {
 
 						public void onTick(long millisUntilFinished) {
-							Toast.makeText(a2dp.Vol.service.this,
-									"Time left: " + millisUntilFinished / 1000,
-									Toast.LENGTH_LONG).show();
+							if (toasts)
+								Toast.makeText(
+										a2dp.Vol.service.this,
+										"Time left: " + millisUntilFinished
+												/ 1000, Toast.LENGTH_LONG)
+										.show();
 						}
 
 						public void onFinish() {
 							clearLoc();
 						}
 					}.start();
-					// clear any previously running instances of the location listener
+					// clear any previously running instances of the location
+					// listener
 					clearLoc();
 					// start location provider GPS
 					// Register the listener with the Location Manager to
 					// receive location updates
-					
+
 					if (locationManager
 							.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 						locationManager.requestLocationUpdates(
@@ -243,9 +268,10 @@ public class service extends Service {
 				new CountDownTimer(MAX_TIME, 5000) {
 
 					public void onTick(long millisUntilFinished) {
-						Toast.makeText(a2dp.Vol.service.this,
-								"Time left: " + millisUntilFinished / 1000,
-								Toast.LENGTH_LONG).show();
+						if (toasts)
+							Toast.makeText(a2dp.Vol.service.this,
+									"Time left: " + millisUntilFinished / 1000,
+									Toast.LENGTH_LONG).show();
 					}
 
 					public void onFinish() {
@@ -256,7 +282,7 @@ public class service extends Service {
 				// start location provider GPS
 				// Register the listener with the Location Manager to
 				// receive location updates
-				
+
 				if (locationManager
 						.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 					locationManager.requestLocationUpdates(
@@ -389,6 +415,7 @@ public class service extends Service {
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location",
 						Context.MODE_WORLD_READABLE);
+
 				Time t = new Time();
 				t.set((long) gloc[3]);
 				String temp = "http://maps.google.com/maps?q=" + gloc[0] + ","

@@ -17,30 +17,32 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
-        public static final int icon1b=0x7f020001;
-        public static final int icon1c=0x7f020002;
-        public static final int icon2=0x7f020003;
-        public static final int icon3=0x7f020004;
-        public static final int icon4=0x7f020005;
-        public static final int icon5=0x7f020006;
-        public static final int images3=0x7f020007;
+        public static final int a2dpvol=0x7f020000;
+        public static final int icon=0x7f020001;
+        public static final int icon1b=0x7f020002;
+        public static final int icon1c=0x7f020003;
+        public static final int icon2=0x7f020004;
+        public static final int icon3=0x7f020005;
+        public static final int icon4=0x7f020006;
+        public static final int icon5=0x7f020007;
+        public static final int images3=0x7f020008;
     }
     public static final class id {
         public static final int AbsoluteLayout01=0x7f08000a;
         public static final int Button01=0x7f080010;
         public static final int DefVolBar=0x7f080008;
-        public static final int DelData=0x7f080019;
+        public static final int DelData=0x7f08001b;
         public static final int DoVol=0x7f080006;
         public static final int DoneButton=0x7f080009;
         public static final int EditText01=0x7f080002;
-        public static final int Exit=0x7f08001b;
+        public static final int Exit=0x7f08001d;
+        public static final int ExportLoc=0x7f080016;
         public static final int ImportDBButton=0x7f080015;
         public static final int ListView01=0x7f080012;
         public static final int Locationbtn=0x7f08000f;
-        public static final int Manage_data=0x7f08001a;
-        public static final int Output=0x7f080017;
-        public static final int Path=0x7f080016;
+        public static final int Manage_data=0x7f08001c;
+        public static final int Output=0x7f080018;
+        public static final int Path=0x7f080017;
         public static final int ServButton=0x7f080011;
         public static final int TableLayout01=0x7f080000;
         public static final int TableRow01=0x7f08000c;
@@ -51,25 +53,40 @@ public final class R {
         public static final int TextView01=0x7f08000b;
         public static final int VolSeekBar=0x7f08000e;
         public static final int VolumeText=0x7f08000d;
+        public static final int WidgetButton=0x7f080019;
         public static final int exportdbtosdbutton=0x7f080013;
         public static final int exportdbxmltosdbutton=0x7f080014;
         public static final int getLocBox=0x7f080004;
-        public static final int help=0x7f08001c;
-        public static final int prefs=0x7f080018;
+        public static final int help=0x7f08001e;
+        public static final int prefs=0x7f08001a;
     }
     public static final class layout {
         public static final int editdata=0x7f030000;
         public static final int main=0x7f030001;
         public static final int managedata=0x7f030002;
+        public static final int widgetlayout=0x7f030003;
     }
     public static final class menu {
         public static final int menu=0x7f070000;
     }
     public static final class string {
+        public static final int CapLocationButton=0x7f050003;
+        public static final int ExportDB=0x7f05000a;
+        public static final int ExportLocation=0x7f05000d;
+        public static final int ExportXML=0x7f05000b;
+        public static final int FindDevices=0x7f050006;
+        public static final int GetLocButtonString=0x7f050002;
+        public static final int ImportDB=0x7f05000c;
         public static final int ListName=0x7f050001;
+        public static final int MediaVolume=0x7f050007;
+        public static final int ServiceStarted=0x7f050008;
+        public static final int ServiceStopped=0x7f050009;
+        public static final int StartService=0x7f050004;
+        public static final int StopService=0x7f050005;
         public static final int app_name=0x7f050000;
     }
     public static final class xml {
         public static final int preferences=0x7f040000;
+        public static final int widget=0x7f040001;
     }
 }
