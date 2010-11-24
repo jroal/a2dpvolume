@@ -440,6 +440,12 @@ public class main extends Activity {
 			}
 		}.start();
 
+		// see if a device is already connected in the service
+		try {
+			btCon = service.btConn;
+		} catch (Exception e) {
+			btCon = null;
+		}
 		// load the list from the database
 		refreshList(loadFromDB());
 	}

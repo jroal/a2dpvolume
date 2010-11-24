@@ -23,11 +23,14 @@
 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
 </intent-filter>
 </receiver>
-<activity android:multiprocess="false" android:name="ALauncher"></activity>
+
+
+
+
 <receiver android:name="Widget" android:icon="@drawable/icon5" android:description="@string/GetLocButtonString" android:label="@string/app_name"><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget" /><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
 
 </intent-filter>
-</receiver>
+</receiver><service android:name="ALauncher" android:enabled="true"></service>
 </application>
 
 
