@@ -9,7 +9,9 @@
 <ListPreference android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:defaultValue="20m" android:summary="GPS maximum inaccuracy in meters before listener will stop looking for a better value" android:title="GPS Max Inaccuracy "></ListPreference>
 <CheckBoxPreference android:key="car_mode" android:title="Car mode disconnect" android:enabled="true" android:selectable="true" android:defaultValue="true" android:summaryOn="Also capture location when exiting Car Mode" android:summaryOff="Does not also capture location when exiting Car Mode"></CheckBoxPreference>
 
-</PreferenceCategory><PreferenceCategory android:title="General Settings"><CheckBoxPreference android:selectable="true" android:enabled="true" android:defaultValue="false" android:title="Start at Boot?" android:key="bootstart" android:summaryOn="The service will start at boot" android:summaryOff="The service will not start at boot"></CheckBoxPreference>
+</PreferenceCategory><PreferenceCategory android:title="General Settings"><CheckBoxPreference android:selectable="true" android:enabled="true" android:title="Start at Boot?" android:key="bootstart" android:summaryOn="The service will start at boot" android:summaryOff="The service will not start at boot" android:defaultValue="true"></CheckBoxPreference>
 
+
+<CheckBoxPreference android:enabled="true" android:summaryOff="Pop-up messages are not shown when the service starts or stops." android:selectable="true" android:summary="Should the pop-up messages show when the service has started or stopped?" android:title="Show Pop-ups?" android:key="toasts" android:defaultValue="true" android:summaryOn="Pop-up messages are shown when the service starts or stops."></CheckBoxPreference>
 </PreferenceCategory>
 </PreferenceScreen>
