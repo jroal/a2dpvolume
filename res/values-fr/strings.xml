@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="app_name">A2DP Volume</string>
+<string-array name="gpsDistance"><item>2m </item><item>5m </item>
+<item>10m par défaut</item>
+<item>15m </item>
+<item>20m</item>
+<item>30m </item>
+
+</string-array>
+
+<string-array name="gpsTimeout"><item>Désactiver GPS Listener</item><item>5 seconds</item>
+<item>10 seconds</item>
+<item>15 seconds</item>
+<item>20 seconds</item>
+<item>30 seconds</item>
+<item>45 seconds</item>
+
+</string-array>
+<string-array name="gpsTimeout_items"><item>0</item><item>5000</item>
+<item>10000</item>
+<item>15000</item>
+<item>20000</item>
+<item>30000</item>
+<item>45000</item>
+
+</string-array>
+<string-array name="gpsDistance_items"><item>2</item>
+<item>5</item>
+<item>10</item>
+<item>15</item>
+<item>20</item>
+<item>30</item>
+</string-array>
+<string name="ListName">Périphériques Bluetooth</string>
+<string name="GetLocButtonString">Lieu stockées</string>
+<string name="CapLocationButton">Capture Lieu</string>
+<string name="StartService">Démarrer le service</string>
+<string name="StopService">Arrêter le service</string>
+<string name="FindDevices">Trouver Devices</string>
+<string name="MediaVolume">Volume des médias</string>
+<string name="ServiceStarted">Service Volume A2DP Route</string>
+<string name="ServiceStopped">Service Volume A2DP Arrêté</string>
+<string name="ExportDB">Export base de données sur carte SD</string>
+<string name="ExportXML">Export base de données au format XML sur carte SD</string>
+<string name="ImportDB">Import de base de données de carte SD</string>
+<string name="ExportLocation">Data Export Lieu Dernière</string>
+</resources>
