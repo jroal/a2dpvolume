@@ -18,14 +18,15 @@ public final class R {
     }
     public static final class drawable {
         public static final int a2dpvol=0x7f020000;
-        public static final int icon=0x7f020001;
-        public static final int icon1b=0x7f020002;
-        public static final int icon1c=0x7f020003;
-        public static final int icon2=0x7f020004;
-        public static final int icon3=0x7f020005;
-        public static final int icon4=0x7f020006;
-        public static final int icon5=0x7f020007;
-        public static final int images3=0x7f020008;
+        public static final int car2=0x7f020001;
+        public static final int icon=0x7f020002;
+        public static final int icon1b=0x7f020003;
+        public static final int icon1c=0x7f020004;
+        public static final int icon2=0x7f020005;
+        public static final int icon3=0x7f020006;
+        public static final int icon4=0x7f020007;
+        public static final int icon5=0x7f020008;
+        public static final int images3=0x7f020009;
     }
     public static final class id {
         public static final int AbsoluteLayout01=0x7f08000a;

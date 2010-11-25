@@ -102,6 +102,7 @@ public class service extends Service {
 			IntentFilter filter3 = new IntentFilter(
 					android.app.UiModeManager.ACTION_EXIT_CAR_MODE);
 			this.registerReceiver(mReceiver3, filter3);
+			
 		}
 
 		// capture original volume
