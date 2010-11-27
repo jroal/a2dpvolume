@@ -46,4 +46,6 @@
 <string name="ExportXML">Export Database as XML to SD card</string>
 <string name="ImportDB">Import Database from SD card</string>
 <string name="ExportLocation">Export Last Location Data</string>
+<string name="PrefsNotifySummaryON">The service will start as a foreground task with an icon on the notification bar</string>
+<string name="PrefsNotifySummaryOFF">The service will start but it will be a background tast with no icon on the notification bar.</string>
 </resources>

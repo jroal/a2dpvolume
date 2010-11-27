@@ -5,6 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -48,6 +52,7 @@ public class service extends Service {
 	private boolean carMode = true;
 	private boolean gettingLoc = false;
 	private boolean toasts = true;
+	private boolean notify = false;
 
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
@@ -69,21 +74,26 @@ public class service extends Service {
 
 		// get and load preferences
 
+		String str = "";
 		try {
 			preferences = PreferenceManager
 					.getDefaultSharedPreferences(this.application);
 
-			Float xxx = new Float(preferences.getString("gpsDistance", "20"));
-			MAX_ACC = xxx;
-
-			Long yyy = new Long(preferences.getString("gpsTime", "15"));
-			MAX_TIME = yyy;
-
 			carMode = preferences.getBoolean("car_mode", true);
 			toasts = preferences.getBoolean("toasts", true);
+			notify = preferences.getBoolean("notify1", false);
+			
+			str = preferences.getString("gpsTime", "15");
+			Long yyy = new Long(preferences.getString("gpsTime", "15000"));
+			MAX_TIME = yyy;
+			
+			Float xxx = new Float(preferences.getString("gpsDistance", "10"));
+			MAX_ACC = xxx;
+
 		} catch (NumberFormatException e) {
-			MAX_ACC = 20;
-			MAX_TIME = 10000;
+			MAX_ACC = 10;
+			MAX_TIME = 15000;
+			Toast.makeText(this, "prefs failed to load " + str, Toast.LENGTH_LONG).show();
 			e.printStackTrace();
 		}
 
@@ -123,10 +133,45 @@ public class service extends Service {
 		i.setAction(IRun);
 		this.application.sendBroadcast(i);
 
+		if (notify) {
+			// set up the notification and start foreground
+			String ns = Context.NOTIFICATION_SERVICE;
+			NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+			Notification not = new Notification(R.drawable.car2, "A2DP", System
+					.currentTimeMillis());
+			Context context = getApplicationContext();
+			CharSequence contentTitle = "A2DP Volume Notification";
+			CharSequence contentText = "A2DP Volume Service Running";
+			Intent notificationIntent = new Intent(this, main.class);
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+					notificationIntent, 0);
+			not.setLatestEventInfo(context, contentTitle, contentText,
+					contentIntent);
+			mNotificationManager.notify(1, not);
+			this.startForeground(1, not);
+		}
+		
 		// if all the above works, let the user know it is started
 		if (toasts)
 			Toast.makeText(this, R.string.ServiceStarted, Toast.LENGTH_LONG)
 					.show();
+		
+		// test location file maker
+/*		FileOutputStream fos;
+		try {
+			fos = openFileOutput("My_Last_Location",
+					Context.MODE_WORLD_READABLE);
+			String temp = "http://maps.google.com/maps?q=40.7423612,-89.63056078333334+(Lambo 11/26/10, 05:59:46 pm acc=8)";
+			fos.write(temp.getBytes());
+			fos.close();	
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		// end test file maker
 	}
 
 	@Override
@@ -140,7 +185,7 @@ public class service extends Service {
 		Intent i = new Intent();
 		i.setAction(IStop);
 		this.application.sendBroadcast(i);
-
+		this.stopForeground(true);
 		// let the user know the service stopped
 		if (toasts)
 			Toast.makeText(this, R.string.ServiceStopped, Toast.LENGTH_LONG)
