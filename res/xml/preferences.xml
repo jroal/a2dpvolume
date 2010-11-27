@@ -5,13 +5,14 @@
 
 
 <PreferenceCategory android:title="Location Capture Settings" android:enabled="true">
-<ListPreference android:enabled="true" android:title="GPS Listener Timeout" android:key="gpsTime" android:entries="@array/gpsTimeout" android:entryValues="@array/gpsTimeout_items" android:defaultValue="15s" android:summary="The maximum time the GPS listener will be allowed to run looking for a better GPS location after bluetooth disconnect"></ListPreference>
-<ListPreference android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:defaultValue="20m" android:summary="GPS maximum inaccuracy in meters before listener will stop looking for a better value" android:title="GPS Max Inaccuracy "></ListPreference>
+<ListPreference android:enabled="true" android:title="GPS Listener Timeout" android:key="gpsTime" android:entries="@array/gpsTimeout" android:entryValues="@array/gpsTimeout_items" android:summary="The maximum time the GPS listener will be allowed to run looking for a better GPS location after bluetooth disconnect" android:defaultValue="15000"></ListPreference>
+<ListPreference android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:summary="GPS maximum inaccuracy in meters before listener will stop looking for a better value" android:title="GPS Max Inaccuracy " android:defaultValue="10"></ListPreference>
 <CheckBoxPreference android:key="car_mode" android:title="Car mode disconnect" android:enabled="true" android:selectable="true" android:defaultValue="true" android:summaryOn="Also capture location when exiting Car Mode" android:summaryOff="Does not also capture location when exiting Car Mode"></CheckBoxPreference>
 
 </PreferenceCategory><PreferenceCategory android:title="General Settings"><CheckBoxPreference android:selectable="true" android:enabled="true" android:title="Start at Boot?" android:key="bootstart" android:summaryOn="The service will start at boot" android:summaryOff="The service will not start at boot" android:defaultValue="true"></CheckBoxPreference>
 
 
 <CheckBoxPreference android:enabled="true" android:summaryOff="Pop-up messages are not shown when the service starts or stops." android:selectable="true" android:summary="Should the pop-up messages show when the service has started or stopped?" android:title="Show Pop-ups?" android:key="toasts" android:defaultValue="true" android:summaryOn="Pop-up messages are shown when the service starts or stops."></CheckBoxPreference>
+<CheckBoxPreference android:summaryOn="@string/PrefsNotifySummaryON" android:summaryOff="@string/PrefsNotifySummaryOFF" android:title="Notify foreground?" android:enabled="true" android:selectable="true" android:summary="@string/PrefsNotifySummaryON" android:key="notify1"></CheckBoxPreference>
 </PreferenceCategory>
 </PreferenceScreen>

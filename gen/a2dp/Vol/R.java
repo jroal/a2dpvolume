@@ -80,6 +80,8 @@ public final class R {
         public static final int ImportDB=0x7f05000c;
         public static final int ListName=0x7f050001;
         public static final int MediaVolume=0x7f050007;
+        public static final int PrefsNotifySummaryOFF=0x7f05000f;
+        public static final int PrefsNotifySummaryON=0x7f05000e;
         public static final int ServiceStarted=0x7f050008;
         public static final int ServiceStopped=0x7f050009;
         public static final int StartService=0x7f050004;

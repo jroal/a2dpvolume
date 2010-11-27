@@ -376,7 +376,7 @@ public class ManageData extends Activity {
 			if (!exportDir.exists()) {
 				exportDir.mkdirs();
 			}
-			File file = new File(exportDir, LocFile.getName());
+			File file = new File(exportDir, LocFile.getName() + ".txt");
 			pathstr = file.getPath();
 			try {
 				file.createNewFile();
