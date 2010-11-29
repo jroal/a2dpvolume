@@ -10,10 +10,10 @@
             </intent-filter>
         </activity>
 
-    <service android:enabled="true" android:name="service">
+    <service android:enabled="true" android:name="service" android:label="@string/app_name">
 </service>
 
-<activity android:name="ManageData" android:enabled="true" android:launchMode="standard">
+<activity android:name="ManageData" android:enabled="true" android:launchMode="standard" android:label="@string/app_name">
 
 </activity>
 
@@ -30,7 +30,7 @@
 <receiver android:name="Widget" android:icon="@drawable/icon5" android:description="@string/GetLocButtonString" android:label="@string/app_name"><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget" /><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
 
 </intent-filter>
-</receiver><service android:name="ALauncher" android:enabled="true"></service>
+</receiver><service android:name="ALauncher" android:enabled="true" android:label="@string/app_name"></service>
 </application>
 
 
