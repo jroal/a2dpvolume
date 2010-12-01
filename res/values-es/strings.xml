@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+    <string name="app_name">A2DP volumen</string>
+    <string name="ListName">Dispositivos Bluetooth</string>
+    <string name="GetLocButtonString">Ubicación almacenados</string>
+    <string name="CapLocationButton">Captura de Ubicación</string>
+    <string name="StartService">Inicio de servicio</string>
+    <string name="StopService">Detener servicio</string>
+    <string name="FindDevices">Buscar dispositivos</string>
+    <string name="MediaVolume">Medios de volumen</string>
+    <string name="ServiceStarted">A2DP Servicio de volumen empezar</string>
+    <string name="ServiceStopped">A2DP Servicio de volumen Detenido</string>
+    <string name="ExportDB">Exportación de bases de datos a la tarjeta SD</string>
+    <string name="ExportXML">Exportación de bases de datos como XML a la tarjeta SD</string>
+    <string name="ImportDB">Importar base de datos desde la tarjeta SD</string>
+    <string name="ExportLocation">Exportación de datos de la última ubicación</string>
+    <string name="PrefsNotifySummaryON">El servicio se iniciará como una tarea de primer plano con un icono en la barra de notificación.</string>
+    <string name="PrefsNotifySummaryOFF">El servicio se iniciará, pero será un gusto de fondo con ningún icono en la barra de notificación.</string>
+    <string name="PrefsNotify">Notificar en primer plano?</string>
+    <string name="PrefsGPSTimeoutTitle">GPS de tiempo de espera de escucha</string>
+    <string name="PrefsGPSTimeout">El tiempo máximo que el detector GPS se les permite correr en busca de una mejor ubicación GPS Bluetooth después de la desconexión.</string>
+    <string name="PrefsGPSInaccuracyTitle">GPS inexactitud Max</string>
+    <string name="PrefsGPSInaccuracy">inexactitud del GPS máxima en metros antes de oyente dejar de buscar un mejor valor.</string>
+    <string name="PrefsCarModeON">También la captura de ubicación al salir del coche modo.</string>
+    <string name="PrefsCarModeOFF">No también la captura de ubicación al salir del coche modo.</string>
+    <string name="PrefsCarMode">Desconecte el modo de coches</string>
+    <string name="PrefsCatGPS">Configuración de la ubicación de captura</string>
+    <string name="PrefsCatGen">Configuración general</string>
+    <string name="PrefsBootstart">Comenzar al arrancar?</string>
+    <string name="PrefsBootstartON">El servicio se iniciará en el arranque.</string>
+    <string name="PrefsBootstartOFF">El servicio no se iniciará en el arranque.</string>
+    <string name="PrefsToasts">Mostrar las ventanas emergentes?</string>
+    <string name="PrefsToastsON">mensajes emergentes se muestran cuando el servicio se inicia o se detiene.</string>
+    <string name="PrefsToastsOFF">mensajes emergentes no se muestran cuando el servicio se inicia o se detiene.</string>
+    <string name="PrefsToastsSummary">En caso de mensajes emergentes muestran cuando el servicio se ha iniciado o se detuvo?</string>
+    <string-array name="gpsDistance">
+        <item>2 m (6 pies)</item>
+        <item>5 metros (15 pies)</item>
+        <item>10 metros (30 pies) por defecto</item>
+        <item>15 metros (45 pies)</item>
+        <item>20 metros (60 pies)</item>
+        <item>30 metros (90 pies)</item>
+    </string-array>
+    <string-array name="gpsTimeout">
+        <item>Desactivar GPS escucha</item>
+        <item>5 segundos</item>
+        <item>10 segundos</item>
+        <item>15 segundos</item>
+        <item>20 segundos</item>
+        <item>30 segundos</item>
+        <item>45 segundos</item>
+    </string-array>
+    <string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>45000</item>
+    </string-array>
+    <string-array name="gpsDistance_items">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+</resources>

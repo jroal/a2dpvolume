@@ -29,7 +29,7 @@ import android.widget.Toast;
 
 public class service extends Service {
 
-	/* (non-Javadoc)
+	/* (non-Javadoc)  
 	 * @see android.app.Service#onStartCommand(android.content.Intent, int, int)
 	 */
 	@Override
