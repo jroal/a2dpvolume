@@ -17,16 +17,8 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int a2dpvol=0x7f020000;
-        public static final int car2=0x7f020001;
-        public static final int icon=0x7f020002;
-        public static final int icon1b=0x7f020003;
-        public static final int icon1c=0x7f020004;
-        public static final int icon2=0x7f020005;
-        public static final int icon3=0x7f020006;
-        public static final int icon4=0x7f020007;
-        public static final int icon5=0x7f020008;
-        public static final int images3=0x7f020009;
+        public static final int car2=0x7f020000;
+        public static final int icon5=0x7f020001;
     }
     public static final class id {
         public static final int AbsoluteLayout01=0x7f08000a;
@@ -80,8 +72,25 @@ public final class R {
         public static final int ImportDB=0x7f05000c;
         public static final int ListName=0x7f050001;
         public static final int MediaVolume=0x7f050007;
+        public static final int PrefsBootstart=0x7f05001a;
+        public static final int PrefsBootstartOFF=0x7f05001c;
+        public static final int PrefsBootstartON=0x7f05001b;
+        public static final int PrefsCarMode=0x7f050017;
+        public static final int PrefsCarModeOFF=0x7f050016;
+        public static final int PrefsCarModeON=0x7f050015;
+        public static final int PrefsCatGPS=0x7f050018;
+        public static final int PrefsCatGen=0x7f050019;
+        public static final int PrefsGPSInaccuracy=0x7f050014;
+        public static final int PrefsGPSInaccuracyTitle=0x7f050013;
+        public static final int PrefsGPSTimeout=0x7f050012;
+        public static final int PrefsGPSTimeoutTitle=0x7f050011;
+        public static final int PrefsNotify=0x7f050010;
         public static final int PrefsNotifySummaryOFF=0x7f05000f;
         public static final int PrefsNotifySummaryON=0x7f05000e;
+        public static final int PrefsToasts=0x7f05001d;
+        public static final int PrefsToastsOFF=0x7f05001f;
+        public static final int PrefsToastsON=0x7f05001e;
+        public static final int PrefsToastsSummary=0x7f050020;
         public static final int ServiceStarted=0x7f050008;
         public static final int ServiceStopped=0x7f050009;
         public static final int StartService=0x7f050004;
