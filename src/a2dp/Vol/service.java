@@ -53,6 +53,8 @@ public class service extends Service {
 	private boolean gettingLoc = false;
 	private boolean toasts = true;
 	private boolean notify = false;
+	private Notification not = null;
+	private NotificationManager mNotificationManager = null;
 
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
@@ -136,8 +138,8 @@ public class service extends Service {
 		if (notify) {
 			// set up the notification and start foreground
 			String ns = Context.NOTIFICATION_SERVICE;
-			NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-			Notification not = new Notification(R.drawable.car2, "A2DP", System
+			mNotificationManager = (NotificationManager) getSystemService(ns);
+			not = new Notification(R.drawable.icon5, "A2DP", System
 					.currentTimeMillis());
 			Context context = getApplicationContext();
 			CharSequence contentTitle = "A2DP Volume Notification";
@@ -147,6 +149,7 @@ public class service extends Service {
 					notificationIntent, 0);
 			not.setLatestEventInfo(context, contentTitle, contentText,
 					contentIntent);
+			
 			mNotificationManager.notify(1, not);
 			this.startForeground(1, not);
 		}
@@ -224,6 +227,7 @@ public class service extends Service {
 				if (toasts)
 					Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG)
 							.show();
+				if(notify)updateNot(true,bt2.toString());
 			} catch (Exception e) {
 				if (toasts)
 					Toast.makeText(context, btConn.getAddress() + "\n"
@@ -268,6 +272,7 @@ public class service extends Service {
 				bt2 = null;
 			}
 
+			if(notify)updateNot(false,null);
 			if (bt2 != null && bt2.isGetLoc()) {
 				// make sure we turn OFF the location listener if we don't get a
 				// loc in MAX_TIME
@@ -307,6 +312,11 @@ public class service extends Service {
 			}
 			else
 				if(!gettingLoc)btConn = null;
+			
+			if(notify){
+				not.icon = R.drawable.icon5;
+				mNotificationManager.notify(1, not);
+			}
 		}
 	};
 
@@ -349,6 +359,8 @@ public class service extends Service {
 				}
 				// get best location and store it
 				grabGPS();
+
+				if(notify)updateNot(false,null);	
 			}
 		}
 	};
@@ -559,6 +571,31 @@ public class service extends Service {
 		gettingLoc = false;
 		// Toast.makeText(a2dp.Vol.service.this, " Location Manager stopped",
 		// Toast.LENGTH_LONG).show();
+	}
+	
+	private void updateNot(boolean connect, String car){
+		
+		String temp = car;
+		if(car != null)
+			temp = "Connected to " + car;
+		else
+			temp = "A2DP Volume Service Running";
+		
+		Context context = getApplicationContext();
+		CharSequence contentTitle = "A2DP Volume";
+		CharSequence contentText = temp;
+		Intent notificationIntent = new Intent(this, main.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+				notificationIntent, 0);
+		not.setLatestEventInfo(context, contentTitle, contentText,
+				contentIntent);
+		
+		if(connect)
+			not.icon = R.drawable.car2;
+		else
+			not.icon = R.drawable.icon5;
+		
+		mNotificationManager.notify(1, not);
 	}
 
 }

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android" android:enabled="true">
+  xmlns:android="http://schemas.android.com/apk/res/android" android:enabled="true" android:title="@string/app_name">
 
 
 
-<PreferenceCategory android:title="Location Capture Settings" android:enabled="true">
-<ListPreference android:enabled="true" android:title="GPS Listener Timeout" android:key="gpsTime" android:entries="@array/gpsTimeout" android:entryValues="@array/gpsTimeout_items" android:summary="The maximum time the GPS listener will be allowed to run looking for a better GPS location after bluetooth disconnect" android:defaultValue="15000"></ListPreference>
-<ListPreference android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:summary="GPS maximum inaccuracy in meters before listener will stop looking for a better value" android:title="GPS Max Inaccuracy " android:defaultValue="10"></ListPreference>
-<CheckBoxPreference android:key="car_mode" android:title="Car mode disconnect" android:enabled="true" android:selectable="true" android:defaultValue="true" android:summaryOn="Also capture location when exiting Car Mode" android:summaryOff="Does not also capture location when exiting Car Mode"></CheckBoxPreference>
+<PreferenceCategory android:enabled="true" android:title="@string/PrefsCatGPS">
+<ListPreference android:enabled="true" android:key="gpsTime" android:entries="@array/gpsTimeout" android:entryValues="@array/gpsTimeout_items" android:defaultValue="15000" android:summary="@string/PrefsGPSTimeout" android:title="@string/PrefsGPSTimeoutTitle"></ListPreference>
+<ListPreference android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:defaultValue="10" android:summary="@string/PrefsGPSInaccuracy" android:title="@string/PrefsGPSInaccuracyTitle"></ListPreference>
+<CheckBoxPreference android:key="car_mode" android:enabled="true" android:selectable="true" android:defaultValue="true" android:summaryOff="@string/PrefsCarModeOFF" android:summaryOn="@string/PrefsCarModeON" android:title="@string/PrefsCarMode"></CheckBoxPreference>
 
-</PreferenceCategory><PreferenceCategory android:title="General Settings"><CheckBoxPreference android:selectable="true" android:enabled="true" android:title="Start at Boot?" android:key="bootstart" android:summaryOn="The service will start at boot" android:summaryOff="The service will not start at boot" android:defaultValue="true"></CheckBoxPreference>
+</PreferenceCategory><PreferenceCategory android:title="@string/PrefsCatGen"><CheckBoxPreference android:selectable="true" android:enabled="true" android:key="bootstart" android:defaultValue="true" android:summaryOff="@string/PrefsBootstartOFF" android:summaryOn="@string/PrefsBootstartON" android:title="@string/PrefsBootstart"></CheckBoxPreference>
 
 
-<CheckBoxPreference android:enabled="true" android:summaryOff="Pop-up messages are not shown when the service starts or stops." android:selectable="true" android:summary="Should the pop-up messages show when the service has started or stopped?" android:title="Show Pop-ups?" android:key="toasts" android:defaultValue="true" android:summaryOn="Pop-up messages are shown when the service starts or stops."></CheckBoxPreference>
-<CheckBoxPreference android:summaryOn="@string/PrefsNotifySummaryON" android:summaryOff="@string/PrefsNotifySummaryOFF" android:title="Notify foreground?" android:enabled="true" android:selectable="true" android:summary="@string/PrefsNotifySummaryON" android:key="notify1"></CheckBoxPreference>
+<CheckBoxPreference android:enabled="true" android:selectable="true" android:key="toasts" android:defaultValue="true" android:summaryOff="@string/PrefsToastsOFF" android:summaryOn="@string/PrefsToastsON" android:title="@string/PrefsToasts" android:summary="@string/PrefsToastsSummary"></CheckBoxPreference>
+<CheckBoxPreference android:summaryOn="@string/PrefsNotifySummaryON" android:summaryOff="@string/PrefsNotifySummaryOFF" android:enabled="true" android:selectable="true" android:summary="@string/PrefsNotifySummaryON" android:key="notify1" android:title="@string/PrefsNotify"></CheckBoxPreference>
 </PreferenceCategory>
 </PreferenceScreen>

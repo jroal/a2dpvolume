@@ -46,6 +46,23 @@
 <string name="ExportXML">Export Database as XML to SD card</string>
 <string name="ImportDB">Import Database from SD card</string>
 <string name="ExportLocation">Export Last Location Data</string>
-<string name="PrefsNotifySummaryON">The service will start as a foreground task with an icon on the notification bar</string>
+<string name="PrefsNotifySummaryON">The service will start as a foreground task with an icon on the notification bar.</string>
 <string name="PrefsNotifySummaryOFF">The service will start but it will be a background tast with no icon on the notification bar.</string>
+<string name="PrefsNotify">Notify in Foreground?</string><string name="PrefsGPSTimeoutTitle">GPS Listener Timeout</string><string name="PrefsGPSTimeout">The maximum time the GPS listener will be allowed to run looking for a better GPS location after bluetooth disconnect.</string>
+<string name="PrefsGPSInaccuracyTitle">GPS Max Inaccuracy </string><string name="PrefsGPSInaccuracy">GPS maximum inaccuracy in meters before listener will stop looking for a better value.</string>
+<string name="PrefsCarModeON">Also capture location when exiting Car Mode.</string>
+<string name="PrefsCarModeOFF">Does not also capture location when exiting Car Mode.</string>
+<string name="PrefsCarMode">Car Mode Disconnect</string>
+<string name="PrefsCatGPS">Location Capture Settings</string>
+<string name="PrefsCatGen">General Settings</string>
+<string name="PrefsBootstart">Start at Boot?</string>
+<string name="PrefsBootstartON">The service will start at boot.</string>
+<string name="PrefsBootstartOFF">The service will not start at boot.</string>
+<string name="PrefsToasts">Show Pop-ups?</string>
+<string name="PrefsToastsON">Pop-up messages are shown when the service starts or stops.</string>
+<string name="PrefsToastsOFF">Pop-up messages are not shown when the service starts or stops.</string>
+<string name="PrefsToastsSummary">Should the pop-up messages show when the service has started or stopped?</string>
+
+
+
 </resources>

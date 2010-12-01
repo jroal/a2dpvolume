@@ -46,4 +46,21 @@
 <string name="ExportXML">Export base de données au format XML sur carte SD</string>
 <string name="ImportDB">Import de base de données de carte SD</string>
 <string name="ExportLocation">Data Export Lieu Dernière</string>
+<string name="PrefsNotifySummaryON">Le service démarre comme une tâche de premier plan avec une icône sur la barre de notification</string>
+<string name="PrefsNotifySummaryOFF">Le service démarre, mais il sera un avant-goût de fond avec pas d\'icône sur la barre de notification.</string>
+<string name="PrefsNotify">Avertissez-plan?</string>
+<string name="PrefsGPSTimeout">La durée maximale de l\'auditeur GPS sera autorisé à courir à la recherche d\'un meilleur emplacement GPS bluetooth après déconnexion</string>
+<string name="PrefsGPSInaccuracy">Imprécision maximale GPS en mètres avant auditeur cesser de chercher une meilleure valeur</string>
+<string name="PrefsCarModeON">Aussi emplacement de capture lors de la sortie du mode Auto</string>
+<string name="PrefsCarModeOFF">Ne également capturer l\'emplacement lors de la sortie du mode Auto</string>
+<string name="PrefsCarMode">Car le mode déconnecter</string>
+<string name="PrefsCatGPS">Emplacement des paramètres de capture</string>
+<string name="PrefsCatGen">Paramètres généraux</string>
+<string name="PrefsBootstart">Démarrage à l\'amorçage?</string>
+<string name="PrefsBootstartON">Le service sera lancé au démarrage</string>
+<string name="PrefsBootstartOFF">Le service ne démarre pas au démarrage</string>
+<string name="PrefsToasts">Afficher les Pop-ups?</string>
+<string name="PrefsToastsON">messages pop-up sont affichés quand le service démarre ou s\'arrête.</string>
+<string name="PrefsToastsOFF">messages pop-up ne sont pas indiqués lorsque le service démarre ou s\'arrête.</string>
+<string name="PrefsToastsSummary">Si les messages pop-up voir lorsque le service a démarré ou arrêté?</string>
 </resources>
