@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     
     <string name="app_name">A2DP Volume</string>
-<string-array name="gpsDistance"><item>2m (6ft)</item><item>5m (15ft)</item>
+<string-array name="gpsDistance">
+        <item>2m (6ft)</item>
+        <item>5m (15ft)</item>
 <item>10m (30ft) default</item>
 <item>15m (45ft)</item>
 <item>20m (60ft)</item>
@@ -10,7 +12,9 @@
 
 </string-array>
 
-<string-array name="gpsTimeout"><item>Disable GPS Listener</item><item>5 seconds</item>
+<string-array name="gpsTimeout">
+        <item>Disable GPS Listener</item>
+        <item>5 seconds</item>
 <item>10 seconds</item>
 <item>15 seconds</item>
 <item>20 seconds</item>
@@ -18,7 +22,9 @@
 <item>45 seconds</item>
 
 </string-array>
-<string-array name="gpsTimeout_items"><item>0</item><item>5000</item>
+<string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
 <item>10000</item>
 <item>15000</item>
 <item>20000</item>
@@ -26,7 +32,8 @@
 <item>45000</item>
 
 </string-array>
-<string-array name="gpsDistance_items"><item>2</item>
+<string-array name="gpsDistance_items">
+        <item>2</item>
 <item>5</item>
 <item>10</item>
 <item>15</item>
@@ -48,8 +55,11 @@
 <string name="ExportLocation">Export Last Location Data</string>
 <string name="PrefsNotifySummaryON">The service will start as a foreground task with an icon on the notification bar.</string>
 <string name="PrefsNotifySummaryOFF">The service will start but it will be a background tast with no icon on the notification bar.</string>
-<string name="PrefsNotify">Notify in Foreground?</string><string name="PrefsGPSTimeoutTitle">GPS Listener Timeout</string><string name="PrefsGPSTimeout">The maximum time the GPS listener will be allowed to run looking for a better GPS location after bluetooth disconnect.</string>
-<string name="PrefsGPSInaccuracyTitle">GPS Max Inaccuracy </string><string name="PrefsGPSInaccuracy">GPS maximum inaccuracy in meters before listener will stop looking for a better value.</string>
+<string name="PrefsNotify">Notify in Foreground?</string>
+    <string name="PrefsGPSTimeoutTitle">GPS Listener Timeout</string>
+    <string name="PrefsGPSTimeout">The maximum time the GPS listener will be allowed to run looking for a better GPS location after bluetooth disconnect.</string>
+<string name="PrefsGPSInaccuracyTitle">GPS Max Inaccuracy </string>
+    <string name="PrefsGPSInaccuracy">GPS maximum inaccuracy in meters before listener will stop looking for a better value.</string>
 <string name="PrefsCarModeON">Also capture location when exiting Car Mode.</string>
 <string name="PrefsCarModeOFF">Does not also capture location when exiting Car Mode.</string>
 <string name="PrefsCarMode">Car Mode Disconnect</string>
@@ -65,4 +75,9 @@
 
 
 
+<string name="MenuExit">Exit</string>
+    <string name="MenumanageData">Manage Data</string>
+    <string name="MenuDeleteData">Delete Data</string>
+    <string name="MenuPrefs">Preferences</string>
+    <string name="MenuHelp">Help</string>
 </resources>

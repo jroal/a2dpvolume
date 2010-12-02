@@ -34,12 +34,12 @@
     <string name="PrefsToastsOFF">mensajes emergentes no se muestran cuando el servicio se inicia o se detiene.</string>
     <string name="PrefsToastsSummary">En caso de mensajes emergentes muestran cuando el servicio se ha iniciado o se detuvo?</string>
     <string-array name="gpsDistance">
-        <item>2 m (6 pies)</item>
-        <item>5 metros (15 pies)</item>
-        <item>10 metros (30 pies) por defecto</item>
-        <item>15 metros (45 pies)</item>
-        <item>20 metros (60 pies)</item>
-        <item>30 metros (90 pies)</item>
+        <item>2 metros </item>
+        <item>5 metros</item>
+        <item>10 metros por defecto</item>
+        <item>15 metros</item>
+        <item>20 metros</item>
+        <item>30 metros</item>
     </string-array>
     <string-array name="gpsTimeout">
         <item>Desactivar GPS escucha</item>
@@ -67,4 +67,9 @@
         <item>20</item>
         <item>30</item>
     </string-array>
+<string name="MenuExit">Salir</string>
+    <string name="MenumanageData">Administrar datos</string>
+    <string name="MenuDeleteData">Eliminar datos</string>
+    <string name="MenuPrefs">Preferencias</string>
+    <string name="MenuHelp">Ayuda</string>
 </resources>
