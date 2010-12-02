@@ -1,66 +1,75 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
-    
-    <string name="app_name">A2DP Volume</string>
-<string-array name="gpsDistance"><item>2m </item><item>5m </item>
-<item>10m par défaut</item>
-<item>15m </item>
-<item>20m</item>
-<item>30m </item>
-
-</string-array>
-
-<string-array name="gpsTimeout"><item>Désactiver GPS Listener</item><item>5 seconds</item>
-<item>10 seconds</item>
-<item>15 seconds</item>
-<item>20 seconds</item>
-<item>30 seconds</item>
-<item>45 seconds</item>
-
-</string-array>
-<string-array name="gpsTimeout_items"><item>0</item><item>5000</item>
-<item>10000</item>
-<item>15000</item>
-<item>20000</item>
-<item>30000</item>
-<item>45000</item>
-
-</string-array>
-<string-array name="gpsDistance_items"><item>2</item>
-<item>5</item>
-<item>10</item>
-<item>15</item>
-<item>20</item>
-<item>30</item>
-</string-array>
-<string name="ListName">Périphériques Bluetooth</string>
-<string name="GetLocButtonString">Lieu stockées</string>
-<string name="CapLocationButton">Capture Lieu</string>
-<string name="StartService">Démarrer le service</string>
-<string name="StopService">Arrêter le service</string>
-<string name="FindDevices">Trouver Devices</string>
-<string name="MediaVolume">Volume des médias</string>
-<string name="ServiceStarted">Service Volume A2DP Route</string>
-<string name="ServiceStopped">Service Volume A2DP Arrêté</string>
-<string name="ExportDB">Export base de données sur carte SD</string>
-<string name="ExportXML">Export base de données au format XML sur carte SD</string>
-<string name="ImportDB">Import de base de données de carte SD</string>
-<string name="ExportLocation">Data Export Lieu Dernière</string>
-<string name="PrefsNotifySummaryON">Le service démarre comme une tâche de premier plan avec une icône sur la barre de notification</string>
-<string name="PrefsNotifySummaryOFF">Le service démarre, mais il sera un avant-goût de fond avec pas d\'icône sur la barre de notification.</string>
-<string name="PrefsNotify">Avertissez-plan?</string>
-<string name="PrefsGPSTimeout">La durée maximale de l\'auditeur GPS sera autorisé à courir à la recherche d\'un meilleur emplacement GPS bluetooth après déconnexion</string>
-<string name="PrefsGPSInaccuracy">Imprécision maximale GPS en mètres avant auditeur cesser de chercher une meilleure valeur</string>
-<string name="PrefsCarModeON">Aussi emplacement de capture lors de la sortie du mode Auto</string>
-<string name="PrefsCarModeOFF">Ne également capturer l\'emplacement lors de la sortie du mode Auto</string>
-<string name="PrefsCarMode">Car le mode déconnecter</string>
-<string name="PrefsCatGPS">Emplacement des paramètres de capture</string>
-<string name="PrefsCatGen">Paramètres généraux</string>
-<string name="PrefsBootstart">Démarrage à l\'amorçage?</string>
-<string name="PrefsBootstartON">Le service sera lancé au démarrage</string>
-<string name="PrefsBootstartOFF">Le service ne démarre pas au démarrage</string>
-<string name="PrefsToasts">Afficher les Pop-ups?</string>
-<string name="PrefsToastsON">messages pop-up sont affichés quand le service démarre ou s\'arrête.</string>
-<string name="PrefsToastsOFF">messages pop-up ne sont pas indiqués lorsque le service démarre ou s\'arrête.</string>
-<string name="PrefsToastsSummary">Si les messages pop-up voir lorsque le service a démarré ou arrêté?</string>
+    <string name="app_name">Volume A2DP</string>
+    <string name="ListName">Périphériques Bluetooth</string>
+    <string name="GetLocButtonString">Lieu stockées</string>
+    <string name="CapLocationButton">Capture Lieu</string>
+    <string name="StartService">Démarrer le service</string>
+    <string name="StopService">Arrêter le service</string>
+    <string name="FindDevices">Trouver Devices</string>
+    <string name="MediaVolume">Volume des médias</string>
+    <string name="ServiceStarted">Service Volume A2DP route</string>
+    <string name="ServiceStopped">Service Volume A2DP arrêté</string>
+    <string name="ExportDB">Export base de données sur carte SD</string>
+    <string name="ExportXML">Export base de données au format XML sur carte SD</string>
+    <string name="ImportDB">Import de base de données de carte SD</string>
+    <string name="ExportLocation">Data Export Lieu Dernière</string>
+    <string name="PrefsNotifySummaryON">Le service démarre comme une tâche de premier plan avec une icône sur la barre de notification.</string>
+    <string name="PrefsNotifySummaryOFF">Le service démarre, mais il sera un avant-goût de fond avec pas d\'icône sur la barre de notification.</string>
+    <string name="PrefsNotify">Avertissez originaux?</string>
+    <string name="PrefsGPSTimeoutTitle">Timeout Listener GPS</string>
+    <string name="PrefsGPSTimeout">La durée maximale de l\'auditeur GPS sera autorisé à courir à la recherche d\'un meilleur emplacement GPS bluetooth après déconnexion.</string>
+    <string name="PrefsGPSInaccuracyTitle">Imprécision Max GPS</string>
+    <string name="PrefsGPSInaccuracy">imprécision maximale GPS en mètres avant auditeur cesser de chercher une meilleure valeur.</string>
+    <string name="PrefsCarModeON">Aussi emplacement de capture lors de la sortie du mode Auto.</string>
+    <string name="PrefsCarModeOFF">Ne également capturer l\'emplacement lors de la sortie du mode Auto.</string>
+    <string name="PrefsCarMode">Mode de voitures Débranchez</string>
+    <string name="PrefsCatGPS">Emplacement des paramètres de capture</string>
+    <string name="PrefsCatGen">Paramètres généraux</string>
+    <string name="PrefsBootstart">Démarrage à l\'amorçage?</string>
+    <string name="PrefsBootstartON">Le service sera lancé au démarrage.</string>
+    <string name="PrefsBootstartOFF">Le service ne démarre pas au démarrage.</string>
+    <string name="PrefsToasts">Afficher les Pop-ups?</string>
+    <string name="PrefsToastsON">messages pop-up sont affichés quand le service démarre ou s\'arrête.</string>
+    <string name="PrefsToastsOFF">messages pop-up ne sont pas indiqués lorsque le service démarre ou s\'arrête.</string>
+    <string name="PrefsToastsSummary">Si les messages pop-up voir lorsque le service a démarré ou arrêté?</string>
+    <string-array name="gpsDistance">
+        <item>2m </item>
+        <item>5m </item>
+        <item>10m par défaut</item>
+        <item>15m</item>
+        <item>20m</item>
+        <item>30m</item>
+    </string-array>
+    <string-array name="gpsTimeout">
+        <item>Désactiver GPS Listener</item>
+        <item>5 secondes</item>
+        <item>10 secondes</item>
+        <item>15 secondes</item>
+        <item>20 secondes</item>
+        <item>30 secondes</item>
+        <item>45 secondes</item>
+    </string-array>
+    <string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>45000</item>
+    </string-array>
+    <string-array name="gpsDistance_items">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string name="MenuExit">Exit</string>
+    <string name="MenumanageData">Gérer les données</string>
+    <string name="MenuDeleteData">Supprimer des données</string>
+    <string name="MenuPrefs">Préférences</string>
+    <string name="MenuHelp">Aide</string>
 </resources>

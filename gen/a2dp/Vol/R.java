@@ -72,6 +72,11 @@ public final class R {
         public static final int ImportDB=0x7f05000c;
         public static final int ListName=0x7f050001;
         public static final int MediaVolume=0x7f050007;
+        public static final int MenuDeleteData=0x7f050023;
+        public static final int MenuExit=0x7f050021;
+        public static final int MenuHelp=0x7f050025;
+        public static final int MenuPrefs=0x7f050024;
+        public static final int MenumanageData=0x7f050022;
         public static final int PrefsBootstart=0x7f05001a;
         public static final int PrefsBootstartOFF=0x7f05001c;
         public static final int PrefsBootstartON=0x7f05001b;
