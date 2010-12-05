@@ -496,8 +496,7 @@ public class main extends Activity {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show in a
 					// ListView
-					if (device.getBluetoothClass().hasService(
-							BluetoothClass.Service.AUDIO)) {
+					if (true) {
 						btDevice bt = new btDevice();
 						i++;
 						bt.setBluetoothDevice(device, device.getName(), am
