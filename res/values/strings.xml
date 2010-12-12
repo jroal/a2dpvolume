@@ -77,7 +77,16 @@
 
 <string name="MenuExit">Exit</string>
     <string name="MenumanageData">Manage Data</string>
-    <string name="MenuDeleteData">Delete Data</string>
+    <string name="MenuDeleteData">Delete All Data</string>
     <string name="MenuPrefs">Preferences</string>
     <string name="MenuHelp">Help</string>
+<string name="DeleteDataMsg">Do you really want to delete all the device data from A2DP Volume?</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
+    <string name="OK">OK</string>
+    <string name="Delete">Delete</string>
+    <string name="Edit">Edit</string>
+    <string name="NoData">No Data</string>
+    <string name="ServRunning">A2DP Volume Service Running</string>
+<string name="ImportCompletedText">Import Seccesful</string>
 </resources>

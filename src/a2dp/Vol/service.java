@@ -142,8 +142,8 @@ public class service extends Service {
 			not = new Notification(R.drawable.icon5, "A2DP", System
 					.currentTimeMillis());
 			Context context = getApplicationContext();
-			CharSequence contentTitle = "A2DP Volume Notification";
-			CharSequence contentText = "A2DP Volume Service Running";
+			CharSequence contentTitle = getResources().getString(R.string.app_name);
+			CharSequence contentText = getResources().getString(R.string.ServRunning);
 			Intent notificationIntent = new Intent(this, main.class);
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 					notificationIntent, 0);
@@ -313,10 +313,10 @@ public class service extends Service {
 			else
 				if(!gettingLoc)btConn = null;
 			
-			if(notify){
+/*			if(notify){
 				not.icon = R.drawable.icon5;
 				mNotificationManager.notify(1, not);
-			}
+			}*/
 		}
 	};
 
@@ -579,10 +579,10 @@ public class service extends Service {
 		if(car != null)
 			temp = "Connected to " + car;
 		else
-			temp = "A2DP Volume Service Running";
+			temp = getResources().getString(R.string.ServRunning);
 		
 		Context context = getApplicationContext();
-		CharSequence contentTitle = "A2DP Volume";
+		CharSequence contentTitle = getResources().getString(R.string.app_name);
 		CharSequence contentText = temp;
 		Intent notificationIntent = new Intent(this, main.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,

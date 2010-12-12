@@ -69,7 +69,16 @@
     </string-array>
     <string name="MenuExit">Exit</string>
     <string name="MenumanageData">Gérer les données</string>
-    <string name="MenuDeleteData">Supprimer des données</string>
+    <string name="MenuDeleteData">Supprimer toutes les données</string>
     <string name="MenuPrefs">Préférences</string>
     <string name="MenuHelp">Aide</string>
+<string name="DeleteDataMsg">Voulez-vous vraiment supprimer toutes les données de l\'appareil à partir du volume A2DP?</string>
+    <string name="Yes">Oui</string>
+    <string name="No">N</string>
+    <string name="OK">OK</string>
+    <string name="Delete">Supprimer</string>
+    <string name="Edit">Modifier</string>
+    <string name="NoData">Pas de données</string>
+    <string name="ServRunning">Service Volume A2DP Running</string>
+<string name="ImportCompletedText">Importer Seccesful</string>
 </resources>

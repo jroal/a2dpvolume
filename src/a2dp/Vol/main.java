@@ -83,7 +83,6 @@ public class main extends Activity {
 		case R.id.Manage_data: // used to export the data
 			Intent i = new Intent(a2dp.Vol.main.this, ManageData.class);
 			startActivity(i);
-			refreshList(loadFromDB());
 			return true;
 
 		case R.id.Exit:
@@ -97,8 +96,28 @@ public class main extends Activity {
 			return true;
 
 		case R.id.DelData: // clears the database of all devices and settings.
-			myDB.deleteAll();
-			refreshList(loadFromDB());
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.DeleteDataMsg)
+					.setCancelable(false)
+					.setPositiveButton(R.string.Yes,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int id) {
+									myDB.deleteAll();
+									refreshList(loadFromDB());
+								}
+							})
+					.setNegativeButton(R.string.No,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int id) {
+									// put your code here
+									dialog.cancel();
+								}
+							});
+			AlertDialog alertDialog = builder.create();
+			alertDialog.show();
+
 			return true;
 
 		case R.id.help: // launches help website
@@ -145,6 +164,9 @@ public class main extends Activity {
 		IntentFilter filter4 = new IntentFilter(
 				"a2dp.vol.service.STOPPED_RUNNING");
 		this.registerReceiver(sRunning, filter4);
+		
+		IntentFilter filter5 = new IntentFilter("a2dp.vol.ManageData.RELOAD_LIST");
+		this.registerReceiver(mReceiver5, filter5);
 
 		vec = new Vector<btDevice>();
 		tx1 = (TextView) findViewById(R.id.TextView01);
@@ -266,8 +288,8 @@ public class main extends Activity {
 						+ bt2.mac + "\nConnected Volume: " + bt2.defVol
 						+ "\nTrigger Volume: " + bt2.setV + "\nGet Location: "
 						+ bt2.getLoc);
-				builder.setPositiveButton("OK", null);
-				builder.setNegativeButton("Delete", new OnClickListener() {
+				builder.setPositiveButton(R.string.OK, null);
+				builder.setNegativeButton(R.string.Delete, new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						// BluetoothDevice bdelete =
 						// BluetoothAdapter.getDefaultAdapter().getRemoteDevice(bt.mac);
@@ -275,7 +297,7 @@ public class main extends Activity {
 						refreshList(loadFromDB());
 					}
 				});
-				builder.setNeutralButton("Edit", new OnClickListener() {
+				builder.setNeutralButton(R.string.Edit, new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						final Dialog dl = new Dialog(a2dp.Vol.main.this);
 
@@ -377,7 +399,7 @@ public class main extends Activity {
 							.show();
 					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(st)));
 				} catch (FileNotFoundException e) {
-					Toast.makeText(a2dp.Vol.main.this, "No data",
+					Toast.makeText(a2dp.Vol.main.this, R.string.NoData,
 							Toast.LENGTH_LONG).show();
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -463,7 +485,7 @@ public class main extends Activity {
 			Toast.makeText(a2dp.Vol.main.this, st, Toast.LENGTH_LONG).show();
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(st)));
 		} catch (FileNotFoundException e) {
-			Toast.makeText(a2dp.Vol.main.this, "No data", Toast.LENGTH_LONG)
+			Toast.makeText(a2dp.Vol.main.this, R.string.NoData, Toast.LENGTH_LONG)
 					.show();
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -634,6 +656,15 @@ public class main extends Activity {
 
 			btCon = null;
 			refreshList(vec.size());
+		}
+	};
+	
+	private final BroadcastReceiver mReceiver5 = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context2, Intent intent2) {
+
+			refreshList(loadFromDB());
+			//Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
 		}
 	};
 
@@ -810,44 +841,5 @@ public class main extends Activity {
 
 		// return device class
 		return temp;
-	}
-
-	private Location captureLocation() {
-		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		List<String> providers = lm.getProviders(true);
-
-		Location l = null;
-		Location l2 = null;
-		Location l3 = null;
-
-		long deltat = 9999999;
-		long olddt = 9999999;
-		float oldacc = 999999;
-
-		if (!providers.isEmpty()) {
-			for (int i = providers.size() - 1; i >= 0; i--) {
-				l2 = lm.getLastKnownLocation(providers.get(i));
-
-				if (l2 != null) {
-					if (l2.hasAccuracy()) // if we have accuracy, capture the
-					// best
-					{
-						if (l2.getAccuracy() < oldacc) {
-							l3 = l2;
-							oldacc = l2.getAccuracy();
-						}
-					}
-					olddt = deltat;
-					deltat = System.currentTimeMillis() - l2.getTime();
-					if (deltat < olddt) // get the most recent update
-					{
-						l = l2;
-					}
-				}
-			}
-		} else
-			return null;
-
-		return l;
 	}
 }
