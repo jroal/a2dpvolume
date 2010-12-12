@@ -3,6 +3,7 @@ package a2dp.Vol;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,6 +25,15 @@ import java.util.List;
  *         the database used to store devices
  */
 public class ManageData extends Activity {
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onDestroy()
+	 */
+	@Override
+	protected void onDestroy() {
+		
+		super.onDestroy();
+	}
 
 	private MyApplication application;
 
@@ -322,15 +332,14 @@ public class ManageData extends Activity {
 				// Toast.makeText(ManageData.this, "Import successful!",
 				// Toast.LENGTH_SHORT).show();
 				ManageData.this.path.setText("Imported from: " + pathstr);
-				// need a way to reopen the database at this point
-				android.app.AlertDialog.Builder builder = new AlertDialog.Builder(
-						ManageData.this);
-				builder.setTitle("Import Complete");
-				builder
-						.setMessage("You must now close this program and reopen it for the new database to take affect. "
-								+ "Click the back key twice to return to the main screen and then click menu and exit.  "
-								+ "Doing anything else will cause a force close!");
-				builder.show();
+				
+				//Reload the device list in the main page
+				final String Ireload = "a2dp.vol.ManageData.RELOAD_LIST";
+				Intent itent = new Intent();
+				itent.setAction(Ireload);
+				application.sendBroadcast(itent);
+				Toast.makeText(ManageData.this, R.string.ImportCompletedText,
+						Toast.LENGTH_SHORT).show();
 
 			} else {
 				Toast.makeText(ManageData.this, "Import failed",

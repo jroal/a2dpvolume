@@ -81,15 +81,21 @@ public class DeviceDB {
 	 */
 	public btDevice getBTD(String imac) {
 		btDevice bt = new btDevice();
-		Cursor cs = this.db.query(TABLE_NAME, null, "mac = ?",
-				new String[] { imac }, null, null, null, null);
-		if (cs.moveToFirst()) {
-			bt.setDesc1(cs.getString(0));
-			bt.setDesc2(cs.getString(1));
-			bt.setMac(cs.getString(2));
-			bt.setDefVol((int) cs.getInt(3));
-			bt.setSetV(cs.getInt(4));
-			bt.setGetLoc(cs.getInt(5));
+
+		try {
+			Cursor cs = this.db.query(TABLE_NAME, null, "mac = ?",
+					new String[] { imac }, null, null, null, null);
+			if (cs.moveToFirst()) {
+				bt.setDesc1(cs.getString(0));
+				bt.setDesc2(cs.getString(1));
+				bt.setMac(cs.getString(2));
+				bt.setDefVol((int) cs.getInt(3));
+				bt.setSetV(cs.getInt(4));
+				bt.setGetLoc(cs.getInt(5));
+			}
+		} catch (Exception e) {
+			bt.mac = null;
+			// e.printStackTrace();
 		}
 		return bt;
 	}
@@ -99,6 +105,7 @@ public class DeviceDB {
 	 */
 	public void deleteAll() {
 		this.db.delete(TABLE_NAME, null, null);
+		
 	}
 
 	public SQLiteDatabase getDb() {
@@ -169,18 +176,16 @@ public class DeviceDB {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			db
-					.execSQL("CREATE TABLE "
-							+ TABLE_NAME
-							+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER, getl INTEGER)");
+			db.execSQL("CREATE TABLE "
+					+ TABLE_NAME
+					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER, getl INTEGER)");
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			if (newVersion < 4) {
-				Log
-						.w("Example",
-								"Upgrading database, this will drop tables and recreate.");
+				Log.w("Example",
+						"Upgrading database, this will drop tables and recreate.");
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 				onCreate(db);
 			} else {

@@ -64,11 +64,15 @@ public final class R {
     }
     public static final class string {
         public static final int CapLocationButton=0x7f050003;
+        public static final int Delete=0x7f05002a;
+        public static final int DeleteDataMsg=0x7f050026;
+        public static final int Edit=0x7f05002b;
         public static final int ExportDB=0x7f05000a;
         public static final int ExportLocation=0x7f05000d;
         public static final int ExportXML=0x7f05000b;
         public static final int FindDevices=0x7f050006;
         public static final int GetLocButtonString=0x7f050002;
+        public static final int ImportCompletedText=0x7f05002e;
         public static final int ImportDB=0x7f05000c;
         public static final int ListName=0x7f050001;
         public static final int MediaVolume=0x7f050007;
@@ -77,6 +81,9 @@ public final class R {
         public static final int MenuHelp=0x7f050025;
         public static final int MenuPrefs=0x7f050024;
         public static final int MenumanageData=0x7f050022;
+        public static final int No=0x7f050028;
+        public static final int NoData=0x7f05002c;
+        public static final int OK=0x7f050029;
         public static final int PrefsBootstart=0x7f05001a;
         public static final int PrefsBootstartOFF=0x7f05001c;
         public static final int PrefsBootstartON=0x7f05001b;
@@ -96,10 +103,12 @@ public final class R {
         public static final int PrefsToastsOFF=0x7f05001f;
         public static final int PrefsToastsON=0x7f05001e;
         public static final int PrefsToastsSummary=0x7f050020;
+        public static final int ServRunning=0x7f05002d;
         public static final int ServiceStarted=0x7f050008;
         public static final int ServiceStopped=0x7f050009;
         public static final int StartService=0x7f050004;
         public static final int StopService=0x7f050005;
+        public static final int Yes=0x7f050027;
         public static final int app_name=0x7f050000;
     }
     public static final class xml {
