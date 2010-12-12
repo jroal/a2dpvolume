@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+    <string name="app_name">Volume A2DP</string>
+    <string name="ListName">Dispositivos Bluetooth</string>
+    <string name="GetLocButtonString">Armazenado Localização</string>
+    <string name="CapLocationButton">Local de captura</string>
+    <string name="StartService">Iniciar serviço</string>
+    <string name="StopService">Stop Service</string>
+    <string name="FindDevices">Encontrar Devices</string>
+    <string name="MediaVolume">Volume Media</string>
+    <string name="ServiceStarted">A2DP Serviço Volume Iniciado</string>
+    <string name="ServiceStopped">A2DP Serviço Volume Parado</string>
+    <string name="ExportDB">Exportar banco de dados para o cartão SD</string>
+    <string name="ExportXML">Exportar banco de dados como XML para o cartão SD</string>
+    <string name="ImportDB">Importação de banco de dados de cartão SD</string>
+    <string name="ExportLocation">Exportação Última Dados de Localização</string>
+    <string name="PrefsNotifySummaryON">O serviço será iniciado como uma tarefa de primeiro plano com um ícone na barra de notificação.</string>
+    <string name="PrefsNotifySummaryOFF">O serviço será iniciado, mas ele vai ser um gosto de fundo sem nenhum ícone na barra de notificação.</string>
+    <string name="PrefsNotify">Notificar em primeiro plano?</string>
+    <string name="PrefsGPSTimeoutTitle">GPS Timeout ouvinte</string>
+    <string name="PrefsGPSTimeout">O tempo máximo que o ouvinte GPS será permitida a execução à procura de uma melhor localização GPS bluetooth após desligar.</string>
+    <string name="PrefsGPSInaccuracyTitle">GPS Inexatidão Max</string>
+    <string name="PrefsGPSInaccuracy">GPS imprecisão máxima em metros antes ouvinte vai parar de procurar um valor melhor.</string>
+    <string name="PrefsCarModeON">Também local de captura, ao sair do carro Mode.</string>
+    <string name="PrefsCarModeOFF">Será que também não local de captura, ao sair do carro Mode.</string>
+    <string name="PrefsCarMode">Carro Modo Desligar</string>
+    <string name="PrefsCatGPS">Capturar configurações de local</string>
+    <string name="PrefsCatGen">Definições Gerais</string>
+    <string name="PrefsBootstart">Iniciar no arranque?</string>
+    <string name="PrefsBootstartON">O serviço será iniciado no boot.</string>
+    <string name="PrefsBootstartOFF">O serviço não será iniciado no boot.</string>
+    <string name="PrefsToasts">Show de pop-ups?</string>
+    <string name="PrefsToastsON">mensagens pop-up são mostrados quando o serviço é iniciado ou pára.</string>
+    <string name="PrefsToastsOFF">mensagens pop-up não são mostrados quando o serviço é iniciado ou pára.</string>
+    <string name="PrefsToastsSummary">Se as mensagens pop-up show quando o serviço foi iniciado ou parado?</string>
+    <string name="MenuExit">Sair</string>
+    <string name="MenumanageData">Gerenciar dados</string>
+    <string name="MenuDeleteData">Excluir Todos os Dados</string>
+    <string name="MenuPrefs">Preferências</string>
+    <string name="MenuHelp">Ajuda</string>
+    <string name="DeleteDataMsg">Você realmente deseja apagar todos os dados do dispositivo de Volume A2DP?</string>
+    <string name="Yes">Sim</string>
+    <string name="No">Não</string>
+    <string name="OK">OK</string>
+    <string name="Delete">Excluir</string>
+    <string name="Edit">Editar</string>
+    <string name="NoData">Não há dados</string>
+    <string name="ServRunning">A2DP serviço Volume de duração</string>
+    <string-array name="gpsDistance">
+        <item>2m</item>
+        <item>5m</item>
+        <item>10m padrão</item>
+        <item>15m</item>
+        <item>20m</item>
+        <item>30m</item>
+    </string-array>
+    <string-array name="gpsTimeout">
+        <item>Desativar GPS ouvinte</item>
+        <item>5 segundo</item>
+        <item>10 segundo</item>
+        <item>15 segundo</item>
+        <item>20 segundo</item>
+        <item>30 segundo</item>
+        <item>45 segundo</item>
+    </string-array>
+    <string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>45000</item>
+    </string-array>
+    <string-array name="gpsDistance_items">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+<string name="ImportCompletedText">Importação Seccesful</string>
+</resources>
