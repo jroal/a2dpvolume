@@ -64,6 +64,7 @@ public class main extends Activity {
 	String[] lstring = null; // string array used for the listview
 	ArrayAdapter<String> ladapt; // listview adapter
 	BluetoothDevice btCon;
+	static final int ENABLE_BLUETOOTH = 1;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -203,6 +204,7 @@ public class main extends Activity {
 		// find bonded audio devices and load into the database and listview
 		btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+
 
 				int test = getBtDevices();
 				if (test > 0) {
@@ -504,9 +506,35 @@ public class main extends Activity {
 
 		str2 = "No devices found";
 		int i = 0;
+
 		vec.clear();
 
 		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
+
+		if (mBTA == null) {
+			Toast.makeText(application, R.string.NobtSupport, Toast.LENGTH_LONG)
+					.show();
+			return 0;
+		}
+		// AndroidManifest.xml must have the following permission:
+		// <uses-permission
+		// android:name="android.permission.BLUETOOTH"/>
+		/*
+		 * This number is used to identify this request ("Enable Bluetooth")
+		 * when the callback method onActivityResult() is called. Your
+		 * interaction with the Bluetooth stack will probably start there.
+		 */
+
+		// If Bluetooth is not yet enabled, enable it
+		if (!mBTA.isEnabled()) {
+			Intent enableBluetooth = new Intent(
+					BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH);
+			// Now implement the onActivityResult() and wait for it to
+			// be invoked with ENABLE_BLUETOOTH
+			//onActivityResult(ENABLE_BLUETOOTH, result, enableBluetooth);
+			return 0;
+		}
 
 		if (mBTA != null) {
 			Set<BluetoothDevice> pairedDevices = mBTA.getBondedDevices();
@@ -561,6 +589,37 @@ public class main extends Activity {
 		return i;
 	}
 
+	// Listen for results.
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+	    // See which child activity is calling us back.
+		
+	    switch (requestCode) {
+	        case ENABLE_BLUETOOTH:
+	            // This is the standard resultCode that is sent back if the
+	            // activity crashed or didn't doesn't supply an explicit result.
+	            if (resultCode == RESULT_CANCELED){
+	                Toast.makeText(application, R.string.btEnableFail, Toast.LENGTH_LONG).show();
+	        		refreshList(loadFromDB());
+	            } 
+	            else {
+	            	
+	            	int test = getBtDevices();
+					if (test > 0) {
+						lstring = new String[test];
+						for (int i = 0; i < test; i++) {
+							lstring[i] = vec.get(i).toString();
+						}
+						refreshList(loadFromDB());
+					}
+
+					tx1.setText("Volume:" + OldVol + " Devices=" + test + "  ");
+	            }
+	        default:
+	            break;
+	    }
+	}
+
+	
 	// This function handles the media volume adjustments.
 	/**
 	 * @param inputVol
