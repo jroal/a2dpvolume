@@ -81,4 +81,6 @@
     <string name="NoData">Pas de données</string>
     <string name="ServRunning">Service Volume A2DP Running</string>
 <string name="ImportCompletedText">Importer Seccesful</string>
+<string name="NobtSupport">Votre appareil ne semble pas le support du bluetooth.</string>
+    <string name="btEnableFail">Impossible d\'activer Bluetooth</string>
 </resources>

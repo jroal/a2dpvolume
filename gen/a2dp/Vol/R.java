@@ -83,6 +83,7 @@ public final class R {
         public static final int MenumanageData=0x7f050022;
         public static final int No=0x7f050028;
         public static final int NoData=0x7f05002c;
+        public static final int NobtSupport=0x7f05002f;
         public static final int OK=0x7f050029;
         public static final int PrefsBootstart=0x7f05001a;
         public static final int PrefsBootstartOFF=0x7f05001c;
@@ -110,6 +111,7 @@ public final class R {
         public static final int StopService=0x7f050005;
         public static final int Yes=0x7f050027;
         public static final int app_name=0x7f050000;
+        public static final int btEnableFail=0x7f050030;
     }
     public static final class xml {
         public static final int preferences=0x7f040000;

@@ -81,4 +81,6 @@
         <item>30</item>
     </string-array>
 <string name="ImportCompletedText">Importação Seccesful</string>
+<string name="NobtSupport">O dispositivo não parece compatível com bluetooth.</string>
+    <string name="btEnableFail">Falha ao ativar o Bluetooth</string>
 </resources>
