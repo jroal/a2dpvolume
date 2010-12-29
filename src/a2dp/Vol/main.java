@@ -506,9 +506,27 @@ public class main extends Activity {
 
 		str2 = "No devices found";
 		int i = 0;
-
 		vec.clear();
-
+		
+		// the section below is for testing only. Comment out before building
+		// the application for use.	
+/*		 btDevice bt3 = new btDevice(); bt3.setBluetoothDevice("Device 1",
+		 "Porsche", "00:22:33:44:55:66:77", 15); i = 1; btDevice btx =
+		 myDB.getBTD(bt3.mac); if(btx.mac == null) {
+		 a2dp.Vol.main.this.myDB.insert(bt3); vec.add(bt3); } else vec.add(btx);
+		 
+		 btDevice bt4 = new btDevice(); bt4.setBluetoothDevice("Moto T605",
+		 "Jaguar", "33:44:55:66:77:00:22", 14); 
+		 btDevice bty = myDB.getBTD(bt4.mac); i = 2; if(bty.mac == null) {
+		 a2dp.Vol.main.this.myDB.insert(bt4); vec.add(bt4); } else
+		 vec.add(bty);
+		 
+		 List<String> names = this.myDB.selectAll(); StringBuilder sb = new
+		 StringBuilder(); sb.append("Names in database:\n"); for (String name
+		 : names) { sb.append(name + "\n"); } str2 += " " + i;
+			refreshList(loadFromDB());		*/	
+		// end of testing code
+		 
 		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 
 		if (mBTA == null) {
@@ -563,26 +581,6 @@ public class main extends Activity {
 				str2 += " " + i;
 			}
 		}
-
-		// the section below is for testing only. Comment out before building
-		// the application for use.
-		/*
-		 * btDevice bt = new btDevice(); bt.setBluetoothDevice("Device 1",
-		 * "Porsche", "00:22:33:44:55:66:77", 15); i = 1; btDevice btx =
-		 * myDB.getBTD(bt.mac); if(btx.mac == null) {
-		 * a2dp.Vol.main.this.myDB.insert(bt); vec.add(bt); } else vec.add(btx);
-		 * 
-		 * btDevice bt2 = new btDevice(); bt2.setBluetoothDevice("Device 2",
-		 * "Jaguar", "33:44:55:66:77:00:22", 14); btDevice bty =
-		 * myDB.getBTD(bt2.mac); i = 2; if(bty.mac == null) {
-		 * a2dp.Vol.main.this.myDB.insert(bt2); vec.add(bt2); } else
-		 * vec.add(bty);
-		 * 
-		 * List<String> names = this.myDB.selectAll(); StringBuilder sb = new
-		 * StringBuilder(); sb.append("Names in database:\n"); for (String name
-		 * : names) { sb.append(name + "\n"); } str2 += " " + i;
-		 */
-		// end of testing code
 
 		refreshList(loadFromDB());
 
