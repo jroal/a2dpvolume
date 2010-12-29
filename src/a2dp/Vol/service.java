@@ -318,6 +318,7 @@ public class service extends Service {
 								LocationManager.PASSIVE_PROVIDER, 0, 0,
 								locationListener);
 					}
+				
 				}
 				// get best location and store it
 				grabGPS();
@@ -367,6 +368,18 @@ public class service extends Service {
 						.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 					locationManager.requestLocationUpdates(
 							LocationManager.GPS_PROVIDER, 0, 0,
+							locationListener);
+				}
+				if (locationManager
+						.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+					locationManager.requestLocationUpdates(
+							LocationManager.NETWORK_PROVIDER, 0, 0,
+							locationListener);
+				}
+				if (locationManager
+						.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+					locationManager.requestLocationUpdates(
+							LocationManager.PASSIVE_PROVIDER, 0, 0,
 							locationListener);
 				}
 				// get best location and store it

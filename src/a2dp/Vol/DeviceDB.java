@@ -51,7 +51,7 @@ public class DeviceDB {
 
 	/**
 	 * @param bt
-	 *            is the bluetooth btDevice to remove fromt he database
+	 *            is the bluetooth btDevice to remove from the database
 	 */
 	public void delete(btDevice bt) {
 		this.db.delete(TABLE_NAME, "mac='" + bt.mac + "'", null);
@@ -64,8 +64,13 @@ public class DeviceDB {
 	 *         successful. -1 otherwise.
 	 */
 	public long insert(btDevice btd) {
-		this.insertStmt.bindString(1, btd.desc1);
-		this.insertStmt.bindString(2, btd.desc2);
+		String temp1 = btd.desc1;
+		if(temp1 == null) temp1 = "Unknown Device";  // make sure stirng1 is not null
+		this.insertStmt.bindString(1, temp1);
+		String temp2 = btd.desc2;
+		if(temp2 == null)temp2 = temp1; // make sure string2 is not null
+		this.insertStmt.bindString(2, temp2);
+		if(btd.mac == null)return -1; // if we have no mac address, bail out
 		this.insertStmt.bindString(3, btd.mac);
 		this.insertStmt.bindLong(4, (long) btd.getDefVol());
 		this.insertStmt.bindLong(5, (long) btd.islSetV());
