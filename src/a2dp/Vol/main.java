@@ -515,7 +515,7 @@ public class main extends Activity {
 		 myDB.getBTD(bt3.mac); if(btx.mac == null) {
 		 a2dp.Vol.main.this.myDB.insert(bt3); vec.add(bt3); } else vec.add(btx);
 		 
-		 btDevice bt4 = new btDevice(); bt4.setBluetoothDevice("Moto T605",
+		 btDevice bt4 = new btDevice(); bt4.setBluetoothDevice("Motorola T605",
 		 "Jaguar", "33:44:55:66:77:00:22", 14); 
 		 btDevice bty = myDB.getBTD(bt4.mac); i = 2; if(bty.mac == null) {
 		 a2dp.Vol.main.this.myDB.insert(bt4); vec.add(bt4); } else

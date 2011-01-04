@@ -53,6 +53,7 @@ public class service extends Service {
 	private boolean gettingLoc = false;
 	private boolean toasts = true;
 	private boolean notify = false;
+	private boolean usePass = true;
 	private Notification not = null;
 	private NotificationManager mNotificationManager = null;
 
@@ -84,6 +85,7 @@ public class service extends Service {
 			carMode = preferences.getBoolean("car_mode", true);
 			toasts = preferences.getBoolean("toasts", true);
 			notify = preferences.getBoolean("notify1", false);
+			usePass = preferences.getBoolean("usePassive", true);
 			
 			str = preferences.getString("gpsTime", "15");
 			Long yyy = new Long(preferences.getString("gpsTime", "15000"));
@@ -312,7 +314,7 @@ public class service extends Service {
 								LocationManager.NETWORK_PROVIDER, 0, 0,
 								locationListener);
 					}
-					if (locationManager
+					if (usePass && locationManager
 							.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
 						locationManager.requestLocationUpdates(
 								LocationManager.PASSIVE_PROVIDER, 0, 0,
@@ -376,7 +378,7 @@ public class service extends Service {
 							LocationManager.NETWORK_PROVIDER, 0, 0,
 							locationListener);
 				}
-				if (locationManager
+				if (usePass && locationManager
 						.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
 					locationManager.requestLocationUpdates(
 							LocationManager.PASSIVE_PROVIDER, 0, 0,

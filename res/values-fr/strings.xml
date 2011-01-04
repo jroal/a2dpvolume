@@ -83,4 +83,7 @@
 <string name="ImportCompletedText">Importer Seccesful</string>
 <string name="NobtSupport">Votre appareil ne semble pas le support du bluetooth.</string>
     <string name="btEnableFail">Impossible d\'activer Bluetooth</string>
+<string name="usePassiveOff">Ne pas utiliser auditeur localisation passive</string>
+    <string name="usePassiveOn">Utilisez également auditeur localisation passive</string>
+    <string name="usePassiveTitle">Utiliser des lieux passive</string>
 </resources>

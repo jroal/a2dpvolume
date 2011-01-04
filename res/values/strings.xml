@@ -91,4 +91,7 @@
 <string name="ImportCompletedText">Import Seccesful</string>
 <string name="NobtSupport">Your device does not appear to support bluetooth.</string>
     <string name="btEnableFail">Failed to enable bluetooth</string>
+<string name="usePassiveOff">Do not use passive location listener</string>
+    <string name="usePassiveOn">Also use passive location listener</string>
+    <string name="usePassiveTitle">Use Passive Locations</string>
 </resources>
