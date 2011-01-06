@@ -54,6 +54,7 @@ public class service extends Service {
 	private boolean toasts = true;
 	private boolean notify = false;
 	private boolean usePass = true;
+	private boolean useNet = true;
 	private Notification not = null;
 	private NotificationManager mNotificationManager = null;
 
@@ -86,6 +87,7 @@ public class service extends Service {
 			toasts = preferences.getBoolean("toasts", true);
 			notify = preferences.getBoolean("notify1", false);
 			usePass = preferences.getBoolean("usePassive", true);
+			useNet = preferences.getBoolean("useNetwork", true);
 			
 			str = preferences.getString("gpsTime", "15");
 			Long yyy = new Long(preferences.getString("gpsTime", "15000"));
@@ -308,7 +310,7 @@ public class service extends Service {
 								LocationManager.GPS_PROVIDER, 0, 0,
 								locationListener);
 					}
-					if (locationManager
+					if (useNet && locationManager
 							.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 						locationManager.requestLocationUpdates(
 								LocationManager.NETWORK_PROVIDER, 0, 0,
@@ -372,7 +374,7 @@ public class service extends Service {
 							LocationManager.GPS_PROVIDER, 0, 0,
 							locationListener);
 				}
-				if (locationManager
+				if (useNet && locationManager
 						.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 					locationManager.requestLocationUpdates(
 							LocationManager.NETWORK_PROVIDER, 0, 0,

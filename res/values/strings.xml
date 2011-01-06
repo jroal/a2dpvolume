@@ -94,4 +94,7 @@
 <string name="usePassiveOff">Do not use passive location listener</string>
     <string name="usePassiveOn">Also use passive location listener</string>
     <string name="usePassiveTitle">Use Passive Locations</string>
+<string name="useNetworkTitle">Use Network Locations</string>
+    <string name="useNetworkON">Also use network location listener</string>
+    <string name="useNetworkOFF">Do not use network location listener</string>
 </resources>
