@@ -112,6 +112,9 @@ public final class R {
         public static final int Yes=0x7f050027;
         public static final int app_name=0x7f050000;
         public static final int btEnableFail=0x7f050030;
+        public static final int useNetworkOFF=0x7f050036;
+        public static final int useNetworkON=0x7f050035;
+        public static final int useNetworkTitle=0x7f050034;
         public static final int usePassiveOff=0x7f050031;
         public static final int usePassiveOn=0x7f050032;
         public static final int usePassiveTitle=0x7f050033;

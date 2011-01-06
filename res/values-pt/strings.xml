@@ -86,4 +86,7 @@
 <string name="usePassiveOff">Não use ouvinte passivo localização</string>
     <string name="usePassiveOn">Também o uso de escuta passiva localização</string>
     <string name="usePassiveTitle">Use Passive Locais</string>
+<string name="useNetworkTitle">Rede de locais de uso</string>
+    <string name="useNetworkON">Também o uso de escuta localização de rede</string>
+    <string name="useNetworkOFF">Não use ouvinte local de rede</string>
 </resources>

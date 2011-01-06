@@ -86,4 +86,7 @@
 <string name="usePassiveOff">Ne pas utiliser auditeur localisation passive</string>
     <string name="usePassiveOn">Utilisez également auditeur localisation passive</string>
     <string name="usePassiveTitle">Utiliser des lieux passive</string>
+<string name="useNetworkTitle">Emplacements Réseau Emploi</string>
+    <string name="useNetworkON">Utilisez également auditeur emplacement réseau</string>
+    <string name="useNetworkOFF">Ne pas utiliser auditeur emplacement réseau</string>
 </resources>
