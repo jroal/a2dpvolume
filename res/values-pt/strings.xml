@@ -49,7 +49,7 @@
     <string-array name="gpsDistance">
         <item>2m</item>
         <item>5m</item>
-        <item>10m padrão</item>
+        <item>10m </item>
         <item>15m</item>
         <item>20m</item>
         <item>30m</item>
@@ -80,7 +80,7 @@
         <item>20</item>
         <item>30</item>
     </string-array>
-<string name="ImportCompletedText">Importação Seccesful</string>
+<string name="ImportCompletedText">Importação de sucesso</string>
 <string name="NobtSupport">O dispositivo não parece compatível com bluetooth.</string>
     <string name="btEnableFail">Falha ao ativar o Bluetooth</string>
 <string name="usePassiveOff">Não use ouvinte passivo localização</string>

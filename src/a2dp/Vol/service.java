@@ -53,7 +53,7 @@ public class service extends Service {
 	private boolean gettingLoc = false;
 	private boolean toasts = true;
 	private boolean notify = false;
-	private boolean usePass = true;
+	private boolean usePass = false;
 	private boolean useNet = true;
 	private Notification not = null;
 	private NotificationManager mNotificationManager = null;
@@ -86,7 +86,7 @@ public class service extends Service {
 			carMode = preferences.getBoolean("car_mode", true);
 			toasts = preferences.getBoolean("toasts", true);
 			notify = preferences.getBoolean("notify1", false);
-			usePass = preferences.getBoolean("usePassive", true);
+			usePass = preferences.getBoolean("usePassive", false);
 			useNet = preferences.getBoolean("useNetwork", true);
 			
 			str = preferences.getString("gpsTime", "15");
@@ -217,6 +217,7 @@ public class service extends Service {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int maxvol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+			
 			boolean setvol = true;
 			getOldvol();
 			BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(
@@ -259,8 +260,6 @@ public class service extends Service {
 		 */
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
-
-			setVolume(OldVol2, a2dp.Vol.service.this);
 			BluetoothDevice bt = (BluetoothDevice) intent2.getExtras().get(
 					BluetoothDevice.EXTRA_DEVICE);
 			btConn = bt;
@@ -334,6 +333,7 @@ public class service extends Service {
 				not.icon = R.drawable.icon5;
 				mNotificationManager.notify(1, not);
 			}*/
+			setVolume(OldVol2, a2dp.Vol.service.this);
 		}
 	};
 
