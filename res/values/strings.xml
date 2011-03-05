@@ -5,7 +5,7 @@
 <string-array name="gpsDistance">
         <item>2m (6ft)</item>
         <item>5m (15ft)</item>
-<item>10m (30ft) default</item>
+<item>10m (30ft) </item>
 <item>15m (45ft)</item>
 <item>20m (60ft)</item>
 <item>30m (90ft)</item>
@@ -88,7 +88,7 @@
     <string name="Edit">Edit</string>
     <string name="NoData">No Data</string>
     <string name="ServRunning">A2DP Volume Service Running</string>
-<string name="ImportCompletedText">Import Seccesful</string>
+<string name="ImportCompletedText">Import Succesful</string>
 <string name="NobtSupport">Your device does not appear to support bluetooth.</string>
     <string name="btEnableFail">Failed to enable bluetooth</string>
 <string name="usePassiveOff">Do not use passive location listener</string>
