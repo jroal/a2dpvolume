@@ -54,7 +54,7 @@ public class main extends Activity {
 	static SeekBar VolSeek;
 	static Button serv;
 	boolean servrun = false;
-	ListView lvl = null; // listview used on main screen showing devices
+	ListView lvl = null; // listview used on main screen for showing devices
 	Vector<btDevice> vec; // vector of bluetooth devices
 	private DeviceDB myDB; // database of device data stored in SQlite
 	String activebt = null;
