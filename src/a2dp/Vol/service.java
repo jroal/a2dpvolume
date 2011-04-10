@@ -40,7 +40,7 @@ public class service extends Service {
 	}
 
 	static AudioManager am2 = (AudioManager) null;
-	static Integer OldVol2 = 5;
+	Integer OldVol2 = 5;
 	public static boolean run = false;
 	LocationManager lm2 = null;
 	public static BluetoothDevice btConn = null;
@@ -333,6 +333,7 @@ public class service extends Service {
 				not.icon = R.drawable.icon5;
 				mNotificationManager.notify(1, not);
 			}*/
+			if ((bt2 != null && bt2.isSetV()) || bt2 == null)
 			setVolume(OldVol2, a2dp.Vol.service.this);
 		}
 	};
@@ -396,17 +397,18 @@ public class service extends Service {
 
 	// makes the volume adjustment
 	public static int setVolume(int inputVol, Context sender) {
-		int outVol;
+		int outVol, curvol;
 		if (inputVol < 0)
 			inputVol = 0;
 		if (inputVol > am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
 			inputVol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
+		curvol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 		am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, 0);
 		outVol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 
 		Toast.makeText(sender,
-				"Stored Volume:" + OldVol2 + "  New Volume:" + outVol,
+				"Old Volume:" + curvol + "  New Volume:" + outVol,
 				Toast.LENGTH_LONG).show();
 		return outVol;
 	}
