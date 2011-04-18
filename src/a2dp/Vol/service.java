@@ -1,5 +1,6 @@
 package a2dp.Vol;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
@@ -513,6 +515,7 @@ public class service extends Service {
 			if (btdConn != null) {
 				car = btdConn.getDesc2();
 			}
+// store last location			
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location",
 						Context.MODE_WORLD_READABLE);
@@ -535,7 +538,7 @@ public class service extends Service {
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
-
+// store most accurate location
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location2",
 						Context.MODE_WORLD_READABLE);
@@ -557,6 +560,36 @@ public class service extends Service {
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
+			// store this vehicles location
+			try {
+				File exportDir = new File(
+						Environment.getExternalStorageDirectory(), "BluetoothVol");
+
+				if (!exportDir.exists()) {
+					exportDir.mkdirs();
+				}
+				File file = new File(exportDir,car.replaceAll(" ", "_")  + ".html");
+				
+				FileOutputStream fos = new FileOutputStream(file);
+				Time t = new Time();
+				t.set((long) gloc[3]);
+				String temp = "<a href=\"http://maps.google.com/maps?q=" + gloc[0] + ","
+						+ gloc[5] + "+" + "(" + car + " " + t.format("%D, %r")
+						+ " acc=" + df.format(gloc[2]) + ")\">" + car + "</a>";
+				fos.write(temp.getBytes());
+				fos.close();
+				// Toast.makeText(a2dp.Vol.service.this, temp,
+				// Toast.LENGTH_LONG).show();
+			} catch (FileNotFoundException e) {
+				Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
+						Toast.LENGTH_LONG).show();
+				e.printStackTrace();
+			} catch (IOException e) {
+				Toast.makeText(a2dp.Vol.service.this, "IOException",
+						Toast.LENGTH_LONG).show();
+				e.printStackTrace();
+			}
+			
 		}
 	}
 
