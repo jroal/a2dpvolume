@@ -1,5 +1,6 @@
 package a2dp.Vol;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,6 +46,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.webkit.*;
 
 public class main extends Activity {
 
@@ -134,7 +137,7 @@ public class main extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+				
 		preferences = getSharedPreferences(PREFS_NAME, 1);
 		am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		final Button btn = (Button) findViewById(R.id.Button01);
@@ -261,11 +264,39 @@ public class main extends Activity {
 							break;
 						}
 
+						final String car = bt.toString();
 						mesg += "\nClass = " + getBTClassDev(btd);
 						mesg += "\nMajor Class = " + getBTClassDevMaj(btd);
 						mesg += "\nService Classes = " + getBTClassServ(btd);
 						builder.setMessage(mesg);
 						builder.setPositiveButton("OK", null);
+						builder.setNeutralButton("Location", new OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int which) {
+										File exportDir = new File(
+												Environment.getExternalStorageDirectory(), "BluetoothVol");
+
+										if (!exportDir.exists())return;
+
+										String file = "content://com.android.htmlfileprovider" + exportDir.getPath() + "/" + car.replaceAll(" ", "_")  + ".html";
+										String st = new String(file).trim();
+										
+										Uri uri = Uri.parse(st);
+										 Intent intent = new Intent();
+									     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+									     intent.setAction(android.content.Intent.ACTION_VIEW);
+									     intent.setDataAndType(uri, "text"); 
+									     intent.setClassName("com.android.browser","com.android.browser.BrowserActivity"); 
+										 try {
+											startActivity(intent);
+										} catch (Exception e) {
+											// TODO Auto-generated catch block
+											Toast.makeText(application, e.toString(), Toast.LENGTH_LONG).show();
+											e.printStackTrace();
+										}
+
+									}
+								});
 						builder.show();
 					}
 				}

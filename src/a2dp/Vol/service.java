@@ -573,9 +573,15 @@ public class service extends Service {
 				FileOutputStream fos = new FileOutputStream(file);
 				Time t = new Time();
 				t.set((long) gloc[3]);
-				String temp = "<a href=\"http://maps.google.com/maps?q=" + gloc[0] + ","
-						+ gloc[5] + "+" + "(" + car + " " + t.format("%D, %r")
-						+ " acc=" + df.format(gloc[2]) + ")\">" + car + "</a>";
+				String temp = "<bold><a href=\"http://maps.google.com/maps?q=" + gloc[0] + ","
+						+ gloc[1] + "+" + "(" + car + " " + t.format("%D, %r")
+						+ " acc=" + df.format(gloc[2]) + ")\">" + car + "</a></bold><br>"
+						+ "Time: " + t.format("%D, %r") + "<br>"
+						+ "Location type: " + location2.getProvider() + "<br>"
+						+ "Accuracy: " + location2.getAccuracy() + " meters<br>"
+						+ "Lattitude: " + gloc[0] + "<br>"
+						+ "Longitude: " + gloc[1]  + "<br>"
+						+ "Elevation: " + location2.getAltitude() + " meters<br>";
 				fos.write(temp.getBytes());
 				fos.close();
 				// Toast.makeText(a2dp.Vol.service.this, temp,
