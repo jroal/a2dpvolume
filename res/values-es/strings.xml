@@ -67,12 +67,12 @@
         <item>20</item>
         <item>30</item>
     </string-array>
-<string name="MenuExit">Salir</string>
+    <string name="MenuExit">Salir</string>
     <string name="MenumanageData">Administrar datos</string>
     <string name="MenuDeleteData">Eliminar todos los datos</string>
     <string name="MenuPrefs">Preferencias</string>
     <string name="MenuHelp">Ayuda</string>
-<string name="DeleteDataMsg">¿Estás seguro que quieres eliminar todos los datos del dispositivo de volumen A2DP?</string>
+    <string name="DeleteDataMsg">¿Estás seguro que quieres eliminar todos los datos del dispositivo de volumen A2DP?</string>
     <string name="Yes">Sí</string>
     <string name="No">N</string>
     <string name="OK">Aceptar</string>
@@ -80,13 +80,14 @@
     <string name="Edit">Editar</string>
     <string name="NoData">No hay datos</string>
     <string name="ServRunning">A2DP Servicio de Ejecución de volumen</string>
-<string name="ImportCompletedText">El éxito de la importación</string>
-<string name="NobtSupport">El dispositivo no parece ser compatible con Bluetooth.</string>
+    <string name="ImportCompletedText">El éxito de la importación</string>
+    <string name="NobtSupport">El dispositivo no parece ser compatible con Bluetooth.</string>
     <string name="btEnableFail">Error al habilitar bluetooth</string>
-<string name="usePassiveOff">No utilice oyente localización pasiva</string>
+    <string name="usePassiveOff">No utilice oyente localización pasiva</string>
     <string name="usePassiveOn">Utilice también escucha pasiva ubicación</string>
     <string name="usePassiveTitle">Utilice Lugares pasivo</string>
-<string name="useNetworkTitle">Utilice ubicaciones de red</string>
+    <string name="useNetworkTitle">Utilice ubicaciones de red</string>
     <string name="useNetworkON">Utilice también escucha la ubicación de red</string>
     <string name="useNetworkOFF">No utilice escucha la ubicación de red</string>
+    <string name="LocationString">Localización</string>
 </resources>
