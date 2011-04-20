@@ -270,7 +270,7 @@ public class main extends Activity {
 						mesg += "\nService Classes = " + getBTClassServ(btd);
 						builder.setMessage(mesg);
 						builder.setPositiveButton("OK", null);
-						builder.setNeutralButton("Location", new OnClickListener() {
+						builder.setNeutralButton(R.string.LocationString, new OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int which) {
 										File exportDir = new File(

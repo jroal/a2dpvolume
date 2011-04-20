@@ -80,13 +80,14 @@
         <item>20</item>
         <item>30</item>
     </string-array>
-<string name="ImportCompletedText">Importação de sucesso</string>
-<string name="NobtSupport">O dispositivo não parece compatível com bluetooth.</string>
+    <string name="ImportCompletedText">Importação de sucesso</string>
+    <string name="NobtSupport">O dispositivo não parece compatível com bluetooth.</string>
     <string name="btEnableFail">Falha ao ativar o Bluetooth</string>
-<string name="usePassiveOff">Não use ouvinte passivo localização</string>
+    <string name="usePassiveOff">Não use ouvinte passivo localização</string>
     <string name="usePassiveOn">Também o uso de escuta passiva localização</string>
     <string name="usePassiveTitle">Use Passive Locais</string>
-<string name="useNetworkTitle">Rede de locais de uso</string>
+    <string name="useNetworkTitle">Rede de locais de uso</string>
     <string name="useNetworkON">Também o uso de escuta localização de rede</string>
     <string name="useNetworkOFF">Não use ouvinte local de rede</string>
+    <string name="LocationString">Localização</string>
 </resources>

@@ -72,7 +72,7 @@
     <string name="MenuDeleteData">Supprimer toutes les données</string>
     <string name="MenuPrefs">Préférences</string>
     <string name="MenuHelp">Aide</string>
-<string name="DeleteDataMsg">Voulez-vous vraiment supprimer toutes les données de l\'appareil à partir du volume A2DP?</string>
+    <string name="DeleteDataMsg">Voulez-vous vraiment supprimer toutes les données de l\'appareil à partir du volume A2DP?</string>
     <string name="Yes">Oui</string>
     <string name="No">N</string>
     <string name="OK">OK</string>
@@ -80,13 +80,14 @@
     <string name="Edit">Modifier</string>
     <string name="NoData">Pas de données</string>
     <string name="ServRunning">Service Volume A2DP Running</string>
-<string name="ImportCompletedText">Importation réussie</string>
-<string name="NobtSupport">Votre appareil ne semble pas le support du bluetooth.</string>
+    <string name="ImportCompletedText">Importation réussie</string>
+    <string name="NobtSupport">Votre appareil ne semble pas le support du bluetooth.</string>
     <string name="btEnableFail">Impossible d\'activer Bluetooth</string>
-<string name="usePassiveOff">Ne pas utiliser auditeur localisation passive</string>
+    <string name="usePassiveOff">Ne pas utiliser auditeur localisation passive</string>
     <string name="usePassiveOn">Utilisez également auditeur localisation passive</string>
     <string name="usePassiveTitle">Utiliser des lieux passive</string>
-<string name="useNetworkTitle">Emplacements Réseau Emploi</string>
+    <string name="useNetworkTitle">Emplacements Réseau Emploi</string>
     <string name="useNetworkON">Utilisez également auditeur emplacement réseau</string>
     <string name="useNetworkOFF">Ne pas utiliser auditeur emplacement réseau</string>
+    <string name="LocationString">Lieu</string>
 </resources>
