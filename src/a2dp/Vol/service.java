@@ -31,13 +31,15 @@ import android.widget.Toast;
 
 public class service extends Service {
 
-	/* (non-Javadoc)  
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Service#onStartCommand(android.content.Intent, int, int)
 	 */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		
-		//return super.onStartCommand(intent, flags, startId);
+
+		// return super.onStartCommand(intent, flags, startId);
 		return START_STICKY;
 	}
 
@@ -90,18 +92,19 @@ public class service extends Service {
 			notify = preferences.getBoolean("notify1", false);
 			usePass = preferences.getBoolean("usePassive", false);
 			useNet = preferences.getBoolean("useNetwork", true);
-			
+
 			str = preferences.getString("gpsTime", "15");
 			Long yyy = new Long(preferences.getString("gpsTime", "15000"));
 			MAX_TIME = yyy;
-			
+
 			Float xxx = new Float(preferences.getString("gpsDistance", "10"));
 			MAX_ACC = xxx;
 
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
 			MAX_TIME = 15000;
-			Toast.makeText(this, "prefs failed to load " + str, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "prefs failed to load " + str,
+					Toast.LENGTH_LONG).show();
 			e.printStackTrace();
 		}
 
@@ -120,7 +123,7 @@ public class service extends Service {
 			IntentFilter filter3 = new IntentFilter(
 					android.app.UiModeManager.ACTION_EXIT_CAR_MODE);
 			this.registerReceiver(mReceiver3, filter3);
-			
+
 		}
 
 		// capture original volume
@@ -145,41 +148,38 @@ public class service extends Service {
 			// set up the notification and start foreground
 			String ns = Context.NOTIFICATION_SERVICE;
 			mNotificationManager = (NotificationManager) getSystemService(ns);
-			not = new Notification(R.drawable.icon5, "A2DP", System
-					.currentTimeMillis());
+			not = new Notification(R.drawable.icon5, "A2DP",
+					System.currentTimeMillis());
 			Context context = getApplicationContext();
-			CharSequence contentTitle = getResources().getString(R.string.app_name);
-			CharSequence contentText = getResources().getString(R.string.ServRunning);
+			CharSequence contentTitle = getResources().getString(
+					R.string.app_name);
+			CharSequence contentText = getResources().getString(
+					R.string.ServRunning);
 			Intent notificationIntent = new Intent(this, main.class);
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 					notificationIntent, 0);
 			not.setLatestEventInfo(context, contentTitle, contentText,
 					contentIntent);
-			
+
 			mNotificationManager.notify(1, not);
 			this.startForeground(1, not);
 		}
-		
+
 		// if all the above works, let the user know it is started
 		if (toasts)
 			Toast.makeText(this, R.string.ServiceStarted, Toast.LENGTH_LONG)
 					.show();
-		
+
 		// test location file maker
-/*		FileOutputStream fos;
-		try {
-			fos = openFileOutput("My_Last_Location",
-					Context.MODE_WORLD_READABLE);
-			String temp = "http://maps.google.com/maps?q=40.7423612,-89.63056078333334+(Lambo 11/26/10, 05:59:46 pm acc=8)";
-			fos.write(temp.getBytes());
-			fos.close();	
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		/*
+		 * FileOutputStream fos; try { fos = openFileOutput("My_Last_Location",
+		 * Context.MODE_WORLD_READABLE); String temp =
+		 * "http://maps.google.com/maps?q=40.7423612,-89.63056078333334+(Lambo 11/26/10, 05:59:46 pm acc=8)"
+		 * ; fos.write(temp.getBytes()); fos.close(); } catch
+		 * (FileNotFoundException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated
+		 * catch block e.printStackTrace(); }
+		 */
 		// end test file maker
 	}
 
@@ -219,7 +219,7 @@ public class service extends Service {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int maxvol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-			
+
 			boolean setvol = true;
 			getOldvol();
 			BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(
@@ -234,11 +234,13 @@ public class service extends Service {
 				if (toasts)
 					Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG)
 							.show();
-				if(notify)updateNot(true,bt2.toString());
+				if (notify)
+					updateNot(true, bt2.toString());
 			} catch (Exception e) {
 				if (toasts)
-					Toast.makeText(context, btConn.getAddress() + "\n"
-							+ e.getMessage(), Toast.LENGTH_LONG);
+					Toast.makeText(context,
+							btConn.getAddress() + "\n" + e.getMessage(),
+							Toast.LENGTH_LONG);
 				bt2 = null;
 			}
 
@@ -272,12 +274,14 @@ public class service extends Service {
 				bt2 = DB.getBTD(addres);
 			} catch (Exception e) {
 				if (toasts)
-					Toast.makeText(context2, btConn.getAddress() + "\n"
-							+ e.getMessage(), Toast.LENGTH_LONG);
+					Toast.makeText(context2,
+							btConn.getAddress() + "\n" + e.getMessage(),
+							Toast.LENGTH_LONG);
 				bt2 = null;
 			}
 
-			if(notify)updateNot(false,null);
+			if (notify)
+				updateNot(false, null);
 			if (bt2 != null && bt2.isGetLoc()) {
 				// make sure we turn OFF the location listener if we don't get a
 				// loc in MAX_TIME
@@ -311,32 +315,33 @@ public class service extends Service {
 								LocationManager.GPS_PROVIDER, 0, 0,
 								locationListener);
 					}
-					if (useNet && locationManager
-							.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+					if (useNet
+							&& locationManager
+									.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 						locationManager.requestLocationUpdates(
 								LocationManager.NETWORK_PROVIDER, 0, 0,
 								locationListener);
 					}
-					if (usePass && locationManager
-							.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+					if (usePass
+							&& locationManager
+									.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
 						locationManager.requestLocationUpdates(
 								LocationManager.PASSIVE_PROVIDER, 0, 0,
 								locationListener);
 					}
-				
+
 				}
 				// get best location and store it
 				grabGPS();
-			}
-			else
-				if(!gettingLoc)btConn = null;
-			
-/*			if(notify){
-				not.icon = R.drawable.icon5;
-				mNotificationManager.notify(1, not);
-			}*/
+			} else if (!gettingLoc)
+				btConn = null;
+
+			/*
+			 * if(notify){ not.icon = R.drawable.icon5;
+			 * mNotificationManager.notify(1, not); }
+			 */
 			if ((bt2 != null && bt2.isSetV()) || bt2 == null)
-			setVolume(OldVol2, a2dp.Vol.service.this);
+				setVolume(OldVol2, a2dp.Vol.service.this);
 		}
 	};
 
@@ -377,14 +382,16 @@ public class service extends Service {
 							LocationManager.GPS_PROVIDER, 0, 0,
 							locationListener);
 				}
-				if (useNet && locationManager
-						.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+				if (useNet
+						&& locationManager
+								.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 					locationManager.requestLocationUpdates(
 							LocationManager.NETWORK_PROVIDER, 0, 0,
 							locationListener);
 				}
-				if (usePass && locationManager
-						.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+				if (usePass
+						&& locationManager
+								.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
 					locationManager.requestLocationUpdates(
 							LocationManager.PASSIVE_PROVIDER, 0, 0,
 							locationListener);
@@ -392,7 +399,8 @@ public class service extends Service {
 				// get best location and store it
 				grabGPS();
 
-				if(notify)updateNot(false,null);	
+				if (notify)
+					updateNot(false, null);
 			}
 		}
 	};
@@ -515,7 +523,7 @@ public class service extends Service {
 			if (btdConn != null) {
 				car = btdConn.getDesc2();
 			}
-// store last location			
+			// store last location
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location",
 						Context.MODE_WORLD_READABLE);
@@ -538,7 +546,8 @@ public class service extends Service {
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
-// store most accurate location
+			
+			// store most accurate location
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location2",
 						Context.MODE_WORLD_READABLE);
@@ -560,42 +569,70 @@ public class service extends Service {
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
-			// store this vehicles location
-			try {
-				File exportDir = new File(
-						Environment.getExternalStorageDirectory(), "BluetoothVol");
-
-				if (!exportDir.exists()) {
-					exportDir.mkdirs();
-				}
-				File file = new File(exportDir,car.replaceAll(" ", "_")  + ".html");
-				
-				FileOutputStream fos = new FileOutputStream(file);
-				Time t = new Time();
-				t.set((long) gloc[3]);
-				String temp = "<bold><a href=\"http://maps.google.com/maps?q=" + gloc[0] + ","
-						+ gloc[1] + "+" + "(" + car + " " + t.format("%D, %r")
-						+ " acc=" + df.format(gloc[2]) + ")\">" + car + "</a></bold><br>"
-						+ "Time: " + t.format("%D, %r") + "<br>"
-						+ "Location type: " + location2.getProvider() + "<br>"
-						+ "Accuracy: " + location2.getAccuracy() + " meters<br>"
-						+ "Lattitude: " + gloc[0] + "<br>"
-						+ "Longitude: " + gloc[1]  + "<br>"
-						+ "Elevation: " + location2.getAltitude() + " meters<br>";
-				fos.write(temp.getBytes());
-				fos.close();
-				// Toast.makeText(a2dp.Vol.service.this, temp,
-				// Toast.LENGTH_LONG).show();
-			} catch (FileNotFoundException e) {
-				Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
-						Toast.LENGTH_LONG).show();
-				e.printStackTrace();
-			} catch (IOException e) {
-				Toast.makeText(a2dp.Vol.service.this, "IOException",
-						Toast.LENGTH_LONG).show();
-				e.printStackTrace();
-			}
 			
+			if (btdConn != null) {
+				// store this vehicles location
+				try {
+					File exportDir = new File(
+							Environment.getExternalStorageDirectory(),
+							"BluetoothVol");
+
+					if (!exportDir.exists()) {
+						exportDir.mkdirs();
+					}
+					File file = new File(exportDir, car.replaceAll(" ", "_")
+							+ ".html");
+
+					FileOutputStream fos = new FileOutputStream(file);
+					Time t = new Time();
+					t.set((long) gloc[3]);
+					String temp = "<bold><a href=\"http://maps.google.com/maps?q="
+							+ gloc[0]
+							+ ","
+							+ gloc[1]
+							+ "+"
+							+ "("
+							+ car
+							+ " "
+							+ t.format("%D, %r")
+							+ " acc="
+							+ df.format(gloc[2])
+							+ ")\">"
+							+ car
+							+ "</a></bold><br>"
+							+ "Time: "
+							+ t.format("%D, %r")
+							+ "<br>";
+							
+					if(location2 != null) temp += "Location type: " +location2.getProvider()
+							+ "<br>"
+							+ "Accuracy: "
+							+ location2.getAccuracy()
+							+ " meters<br>" 
+							+ "Elevation: "
+							+ location2.getAltitude() + " meters<br>";
+					
+					temp += "Lattitude: "
+							+ gloc[0]
+							+ "<br>"
+							+ "Longitude: "
+							+ gloc[1];
+							
+					fos.write(temp.getBytes());
+					fos.close();
+					// Toast.makeText(a2dp.Vol.service.this, temp,
+					// Toast.LENGTH_LONG).show();
+				} catch (FileNotFoundException e) {
+					Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
+							Toast.LENGTH_LONG).show();
+					e.printStackTrace();
+				} catch (IOException e) {
+					Toast.makeText(a2dp.Vol.service.this, "IOException",
+							Toast.LENGTH_LONG).show();
+					e.printStackTrace();
+				}
+			}
+
 		}
 	}
 
@@ -642,15 +679,15 @@ public class service extends Service {
 		// Toast.makeText(a2dp.Vol.service.this, " Location Manager stopped",
 		// Toast.LENGTH_LONG).show();
 	}
-	
-	private void updateNot(boolean connect, String car){
-		
+
+	private void updateNot(boolean connect, String car) {
+
 		String temp = car;
-		if(car != null)
+		if (car != null)
 			temp = "Connected to " + car;
 		else
 			temp = getResources().getString(R.string.ServRunning);
-		
+
 		Context context = getApplicationContext();
 		CharSequence contentTitle = getResources().getString(R.string.app_name);
 		CharSequence contentText = temp;
@@ -659,12 +696,12 @@ public class service extends Service {
 				notificationIntent, 0);
 		not.setLatestEventInfo(context, contentTitle, contentText,
 				contentIntent);
-		
-		if(connect)
+
+		if (connect)
 			not.icon = R.drawable.car2;
 		else
 			not.icon = R.drawable.icon5;
-		
+
 		mNotificationManager.notify(1, not);
 	}
 
