@@ -48,7 +48,7 @@ public class service extends Service {
 	public static boolean run = false;
 	LocationManager lm2 = null;
 	public static BluetoothDevice btConn = null;
-	static btDevice btdConn = null;
+	static btDevice btdConn = null; //n the device in the database that has connected
 	private DeviceDB DB; // database of device data stored in SQlite
 	private LocationManager locationManager;
 	private Location location2;
@@ -272,6 +272,7 @@ public class service extends Service {
 			try {
 				String addres = btConn.getAddress();
 				bt2 = DB.getBTD(addres);
+				btdConn = bt2;
 			} catch (Exception e) {
 				if (toasts)
 					Toast.makeText(context2,
@@ -345,6 +346,7 @@ public class service extends Service {
 		}
 	};
 
+	// car mode exit
 	private final BroadcastReceiver mReceiver3 = new BroadcastReceiver() {
 		/*
 		 * (non-Javadoc)
@@ -357,6 +359,7 @@ public class service extends Service {
 		public void onReceive(Context context3, Intent intent3) {
 			// make sure we turn OFF the location listener if we don't get a
 			// loc in MAX_TIME
+			btdConn = null; // since this is not a bluetooth device disconnecting, clear the connected device  
 			if (MAX_TIME > 0 && !gettingLoc) {
 				new CountDownTimer(MAX_TIME, 5000) {
 
@@ -571,7 +574,7 @@ public class service extends Service {
 						+ l.getLatitude() + "," + l.getLongitude() + "+" + "("
 						+ car + " " + t.format("%D, %r") + " acc="
 						+ df.format(l.getAccuracy()) + ")\">" + car
-						+ "</a></bold><hr /><br> Most Recent Location<br>Time: " + t.format("%D, %r")
+						+ "</a></bold><hr /> Most Recent Location<br>Time: " + t.format("%D, %r")
 						+ "<br>" + "Location type: " + l.getProvider() + "<br>"
 						+ "Accuracy: " + l.getAccuracy() + " meters<br>"
 						+ "Elevation: " + l.getAltitude() + " meters<br>"
@@ -579,7 +582,7 @@ public class service extends Service {
 						+ "Longitude: " + l.getLongitude();
 				if(l3 != null) {
 					t.set((long) l3.getTime());
-					temp += "<hr /><br> Most Accurate Location<br>Time: " + t.format("%D, %r")
+					temp += "<hr /> Most Accurate Location<br>Time: " + t.format("%D, %r")
 						+ "<br>" + "Location type: " + l3.getProvider() + "<br>"
 						+ "Accuracy: " + l3.getAccuracy() + " meters<br>"
 						+ "Elevation: " + l3.getAltitude() + " meters<br>"
