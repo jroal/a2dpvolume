@@ -131,6 +131,7 @@ public class DeviceDB {
 	 */
 	public List<String> selectAll() {
 		List<String> list = new ArrayList<String>();
+		if(!this.db.isOpen())return null;
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1",
 				"desc2" }, null, null, null, null, "desc2");
 		if (cursor.moveToFirst()) {
@@ -149,7 +150,7 @@ public class DeviceDB {
 	}
 
 	/**
-	 * @returna vector of btDevices for all the data in the btDevice table.
+	 * @return a vector of btDevices for all the data in the btDevice table.
 	 */
 	public Vector<btDevice> selectAlldb() {
 		Vector<btDevice> list = new Vector<btDevice>();
