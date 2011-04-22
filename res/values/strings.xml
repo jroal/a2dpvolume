@@ -90,4 +90,5 @@
     <string name="useNetworkON">Also use network location listener</string>
     <string name="useNetworkOFF">Do not use network location listener</string>
     <string name="LocationString">Location</string>
+    <string name="btNotOn">Bluetooth is not enabled so device information is not available</string>
 </resources>

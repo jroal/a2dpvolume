@@ -137,7 +137,7 @@ public class main extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-				
+
 		preferences = getSharedPreferences(PREFS_NAME, 1);
 		am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		final Button btn = (Button) findViewById(R.id.Button01);
@@ -168,8 +168,9 @@ public class main extends Activity {
 		IntentFilter filter4 = new IntentFilter(
 				"a2dp.vol.service.STOPPED_RUNNING");
 		this.registerReceiver(sRunning, filter4);
-		
-		IntentFilter filter5 = new IntentFilter("a2dp.vol.ManageData.RELOAD_LIST");
+
+		IntentFilter filter5 = new IntentFilter(
+				"a2dp.vol.ManageData.RELOAD_LIST");
 		this.registerReceiver(mReceiver5, filter5);
 
 		vec = new Vector<btDevice>();
@@ -208,7 +209,6 @@ public class main extends Activity {
 		btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 
-
 				int test = getBtDevices();
 				if (test > 0) {
 					lstring = new String[test];
@@ -231,75 +231,87 @@ public class main extends Activity {
 				if (vec.isEmpty())
 					return false;
 				BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
-				if (mBTA != null) {
-					Set<BluetoothDevice> pairedDevices = mBTA
-							.getBondedDevices();
 
-					btDevice bt = new btDevice();
-					bt = vec.get(position);
-					BluetoothDevice btd = null;
+				btDevice bt = new btDevice();
+				bt = vec.get(position);
+				BluetoothDevice btd = null;
+				if (mBTA != null) {
+					Set<BluetoothDevice> pairedDevices = mBTA.getBondedDevices();
 					for (BluetoothDevice device : pairedDevices) {
 						if (device.getAddress().equalsIgnoreCase(bt.mac)) {
 							btd = device;
 						}
 					}
-					if (btd != null) {
-						android.app.AlertDialog.Builder builder = new AlertDialog.Builder(
-								a2dp.Vol.main.this);
-						builder.setTitle(bt.toString());
-						String mesg = bt.desc1 + "\n" + bt.mac + "\n";
-
-						switch (btd.getBondState()) {
-						case BluetoothDevice.BOND_BONDED:
-							mesg += "Bonded = Bonded";
-							break;
-						case BluetoothDevice.BOND_BONDING:
-							mesg += "Bonded = Bonding";
-							break;
-						case BluetoothDevice.BOND_NONE:
-							mesg += "Bonded = None";
-							break;
-						case BluetoothDevice.ERROR:
-							mesg += "Bonded = Error";
-							break;
-						}
-
-						final String car = bt.toString();
-						mesg += "\nClass = " + getBTClassDev(btd);
-						mesg += "\nMajor Class = " + getBTClassDevMaj(btd);
-						mesg += "\nService Classes = " + getBTClassServ(btd);
-						builder.setMessage(mesg);
-						builder.setPositiveButton("OK", null);
-						builder.setNeutralButton(R.string.LocationString, new OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int which) {
-										File exportDir = new File(
-												Environment.getExternalStorageDirectory(), "BluetoothVol");
-
-										if (!exportDir.exists())return;
-
-										String file = "content://com.android.htmlfileprovider" + exportDir.getPath() + "/" + car.replaceAll(" ", "_")  + ".html";
-										String st = new String(file).trim();
-										
-										Uri uri = Uri.parse(st);
-										 Intent intent = new Intent();
-									     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-									     intent.setAction(android.content.Intent.ACTION_VIEW);
-									     intent.setDataAndType(uri, "text"); 
-									     intent.setClassName("com.android.browser","com.android.browser.BrowserActivity"); 
-										 try {
-											startActivity(intent);
-										} catch (Exception e) {
-											// TODO Auto-generated catch block
-											Toast.makeText(application, e.toString(), Toast.LENGTH_LONG).show();
-											e.printStackTrace();
-										}
-
-									}
-								});
-						builder.show();
-					}
 				}
+
+				android.app.AlertDialog.Builder builder = new AlertDialog.Builder(
+						a2dp.Vol.main.this);
+				builder.setTitle(bt.toString());
+				final String car = bt.toString();
+				String mesg;
+				if (btd != null) {
+					mesg = bt.desc1 + "\n" + bt.mac + "\n";
+					switch (btd.getBondState()) {
+					case BluetoothDevice.BOND_BONDED:
+						mesg += "Bonded = Bonded";
+						break;
+					case BluetoothDevice.BOND_BONDING:
+						mesg += "Bonded = Bonding";
+						break;
+					case BluetoothDevice.BOND_NONE:
+						mesg += "Bonded = None";
+						break;
+					case BluetoothDevice.ERROR:
+						mesg += "Bonded = Error";
+						break;
+					}
+
+					mesg += "\nClass = " + getBTClassDev(btd);
+					mesg += "\nMajor Class = " + getBTClassDevMaj(btd);
+					mesg += "\nService Classes = " + getBTClassServ(btd);
+				} else {
+					mesg = (String) getText(R.string.btNotOn);
+				}
+
+				builder.setMessage(mesg);
+				builder.setPositiveButton("OK", null);
+				builder.setNeutralButton(R.string.LocationString,
+						new OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								File exportDir = new File(Environment
+										.getExternalStorageDirectory(),
+										"BluetoothVol");
+
+								if (!exportDir.exists())
+									return;
+
+								String file = "content://com.android.htmlfileprovider"
+										+ exportDir.getPath()
+										+ "/"
+										+ car.replaceAll(" ", "_") + ".html";
+								String st = new String(file).trim();
+
+								Uri uri = Uri.parse(st);
+								Intent intent = new Intent();
+								intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+								intent.setAction(android.content.Intent.ACTION_VIEW);
+								intent.setDataAndType(uri, "text");
+								intent.setClassName("com.android.browser",
+										"com.android.browser.BrowserActivity");
+								try {
+									startActivity(intent);
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									Toast.makeText(application, e.toString(),
+											Toast.LENGTH_LONG).show();
+									e.printStackTrace();
+								}
+
+							}
+						});
+				builder.show();
+
 				return servrun;
 			}
 		});
@@ -322,14 +334,16 @@ public class main extends Activity {
 						+ "\nTrigger Volume: " + bt2.setV + "\nGet Location: "
 						+ bt2.getLoc);
 				builder.setPositiveButton(R.string.OK, null);
-				builder.setNegativeButton(R.string.Delete, new OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						// BluetoothDevice bdelete =
-						// BluetoothAdapter.getDefaultAdapter().getRemoteDevice(bt.mac);
-						myDB.delete(bt2);
-						refreshList(loadFromDB());
-					}
-				});
+				builder.setNegativeButton(R.string.Delete,
+						new OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								// BluetoothDevice bdelete =
+								// BluetoothAdapter.getDefaultAdapter().getRemoteDevice(bt.mac);
+								myDB.delete(bt2);
+								refreshList(loadFromDB());
+							}
+						});
 				builder.setNeutralButton(R.string.Edit, new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						final Dialog dl = new Dialog(a2dp.Vol.main.this);
@@ -518,8 +532,8 @@ public class main extends Activity {
 			Toast.makeText(a2dp.Vol.main.this, st, Toast.LENGTH_LONG).show();
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(st)));
 		} catch (FileNotFoundException e) {
-			Toast.makeText(a2dp.Vol.main.this, R.string.NoData, Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(a2dp.Vol.main.this, R.string.NoData,
+					Toast.LENGTH_LONG).show();
 			e.printStackTrace();
 		} catch (IOException e) {
 			Toast.makeText(a2dp.Vol.main.this, "Some IO issue",
@@ -538,26 +552,29 @@ public class main extends Activity {
 		str2 = "No devices found";
 		int i = 0;
 		vec.clear();
-		
+
 		// the section below is for testing only. Comment out before building
-		// the application for use.	
-/*		 btDevice bt3 = new btDevice(); bt3.setBluetoothDevice("Device 1",
-		 "Porsche", "00:22:33:44:55:66:77", 15); i = 1; btDevice btx =
-		 myDB.getBTD(bt3.mac); if(btx.mac == null) {
-		 a2dp.Vol.main.this.myDB.insert(bt3); vec.add(bt3); } else vec.add(btx);
-		 
-		 btDevice bt4 = new btDevice(); bt4.setBluetoothDevice("Motorola T605",
-		 "Jaguar", "33:44:55:66:77:00:22", 14); 
-		 btDevice bty = myDB.getBTD(bt4.mac); i = 2; if(bty.mac == null) {
-		 a2dp.Vol.main.this.myDB.insert(bt4); vec.add(bt4); } else
-		 vec.add(bty);
-		 
-		 List<String> names = this.myDB.selectAll(); StringBuilder sb = new
-		 StringBuilder(); sb.append("Names in database:\n"); for (String name
-		 : names) { sb.append(name + "\n"); } str2 += " " + i;
-			refreshList(loadFromDB());		*/	
+		// the application for use.
+		/*
+		 * btDevice bt3 = new btDevice(); bt3.setBluetoothDevice("Device 1",
+		 * "Porsche", "00:22:33:44:55:66:77", 15); i = 1; btDevice btx =
+		 * myDB.getBTD(bt3.mac); if(btx.mac == null) {
+		 * a2dp.Vol.main.this.myDB.insert(bt3); vec.add(bt3); } else
+		 * vec.add(btx);
+		 * 
+		 * btDevice bt4 = new btDevice();
+		 * bt4.setBluetoothDevice("Motorola T605", "Jaguar",
+		 * "33:44:55:66:77:00:22", 14); btDevice bty = myDB.getBTD(bt4.mac); i =
+		 * 2; if(bty.mac == null) { a2dp.Vol.main.this.myDB.insert(bt4);
+		 * vec.add(bt4); } else vec.add(bty);
+		 * 
+		 * List<String> names = this.myDB.selectAll(); StringBuilder sb = new
+		 * StringBuilder(); sb.append("Names in database:\n"); for (String name
+		 * : names) { sb.append(name + "\n"); } str2 += " " + i;
+		 * refreshList(loadFromDB());
+		 */
 		// end of testing code
-		 
+
 		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 
 		if (mBTA == null) {
@@ -581,7 +598,7 @@ public class main extends Activity {
 			startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH);
 			// Now implement the onActivityResult() and wait for it to
 			// be invoked with ENABLE_BLUETOOTH
-			//onActivityResult(ENABLE_BLUETOOTH, result, enableBluetooth);
+			// onActivityResult(ENABLE_BLUETOOTH, result, enableBluetooth);
 			return 0;
 		}
 
@@ -619,36 +636,35 @@ public class main extends Activity {
 	}
 
 	// Listen for results.
-	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-	    // See which child activity is calling us back.
-		
-	    switch (requestCode) {
-	        case ENABLE_BLUETOOTH:
-	            // This is the standard resultCode that is sent back if the
-	            // activity crashed or didn't doesn't supply an explicit result.
-	            if (resultCode == RESULT_CANCELED){
-	                Toast.makeText(application, R.string.btEnableFail, Toast.LENGTH_LONG).show();
-	        		refreshList(loadFromDB());
-	            } 
-	            else {
-	            	
-	            	int test = getBtDevices();
-					if (test > 0) {
-						lstring = new String[test];
-						for (int i = 0; i < test; i++) {
-							lstring[i] = vec.get(i).toString();
-						}
-						refreshList(loadFromDB());
-					}
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// See which child activity is calling us back.
 
-					tx1.setText("Volume:" + OldVol + " Devices=" + test + "  ");
-	            }
-	        default:
-	            break;
-	    }
+		switch (requestCode) {
+		case ENABLE_BLUETOOTH:
+			// This is the standard resultCode that is sent back if the
+			// activity crashed or didn't doesn't supply an explicit result.
+			if (resultCode == RESULT_CANCELED) {
+				Toast.makeText(application, R.string.btEnableFail,
+						Toast.LENGTH_LONG).show();
+				refreshList(loadFromDB());
+			} else {
+
+				int test = getBtDevices();
+				if (test > 0) {
+					lstring = new String[test];
+					for (int i = 0; i < test; i++) {
+						lstring[i] = vec.get(i).toString();
+					}
+					refreshList(loadFromDB());
+				}
+
+				tx1.setText("Volume:" + OldVol + " Devices=" + test + "  ");
+			}
+		default:
+			break;
+		}
 	}
 
-	
 	// This function handles the media volume adjustments.
 	/**
 	 * @param inputVol
@@ -715,7 +731,8 @@ public class main extends Activity {
 		// work
 
 		vec = myDB.selectAlldb();
-		if(vec.isEmpty() || vec == null) return 0;
+		if (vec.isEmpty() || vec == null)
+			return 0;
 
 		return vec.size();
 	}
@@ -747,13 +764,13 @@ public class main extends Activity {
 			refreshList(vec.size());
 		}
 	};
-	
+
 	private final BroadcastReceiver mReceiver5 = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
 
 			refreshList(loadFromDB());
-			//Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
+			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
 		}
 	};
 

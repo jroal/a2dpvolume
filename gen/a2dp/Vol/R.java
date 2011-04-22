@@ -113,6 +113,7 @@ public final class R {
         public static final int Yes=0x7f050027;
         public static final int app_name=0x7f050000;
         public static final int btEnableFail=0x7f050030;
+        public static final int btNotOn=0x7f050038;
         public static final int useNetworkOFF=0x7f050036;
         public static final int useNetworkON=0x7f050035;
         public static final int useNetworkTitle=0x7f050034;

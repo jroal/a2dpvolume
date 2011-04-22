@@ -90,4 +90,5 @@
     <string name="useNetworkON">Utilisez également auditeur emplacement réseau</string>
     <string name="useNetworkOFF">Ne pas utiliser auditeur emplacement réseau</string>
     <string name="LocationString">Lieu</string>
+    <string name="btNotOn">Bluetooth n\'est pas activé afin d\'informations de périphérique n\'est pas disponible</string>
 </resources>
