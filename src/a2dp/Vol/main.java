@@ -715,6 +715,7 @@ public class main extends Activity {
 		// work
 
 		vec = myDB.selectAlldb();
+		if(vec.isEmpty() || vec == null) return 0;
 
 		return vec.size();
 	}

@@ -189,7 +189,7 @@ public class service extends Service {
 		run = false;
 		// in case the location listener is running, stop it
 		clearLoc();
-		// Tell the world we are running
+		// Tell the world we are not running
 		final String IStop = "a2dp.vol.service.STOPPED_RUNNING";
 		Intent i = new Intent();
 		i.setAction(IStop);
@@ -439,100 +439,77 @@ public class service extends Service {
 	}
 
 	// finds the most recent and most accurate locations
-	private double[] getGPS2() {
+	// get the location and write it to a file.
+	void grabGPS() {
 
+		String car = "My Car";
 		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		List<String> providers = lm.getProviders(true);
 
-		Location l = null;
-		Location l2 = null;
-		Location l3 = null;
+		Location l = null; // the most recent location
+		Location l2 = null; // the temporary last known location
+		Location l3 = null; // the most accurate location
 
 		long deltat = 9999999;
 		long olddt = 9999999;
 		float oldacc = 999999;
 
-		if (!providers.isEmpty()) {
-			for (int i = providers.size() - 1; i >= 0; i--) {
-				l2 = lm.getLastKnownLocation(providers.get(i));
+		try {
 
-				if (l2 != null) {
-					if (l2.hasAccuracy()) // if we have accuracy, capture the
-					// best
-					{
-						if (l2.getAccuracy() < oldacc) {
-							l3 = l2;
-							oldacc = l2.getAccuracy();
+			if (!providers.isEmpty()) {
+				for (int i = providers.size() - 1; i >= 0; i--) {
+					l2 = lm.getLastKnownLocation(providers.get(i));
+
+					if (l2 != null) {
+						if (l2.hasAccuracy()) // if we have accuracy, capture the best
+						{
+							if (l2.getAccuracy() < oldacc) {
+								l3 = l2;
+								oldacc = l2.getAccuracy();
+							}
+						}
+						olddt = deltat;
+						deltat = System.currentTimeMillis() - l2.getTime();
+						if (deltat < olddt) // get the most recent update
+						{
+							l = l2;
 						}
 					}
-					olddt = deltat;
-					deltat = System.currentTimeMillis() - l2.getTime();
-					if (deltat < olddt) // get the most recent update
-					{
-						l = l2;
-					}
 				}
+			} else
+				return; // if no location data just abort here
+
+			if (l != null) location_old = l;
+
+			// If we have a good location, turn OFF the gps listener.
+			if (locationListener != null && l != null && location2 != null) {
+				float x = location2.getAccuracy();
+				if (x < MAX_ACC
+						&& x > 0
+						&& (System.currentTimeMillis() - location2.getTime()) < MAX_TIME)
+					clearLoc();
 			}
-		} else
-			return null;
 
-		double[] gps = new double[8];
-
-		if (l != null) {
-			gps[0] = l.getLatitude();
-			gps[1] = l.getLongitude();
-			gps[2] = l.getAccuracy();
-			gps[3] = l.getTime();
-			location_old = l;
-		} else
-			return null;
-
-		if (l3 != null) {
-			gps[4] = l3.getLatitude();
-			gps[5] = l3.getLongitude();
-			gps[6] = l3.getAccuracy();
-			gps[7] = l3.getTime();
-		} else
-			return null;
-
-		// If we have a good location, turn OFF the gps listener.
-		if (locationListener != null && l != null && location2 != null) {
-			float x = location2.getAccuracy();
-			if (x < MAX_ACC
-					&& x > 0
-					&& (System.currentTimeMillis() - location2.getTime()) < MAX_TIME)
-				clearLoc();
-		}
-
-		return gps;
-	}
-
-	// get the location and write it to a file.
-	void grabGPS() {
-		double[] gloc;
-		String car = "My Car";
-		try {
-			gloc = getGPS2();
 		} catch (Exception e1) {
 			return;
 		}
 
 		DecimalFormat df = new DecimalFormat("#.#");
+		// figure out which device we are disconnecting from
+		if (btdConn != null) car = btdConn.getDesc2();
 
-		if (gloc != null) {
-			if (btdConn != null) {
-				car = btdConn.getDesc2();
-			}
-			// store last location
+		// store the most recent location
+		if (l != null) {
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location",
 						Context.MODE_WORLD_READABLE);
 
 				Time t = new Time();
-				t.set((long) gloc[3]);
-				String temp = "http://maps.google.com/maps?q=" + gloc[0] + ","
-						+ gloc[1] + "+" + "(" + car + " " + t.format("%D, %r")
-						+ " acc=" + df.format(gloc[2]) + ")";
+				t.set((long) l.getTime());
+				String temp = "http://maps.google.com/maps?q="
+						+ l.getLatitude() + "," + l.getLongitude() + "+" + "("
+						+ car + " " + t.format("%D, %r") + " acc="
+						+ df.format(l.getAccuracy()) + ")";
 				fos.write(temp.getBytes());
 				fos.close();
 				// Toast.makeText(a2dp.Vol.service.this, temp,
@@ -546,16 +523,19 @@ public class service extends Service {
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
-			
-			// store most accurate location
+		}
+
+		// store most accurate location
+		if (l3 != null) {
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location2",
 						Context.MODE_WORLD_READABLE);
 				Time t = new Time();
-				t.set((long) gloc[7]);
-				String temp = "http://maps.google.com/maps?q=" + gloc[4] + ","
-						+ gloc[5] + "+" + "(" + car + " " + t.format("%D, %r")
-						+ " acc=" + df.format(gloc[6]) + ")";
+				t.set((long) l3.getTime());
+				String temp = "http://maps.google.com/maps?q="
+						+ l3.getLatitude() + "," + l3.getLongitude() + "+"
+						+ "(" + car + " " + t.format("%D, %r") + " acc="
+						+ df.format(l3.getAccuracy()) + ")";
 				fos.write(temp.getBytes());
 				fos.close();
 				// Toast.makeText(a2dp.Vol.service.this, temp,
@@ -569,68 +549,55 @@ public class service extends Service {
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
-			
-			if (btdConn != null) {
-				// store this vehicles location
-				try {
-					File exportDir = new File(
-							Environment.getExternalStorageDirectory(),
-							"BluetoothVol");
+		}
+		
+		// store this vehicles location
+		if (btdConn != null && l != null) {
+			try {
+				File exportDir = new File(
+						Environment.getExternalStorageDirectory(),
+						"BluetoothVol");
 
-					if (!exportDir.exists()) {
-						exportDir.mkdirs();
-					}
-					File file = new File(exportDir, car.replaceAll(" ", "_")
-							+ ".html");
-
-					FileOutputStream fos = new FileOutputStream(file);
-					Time t = new Time();
-					t.set((long) gloc[3]);
-					String temp = "<bold><a href=\"http://maps.google.com/maps?q="
-							+ gloc[0]
-							+ ","
-							+ gloc[1]
-							+ "+"
-							+ "("
-							+ car
-							+ " "
-							+ t.format("%D, %r")
-							+ " acc="
-							+ df.format(gloc[2])
-							+ ")\">"
-							+ car
-							+ "</a></bold><br>"
-							+ "Time: "
-							+ t.format("%D, %r")
-							+ "<br>";
-							
-					if(location2 != null) temp += "Location type: " +location2.getProvider()
-							+ "<br>"
-							+ "Accuracy: "
-							+ location2.getAccuracy()
-							+ " meters<br>" 
-							+ "Elevation: "
-							+ location2.getAltitude() + " meters<br>";
-					
-					temp += "Lattitude: "
-							+ gloc[0]
-							+ "<br>"
-							+ "Longitude: "
-							+ gloc[1];
-							
-					fos.write(temp.getBytes());
-					fos.close();
-					// Toast.makeText(a2dp.Vol.service.this, temp,
-					// Toast.LENGTH_LONG).show();
-				} catch (FileNotFoundException e) {
-					Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
-							Toast.LENGTH_LONG).show();
-					e.printStackTrace();
-				} catch (IOException e) {
-					Toast.makeText(a2dp.Vol.service.this, "IOException",
-							Toast.LENGTH_LONG).show();
-					e.printStackTrace();
+				if (!exportDir.exists()) {
+					exportDir.mkdirs();
 				}
+				File file = new File(exportDir, car.replaceAll(" ", "_")
+						+ ".html");
+
+				FileOutputStream fos = new FileOutputStream(file);
+				Time t = new Time();
+				t.set((long) l.getTime());
+				String temp = "<bold><a href=\"http://maps.google.com/maps?q="
+						+ l.getLatitude() + "," + l.getLongitude() + "+" + "("
+						+ car + " " + t.format("%D, %r") + " acc="
+						+ df.format(l.getAccuracy()) + ")\">" + car
+						+ "</a></bold><hr /><br> Most Recent Location<br>Time: " + t.format("%D, %r")
+						+ "<br>" + "Location type: " + l.getProvider() + "<br>"
+						+ "Accuracy: " + l.getAccuracy() + " meters<br>"
+						+ "Elevation: " + l.getAltitude() + " meters<br>"
+						+ "Lattitude: " + l.getLatitude() + "<br>"
+						+ "Longitude: " + l.getLongitude();
+				if(l3 != null) {
+					t.set((long) l3.getTime());
+					temp += "<hr /><br> Most Accurate Location<br>Time: " + t.format("%D, %r")
+						+ "<br>" + "Location type: " + l3.getProvider() + "<br>"
+						+ "Accuracy: " + l3.getAccuracy() + " meters<br>"
+						+ "Elevation: " + l3.getAltitude() + " meters<br>"
+						+ "Lattitude: " + l3.getLatitude() + "<br>"
+						+ "Longitude: " + l3.getLongitude();
+				}
+				fos.write(temp.getBytes());
+				fos.close();
+				// Toast.makeText(a2dp.Vol.service.this, temp,
+				// Toast.LENGTH_LONG).show();
+			} catch (FileNotFoundException e) {
+				Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
+						Toast.LENGTH_LONG).show();
+				e.printStackTrace();
+			} catch (IOException e) {
+				Toast.makeText(a2dp.Vol.service.this, "IOException",
+						Toast.LENGTH_LONG).show();
+				e.printStackTrace();
 			}
 
 		}
