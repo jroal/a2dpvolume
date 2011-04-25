@@ -799,6 +799,7 @@ public class main extends Activity {
 	// Returns the bluetooth services supported as a string
 	private String getBTClassServ(BluetoothDevice btd) {
 		String temp = "";
+		if(btd == null)return temp;
 		if (btd.getBluetoothClass().hasService(BluetoothClass.Service.AUDIO))
 			temp = "Audio, ";
 		if (btd.getBluetoothClass()
@@ -839,6 +840,7 @@ public class main extends Activity {
 	 */
 	private String getBTClassDev(BluetoothDevice btd) {
 		String temp = "";
+		if(btd == null)return temp;
 		if (btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_CAR_AUDIO)
 			temp = "Car Audio, ";
 		if (btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_HANDSFREE)
@@ -915,6 +917,7 @@ public class main extends Activity {
 	 */
 	private String getBTClassDevMaj(BluetoothDevice btd) {
 		String temp = "";
+		if(btd == null)return temp;
 		if (btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.AUDIO_VIDEO)
 			temp = "Audio Video, ";
 		if (btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.COMPUTER)
