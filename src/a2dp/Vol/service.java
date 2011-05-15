@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.widget.Toast;
@@ -61,6 +62,10 @@ public class service extends Service {
 	private boolean useNet = true;
 	private Notification not = null;
 	private NotificationManager mNotificationManager = null;
+	Long dtime = null;
+	Location l = null; // the most recent location
+	Location l3 = null; // the most accurate location
+	Location l4 = null; // the best location
 
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
@@ -83,6 +88,7 @@ public class service extends Service {
 		// get and load preferences
 
 		String str = "";
+		dtime = System.currentTimeMillis();
 		try {
 			preferences = PreferenceManager
 					.getDefaultSharedPreferences(this.application);
@@ -269,6 +275,9 @@ public class service extends Service {
 			btConn = bt;
 
 			btDevice bt2 = null;
+			dtime = System.currentTimeMillis(); // catch the time we disconnected
+			location2 = null; // clear this so a new location is stored
+			
 			try {
 				String addres = btConn.getAddress();
 				bt2 = DB.getBTD(addres);
@@ -360,6 +369,8 @@ public class service extends Service {
 			// make sure we turn OFF the location listener if we don't get a
 			// loc in MAX_TIME
 			btdConn = null; // since this is not a bluetooth device disconnecting, clear the connected device  
+			dtime = System.currentTimeMillis(); // catch the time we disconnected
+			location2 = null; // clear this so a new location is stored
 			if (MAX_TIME > 0 && !gettingLoc) {
 				new CountDownTimer(MAX_TIME, 5000) {
 
@@ -449,27 +460,37 @@ public class service extends Service {
 		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		List<String> providers = lm.getProviders(true);
 
-		Location l = null; // the most recent location
-		Location l2 = null; // the temporary last known location
-		Location l3 = null; // the most accurate location
-
 		long deltat = 9999999;
 		long olddt = 9999999;
-		float oldacc = 999999;
-
+		float oldacc = 99999999;
+		float bestacc = 99999999;
+		Location l2 = null; // the temporary last known location
+		if(l4 != null)
+			if(l4.hasAccuracy())bestacc = l4.getAccuracy();
+		
 		try {
 
 			if (!providers.isEmpty()) {
 				for (int i = providers.size() - 1; i >= 0; i--) {
 					l2 = lm.getLastKnownLocation(providers.get(i));
-
+					
 					if (l2 != null) {
+						if(location_old != null)
+						if(location_old.getTime() < (dtime - 15000)) location_old = l2; // reset this if its too old
+						
 						if (l2.hasAccuracy()) // if we have accuracy, capture the best
 						{
-							if (l2.getAccuracy() < oldacc) {
-								l3 = l2;
-								oldacc = l2.getAccuracy();
+							float acc = l2.getAccuracy();
+							if (acc < oldacc) {
+								l3 = l2; // the sample with the best accuracy
+								oldacc = acc;	
 							}
+							if((acc < bestacc) && (l2.getTime() > (dtime - 15000))){
+								l4 = l2; // the best sample since 15s before
+											// disconnect
+								bestacc = acc;
+							}
+							
 						}
 						olddt = deltat;
 						deltat = System.currentTimeMillis() - l2.getTime();
@@ -482,10 +503,10 @@ public class service extends Service {
 			} else
 				return; // if no location data just abort here
 
-			if (l != null) location_old = l;
+			if (l4 != null) location_old = l4;
 
 			// If we have a good location, turn OFF the gps listener.
-			if (locationListener != null && l != null && location2 != null) {
+			if (locationListener != null && l4 != null && location2 != null) {
 				float x = location2.getAccuracy();
 				if (x < MAX_ACC
 						&& x > 0
@@ -501,18 +522,18 @@ public class service extends Service {
 		// figure out which device we are disconnecting from
 		if (btdConn != null) car = btdConn.getDesc2();
 
-		// store the most recent location
-		if (l != null) {
+		// store the best location
+		if (l4 != null) {
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location",
 						Context.MODE_WORLD_READABLE);
 
 				Time t = new Time();
-				t.set((long) l.getTime());
+				t.set((long) l4.getTime());
 				String temp = "http://maps.google.com/maps?q="
-						+ l.getLatitude() + "," + l.getLongitude() + "+" + "("
+						+ l4.getLatitude() + "," + l4.getLongitude() + "+" + "("
 						+ car + " " + t.format("%D, %r") + " acc="
-						+ df.format(l.getAccuracy()) + ")";
+						+ df.format(l4.getAccuracy()) + ")";
 				fos.write(temp.getBytes());
 				fos.close();
 				// Toast.makeText(a2dp.Vol.service.this, temp,
@@ -554,56 +575,8 @@ public class service extends Service {
 			}
 		}
 		
-		// store this vehicles location
-		if (btdConn != null && l != null) {
-			try {
-				File exportDir = new File(
-						Environment.getExternalStorageDirectory(),
-						"BluetoothVol");
 
-				if (!exportDir.exists()) {
-					exportDir.mkdirs();
-				}
-				File file = new File(exportDir, car.replaceAll(" ", "_")
-						+ ".html");
-
-				FileOutputStream fos = new FileOutputStream(file);
-				Time t = new Time();
-				t.set((long) l.getTime());
-				String temp = "<bold><a href=\"http://maps.google.com/maps?q="
-						+ l.getLatitude() + "," + l.getLongitude() + "+" + "("
-						+ car + " " + t.format("%D, %r") + " acc="
-						+ df.format(l.getAccuracy()) + ")\">" + car
-						+ "</a></bold><hr /> Most Recent Location<br>Time: " + t.format("%D, %r")
-						+ "<br>" + "Location type: " + l.getProvider() + "<br>"
-						+ "Accuracy: " + l.getAccuracy() + " meters<br>"
-						+ "Elevation: " + l.getAltitude() + " meters<br>"
-						+ "Lattitude: " + l.getLatitude() + "<br>"
-						+ "Longitude: " + l.getLongitude();
-				if(l3 != null) {
-					t.set((long) l3.getTime());
-					temp += "<hr /> Most Accurate Location<br>Time: " + t.format("%D, %r")
-						+ "<br>" + "Location type: " + l3.getProvider() + "<br>"
-						+ "Accuracy: " + l3.getAccuracy() + " meters<br>"
-						+ "Elevation: " + l3.getAltitude() + " meters<br>"
-						+ "Lattitude: " + l3.getLatitude() + "<br>"
-						+ "Longitude: " + l3.getLongitude();
-				}
-				fos.write(temp.getBytes());
-				fos.close();
-				// Toast.makeText(a2dp.Vol.service.this, temp,
-				// Toast.LENGTH_LONG).show();
-			} catch (FileNotFoundException e) {
-				Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
-						Toast.LENGTH_LONG).show();
-				e.printStackTrace();
-			} catch (IOException e) {
-				Toast.makeText(a2dp.Vol.service.this, "IOException",
-						Toast.LENGTH_LONG).show();
-				e.printStackTrace();
-			}
-
-		}
+		
 	}
 
 	// Define a listener that responds to location updates
@@ -641,11 +614,94 @@ public class service extends Service {
 		}
 	};
 
-	// just kills the location listener
+	// kills the location listener and writes the location file
 	private void clearLoc() {
 		locationManager.removeUpdates(locationListener);
 		btConn = null;
 		gettingLoc = false;
+		String car = "My Car";
+		DecimalFormat df = new DecimalFormat("#.#");
+		// figure out which device we are disconnecting from
+		if (btdConn != null) car = btdConn.getDesc2();
+		
+		// store this vehicles location
+		
+		try {
+			File exportDir = new File(
+					Environment.getExternalStorageDirectory(),
+					"BluetoothVol");
+
+			if (!exportDir.exists()) {
+				exportDir.mkdirs();
+			}
+			File file = new File(exportDir, car.replaceAll(" ", "_")
+					+ ".html");
+
+			FileOutputStream fos = new FileOutputStream(file);
+			Time t = new Time();
+			String temp = null;
+			
+			if (l4 != null) {
+			t.set((long) l4.getTime());
+			temp = "<bold><a href=\"http://maps.google.com/maps?q="
+					+ l4.getLatitude() + "," + l4.getLongitude() + "+" + "("
+					+ car + " " + t.format("%D, %r") + " acc="
+					+ df.format(l4.getAccuracy()) + ")\">" + car
+					+ "</a></bold><hr /> Best Location<br>Time: " + t.format("%D, %r")
+					+ "<br>" + "Location type: " + l4.getProvider() + "<br>"
+					+ "Accuracy: " + l4.getAccuracy() + " meters<br>"
+					+ "Elevation: " + l4.getAltitude() + " meters<br>"
+					+ "Lattitude: " + l4.getLatitude() + "<br>"
+					+ "Longitude: " + l4.getLongitude();
+			}
+			else
+			{
+				temp = "No Best Location Captured";
+			}
+			if(l3 != null) {
+				t.set((long) l3.getTime());
+				temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
+					+ l3.getLatitude() + "," + l3.getLongitude() + "+" + "("
+					+ car + " " + t.format("%D, %r") + " acc="
+					+ df.format(l3.getAccuracy()) + ")\">" + car
+					+ "</a></bold> Most Accurate Location<br>Time: " + t.format("%D, %r")
+					+ "<br>" + "Location type: " + l3.getProvider() + "<br>"
+					+ "Accuracy: " + l3.getAccuracy() + " meters<br>"
+					+ "Elevation: " + l3.getAltitude() + " meters<br>"
+					+ "Lattitude: " + l3.getLatitude() + "<br>"
+					+ "Longitude: " + l3.getLongitude();
+			}
+			if(l != null) {
+				t.set((long) l.getTime());
+				temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
+					+ l.getLatitude() + "," + l.getLongitude() + "+" + "("
+					+ car + " " + t.format("%D, %r") + " acc="
+					+ df.format(l.getAccuracy()) + ")\">" + car
+					+ "</a></bold> Most Recent Location<br>Time: " + t.format("%D, %r")
+					+ "<br>" + "Location type: " + l.getProvider() + "<br>"
+					+ "Accuracy: " + l.getAccuracy() + " meters<br>"
+					+ "Elevation: " + l.getAltitude() + " meters<br>"
+					+ "Lattitude: " + l.getLatitude() + "<br>"
+					+ "Longitude: " + l.getLongitude();
+			}
+			fos.write(temp.getBytes());
+			fos.close();
+			// Toast.makeText(a2dp.Vol.service.this, temp,
+			// Toast.LENGTH_LONG).show();
+		} catch (FileNotFoundException e) {
+			Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
+					Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		} catch (IOException e) {
+			Toast.makeText(a2dp.Vol.service.this, "IOException",
+					Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		}
+
+		// reset all the location variables
+		l = null; // the most recent location
+		l3 = null; // the most accurate location
+		l4 = null; // the best location
 		// Toast.makeText(a2dp.Vol.service.this, " Location Manager stopped",
 		// Toast.LENGTH_LONG).show();
 	}
