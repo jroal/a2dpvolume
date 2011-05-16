@@ -67,6 +67,7 @@ public class service extends Service {
 	Location l3 = null; // the most accurate location
 	Location l4 = null; // the best location
 
+
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
@@ -312,9 +313,7 @@ public class service extends Service {
 							clearLoc();
 						}
 					}.start();
-					// clear any previously running instances of the location
-					// listener
-					clearLoc();
+					
 					// start location provider GPS
 					// Register the listener with the Location Manager to
 					// receive location updates
@@ -476,7 +475,7 @@ public class service extends Service {
 					
 					if (l2 != null) {
 						if(location_old != null)
-						if(location_old.getTime() < (dtime - 15000)) location_old = l2; // reset this if its too old
+						if(location_old.getTime() < (dtime - MAX_TIME)) location_old = l2; // reset this if its too old
 						
 						if (l2.hasAccuracy()) // if we have accuracy, capture the best
 						{
@@ -485,7 +484,7 @@ public class service extends Service {
 								l3 = l2; // the sample with the best accuracy
 								oldacc = acc;	
 							}
-							if((acc < bestacc) && (l2.getTime() > (dtime - 15000))){
+							if((acc < bestacc) && (l2.getTime() > (dtime - MAX_TIME))){
 								l4 = l2; // the best sample since 15s before
 											// disconnect
 								bestacc = acc;
@@ -643,11 +642,11 @@ public class service extends Service {
 			
 			if (l4 != null) {
 			t.set((long) l4.getTime());
-			temp = "<bold><a href=\"http://maps.google.com/maps?q="
+			temp = "<hr /><bold><a href=\"http://maps.google.com/maps?q="
 					+ l4.getLatitude() + "," + l4.getLongitude() + "+" + "("
 					+ car + " " + t.format("%D, %r") + " acc="
 					+ df.format(l4.getAccuracy()) + ")\">" + car
-					+ "</a></bold><hr /> Best Location<br>Time: " + t.format("%D, %r")
+					+ "</a></bold> Best Location<br>Time: " + t.format("%D, %r")
 					+ "<br>" + "Location type: " + l4.getProvider() + "<br>"
 					+ "Accuracy: " + l4.getAccuracy() + " meters<br>"
 					+ "Elevation: " + l4.getAltitude() + " meters<br>"
