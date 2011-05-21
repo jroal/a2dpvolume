@@ -595,9 +595,9 @@ public class service extends Service {
 					acc2 = location_old.getAccuracy();
 			}
 
-			if ((acc < MAX_ACC || acc < acc2) && acc != 0) {
+			//if ((acc < MAX_ACC || acc <= acc2) && acc != 0) {
 				grabGPS();
-			}
+			//}
 
 		}
 
