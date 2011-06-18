@@ -12,6 +12,7 @@ public class btDevice {
 	public String desc1; // Default device name as read via Bluetooth
 	public String desc2; // Description as assigned by user
 	public String mac; // mac address of the bluetooth device
+	public String pname; // package name to auto launch
 	public boolean setV; // whether to adjust volume on this device or not
 	public int defVol; // default volume to set to when connected. Normally this
 	// is just max (15)
@@ -179,6 +180,21 @@ public class btDevice {
 		this.setV = true;
 		this.defVol = vol;
 		this.getLoc = true;
+		this.pname = null;
+	}
+
+	/**
+	 * @return the pname
+	 */
+	public String getPname() {
+		return pname;
+	}
+
+	/**
+	 * @param pname the pname to set
+	 */
+	public void setPname(String pname) {
+		this.pname = pname;
 	}
 
 	/**
@@ -200,5 +216,6 @@ public class btDevice {
 		this.setV = true;
 		this.defVol = vol;
 		this.getLoc = true;
+		this.pname = null;
 	}
 }

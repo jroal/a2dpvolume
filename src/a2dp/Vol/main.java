@@ -137,7 +137,7 @@ public class main extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+		
 		preferences = getSharedPreferences(PREFS_NAME, 1);
 		am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		final Button btn = (Button) findViewById(R.id.Button01);
@@ -359,6 +359,7 @@ public class main extends Activity {
 								.findViewById(R.id.DoVol);
 						final CheckBox gl = (CheckBox) dl
 								.findViewById(R.id.getLocBox);
+						final EditText t3 = (EditText) dl.findViewById(R.id.editPname);
 						final Button endedit = (Button) dl
 								.findViewById(R.id.DoneButton);
 						dl.setTitle("Edit Device");
@@ -368,6 +369,7 @@ public class main extends Activity {
 								.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 						b1.setProgress(bt.getDefVol());
 						gl.setChecked(bt.isGetLoc());
+						t3.setText(bt.getPname());
 
 						android.view.View.OnClickListener saveandexit = new View.OnClickListener() {
 
@@ -387,6 +389,7 @@ public class main extends Activity {
 								bt.setSetV(dv.isChecked());
 								bt.setDefVol(b1.getProgress());
 								bt.setGetLoc(gl.isChecked());
+								bt.setPname(t3.getText().toString());
 								myDB.update(bt);
 								endedit.setText("Save Complete");
 								refreshList(loadFromDB());
