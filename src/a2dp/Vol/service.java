@@ -12,6 +12,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothDevice;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -258,6 +259,11 @@ public class service extends Service {
 
 			if (setvol)
 				setVolume(maxvol, a2dp.Vol.service.this);
+			
+			if(bt2.pname.length() > 3)
+			{
+				launchApp(bt2.pname);
+			}
 		}
 	};
 
@@ -729,5 +735,17 @@ public class service extends Service {
 
 		mNotificationManager.notify(1, not);
 	}
-
+	protected void launchApp(String packageName) {
+		Intent mIntent = getPackageManager().getLaunchIntentForPackage(
+				packageName);
+		if (mIntent != null) {
+			try {
+				startActivity(mIntent);
+			} catch (ActivityNotFoundException err) {
+				Toast t = Toast.makeText(getApplicationContext(),
+						R.string.app_not_found, Toast.LENGTH_SHORT);
+				t.show();
+			}
+		}
+	}
 }
