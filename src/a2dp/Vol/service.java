@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.widget.Toast;
@@ -260,6 +259,8 @@ public class service extends Service {
 			if (setvol)
 				setVolume(maxvol, a2dp.Vol.service.this);
 			
+			// If we defined an app to auto-start then run it on connect
+			if(bt2.pname != null)
 			if(bt2.pname.length() > 3)
 			{
 				launchApp(bt2.pname);
@@ -578,10 +579,7 @@ public class service extends Service {
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
-		}
-		
-
-		
+		}	
 	}
 
 	// Define a listener that responds to location updates
@@ -590,21 +588,7 @@ public class service extends Service {
 			// Called when a new location is found by the gps location
 			// provider.
 			location2 = location;
-			// since we know this is a new location, just check the accuracy
-			float acc = location.getAccuracy();
-			float acc2 = acc;
-
-			// if we have an old location then use it to compare with the new
-			// one.
-			if (location_old != null) {
-				if (location_old.hasAccuracy())
-					acc2 = location_old.getAccuracy();
-			}
-
-			//if ((acc < MAX_ACC || acc <= acc2) && acc != 0) {
-				grabGPS();
-			//}
-
+			grabGPS();
 		}
 
 		public void onProviderEnabled(String provider) {
@@ -748,4 +732,5 @@ public class service extends Service {
 			}
 		}
 	}
+	
 }

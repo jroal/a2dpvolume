@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -17,14 +16,10 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
-import android.content.DialogInterface.OnDismissListener;
-import android.content.res.Configuration;
-import android.location.Location;
-import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,18 +30,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.webkit.*;
 
 public class main extends Activity {
 
@@ -332,75 +326,21 @@ public class main extends Activity {
 				builder.setMessage(bt2.desc1 + "\n" + bt2.desc2 + "\n"
 						+ bt2.mac + "\nConnected Volume: " + bt2.defVol
 						+ "\nTrigger Volume: " + bt2.setV + "\nGet Location: "
-						+ bt2.getLoc);
+						+ bt2.getLoc + "\nAuto Launch: " + bt2.pname);
 				builder.setPositiveButton(R.string.OK, null);
 				builder.setNegativeButton(R.string.Delete,
 						new OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								// BluetoothDevice bdelete =
-								// BluetoothAdapter.getDefaultAdapter().getRemoteDevice(bt.mac);
 								myDB.delete(bt2);
 								refreshList(loadFromDB());
 							}
 						});
 				builder.setNeutralButton(R.string.Edit, new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						final Dialog dl = new Dialog(a2dp.Vol.main.this);
-
-						dl.setContentView(R.layout.editdata);
-
-						dl.setCancelable(true);
-						final SeekBar b1 = (SeekBar) dl
-								.findViewById(R.id.DefVolBar);
-						final EditText t2 = (EditText) dl
-								.findViewById(R.id.EditText01);
-						final CheckBox dv = (CheckBox) dl
-								.findViewById(R.id.DoVol);
-						final CheckBox gl = (CheckBox) dl
-								.findViewById(R.id.getLocBox);
-						final EditText t3 = (EditText) dl.findViewById(R.id.editPname);
-						final Button endedit = (Button) dl
-								.findViewById(R.id.DoneButton);
-						dl.setTitle("Edit Device");
-						t2.setText(bt.getDesc2());
-						dv.setChecked(bt.isSetV());
-						b1.setMax(am
-								.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-						b1.setProgress(bt.getDefVol());
-						gl.setChecked(bt.isGetLoc());
-						t3.setText(bt.getPname());
-
-						android.view.View.OnClickListener saveandexit = new View.OnClickListener() {
-
-							/*
-							 * (non-Javadoc)
-							 * 
-							 * @see
-							 * android.view.View.OnClickListener#onClick(android
-							 * .view.View)
-							 */
-							public void onClick(View v) {
-								if (t2.length() < 1)
-									bt.setDesc2(bt.desc1);
-								else
-									bt.setDesc2(t2.getText().toString());
-
-								bt.setSetV(dv.isChecked());
-								bt.setDefVol(b1.getProgress());
-								bt.setGetLoc(gl.isChecked());
-								bt.setPname(t3.getText().toString());
-								myDB.update(bt);
-								endedit.setText("Save Complete");
-								refreshList(loadFromDB());
-								dl.dismiss();
-							}
-
-						};
-						endedit.setOnClickListener(saveandexit);
-
-						dl.show();
-
+						Intent i = new Intent(a2dp.Vol.main.this, EditDevice.class);
+						i.putExtra("btd",bt.mac);
+						startActivity(i);
 					}
 				});
 				builder.show();

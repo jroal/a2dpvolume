@@ -1,52 +1,47 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="a2dp.Vol"
-      android:installLocation="auto" android:versionCode="23" android:versionName="2.0.0">
-    <application android:name="MyApplication" android:label="@string/app_name" android:allowBackup="true" android:icon="@drawable/icon5" android:persistent="true">
-        <activity android:name=".main" android:label="@string/app_name" android:multiprocess="false" android:configChanges="keyboard|keyboardHidden|orientation" android:icon="@drawable/icon5" android:launchMode="singleInstance">
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest android:installLocation="auto" android:versionCode="24"
+    android:versionName="2.0.1" package="a2dp.Vol" xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:allowBackup="true"
+        android:icon="@drawable/icon5" android:label="@string/app_name"
+        android:name="MyApplication" android:persistent="true">
+        <activity android:icon="@drawable/icon5"
+            android:label="@string/app_name"
+            android:launchMode="singleInstance"
+            android:multiprocess="false" android:name=".main">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-    <service android:enabled="true" android:name="service" android:label="@string/app_name">
-</service>
-
-<activity android:name="ManageData" android:enabled="true" android:label="@string/app_name" android:icon="@drawable/icon5" android:launchMode="singleInstance">
-
-</activity>
-
-<activity android:name="Preferences" android:enabled="true" android:label="@xml/preferences" android:icon="@drawable/icon5" android:launchMode="singleInstance"></activity>
-
-<receiver android:name="Starter"><intent-filter><category android:name="android.intent.category.HOME"></category>
-<action android:name="android.intent.action.BOOT_COMPLETED"></action>
-</intent-filter>
-</receiver>
-
-
-
-
-<receiver android:name="Widget" android:icon="@drawable/icon5" android:description="@string/GetLocButtonString" android:label="@string/app_name"><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget" /><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
-
-</intent-filter>
-</receiver><service android:name="ALauncher" android:enabled="true" android:label="@string/app_name"></service>
-</application>
-
-
-
-<uses-permission android:name="android.permission.BLUETOOTH"></uses-permission>
-
-<uses-sdk android:minSdkVersion="8"></uses-sdk>
-
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
-<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"></uses-permission>
-
-
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
-<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
-
-
-
-</manifest> 
+        <service android:enabled="true" android:label="@string/app_name" android:name="service"/>
+        <activity android:enabled="true" android:icon="@drawable/icon5"
+            android:label="@string/app_name"
+            android:launchMode="singleInstance" android:name="ManageData"/>
+        <activity android:enabled="true" android:icon="@drawable/icon5"
+            android:label="@xml/preferences"
+            android:launchMode="singleInstance" android:name="Preferences"/>
+        <receiver android:name="Starter">
+            <intent-filter>
+                <category android:name="android.intent.category.HOME"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:icon="@drawable/icon5"
+            android:label="@string/app_name" android:name="Widget">
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget"/>
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+        </receiver>
+        <service android:enabled="true" android:label="@string/app_name" android:name="ALauncher"/>
+        <activity android:name=".EditDevice"/>
+        <activity android:name=".ListViewer"/>
+    </application>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-sdk android:minSdkVersion="8"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+</manifest>
