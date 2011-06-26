@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -265,9 +267,24 @@ public class service extends Service {
 			{
 				launchApp(bt2.pname);
 			}
+			
+			if(bt2.wifi)dowifi(false);
+			
+			if(bt2.bdevice != null)
+				if(bt2.bdevice.length() == 17){
+/*					BluetoothDevice device;
+					connectBluetoothA2dp(device);*/
+				}
+					
 		}
 	};
-
+	
+	// disable wifi is requested
+	private void dowifi(boolean s){
+		WifiManager wifiManager = (WifiManager)getBaseContext().getSystemService(Context.WIFI_SERVICE);
+		wifiManager.setWifiEnabled(s);
+	}
+	
 	private final BroadcastReceiver mReceiver2 = new BroadcastReceiver() {
 		/*
 		 * (non-Javadoc)
@@ -733,4 +750,46 @@ public class service extends Service {
 		}
 	}
 	
+	private void connectBluetoothA2dp(BluetoothDevice device) {
+
+		IBluetoothA2dp ibta = getIBluetoothA2dp();
+		try {
+		    //Log.d("Felix", "Here: " + ibta.getSinkPriority(device));
+		    ibta.connectSink(device);
+		} catch (Exception e) {
+		    // * TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+
+		}
+	
+	private IBluetoothA2dp getIBluetoothA2dp() {
+
+		IBluetoothA2dp ibta = null;
+
+		try {
+
+		    Class c2 = Class.forName("android.os.ServiceManager");
+
+		    Method m2 = c2.getDeclaredMethod("getService", String.class);
+		    IBinder b = (IBinder) m2.invoke(null, "bluetooth_a2dp");
+
+		    //Log.d("Felix", "Test2: " + b.getInterfaceDescriptor());
+
+		    Class c3 = Class.forName("android.bluetooth.IBluetoothA2dp");
+
+		    Class[] s2 = c3.getDeclaredClasses();
+
+		    Class c = s2[0];
+		    // printMethods(c);
+		    Method m = c.getDeclaredMethod("asInterface", IBinder.class);
+
+		    m.setAccessible(true);
+		    ibta = (IBluetoothA2dp) m.invoke(null, b);
+
+		} catch (Exception e) {
+		    //Log.e("flowlab", "Erroraco!!! " + e.getMessage());
+		}
+		return ibta;
+	}
 }
