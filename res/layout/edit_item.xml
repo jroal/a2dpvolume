@@ -1,0 +1,27 @@
+
+    <ScrollView android:id="@+id/scrollView1" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
+        <TableLayout android:id="@+id/tableLayout1" android:layout_width="match_parent" android:layout_height="match_parent">
+                <TextView android:text="@string/deviceName" android:layout_height="wrap_content" android:id="@+id/textView2" android:layout_width="wrap_content"></TextView>
+   
+            <EditText android:id="@+id/editDesc2" android:text="EditText" android:layout_height="wrap_content" android:layout_width="match_parent"></EditText>
+   
+        <CheckBox android:text="@string/getLoc" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/checkCaptLoc"></CheckBox>
+    
+        <CheckBox android:text="@string/setVol" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/checkSetVol"></CheckBox>
+    
+        <TextView android:text="@string/MediaVolume" android:layout_height="wrap_content" android:id="@+id/textView1" android:layout_width="wrap_content"></TextView>
+    
+        <SeekBar android:layout_width="match_parent" android:id="@+id/seekBarVol" android:layout_height="wrap_content" android:layout_weight="1" android:layout_gravity="center" android:layout_marginLeft="2pt" android:layout_marginRight="2pt"></SeekBar>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/chooseAppButton" android:text="@string/startApp" android:layout_marginTop="5pt"></Button>
+   
+        <EditText android:id="@+id/editApp" android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_marginBottom="5pt"></EditText>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/chooseBTbutton" android:text="@string/connectBT" android:layout_marginTop="5pt"></Button>
+    
+        <EditText android:id="@+id/editBtConnect" android:layout_height="wrap_content" android:layout_width="match_parent" android:inputType="text|textNoSuggestions" android:layout_marginBottom="5pt"></EditText>
+    
+        <CheckBox android:text="@string/wifiDisconnect" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/checkwifi"></CheckBox>
+                <Button android:layout_height="wrap_content" android:id="@+id/EditDevSavebutton" android:text="@string/save" android:layout_gravity="fill_horizontal" android:layout_width="fill_parent" android:layout_weight="1"></Button>
+        </TableLayout>
+        
+           
+    </ScrollView>

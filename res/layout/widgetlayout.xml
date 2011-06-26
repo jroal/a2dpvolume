@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content">
+<Button android:text="@string/GetLocButtonString" android:id="@+id/WidgetButton" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_gravity="center" android:background="@drawable/car2" android:shadowColor="#000000" android:textColor="#FFFFFF" android:shadowDx="2" android:shadowDy="2" android:shadowRadius="2" android:textSize="10sp" android:textStyle="bold" android:height="74px" android:width="74px"></Button>
+</LinearLayout>

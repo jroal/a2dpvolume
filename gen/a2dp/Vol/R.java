@@ -45,6 +45,8 @@ public final class R {
         public static final int checkCaptLoc=0x7f080004;
         public static final int checkSetVol=0x7f080005;
         public static final int checkwifi=0x7f08000c;
+        public static final int chooseAppButton=0x7f080008;
+        public static final int chooseBTbutton=0x7f08000a;
         public static final int editApp=0x7f080009;
         public static final int editBtConnect=0x7f08000b;
         public static final int editDesc2=0x7f080003;
@@ -57,8 +59,6 @@ public final class R {
         public static final int tableLayout1=0x7f080001;
         public static final int textView1=0x7f080006;
         public static final int textView2=0x7f080002;
-        public static final int textView3=0x7f080008;
-        public static final int textView4=0x7f08000a;
     }
     public static final class layout {
         public static final int edit_item=0x7f030000;
