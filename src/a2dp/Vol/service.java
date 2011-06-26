@@ -12,6 +12,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -68,7 +69,8 @@ public class service extends Service {
 	Location l = null; // the most recent location
 	Location l3 = null; // the most accurate location
 	Location l4 = null; // the best location
-
+	boolean oldwifistate = true;
+	WifiManager wifiManager;
 
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
@@ -147,6 +149,8 @@ public class service extends Service {
 		location2 = locationManager
 				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+		wifiManager = (WifiManager)getBaseContext().getSystemService(Context.WIFI_SERVICE);
+		
 		// Tell the world we are running
 		final String IRun = "a2dp.vol.service.RUNNING";
 		Intent i = new Intent();
@@ -268,12 +272,27 @@ public class service extends Service {
 				launchApp(bt2.pname);
 			}
 			
-			if(bt2.wifi)dowifi(false);
+			if(bt2.wifi){
+				try {
+					oldwifistate = wifiManager.isWifiEnabled();
+					dowifi(false);
+				} catch (Exception e) {
+					Toast.makeText(application, "Unable to access wifi: " + e.toString(), Toast.LENGTH_LONG).show();
+					e.printStackTrace();
+				}
+			}
 			
 			if(bt2.bdevice != null)
 				if(bt2.bdevice.length() == 17){
-/*					BluetoothDevice device;
-					connectBluetoothA2dp(device);*/
+					try {
+						BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
+						bta.getBondedDevices();
+						BluetoothDevice device = bta.getRemoteDevice(bt2.mac);
+						connectBluetoothA2dp(device);
+					} catch (Exception e) {
+						Toast.makeText(application, "Unable to connect bluetooth: " + e.toString(), Toast.LENGTH_LONG).show();
+						e.printStackTrace();
+					}
 				}
 					
 		}
@@ -281,8 +300,12 @@ public class service extends Service {
 	
 	// disable wifi is requested
 	private void dowifi(boolean s){
-		WifiManager wifiManager = (WifiManager)getBaseContext().getSystemService(Context.WIFI_SERVICE);
-		wifiManager.setWifiEnabled(s);
+		try {		
+			wifiManager.setWifiEnabled(s);
+		} catch (Exception e) {
+			Toast.makeText(application, "Unable to switch wifi: " + e.toString(), Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		}
 	}
 	
 	private final BroadcastReceiver mReceiver2 = new BroadcastReceiver() {
@@ -375,6 +398,10 @@ public class service extends Service {
 			 */
 			if ((bt2 != null && bt2.isSetV()) || bt2 == null)
 				setVolume(OldVol2, a2dp.Vol.service.this);
+			
+			if(bt2.wifi){
+				dowifi(oldwifistate);
+			}
 		}
 	};
 
