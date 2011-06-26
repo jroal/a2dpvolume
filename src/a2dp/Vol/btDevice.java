@@ -17,8 +17,55 @@ public class btDevice {
 	public int defVol; // default volume to set to when connected. Normally this
 	// is just max (15)
 	public boolean getLoc; // this sets whether to capture location info for
+	public String bdevice; // this is a bluetooth device to auto connect when this device connects
+	public boolean wifi; // whether to turn OFF wifi on connect or not this device
+	
+	/**
+	 * @return the bdevice
+	 */
+	public String getBdevice() {
+		return bdevice;
+	}
 
-	// this device
+	/**
+	 * @param bdevice the bdevice to set
+	 */
+	public void setBdevice(String bdevice) {
+		this.bdevice = bdevice;
+	}
+
+	/**
+	 * @return the wifi
+	 */
+	public boolean isWifi() {
+		return wifi;
+	}
+
+	
+	public long islWifi(){
+		if(wifi)
+			return 1;
+		else
+			return 0; 
+	}
+	/**
+	 * @param wifi the wifi to set
+	 */
+	public void setWifi(boolean wifi) {
+		this.wifi = wifi;
+	}
+
+	/**
+	 * @param wifi the wifi to set
+	 */
+	public void setWifi(int swifi) {
+		if(swifi > 0)
+			this.wifi = true;
+		else
+			this.wifi = false;
+	}
+
+
 
 	/**
 	 * @return the getLoc. This is the flag used to determine if location should
@@ -180,7 +227,9 @@ public class btDevice {
 		this.setV = true;
 		this.defVol = vol;
 		this.getLoc = true;
-		this.pname = null;
+		this.pname = "";
+		this.bdevice = "";
+		this.wifi = false;
 	}
 
 	/**
@@ -216,6 +265,8 @@ public class btDevice {
 		this.setV = true;
 		this.defVol = vol;
 		this.getLoc = true;
-		this.pname = null;
+		this.pname = "";
+		this.bdevice = "";
+		this.wifi = false;
 	}
 }

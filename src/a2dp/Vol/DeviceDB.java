@@ -12,8 +12,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -21,13 +19,13 @@ import java.util.Vector;
 public class DeviceDB {
 
 	private static final String DATABASE_NAME = "btdevices.db";
-	private static final int DATABASE_VERSION = 5;
+	private static final int DATABASE_VERSION = 6;
 	private static final String TABLE_NAME = "devices";
 	private Context context;
 	private SQLiteDatabase db;
 	private SQLiteStatement insertStmt;
 	private static final String INSERT = "insert into " + TABLE_NAME
-			+ "(desc1, desc2, mac, maxv, setv, getl, pname) values (?, ?, ?, ?, ?, ?, ?)";
+			+ "(desc1, desc2, mac, maxv, setv, getl, pname, bdevice, wifi) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public DeviceDB(Context context) {
 		this.context = context;
@@ -47,6 +45,8 @@ public class DeviceDB {
 		vals.put("setv", bt.islSetV());
 		vals.put("getl", (long) bt.islGetLoc());
 		vals.put("pname", bt.getPname());
+		vals.put("bdevice", bt.getBdevice());
+		vals.put("wifi", (long) bt.islWifi());
 		this.db.update(TABLE_NAME, vals, "mac='" + bt.mac + "'", null);
 	}
 
@@ -77,6 +77,8 @@ public class DeviceDB {
 		this.insertStmt.bindLong(5, (long) btd.islSetV());
 		this.insertStmt.bindLong(6, (long) btd.islGetLoc());
 		this.insertStmt.bindString(7, btd.getPname());
+		this.insertStmt.bindString(8, btd.getBdevice());
+		this.insertStmt.bindLong(9, (long) btd.islWifi());
 		return this.insertStmt.executeInsert();
 	}
 
@@ -100,6 +102,8 @@ public class DeviceDB {
 				bt.setSetV(cs.getInt(4));
 				bt.setGetLoc(cs.getInt(5));
 				bt.setPname(cs.getString(6));
+				bt.setBdevice(cs.getString(7));
+				bt.setWifi(cs.getInt(8));
 			}
 		} catch (Exception e) {
 			bt.mac = null;
@@ -158,7 +162,7 @@ public class DeviceDB {
 	public Vector<btDevice> selectAlldb() {
 		Vector<btDevice> list = new Vector<btDevice>();
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1",
-				"desc2", "mac", "maxv", "setv", "getl", "pname" }, null, null, null,
+				"desc2", "mac", "maxv", "setv", "getl", "pname" , "bdevice", "wifi"}, null, null, null,
 				null, "desc2");
 		if (cursor.moveToFirst()) {
 			do {
@@ -170,6 +174,8 @@ public class DeviceDB {
 				bt.setDefVol(cursor.getInt(3));
 				bt.setGetLoc(cursor.getInt(5));
 				bt.setPname(cursor.getString(6));
+				bt.setBdevice(cursor.getString(7));
+				bt.setWifi(cursor.getInt(8));
 				list.add(bt);
 			} while (cursor.moveToNext());
 		}
@@ -193,13 +199,14 @@ public class DeviceDB {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			if (newVersion < 4) {
+			if (newVersion < 4 && oldVersion < 4) {
 				Log.w("Example",
 						"Upgrading database, this will drop tables and recreate.");
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 				onCreate(db);
-			} else if(newVersion == 4){
-				Log.w("Update", "Update table and default the new column");
+			} 
+			if(oldVersion < 4 && newVersion >= 4){
+				Log.w("Update", "Update table and default the new column getl");
 
 				try {
 					db.execSQL("ALTER TABLE " + TABLE_NAME
@@ -208,12 +215,28 @@ public class DeviceDB {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else {
-				Log.w("Update", "Update table and default the new column");
+			} 
+			if(oldVersion < 5 && newVersion >= 5)
+			{
+				Log.w("Update", "Update table and default the new column pname");
 
 				try {
 					db.execSQL("ALTER TABLE " + TABLE_NAME
-							+ " ADD COLUMN pname STRING");
+							+ " ADD COLUMN pname TEXT");
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(oldVersion < 6 && newVersion >= 6)
+			{
+				Log.w("Update", "Update table and default the new column pname");
+
+				try {
+					db.execSQL("ALTER TABLE " + TABLE_NAME
+							+ " ADD COLUMN bdevice TEXT");
+					db.execSQL("ALTER TABLE " + TABLE_NAME
+							+ " ADD COLUMN wifi INTEGER DEFAULT 0");
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

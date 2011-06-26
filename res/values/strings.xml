@@ -92,4 +92,11 @@
     <string name="LocationString">Location</string>
     <string name="btNotOn">Bluetooth is not enabled so device information is not available</string>
     <string name="app_not_found">Application Not Found</string>
+    <string name="deviceName">Enter a name for this device</string>
+    <string name="getLoc">Capture location on disconnect?</string>
+    <string name="setVol">Set volume on connect?</string>
+    <string name="connectBT">Also connect to bluetooth device</string>
+    <string name="startApp">Start app on connect</string>
+    <string name="wifiDisconnect">Disconnect WIFI when bluetooth connects</string>
+    <string name="save">Save</string>
 </resources>
