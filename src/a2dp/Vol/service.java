@@ -14,6 +14,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.IBluetoothA2dp;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -785,7 +786,7 @@ public class service extends Service {
 		    ibta.connectSink(device);
 		} catch (Exception e) {
 		    // * TODO Auto-generated catch block
-		    e.printStackTrace();
+		    //e.printStackTrace();
 		}
 
 		}
