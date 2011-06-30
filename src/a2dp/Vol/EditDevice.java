@@ -102,23 +102,41 @@ public class EditDevice extends Activity {
 			public void onClick(View arg0) {
 				final PackageManager pm = getPackageManager();
 
-				List<ApplicationInfo> packages = pm
-						.getInstalledApplications(PackageManager.GET_META_DATA);		
+				/*List<ApplicationInfo> packages = pm
+						.getInstalledApplications(PackageManager.GET_META_DATA);*/
+				List<ApplicationInfo> packages = pm.getInstalledApplications(0);
 				final String[] lstring = new String[packages.size()];
-				int i = 0;
-				for (ApplicationInfo packageInfo : packages) {
-					lstring[i] = packageInfo.packageName;
-					i++;
-				}			
+				int i=0;
+				for (int n=0; n < packages.size(); n++)
+		        {
+		            if (packages.get(n).icon > 0 && packages.get(n).enabled)
+		            {
+		            	lstring[i] = packages.get(n).packageName;
+		            	//lstring[i] = (String) packages.get(n).loadLabel(pm);
+		            	i++;
+		            }
+		            else
+		            {
+		                //This does not have an icon or is not enabled
+		            }
+		        }
 
+				// get just the ones with an icon.  This assumes packages without icons are likely not ones a user needs.
+				final String[] ls2 = new String[i];
+				for(int j = 0; j<i; j++){
+					ls2[j]=lstring[j];
+				}
+				java.util.Arrays.sort(ls2); // sort the array
+				
 				AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.EditDevice.this);
 				builder.setTitle("Pick a package");
-				builder.setItems(lstring, new DialogInterface.OnClickListener() {
+				builder.setItems(ls2, new DialogInterface.OnClickListener() {
 				    public void onClick(DialogInterface dialog, int item) {
-				    	fapp.setText(lstring[item]);
+				    	fapp.setText(ls2[item]);
 				    }
 				});
 				AlertDialog alert = builder.create();
+				
 				alert.show();
 				
 			}} );

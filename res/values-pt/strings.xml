@@ -92,4 +92,11 @@
     <string name="LocationString">Localização</string>
     <string name="btNotOn">Bluetooth não é habilitado para informações sobre o dispositivo não está disponível</string>
     <string name="app_not_found">Aplicativo não encontrado</string>
+    <string name="save">Salvar</string>
+    <string name="deviceName">Digite um nome para este dispositivo</string>
+    <string name="getLoc">Capture localização no desconectar?</string>
+    <string name="startApp">Iniciar aplicativo ao conectar</string>
+    <string name="wifiDisconnect">Desconectar quando WIFI bluetooth conecta</string>
+    <string name="connectBT">Também ligar para o dispositivo bluetooth</string>
+    <string name="setVol">Ajuste o volume em conectar?</string>
 </resources>
