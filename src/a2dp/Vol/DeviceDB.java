@@ -194,7 +194,7 @@ public class DeviceDB {
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("CREATE TABLE "
 					+ TABLE_NAME
-					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER, getl INTEGER, pname TEXT)");
+					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER, getl INTEGER, pname TEXT, bdevice TEXT, wifi INTEGER)");
 		}
 
 		@Override
