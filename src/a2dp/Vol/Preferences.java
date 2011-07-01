@@ -10,7 +10,7 @@ import android.preference.PreferenceActivity;
  *         preferences
  */
 public class Preferences extends PreferenceActivity {
-
+	private MyApplication application;
 	public static final String PREFS_NAME = "btVol";
 
 	/*
@@ -41,7 +41,12 @@ public class Preferences extends PreferenceActivity {
 		editor.commit();
 		// restart the service
 		startService(new Intent(a2dp.Vol.Preferences.this, service.class));
-
+		// Tell the world we updated preferences
+		this.application = (MyApplication) this.getApplication();
+		final String IRun = "a2dp.vol.preferences.UPDATED";
+		Intent i = new Intent();
+		i.setAction(IRun);
+		this.application.sendBroadcast(i);
 		super.onDestroy();
 	}
 

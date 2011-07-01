@@ -90,7 +90,7 @@
     <string name="useNetworkON">Também o uso de escuta localização de rede</string>
     <string name="useNetworkOFF">Não use ouvinte local de rede</string>
     <string name="LocationString">Localização</string>
-    <string name="btNotOn">Bluetooth não é habilitado para informações sobre o dispositivo não está disponível</string>
+    <string name="btNotOn">Informações sobre o dispositivo não está disponível</string>
     <string name="app_not_found">Aplicativo não encontrado</string>
     <string name="save">Salvar</string>
     <string name="deviceName">Digite um nome para este dispositivo</string>

@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -62,6 +63,7 @@ public class main extends Activity {
 	ArrayAdapter<String> ladapt; // listview adapter
 	BluetoothDevice btCon;
 	static final int ENABLE_BLUETOOTH = 1;
+	boolean carMode = false;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -132,17 +134,27 @@ public class main extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		preferences = getSharedPreferences(PREFS_NAME, 1);
+		// get "Application" object for shared state or creating of expensive
+		// resources - like DataHelper
+		// (this is not recreated as often as each Activity)
+		this.application = (MyApplication) this.getApplication();
+		
+		preferences = PreferenceManager
+		.getDefaultSharedPreferences(this.application);
+
+		try {
+			carMode = preferences.getBoolean("car_mode", true);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		final Button btn = (Button) findViewById(R.id.Button01);
 		final SeekBar VolSeek = (SeekBar) findViewById(R.id.VolSeekBar);
 
 		final Button locbtn = (Button) findViewById(R.id.Locationbtn);
 		serv = (Button) findViewById(R.id.ServButton);
-		// get "Application" object for shared state or creating of expensive
-		// resources - like DataHelper
-		// (this is not recreated as often as each Activity)
-		this.application = (MyApplication) this.getApplication();
 
 		// create intent filter for a bluetooth stream connection
 		IntentFilter filter = new IntentFilter(
@@ -167,13 +179,33 @@ public class main extends Activity {
 				"a2dp.vol.ManageData.RELOAD_LIST");
 		this.registerReceiver(mReceiver5, filter5);
 
+		IntentFilter filter6 = new IntentFilter(
+				"a2dp.vol.preferences.UPDATED");
+		this.registerReceiver(mReceiver6, filter6);
+		
 		vec = new Vector<btDevice>();
 		tx1 = (TextView) findViewById(R.id.TextView01);
 		VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 
-		this.myDB = new DeviceDB(this);
-
 		lstring = new String[] { "no data" };
+		
+		this.myDB = new DeviceDB(this);
+		
+		try {
+			if(myDB.getLength() < 1){
+				int test = getBtDevices();
+				if (test > 0) {
+					lstring = new String[test];
+					for (int i = 0; i < test; i++) {
+						lstring[i] = vec.get(i).toString();
+					}
+					refreshList(loadFromDB());
+				}
+			}
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		this.ladapt = new ArrayAdapter<String>(application,
 				android.R.layout.simple_list_item_1, lstring);
@@ -518,19 +550,19 @@ public class main extends Activity {
 		 */
 		// end of testing code
 
-		// add the car dock false device
-		btDevice fbt = new btDevice();
-
-		fbt.setBluetoothDevice("Car Dock", "Car Dock", "1",
-				am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-		btDevice fbt2 = myDB.getBTD(fbt.mac);
-
-		if (fbt2.mac == null) {
-			a2dp.Vol.main.this.myDB.insert(fbt);
-			vec.add(fbt);
-		} else
-			vec.add(fbt2);
-		refreshList(loadFromDB()); // make sure it is relisted even if bluetooth disabled
+		if (carMode) {
+			// add the car dock false device if car mode check is enabled
+			btDevice fbt = new btDevice();
+			fbt.setBluetoothDevice("Car Dock", "Car Dock", "1",
+					am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+			btDevice fbt2 = myDB.getBTD(fbt.mac);
+			if (fbt2.mac == null) {
+				a2dp.Vol.main.this.myDB.insert(fbt);
+				vec.add(fbt);
+			} else
+				vec.add(fbt2);
+			refreshList(loadFromDB()); // make sure it is relisted even if bluetooth disabled
+		}
 		
 		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 
@@ -731,6 +763,20 @@ public class main extends Activity {
 		}
 	};
 
+	private final BroadcastReceiver mReceiver6 = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context2, Intent intent2) {
+			try {
+				carMode = preferences.getBoolean("car_mode", true);
+			} catch (Exception e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			
+			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
+		}
+	};
+	
 	private final BroadcastReceiver sRunning = new BroadcastReceiver() {
 
 		@Override
