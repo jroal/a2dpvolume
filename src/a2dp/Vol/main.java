@@ -199,7 +199,7 @@ public class main extends Activity {
 		// set the seek bar position for media volume
 		VolSeek.setProgress(OldVol);
 
-		// find bonded audio devices and load into the database and listview
+		// find bonded devices and load into the database and listview
 		btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 
@@ -518,6 +518,20 @@ public class main extends Activity {
 		 */
 		// end of testing code
 
+		// add the car dock false device
+		btDevice fbt = new btDevice();
+
+		fbt.setBluetoothDevice("Car Dock", "Car Dock", "1",
+				am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+		btDevice fbt2 = myDB.getBTD(fbt.mac);
+
+		if (fbt2.mac == null) {
+			a2dp.Vol.main.this.myDB.insert(fbt);
+			vec.add(fbt);
+		} else
+			vec.add(fbt2);
+		refreshList(loadFromDB()); // make sure it is relisted even if bluetooth disabled
+		
 		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 
 		if (mBTA == null) {
@@ -572,7 +586,7 @@ public class main extends Activity {
 				str2 += " " + i;
 			}
 		}
-
+		
 		refreshList(loadFromDB());
 
 		return i;

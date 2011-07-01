@@ -131,11 +131,15 @@ public class service extends Service {
 		this.registerReceiver(mReceiver2, filter2);
 
 		if (carMode) {
-			// Create listener to grab GPS if car mode disconnects
+			// Create listener for when car mode disconnects
 			IntentFilter filter3 = new IntentFilter(
 					android.app.UiModeManager.ACTION_EXIT_CAR_MODE);
 			this.registerReceiver(mReceiver3, filter3);
 
+			// Create listener for when car mode connects
+			IntentFilter filter4 = new IntentFilter(
+					android.app.UiModeManager.ACTION_ENTER_CAR_MODE);
+			this.registerReceiver(mReceiver4, filter4);
 		}
 
 		// capture original volume
@@ -309,6 +313,81 @@ public class service extends Service {
 		}
 	}
 	
+	// a Car Dock has just connected. Do the on connect stuff
+	private final BroadcastReceiver mReceiver4 = new BroadcastReceiver() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
+		 * android.content.Intent)
+		 */
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int maxvol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+			boolean setvol = true;
+			getOldvol();
+
+			btDevice bt2 = null;
+			try {
+				bt2 = DB.getBTD("1");
+				btdConn = bt2;
+				if (toasts)
+					Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG)
+							.show();
+				if (notify)
+					updateNot(true, bt2.toString());
+			} catch (Exception e) {
+				if (toasts)
+					Toast.makeText(context,
+							btConn.getAddress() + "\n" + e.getMessage(),
+							Toast.LENGTH_LONG);
+				bt2 = null;
+			}
+
+			if (bt2 != null) {
+				maxvol = bt2.getDefVol();
+				setvol = bt2.isSetV();
+			}
+
+			if (setvol)
+				setVolume(maxvol, a2dp.Vol.service.this);
+			
+			// If we defined an app to auto-start then run it on connect
+			if(bt2.pname != null)
+			if(bt2.pname.length() > 3)
+			{
+				launchApp(bt2.pname);
+			}
+			
+			if(bt2.wifi){
+				try {
+					oldwifistate = wifiManager.isWifiEnabled();
+					dowifi(false);
+				} catch (Exception e) {
+					Toast.makeText(application, "Unable to access wifi: " + e.toString(), Toast.LENGTH_LONG).show();
+					e.printStackTrace();
+				}
+			}
+			
+			if(bt2.bdevice != null)
+				if(bt2.bdevice.length() == 17){
+					try {
+						BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
+						bta.getBondedDevices();
+						BluetoothDevice device = bta.getRemoteDevice(bt2.mac);
+						connectBluetoothA2dp(device);
+					} catch (Exception e) {
+						Toast.makeText(application, "Unable to connect bluetooth: " + e.toString(), Toast.LENGTH_LONG).show();
+						e.printStackTrace();
+					}
+				}
+					
+		}
+	};
+	
+	// bluetooth disconnected
 	private final BroadcastReceiver mReceiver2 = new BroadcastReceiver() {
 		/*
 		 * (non-Javadoc)
@@ -341,7 +420,7 @@ public class service extends Service {
 
 			if (notify)
 				updateNot(false, null);
-			if (bt2 != null && bt2.isGetLoc()) {
+			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
 				// make sure we turn OFF the location listener if we don't get a
 				// loc in MAX_TIME
 				gettingLoc = true;
@@ -419,10 +498,16 @@ public class service extends Service {
 		public void onReceive(Context context3, Intent intent3) {
 			// make sure we turn OFF the location listener if we don't get a
 			// loc in MAX_TIME
-			btdConn = null; // since this is not a bluetooth device disconnecting, clear the connected device  
+			
+			btDevice bt2 = DB.getBTD("1");
+			btdConn = bt2; 
 			dtime = System.currentTimeMillis(); // catch the time we disconnected
 			location2 = null; // clear this so a new location is stored
-			if (MAX_TIME > 0 && !gettingLoc) {
+			
+			if (notify)
+				updateNot(false, null);
+			
+			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
 				new CountDownTimer(MAX_TIME, 5000) {
 
 					public void onTick(long millisUntilFinished) {
@@ -463,9 +548,12 @@ public class service extends Service {
 				}
 				// get best location and store it
 				grabGPS();
-
-				if (notify)
-					updateNot(false, null);
+			}
+			if ((bt2 != null && bt2.isSetV()) || bt2 == null)
+				setVolume(OldVol2, a2dp.Vol.service.this);
+			
+			if(bt2.wifi){
+				dowifi(oldwifistate);
 			}
 		}
 	};

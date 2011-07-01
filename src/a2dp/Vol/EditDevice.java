@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
@@ -89,6 +90,11 @@ public class EditDevice extends Activity {
 				sb.setText("Saving");
 				try {
 					myDB.update(device);
+					//Reload the device list in the main page
+					final String Ireload = "a2dp.vol.ManageData.RELOAD_LIST";
+					Intent itent = new Intent();
+					itent.setAction(Ireload);
+					application.sendBroadcast(itent);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
