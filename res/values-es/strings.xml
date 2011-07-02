@@ -99,4 +99,7 @@
     <string name="wifiDisconnect">Desconecte el WiFi cuando se conecta bluetooth</string>
     <string name="connectBT">También se conectan a un dispositivo Bluetooth</string>
     <string name="setVol">Ajuste el volumen al conectar?</string>
+    <string name="PrefsUseLocatStorageON">El uso de dispositivos de almacenamiento de archivos</string>
+    <string name="PrefsUseLocalStorageOFF">Uso de la tarjeta SD de almacenamiento de archivos</string>
+    <string name="PrefsUseLocalStorage">El uso del almacenamiento de archivos locales?</string>
 </resources>

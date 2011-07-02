@@ -64,6 +64,7 @@ public class main extends Activity {
 	BluetoothDevice btCon;
 	static final int ENABLE_BLUETOOTH = 1;
 	boolean carMode = false;
+	private String a2dpDir = "";
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -133,22 +134,35 @@ public class main extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
+
 		// get "Application" object for shared state or creating of expensive
 		// resources - like DataHelper
 		// (this is not recreated as often as each Activity)
 		this.application = (MyApplication) this.getApplication();
-		
+
 		preferences = PreferenceManager
-		.getDefaultSharedPreferences(this.application);
+				.getDefaultSharedPreferences(this.application);
 
 		try {
+			boolean local = preferences.getBoolean("useLocalStorage", false);
+			if (local)
+				a2dpDir = getFilesDir().toString();
+			else
+				a2dpDir = Environment.getExternalStorageDirectory()
+						+ "/A2DPVol";
+
+			File exportDir = new File(a2dpDir);
+
+			if (!exportDir.exists()) {
+				exportDir.mkdirs();
+			}
+
 			carMode = preferences.getBoolean("car_mode", true);
 		} catch (Exception e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		
+
 		am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		final Button btn = (Button) findViewById(R.id.Button01);
 		final SeekBar VolSeek = (SeekBar) findViewById(R.id.VolSeekBar);
@@ -179,20 +193,19 @@ public class main extends Activity {
 				"a2dp.vol.ManageData.RELOAD_LIST");
 		this.registerReceiver(mReceiver5, filter5);
 
-		IntentFilter filter6 = new IntentFilter(
-				"a2dp.vol.preferences.UPDATED");
+		IntentFilter filter6 = new IntentFilter("a2dp.vol.preferences.UPDATED");
 		this.registerReceiver(mReceiver6, filter6);
-		
+
 		vec = new Vector<btDevice>();
 		tx1 = (TextView) findViewById(R.id.TextView01);
 		VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 
 		lstring = new String[] { "no data" };
-		
+
 		this.myDB = new DeviceDB(this);
-		
+
 		try {
-			if(myDB.getLength() < 1){
+			if (myDB.getLength() < 1) {
 				int test = getBtDevices();
 				if (test > 0) {
 					lstring = new String[test];
@@ -262,7 +275,8 @@ public class main extends Activity {
 				bt = vec.get(position);
 				BluetoothDevice btd = null;
 				if (mBTA != null) {
-					Set<BluetoothDevice> pairedDevices = mBTA.getBondedDevices();
+					Set<BluetoothDevice> pairedDevices = mBTA
+							.getBondedDevices();
 					for (BluetoothDevice device : pairedDevices) {
 						if (device.getAddress().equalsIgnoreCase(bt.mac)) {
 							btd = device;
@@ -305,9 +319,7 @@ public class main extends Activity {
 						new OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								File exportDir = new File(Environment
-										.getExternalStorageDirectory(),
-										"BluetoothVol");
+								File exportDir = new File(a2dpDir);
 
 								if (!exportDir.exists())
 									return;
@@ -370,8 +382,9 @@ public class main extends Activity {
 						});
 				builder.setNeutralButton(R.string.Edit, new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						Intent i = new Intent(a2dp.Vol.main.this, EditDevice.class);
-						i.putExtra("btd",bt.mac);
+						Intent i = new Intent(a2dp.Vol.main.this,
+								EditDevice.class);
+						i.putExtra("btd", bt.mac);
 						startActivity(i);
 					}
 				});
@@ -561,9 +574,10 @@ public class main extends Activity {
 				vec.add(fbt);
 			} else
 				vec.add(fbt2);
-			refreshList(loadFromDB()); // make sure it is relisted even if bluetooth disabled
+			refreshList(loadFromDB()); // make sure it is relisted even if
+										// bluetooth disabled
 		}
-		
+
 		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 
 		if (mBTA == null) {
@@ -618,7 +632,7 @@ public class main extends Activity {
 				str2 += " " + i;
 			}
 		}
-		
+
 		refreshList(loadFromDB());
 
 		return i;
@@ -768,15 +782,28 @@ public class main extends Activity {
 		public void onReceive(Context context2, Intent intent2) {
 			try {
 				carMode = preferences.getBoolean("car_mode", true);
+				boolean local = preferences
+						.getBoolean("useLocalStorage", false);
+				if (local)
+					a2dpDir = getFilesDir().toString();
+				else
+					a2dpDir = Environment.getExternalStorageDirectory()
+							+ "/A2DPVol";
+
+				File exportDir = new File(a2dpDir);
+
+				if (!exportDir.exists()) {
+					exportDir.mkdirs();
+				}
 			} catch (Exception e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
-			
+
 			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
 		}
 	};
-	
+
 	private final BroadcastReceiver sRunning = new BroadcastReceiver() {
 
 		@Override
@@ -802,7 +829,8 @@ public class main extends Activity {
 	// Returns the bluetooth services supported as a string
 	private String getBTClassServ(BluetoothDevice btd) {
 		String temp = "";
-		if(btd == null)return temp;
+		if (btd == null)
+			return temp;
 		if (btd.getBluetoothClass().hasService(BluetoothClass.Service.AUDIO))
 			temp = "Audio, ";
 		if (btd.getBluetoothClass()
@@ -843,7 +871,8 @@ public class main extends Activity {
 	 */
 	private String getBTClassDev(BluetoothDevice btd) {
 		String temp = "";
-		if(btd == null)return temp;
+		if (btd == null)
+			return temp;
 		if (btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_CAR_AUDIO)
 			temp = "Car Audio, ";
 		if (btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_HANDSFREE)
@@ -920,7 +949,8 @@ public class main extends Activity {
 	 */
 	private String getBTClassDevMaj(BluetoothDevice btd) {
 		String temp = "";
-		if(btd == null)return temp;
+		if (btd == null)
+			return temp;
 		if (btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.AUDIO_VIDEO)
 			temp = "Audio Video, ";
 		if (btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.COMPUTER)

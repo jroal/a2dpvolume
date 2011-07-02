@@ -99,4 +99,7 @@
     <string name="startApp">Start app on connect</string>
     <string name="wifiDisconnect">Disconnect WIFI when bluetooth connects</string>
     <string name="save">Save</string>
+    <string name="PrefsUseLocatStorageON">Use device file storage</string>
+    <string name="PrefsUseLocalStorageOFF">Use SD Card file storage</string>
+    <string name="PrefsUseLocalStorage">Use Local File Storage?</string>
 </resources>
