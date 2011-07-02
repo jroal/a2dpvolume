@@ -32,7 +32,7 @@ import java.nio.channels.FileChannel;
  */
 public class DataXmlExporter {
 
-	private static final String DATASUBDIRECTORY = "BluetoothVol";
+	private static final String DATASUBDIRECTORY = Environment.getExternalStorageDirectory() + "/A2DPVol";
 
 	private SQLiteDatabase db;
 	private XmlBuilder xmlBuilder;
@@ -101,8 +101,7 @@ public class DataXmlExporter {
 
 	private void writeToFile(String xmlString, String exportFileName)
 			throws IOException {
-		File dir = new File(Environment.getExternalStorageDirectory(),
-				DATASUBDIRECTORY);
+		File dir = new File(DATASUBDIRECTORY);
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}

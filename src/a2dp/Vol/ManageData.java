@@ -25,6 +25,7 @@ import java.util.List;
  */
 public class ManageData extends Activity {
 
+	String a2dpDir;
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onDestroy()
 	 */
@@ -49,7 +50,8 @@ public class ManageData extends Activity {
 		super.onCreate(savedInstanceState);
 
 		this.application = (MyApplication) this.getApplication();
-
+		a2dpDir = Environment.getExternalStorageDirectory() + "/A2DPVol";
+		
 		this.setContentView(R.layout.managedata);
 
 		this.output = (TextView) findViewById(R.id.Output);
@@ -79,7 +81,7 @@ public class ManageData extends Activity {
 			public void onClick(final View v) {
 				if (ManageData.this.isExternalStorageAvail()) {
 					new ExportDataAsXmlTask()
-							.execute("devices", "BluetoothVol");
+							.execute("devices", "A2DPDevices");
 				} else {
 					Toast
 							.makeText(
@@ -95,7 +97,7 @@ public class ManageData extends Activity {
 			public void onClick(final View v) {
 				if (ManageData.this.isExternalStorageAvail()) {
 					new ImportDatabaseFileTask().execute("devices",
-							"BluetoothVol");
+							a2dpDir);
 				} else {
 					Toast
 							.makeText(
@@ -111,7 +113,7 @@ public class ManageData extends Activity {
 			public void onClick(final View v) {
 				if (ManageData.this.isExternalStorageAvail()) {
 					new ExportLocationTask().execute("My_Last_Location",
-							"BluetoothVol");
+							a2dpDir);
 				} else {
 					Toast
 							.makeText(
@@ -161,8 +163,7 @@ public class ManageData extends Activity {
 			// File dbFile = new File(Environment.getDataDirectory() +
 			// "/data/a2dp.vol/databases/btdevices.db");
 			File dbFile = new File(application.getDeviceDB().getDb().getPath());
-			File exportDir = new File(
-					Environment.getExternalStorageDirectory(), "BluetoothVol");
+			File exportDir = new File(a2dpDir);
 
 			if (!exportDir.exists()) {
 				exportDir.mkdirs();
@@ -228,8 +229,7 @@ public class ManageData extends Activity {
 				String dbName = args[0];
 				String exportFileName = args[1];
 				dm.export(dbName, exportFileName);
-				pathstr = Environment.getExternalStorageDirectory()
-						+ "/BluetoothVol/" + exportFileName + ".xml";
+				pathstr = a2dpDir + "/" + exportFileName + ".xml";
 			} catch (IOException e) {
 				Log.e(MyApplication.APP_NAME, e.getMessage(), e);
 				return e.getMessage();
@@ -304,8 +304,7 @@ public class ManageData extends Activity {
 			// "/data/a2dp.vol/databases/btdevices.db");
 			File dbFile = new File(application.getDeviceDB().getDb().getPath());
 			// application.getDeviceDB().getDb().close();
-			File exportDir = new File(
-					Environment.getExternalStorageDirectory(), "BluetoothVol");
+			File exportDir = new File(a2dpDir);
 
 			if (!exportDir.exists()) {
 				exportDir.mkdirs();
@@ -378,8 +377,7 @@ public class ManageData extends Activity {
 
 			File LocFile = application.getFileStreamPath(args[0]);
 
-			File exportDir = new File(
-					Environment.getExternalStorageDirectory(), "BluetoothVol");
+			File exportDir = new File(a2dpDir);
 
 			if (!exportDir.exists()) {
 				exportDir.mkdirs();

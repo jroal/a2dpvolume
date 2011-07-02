@@ -9,6 +9,7 @@
 
 <CheckBoxPreference android:enabled="true" android:selectable="true" android:key="toasts" android:defaultValue="true" android:summaryOff="@string/PrefsToastsOFF" android:summaryOn="@string/PrefsToastsON" android:title="@string/PrefsToasts" android:summary="@string/PrefsToastsSummary"></CheckBoxPreference>
 <CheckBoxPreference android:summaryOn="@string/PrefsNotifySummaryON" android:summaryOff="@string/PrefsNotifySummaryOFF" android:enabled="true" android:selectable="true" android:summary="@string/PrefsNotifySummaryON" android:key="notify1" android:title="@string/PrefsNotify" android:defaultValue="true"></CheckBoxPreference>
+<CheckBoxPreference android:key="useLocalStorage" android:summaryOff="@string/PrefsUseLocalStorageOFF" android:summaryOn="@string/PrefsUseLocatStorageON" android:defaultValue="false" android:title="@string/PrefsUseLocalStorage"></CheckBoxPreference>
 </PreferenceCategory><PreferenceCategory android:enabled="true" android:title="@string/PrefsCatGPS">
 <ListPreference android:enabled="true" android:key="gpsTime" android:entries="@array/gpsTimeout" android:entryValues="@array/gpsTimeout_items" android:summary="@string/PrefsGPSTimeout" android:title="@string/PrefsGPSTimeoutTitle" android:defaultValue="20000"></ListPreference>
 <ListPreference android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:summary="@string/PrefsGPSInaccuracy" android:title="@string/PrefsGPSInaccuracyTitle" android:defaultValue="2"></ListPreference>

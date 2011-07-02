@@ -53,7 +53,8 @@ public class service extends Service {
 	public static boolean run = false;
 	LocationManager lm2 = null;
 	public static BluetoothDevice btConn = null;
-	static btDevice btdConn = null; //n the device in the database that has connected
+	static btDevice btdConn = null; // n the device in the database that has
+									// connected
 	private DeviceDB DB; // database of device data stored in SQlite
 	private LocationManager locationManager;
 	private Location location2;
@@ -72,7 +73,9 @@ public class service extends Service {
 	Location l4 = null; // the best location
 	boolean oldwifistate = true;
 	WifiManager wifiManager;
-
+	String a2dpDir = "";
+	boolean local;
+	
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
@@ -112,6 +115,12 @@ public class service extends Service {
 			Float xxx = new Float(preferences.getString("gpsDistance", "10"));
 			MAX_ACC = xxx;
 
+			local = preferences.getBoolean("useLocalStorage", false);
+			if (local)
+				a2dpDir = getFilesDir().toString();
+			else
+				a2dpDir = Environment.getExternalStorageDirectory()
+						+ "/A2DPVol";
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
 			MAX_TIME = 15000;
@@ -154,8 +163,9 @@ public class service extends Service {
 		location2 = locationManager
 				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-		wifiManager = (WifiManager)getBaseContext().getSystemService(Context.WIFI_SERVICE);
-		
+		wifiManager = (WifiManager) getBaseContext().getSystemService(
+				Context.WIFI_SERVICE);
+
 		// Tell the world we are running
 		final String IRun = "a2dp.vol.service.RUNNING";
 		Intent i = new Intent();
@@ -206,7 +216,7 @@ public class service extends Service {
 		// let the GUI know we closed
 		run = false;
 		// in case the location listener is running, stop it
-		clearLoc();
+		clearLoc(false);
 		// Tell the world we are not running
 		final String IStop = "a2dp.vol.service.STOPPED_RUNNING";
 		Intent i = new Intent();
@@ -269,50 +279,56 @@ public class service extends Service {
 
 			if (setvol)
 				setVolume(maxvol, a2dp.Vol.service.this);
-			
+
 			// If we defined an app to auto-start then run it on connect
-			if(bt2.pname != null)
-			if(bt2.pname.length() > 3)
-			{
-				launchApp(bt2.pname);
-			}
-			
-			if(bt2.wifi){
+			if (bt2.pname != null)
+				if (bt2.pname.length() > 3) {
+					launchApp(bt2.pname);
+				}
+
+			if (bt2.wifi) {
 				try {
 					oldwifistate = wifiManager.isWifiEnabled();
 					dowifi(false);
 				} catch (Exception e) {
-					Toast.makeText(application, "Unable to access wifi: " + e.toString(), Toast.LENGTH_LONG).show();
+					Toast.makeText(application,
+							"Unable to access wifi: " + e.toString(),
+							Toast.LENGTH_LONG).show();
 					e.printStackTrace();
 				}
 			}
-			
-			if(bt2.bdevice != null)
-				if(bt2.bdevice.length() == 17){
+
+			if (bt2.bdevice != null)
+				if (bt2.bdevice.length() == 17) {
 					try {
-						BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
+						BluetoothAdapter bta = BluetoothAdapter
+								.getDefaultAdapter();
 						bta.getBondedDevices();
 						BluetoothDevice device = bta.getRemoteDevice(bt2.mac);
 						connectBluetoothA2dp(device);
 					} catch (Exception e) {
-						Toast.makeText(application, "Unable to connect bluetooth: " + e.toString(), Toast.LENGTH_LONG).show();
+						Toast.makeText(application,
+								"Unable to connect bluetooth: " + e.toString(),
+								Toast.LENGTH_LONG).show();
 						e.printStackTrace();
 					}
 				}
-					
+
 		}
 	};
-	
+
 	// disable wifi is requested
-	private void dowifi(boolean s){
-		try {		
+	private void dowifi(boolean s) {
+		try {
 			wifiManager.setWifiEnabled(s);
 		} catch (Exception e) {
-			Toast.makeText(application, "Unable to switch wifi: " + e.toString(), Toast.LENGTH_LONG).show();
+			Toast.makeText(application,
+					"Unable to switch wifi: " + e.toString(), Toast.LENGTH_LONG)
+					.show();
 			e.printStackTrace();
 		}
 	}
-	
+
 	// a Car Dock has just connected. Do the on connect stuff
 	private final BroadcastReceiver mReceiver4 = new BroadcastReceiver() {
 		/*
@@ -353,40 +369,44 @@ public class service extends Service {
 
 			if (setvol)
 				setVolume(maxvol, a2dp.Vol.service.this);
-			
+
 			// If we defined an app to auto-start then run it on connect
-			if(bt2.pname != null)
-			if(bt2.pname.length() > 3)
-			{
-				launchApp(bt2.pname);
-			}
-			
-			if(bt2.wifi){
+			if (bt2.pname != null)
+				if (bt2.pname.length() > 3) {
+					launchApp(bt2.pname);
+				}
+
+			if (bt2.wifi) {
 				try {
 					oldwifistate = wifiManager.isWifiEnabled();
 					dowifi(false);
 				} catch (Exception e) {
-					Toast.makeText(application, "Unable to access wifi: " + e.toString(), Toast.LENGTH_LONG).show();
+					Toast.makeText(application,
+							"Unable to access wifi: " + e.toString(),
+							Toast.LENGTH_LONG).show();
 					e.printStackTrace();
 				}
 			}
-			
-			if(bt2.bdevice != null)
-				if(bt2.bdevice.length() == 17){
+
+			if (bt2.bdevice != null)
+				if (bt2.bdevice.length() == 17) {
 					try {
-						BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
+						BluetoothAdapter bta = BluetoothAdapter
+								.getDefaultAdapter();
 						bta.getBondedDevices();
 						BluetoothDevice device = bta.getRemoteDevice(bt2.mac);
 						connectBluetoothA2dp(device);
 					} catch (Exception e) {
-						Toast.makeText(application, "Unable to connect bluetooth: " + e.toString(), Toast.LENGTH_LONG).show();
+						Toast.makeText(application,
+								"Unable to connect bluetooth: " + e.toString(),
+								Toast.LENGTH_LONG).show();
 						e.printStackTrace();
 					}
 				}
-					
+
 		}
 	};
-	
+
 	// bluetooth disconnected
 	private final BroadcastReceiver mReceiver2 = new BroadcastReceiver() {
 		/*
@@ -403,9 +423,10 @@ public class service extends Service {
 			btConn = bt;
 
 			btDevice bt2 = null;
-			dtime = System.currentTimeMillis(); // catch the time we disconnected
+			dtime = System.currentTimeMillis(); // catch the time we
+												// disconnected
 			location2 = null; // clear this so a new location is stored
-			
+
 			try {
 				String addres = btConn.getAddress();
 				bt2 = DB.getBTD(addres);
@@ -437,10 +458,10 @@ public class service extends Service {
 						}
 
 						public void onFinish() {
-							clearLoc();
+							clearLoc(true);
 						}
 					}.start();
-					
+
 					// start location provider GPS
 					// Register the listener with the Location Manager to
 					// receive location updates
@@ -478,8 +499,8 @@ public class service extends Service {
 			 */
 			if ((bt2 != null && bt2.isSetV()) || bt2 == null)
 				setVolume(OldVol2, a2dp.Vol.service.this);
-			
-			if(bt2.wifi){
+
+			if (bt2.wifi) {
 				dowifi(oldwifistate);
 			}
 		}
@@ -498,15 +519,16 @@ public class service extends Service {
 		public void onReceive(Context context3, Intent intent3) {
 			// make sure we turn OFF the location listener if we don't get a
 			// loc in MAX_TIME
-			
+
 			btDevice bt2 = DB.getBTD("1");
-			btdConn = bt2; 
-			dtime = System.currentTimeMillis(); // catch the time we disconnected
+			btdConn = bt2;
+			dtime = System.currentTimeMillis(); // catch the time we
+												// disconnected
 			location2 = null; // clear this so a new location is stored
-			
+
 			if (notify)
 				updateNot(false, null);
-			
+
 			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
 				new CountDownTimer(MAX_TIME, 5000) {
 
@@ -518,7 +540,7 @@ public class service extends Service {
 					}
 
 					public void onFinish() {
-						clearLoc();
+						clearLoc(true);
 					}
 				}.start();
 
@@ -551,8 +573,8 @@ public class service extends Service {
 			}
 			if ((bt2 != null && bt2.isSetV()) || bt2 == null)
 				setVolume(OldVol2, a2dp.Vol.service.this);
-			
-			if(bt2.wifi){
+
+			if (bt2.wifi) {
 				dowifi(oldwifistate);
 			}
 		}
@@ -604,32 +626,36 @@ public class service extends Service {
 		float oldacc = 99999999;
 		float bestacc = 99999999;
 		Location l2 = null; // the temporary last known location
-		if(l4 != null)
-			if(l4.hasAccuracy())bestacc = l4.getAccuracy();
-		
+		if (l4 != null)
+			if (l4.hasAccuracy())
+				bestacc = l4.getAccuracy();
+
 		try {
 
 			if (!providers.isEmpty()) {
 				for (int i = providers.size() - 1; i >= 0; i--) {
 					l2 = lm.getLastKnownLocation(providers.get(i));
-					
+
 					if (l2 != null) {
-						if(location_old != null)
-						if(location_old.getTime() < (dtime - MAX_TIME)) location_old = l2; // reset this if its too old
-						
-						if (l2.hasAccuracy()) // if we have accuracy, capture the best
+						if (location_old != null)
+							if (location_old.getTime() < (dtime - MAX_TIME))
+								location_old = l2; // reset this if its too old
+
+						if (l2.hasAccuracy()) // if we have accuracy, capture
+												// the best
 						{
 							float acc = l2.getAccuracy();
 							if (acc < oldacc) {
 								l3 = l2; // the sample with the best accuracy
-								oldacc = acc;	
+								oldacc = acc;
 							}
-							if((acc < bestacc) && (l2.getTime() > (dtime - MAX_TIME))){
+							if ((acc < bestacc)
+									&& (l2.getTime() > (dtime - MAX_TIME))) {
 								l4 = l2; // the best sample since 15s before
 											// disconnect
 								bestacc = acc;
 							}
-							
+
 						}
 						olddt = deltat;
 						deltat = System.currentTimeMillis() - l2.getTime();
@@ -642,7 +668,8 @@ public class service extends Service {
 			} else
 				return; // if no location data just abort here
 
-			if (l4 != null) location_old = l4;
+			if (l4 != null)
+				location_old = l4;
 
 			// If we have a good location, turn OFF the gps listener.
 			if (locationListener != null && l4 != null && location2 != null) {
@@ -650,7 +677,7 @@ public class service extends Service {
 				if (x < MAX_ACC
 						&& x > 0
 						&& (System.currentTimeMillis() - location2.getTime()) < MAX_TIME)
-					clearLoc();
+					clearLoc(true);
 			}
 
 		} catch (Exception e1) {
@@ -659,7 +686,8 @@ public class service extends Service {
 
 		DecimalFormat df = new DecimalFormat("#.#");
 		// figure out which device we are disconnecting from
-		if (btdConn != null) car = btdConn.getDesc2();
+		if (btdConn != null)
+			car = btdConn.getDesc2();
 
 		// store the best location
 		if (l4 != null) {
@@ -670,8 +698,8 @@ public class service extends Service {
 				Time t = new Time();
 				t.set((long) l4.getTime());
 				String temp = "http://maps.google.com/maps?q="
-						+ l4.getLatitude() + "," + l4.getLongitude() + "+" + "("
-						+ car + " " + t.format("%D, %r") + " acc="
+						+ l4.getLatitude() + "," + l4.getLongitude() + "+"
+						+ "(" + car + " " + t.format("%D, %r") + " acc="
 						+ df.format(l4.getAccuracy()) + ")";
 				fos.write(temp.getBytes());
 				fos.close();
@@ -712,7 +740,7 @@ public class service extends Service {
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
-		}	
+		}
 	}
 
 	// Define a listener that responds to location updates
@@ -737,89 +765,153 @@ public class service extends Service {
 	};
 
 	// kills the location listener and writes the location file
-	private void clearLoc() {
+	private void clearLoc(boolean doGps) {
 		locationManager.removeUpdates(locationListener);
 		btConn = null;
 		gettingLoc = false;
 		String car = "My Car";
 		DecimalFormat df = new DecimalFormat("#.#");
 		// figure out which device we are disconnecting from
-		if (btdConn != null) car = btdConn.getDesc2();
-		
+		if (btdConn != null)
+			car = btdConn.getDesc2();
+
 		// store this vehicles location
-		
-		try {
-			File exportDir = new File(
-					Environment.getExternalStorageDirectory(),
-					"BluetoothVol");
+		if (doGps) {
+			try {
+				File exportDir = new File(a2dpDir);
 
-			if (!exportDir.exists()) {
-				exportDir.mkdirs();
-			}
-			File file = new File(exportDir, car.replaceAll(" ", "_")
-					+ ".html");
+				if (!exportDir.exists()) {
+					exportDir.mkdirs();
+				}
+				File file = new File(exportDir, car.replaceAll(" ", "_")
+						+ ".html");
 
-			FileOutputStream fos = new FileOutputStream(file);
-			Time t = new Time();
-			String temp = null;
-			
-			if (l4 != null) {
-			t.set((long) l4.getTime());
-			temp = "<hr /><bold><a href=\"http://maps.google.com/maps?q="
-					+ l4.getLatitude() + "," + l4.getLongitude() + "+" + "("
-					+ car + " " + t.format("%D, %r") + " acc="
-					+ df.format(l4.getAccuracy()) + ")\">" + car
-					+ "</a></bold> Best Location<br>Time: " + t.format("%D, %r")
-					+ "<br>" + "Location type: " + l4.getProvider() + "<br>"
-					+ "Accuracy: " + l4.getAccuracy() + " meters<br>"
-					+ "Elevation: " + l4.getAltitude() + " meters<br>"
-					+ "Lattitude: " + l4.getLatitude() + "<br>"
-					+ "Longitude: " + l4.getLongitude();
+				Time t = new Time();
+				String temp = null;
+
+				if (l4 != null) {
+					t.set((long) l4.getTime());
+					temp = "<hr /><bold><a href=\"http://maps.google.com/maps?q="
+							+ l4.getLatitude()
+							+ ","
+							+ l4.getLongitude()
+							+ "+"
+							+ "("
+							+ car
+							+ " "
+							+ t.format("%D, %r")
+							+ " acc="
+							+ df.format(l4.getAccuracy())
+							+ ")\">"
+							+ car
+							+ "</a></bold> Best Location<br>Time: "
+							+ t.format("%D, %r")
+							+ "<br>"
+							+ "Location type: "
+							+ l4.getProvider()
+							+ "<br>"
+							+ "Accuracy: "
+							+ l4.getAccuracy()
+							+ " meters<br>"
+							+ "Elevation: "
+							+ l4.getAltitude()
+							+ " meters<br>"
+							+ "Lattitude: "
+							+ l4.getLatitude()
+							+ "<br>"
+							+ "Longitude: "
+							+ l4.getLongitude();
+				} else {
+					temp = "No Best Location Captured";
+				}
+				if (l3 != null) {
+					t.set((long) l3.getTime());
+					temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
+							+ l3.getLatitude()
+							+ ","
+							+ l3.getLongitude()
+							+ "+"
+							+ "("
+							+ car
+							+ " "
+							+ t.format("%D, %r")
+							+ " acc="
+							+ df.format(l3.getAccuracy())
+							+ ")\">"
+							+ car
+							+ "</a></bold> Most Accurate Location<br>Time: "
+							+ t.format("%D, %r")
+							+ "<br>"
+							+ "Location type: "
+							+ l3.getProvider()
+							+ "<br>"
+							+ "Accuracy: "
+							+ l3.getAccuracy()
+							+ " meters<br>"
+							+ "Elevation: "
+							+ l3.getAltitude()
+							+ " meters<br>"
+							+ "Lattitude: "
+							+ l3.getLatitude()
+							+ "<br>"
+							+ "Longitude: "
+							+ l3.getLongitude();
+				}
+				if (l != null) {
+					t.set((long) l.getTime());
+					temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
+							+ l.getLatitude()
+							+ ","
+							+ l.getLongitude()
+							+ "+"
+							+ "("
+							+ car
+							+ " "
+							+ t.format("%D, %r")
+							+ " acc="
+							+ df.format(l.getAccuracy())
+							+ ")\">"
+							+ car
+							+ "</a></bold> Most Recent Location<br>Time: "
+							+ t.format("%D, %r")
+							+ "<br>"
+							+ "Location type: "
+							+ l.getProvider()
+							+ "<br>"
+							+ "Accuracy: "
+							+ l.getAccuracy()
+							+ " meters<br>"
+							+ "Elevation: "
+							+ l.getAltitude()
+							+ " meters<br>"
+							+ "Lattitude: "
+							+ l.getLatitude()
+							+ "<br>"
+							+ "Longitude: "
+							+ l.getLongitude();
+				}
+				
+				if(local){
+					FileOutputStream fos = openFileOutput(file.getName(),Context.MODE_WORLD_READABLE);
+					fos.write(temp.getBytes());
+					fos.close();
+				}
+				else{
+					FileOutputStream fos = new FileOutputStream(file);
+					fos.write(temp.getBytes());
+					fos.close();
+				}
+
+			} catch (FileNotFoundException e) {
+				Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
+						Toast.LENGTH_LONG).show();
+				e.printStackTrace();
+			} catch (IOException e) {
+				Toast.makeText(a2dp.Vol.service.this, "IOException",
+						Toast.LENGTH_LONG).show();
+				e.printStackTrace();
 			}
-			else
-			{
-				temp = "No Best Location Captured";
-			}
-			if(l3 != null) {
-				t.set((long) l3.getTime());
-				temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
-					+ l3.getLatitude() + "," + l3.getLongitude() + "+" + "("
-					+ car + " " + t.format("%D, %r") + " acc="
-					+ df.format(l3.getAccuracy()) + ")\">" + car
-					+ "</a></bold> Most Accurate Location<br>Time: " + t.format("%D, %r")
-					+ "<br>" + "Location type: " + l3.getProvider() + "<br>"
-					+ "Accuracy: " + l3.getAccuracy() + " meters<br>"
-					+ "Elevation: " + l3.getAltitude() + " meters<br>"
-					+ "Lattitude: " + l3.getLatitude() + "<br>"
-					+ "Longitude: " + l3.getLongitude();
-			}
-			if(l != null) {
-				t.set((long) l.getTime());
-				temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
-					+ l.getLatitude() + "," + l.getLongitude() + "+" + "("
-					+ car + " " + t.format("%D, %r") + " acc="
-					+ df.format(l.getAccuracy()) + ")\">" + car
-					+ "</a></bold> Most Recent Location<br>Time: " + t.format("%D, %r")
-					+ "<br>" + "Location type: " + l.getProvider() + "<br>"
-					+ "Accuracy: " + l.getAccuracy() + " meters<br>"
-					+ "Elevation: " + l.getAltitude() + " meters<br>"
-					+ "Lattitude: " + l.getLatitude() + "<br>"
-					+ "Longitude: " + l.getLongitude();
-			}
-			fos.write(temp.getBytes());
-			fos.close();
-			// Toast.makeText(a2dp.Vol.service.this, temp,
-			// Toast.LENGTH_LONG).show();
-		} catch (FileNotFoundException e) {
-			Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
-					Toast.LENGTH_LONG).show();
-			e.printStackTrace();
-		} catch (IOException e) {
-			Toast.makeText(a2dp.Vol.service.this, "IOException",
-					Toast.LENGTH_LONG).show();
-			e.printStackTrace();
 		}
-
 		// reset all the location variables
 		l = null; // the most recent location
 		l3 = null; // the most accurate location
@@ -852,6 +944,7 @@ public class service extends Service {
 
 		mNotificationManager.notify(1, not);
 	}
+
 	protected void launchApp(String packageName) {
 		Intent mIntent = getPackageManager().getLaunchIntentForPackage(
 				packageName);
@@ -865,46 +958,46 @@ public class service extends Service {
 			}
 		}
 	}
-	
+
 	private void connectBluetoothA2dp(BluetoothDevice device) {
 
 		IBluetoothA2dp ibta = getIBluetoothA2dp();
 		try {
-		    //Log.d("Felix", "Here: " + ibta.getSinkPriority(device));
-		    ibta.connectSink(device);
+			// Log.d("Felix", "Here: " + ibta.getSinkPriority(device));
+			ibta.connectSink(device);
 		} catch (Exception e) {
-		    // * TODO Auto-generated catch block
-		    //e.printStackTrace();
+			// * TODO Auto-generated catch block
+			// e.printStackTrace();
 		}
 
-		}
-	
+	}
+
 	private IBluetoothA2dp getIBluetoothA2dp() {
 
 		IBluetoothA2dp ibta = null;
 
 		try {
 
-		    Class c2 = Class.forName("android.os.ServiceManager");
+			Class c2 = Class.forName("android.os.ServiceManager");
 
-		    Method m2 = c2.getDeclaredMethod("getService", String.class);
-		    IBinder b = (IBinder) m2.invoke(null, "bluetooth_a2dp");
+			Method m2 = c2.getDeclaredMethod("getService", String.class);
+			IBinder b = (IBinder) m2.invoke(null, "bluetooth_a2dp");
 
-		    //Log.d("Felix", "Test2: " + b.getInterfaceDescriptor());
+			// Log.d("Felix", "Test2: " + b.getInterfaceDescriptor());
 
-		    Class c3 = Class.forName("android.bluetooth.IBluetoothA2dp");
+			Class c3 = Class.forName("android.bluetooth.IBluetoothA2dp");
 
-		    Class[] s2 = c3.getDeclaredClasses();
+			Class[] s2 = c3.getDeclaredClasses();
 
-		    Class c = s2[0];
-		    // printMethods(c);
-		    Method m = c.getDeclaredMethod("asInterface", IBinder.class);
+			Class c = s2[0];
+			// printMethods(c);
+			Method m = c.getDeclaredMethod("asInterface", IBinder.class);
 
-		    m.setAccessible(true);
-		    ibta = (IBluetoothA2dp) m.invoke(null, b);
+			m.setAccessible(true);
+			ibta = (IBluetoothA2dp) m.invoke(null, b);
 
 		} catch (Exception e) {
-		    //Log.e("flowlab", "Erroraco!!! " + e.getMessage());
+			// Log.e("flowlab", "Erroraco!!! " + e.getMessage());
 		}
 		return ibta;
 	}
