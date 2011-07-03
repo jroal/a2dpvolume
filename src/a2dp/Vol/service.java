@@ -8,6 +8,10 @@ import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -441,6 +445,13 @@ public class service extends Service {
 
 			if (notify)
 				updateNot(false, null);
+			
+			// if we opened a package for this device, close it now
+			if(bt2.pname.length() > 3)
+			{
+				stopApp(bt2.pname); 
+			}
+			
 			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
 				// make sure we turn OFF the location listener if we don't get a
 				// loc in MAX_TIME
@@ -528,7 +539,11 @@ public class service extends Service {
 
 			if (notify)
 				updateNot(false, null);
-
+			// if we opened a package for this device, close it now
+			if(bt2.pname.length() > 3)
+			{
+				stopApp(bt2.pname); 
+			}
 			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
 				new CountDownTimer(MAX_TIME, 5000) {
 
@@ -577,6 +592,7 @@ public class service extends Service {
 			if (bt2.wifi) {
 				dowifi(oldwifistate);
 			}
+
 		}
 	};
 
@@ -951,6 +967,31 @@ public class service extends Service {
 		if (mIntent != null) {
 			try {
 				startActivity(mIntent);
+			} catch (ActivityNotFoundException err) {
+				Toast t = Toast.makeText(getApplicationContext(),
+						R.string.app_not_found, Toast.LENGTH_SHORT);
+				t.show();
+			}
+		}
+	}
+	
+	protected void stopApp(String packageName) {
+		Intent mIntent = getPackageManager().getLaunchIntentForPackage(
+				packageName);
+		if (mIntent != null) {
+			try {
+				ActivityManager act1 = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
+				//act1.restartPackage(packageName);
+				//act1.killBackgroundProcesses(packageName);
+				List<ActivityManager.RunningAppProcessInfo> processes;
+				processes = act1.getRunningAppProcesses();
+				for(ActivityManager.RunningAppProcessInfo info: processes) {					
+					for(int i = 0; i < info.pkgList.length; i++){
+						if(info.pkgList[i] == packageName){
+							android.os.Process.killProcess(info.pid);
+						}
+					}
+				}
 			} catch (ActivityNotFoundException err) {
 				Toast t = Toast.makeText(getApplicationContext(),
 						R.string.app_not_found, Toast.LENGTH_SHORT);
