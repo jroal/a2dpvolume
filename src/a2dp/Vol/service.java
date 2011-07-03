@@ -982,12 +982,12 @@ public class service extends Service {
 			try {
 				ActivityManager act1 = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
 				//act1.restartPackage(packageName);
-				//act1.killBackgroundProcesses(packageName);
+				act1.killBackgroundProcesses(packageName);
 				List<ActivityManager.RunningAppProcessInfo> processes;
 				processes = act1.getRunningAppProcesses();
 				for(ActivityManager.RunningAppProcessInfo info: processes) {					
 					for(int i = 0; i < info.pkgList.length; i++){
-						if(info.pkgList[i] == packageName){
+						if(info.pkgList[i].matches(packageName)){
 							android.os.Process.killProcess(info.pid);
 						}
 					}
