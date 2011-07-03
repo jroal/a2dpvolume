@@ -14,12 +14,15 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -134,7 +137,7 @@ public class main extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+		
 		// get "Application" object for shared state or creating of expensive
 		// resources - like DataHelper
 		// (this is not recreated as often as each Activity)
@@ -238,8 +241,6 @@ public class main extends Activity {
 		} else {
 			OldVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		}
-
-		tx1.setText("Stored Volume:" + OldVol + " " + str2);
 
 		// set the seek bar position for media volume
 		VolSeek.setProgress(OldVol);
@@ -505,6 +506,18 @@ public class main extends Activity {
 		}
 		// load the list from the database
 		refreshList(loadFromDB());
+		
+		ComponentName comp = new ComponentName("a2dp.Vol", "main");
+		PackageInfo pinfo;
+		String ver = null;
+		try {
+			pinfo = getPackageManager().getPackageInfo(comp.getPackageName(), 0);
+			ver = pinfo.versionName;
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		tx1.setText("Version: " + ver);
 	}
 
 	/**

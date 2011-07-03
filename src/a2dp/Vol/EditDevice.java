@@ -108,17 +108,16 @@ public class EditDevice extends Activity {
 			public void onClick(View arg0) {
 				final PackageManager pm = getPackageManager();
 
-				/*List<ApplicationInfo> packages = pm
-						.getInstalledApplications(PackageManager.GET_META_DATA);*/
 				List<ApplicationInfo> packages = pm.getInstalledApplications(0);
 				final String[] lstring = new String[packages.size()];
 				int i=0;
 				for (int n=0; n < packages.size(); n++)
 		        {
-		            if (packages.get(n).icon > 0 && packages.get(n).enabled)
+					Intent itent = pm.getLaunchIntentForPackage(packages.get(n).packageName);
+		            if (packages.get(n).icon > 0 && packages.get(n).enabled && itent != null)
 		            {
 		            	lstring[i] = packages.get(n).packageName;
-		            	//lstring[i] = (String) packages.get(n).loadLabel(pm);
+		            	//lstring[i] = itent.toUri(0);
 		            	i++;
 		            }
 		            else
