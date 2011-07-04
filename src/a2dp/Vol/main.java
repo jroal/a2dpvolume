@@ -137,7 +137,18 @@ public class main extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		ComponentName comp = new ComponentName("a2dp.Vol", "main");
+		PackageInfo pinfo;
+		String ver = null;
+		try {
+			pinfo = getPackageManager().getPackageInfo(comp.getPackageName(), 0);
+			ver = pinfo.versionName;
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+		setTitle(getResources().getString(R.string.app_name) + " Version: " + ver);
 		// get "Application" object for shared state or creating of expensive
 		// resources - like DataHelper
 		// (this is not recreated as often as each Activity)
@@ -506,18 +517,6 @@ public class main extends Activity {
 		}
 		// load the list from the database
 		refreshList(loadFromDB());
-		
-		ComponentName comp = new ComponentName("a2dp.Vol", "main");
-		PackageInfo pinfo;
-		String ver = null;
-		try {
-			pinfo = getPackageManager().getPackageInfo(comp.getPackageName(), 0);
-			ver = pinfo.versionName;
-		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		tx1.setText("Version: " + ver);
 	}
 
 	/**
