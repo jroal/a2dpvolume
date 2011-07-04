@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent" android:paddingBottom="3dip" android:paddingTop="3dip">
+<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/pi_iv_icon" android:layout_margin="5dip" android:adjustViewBounds="true" android:maxHeight="40dip" android:maxWidth="40dip" android:minHeight="40dip" android:minWidth="40dip"></ImageView>
+<TextView android:id="@+id/pi_tv_name" android:layout_height="fill_parent" android:gravity="center_vertical" android:textColor="#fff" android:textStyle="bold" android:textSize="18dip" android:scrollHorizontally="true" android:layout_width="wrap_content" android:layout_weight="1"></TextView>
+
+</LinearLayout>

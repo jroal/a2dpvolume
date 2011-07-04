@@ -1,27 +1,22 @@
 package a2dp.Vol;
 
-import java.util.List;
 import java.util.Vector;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 
 public class EditDevice extends Activity {
-	
+
 	private Button sb;
 	private Button startapp;
 	private Button connbt;
@@ -36,6 +31,7 @@ public class EditDevice extends Activity {
 	private btDevice device;
 	private MyApplication application;
 	private DeviceDB myDB; // database of device data stored in SQlite
+
 
 	/**
 	 * @see android.app.Activity#onCreate(Bundle)
@@ -106,9 +102,12 @@ public class EditDevice extends Activity {
 
 		startapp.setOnClickListener(new OnClickListener(){			
 			public void onClick(View arg0) {
-				final PackageManager pm = getPackageManager();
-
-				List<ApplicationInfo> packages = pm.getInstalledApplications(0);
+				//final PackageManager pm = getPackageManager();
+				
+				Intent in = new Intent(getBaseContext(), AppChooser.class);
+				startActivityForResult(in, 0);
+				
+			/*	List<ApplicationInfo> packages = pm.getInstalledApplications(0);
 				final String[] lstring = new String[packages.size()];
 				int i=0;
 				for (int n=0; n < packages.size(); n++)
@@ -143,7 +142,7 @@ public class EditDevice extends Activity {
 				AlertDialog alert = builder.create();
 				
 				alert.show();
-				
+				*/
 			}} );
 
 		connbt.setOnClickListener(new OnClickListener(){
@@ -166,4 +165,10 @@ public class EditDevice extends Activity {
 			
 		});
 	}
+	
+	protected void onActivityResult (int requestCode, int resultCode, Intent data){
+		if(resultCode == RESULT_OK){
+			fapp.setText(data.getStringExtra("package_name"));
+		}
+	};
 }

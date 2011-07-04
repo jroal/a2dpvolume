@@ -393,6 +393,7 @@ public class service extends Service {
 			}
 
 			if (bt2.bdevice != null)
+				//Toast.makeText(application, bt2.bdevice + " L:" + bt2.bdevice.length(), Toast.LENGTH_LONG).show();
 				if (bt2.bdevice.length() == 17) {
 					try {
 						BluetoothAdapter bta = BluetoothAdapter
