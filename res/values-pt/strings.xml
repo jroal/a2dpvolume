@@ -102,4 +102,7 @@
     <string name="PrefsUseLocatStorageON">Use dispositivo de armazenamento de arquivos</string>
     <string name="PrefsUseLocalStorageOFF">Use SD de armazenamento de arquivos cartão</string>
     <string name="PrefsUseLocalStorage">Use o armazenamento de arquivos locais?</string>
+    <string name="PrefsHomeDockOFF">Não responda a Home Dock</string>
+    <string name="PrefsHomeDock">Responder a Home Dock</string>
+    <string name="PrefsHomeDockON">Responder a Home Dock</string>
 </resources>

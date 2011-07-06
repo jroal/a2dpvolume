@@ -55,9 +55,9 @@
     <string name="PrefsGPSTimeout">The maximum time the GPS listener will be allowed to run looking for a better GPS location after bluetooth disconnect.</string>
     <string name="PrefsGPSInaccuracyTitle">GPS Max Inaccuracy </string>
     <string name="PrefsGPSInaccuracy">GPS maximum inaccuracy in meters before listener will stop looking for a better value.</string>
-    <string name="PrefsCarModeON">Also capture location when exiting Car Mode.</string>
-    <string name="PrefsCarModeOFF">Does not also capture location when exiting Car Mode.</string>
-    <string name="PrefsCarMode">Car Mode Disconnect</string>
+    <string name="PrefsCarModeON">Respond to Car Mode</string>
+    <string name="PrefsCarModeOFF">Does not respond to Car Mode.</string>
+    <string name="PrefsCarMode">Respond to Car Mode</string>
     <string name="PrefsCatGPS">Location Capture Settings</string>
     <string name="PrefsCatGen">General Settings</string>
     <string name="PrefsBootstart">Start at Boot?</string>
@@ -102,4 +102,7 @@
     <string name="PrefsUseLocatStorageON">Use device file storage</string>
     <string name="PrefsUseLocalStorageOFF">Use SD Card file storage</string>
     <string name="PrefsUseLocalStorage">Use Local File Storage?</string>
+    <string name="PrefsHomeDockOFF">Do not respond to Home Dock</string>
+    <string name="PrefsHomeDock">Respond to Home Dock</string>
+    <string name="PrefsHomeDockON">Respond to Home Dock</string>
 </resources>

@@ -48,8 +48,6 @@ import android.widget.Toast;
 
 public class main extends Activity {
 
-	static String str2 = "";
-	static TextView tx1 = (TextView) null;
 	public static Integer OldVol = 5;
 	static AudioManager am = (AudioManager) null;
 	static SeekBar VolSeek;
@@ -67,6 +65,7 @@ public class main extends Activity {
 	BluetoothDevice btCon;
 	static final int ENABLE_BLUETOOTH = 1;
 	boolean carMode = false;
+	boolean homeDock = false;
 	private String a2dpDir = "";
 
 	@Override
@@ -172,6 +171,7 @@ public class main extends Activity {
 			}
 
 			carMode = preferences.getBoolean("car_mode", true);
+			homeDock = preferences.getBoolean("home_dock", false);
 		} catch (Exception e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -211,7 +211,7 @@ public class main extends Activity {
 		this.registerReceiver(mReceiver6, filter6);
 
 		vec = new Vector<btDevice>();
-		tx1 = (TextView) findViewById(R.id.TextView01);
+		
 		VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 
 		lstring = new String[] { "no data" };
@@ -268,9 +268,6 @@ public class main extends Activity {
 					}
 					refreshList(loadFromDB());
 				}
-
-				tx1.setText("Volume:" + OldVol + " Devices=" + test + "  ");
-
 			}
 		});
 
@@ -549,7 +546,7 @@ public class main extends Activity {
 	 */
 	private int getBtDevices() {
 
-		str2 = "No devices found";
+		
 		int i = 0;
 		vec.clear();
 
@@ -586,10 +583,27 @@ public class main extends Activity {
 				vec.add(fbt);
 			} else
 				vec.add(fbt2);
-			refreshList(loadFromDB()); // make sure it is relisted even if
-										// bluetooth disabled
+			
+			refreshList(loadFromDB()); // make sure it is relisted 
 		}
 
+		if (homeDock) {
+			// add the home dock false device if car mode check is enabled
+			btDevice fbt = new btDevice();
+			fbt.setBluetoothDevice("Home Dock", "Home Dock", "2",
+					am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+			btDevice fbt2 = myDB.getBTD(fbt.mac);
+			if (fbt2.mac == null) {
+				fbt.setGetLoc(false);
+				a2dp.Vol.main.this.myDB.insert(fbt);
+				vec.add(fbt);
+			} else
+				vec.add(fbt2);
+			
+			refreshList(loadFromDB()); // make sure it is relisted 
+		}
+		
+		
 		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 
 		if (mBTA == null) {
@@ -622,7 +636,6 @@ public class main extends Activity {
 			// If there are paired devices
 
 			if (pairedDevices.size() > 0) {
-				str2 = "Devices found: ";
 				// Loop through paired devices
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show in a
@@ -641,7 +654,7 @@ public class main extends Activity {
 							vec.add(bt2);
 					}
 				}
-				str2 += " " + i;
+				
 			}
 		}
 
@@ -672,8 +685,6 @@ public class main extends Activity {
 					}
 					refreshList(loadFromDB());
 				}
-
-				tx1.setText("Volume:" + OldVol + " Devices=" + test + "  ");
 			}
 		default:
 			break;
@@ -697,7 +708,6 @@ public class main extends Activity {
 
 		am.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, 0);
 		outVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-		tx1.setText("Old Volume:" + OldVol + "  New Volume:" + outVol + "  ");
 
 		// Toast.makeText(sender, "Stored Volume:" + OldVol + "  New Volume:" +
 		// outVol, Toast.LENGTH_LONG).show();
@@ -794,6 +804,7 @@ public class main extends Activity {
 		public void onReceive(Context context2, Intent intent2) {
 			try {
 				carMode = preferences.getBoolean("car_mode", true);
+				homeDock = preferences.getBoolean("home_dock", true);
 				boolean local = preferences
 						.getBoolean("useLocalStorage", false);
 				if (local)
