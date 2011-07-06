@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -18,6 +19,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.bluetooth.IBluetoothA2dp;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -36,6 +38,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
+import android.util.Log;
 import android.widget.Toast;
 
 public class service extends Service {
@@ -64,6 +67,7 @@ public class service extends Service {
 	private Location location2;
 	private Location location_old;
 	private boolean carMode = true;
+	private boolean homeDock = false;
 	private boolean gettingLoc = false;
 	private boolean toasts = true;
 	private boolean notify = false;
@@ -79,7 +83,7 @@ public class service extends Service {
 	WifiManager wifiManager;
 	String a2dpDir = "";
 	boolean local;
-	
+
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
@@ -107,6 +111,7 @@ public class service extends Service {
 					.getDefaultSharedPreferences(this.application);
 
 			carMode = preferences.getBoolean("car_mode", true);
+			homeDock = preferences.getBoolean("home_dock", false);
 			toasts = preferences.getBoolean("toasts", true);
 			notify = preferences.getBoolean("notify1", false);
 			usePass = preferences.getBoolean("usePassive", false);
@@ -155,6 +160,19 @@ public class service extends Service {
 			this.registerReceiver(mReceiver4, filter4);
 		}
 
+		if (homeDock) {
+			// Create listener for when car mode disconnects
+			IntentFilter filter5 = new IntentFilter(
+					android.app.UiModeManager.ACTION_EXIT_DESK_MODE);
+			this.registerReceiver(mReceiver3, filter5);
+
+			// Create listener for when car mode connects
+			IntentFilter filter6 = new IntentFilter(
+					android.app.UiModeManager.ACTION_ENTER_DESK_MODE);
+			this.registerReceiver(mReceiver4, filter6);
+		}
+
+		
 		// capture original volume
 		am2 = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		// set run flag to true. This is used for the GUI
@@ -308,13 +326,13 @@ public class service extends Service {
 						BluetoothAdapter bta = BluetoothAdapter
 								.getDefaultAdapter();
 						bta.getBondedDevices();
-						BluetoothDevice device = bta.getRemoteDevice(bt2.mac);
+						BluetoothDevice device = bta.getRemoteDevice(bt2.bdevice);
 						connectBluetoothA2dp(device);
 					} catch (Exception e) {
 						Toast.makeText(application,
 								"Unable to connect bluetooth: " + e.toString(),
 								Toast.LENGTH_LONG).show();
-						e.printStackTrace();
+						Log.e("A2DPVol", "Error " + e.getMessage());
 					}
 				}
 
@@ -333,7 +351,7 @@ public class service extends Service {
 		}
 	}
 
-	// a Car Dock has just connected. Do the on connect stuff
+	// a Car Dock or home dock has just connected. Do the on connect stuff
 	private final BroadcastReceiver mReceiver4 = new BroadcastReceiver() {
 		/*
 		 * (non-Javadoc)
@@ -351,26 +369,34 @@ public class service extends Service {
 
 			btDevice bt2 = null;
 			try {
-				bt2 = DB.getBTD("1");
-				btdConn = bt2;
-				if (toasts)
-					Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG)
-							.show();
-				if (notify)
-					updateNot(true, bt2.toString());
+				Log.d("Dock:", intent.toString());
+				if(intent.getAction().equalsIgnoreCase("android.app.action.ENTER_CAR_MODE"))
+					bt2 = DB.getBTD("1");
+				else
+					bt2 = DB.getBTD("2");
+				
 			} catch (Exception e) {
 				if (toasts)
 					Toast.makeText(context,
 							btConn.getAddress() + "\n" + e.getMessage(),
 							Toast.LENGTH_LONG);
 				bt2 = null;
+				Log.e("A2DPVol:", e.toString());
 			}
 
-			if (bt2 != null) {
+			if (bt2.mac != null) {
 				maxvol = bt2.getDefVol();
 				setvol = bt2.isSetV();
+				if (notify)
+					updateNot(true, bt2.toString());
+				btdConn = bt2;
+				if (toasts)
+					Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG)
+							.show();
 			}
-
+			else
+				return;
+			
 			if (setvol)
 				setVolume(maxvol, a2dp.Vol.service.this);
 
@@ -388,24 +414,25 @@ public class service extends Service {
 					Toast.makeText(application,
 							"Unable to access wifi: " + e.toString(),
 							Toast.LENGTH_LONG).show();
-					e.printStackTrace();
+					Log.e("A2DPVol:", e.toString());
 				}
 			}
 
 			if (bt2.bdevice != null)
-				//Toast.makeText(application, bt2.bdevice + " L:" + bt2.bdevice.length(), Toast.LENGTH_LONG).show();
+				// Toast.makeText(application, bt2.bdevice + " L:" +
+				// bt2.bdevice.length(), Toast.LENGTH_LONG).show();
 				if (bt2.bdevice.length() == 17) {
 					try {
 						BluetoothAdapter bta = BluetoothAdapter
 								.getDefaultAdapter();
 						bta.getBondedDevices();
-						BluetoothDevice device = bta.getRemoteDevice(bt2.mac);
+						BluetoothDevice device = bta.getRemoteDevice(bt2.bdevice);
 						connectBluetoothA2dp(device);
 					} catch (Exception e) {
 						Toast.makeText(application,
 								"Unable to connect bluetooth: " + e.toString(),
 								Toast.LENGTH_LONG).show();
-						e.printStackTrace();
+						Log.e("A2DPVol", "Error " + e.getMessage());
 					}
 				}
 
@@ -442,17 +469,17 @@ public class service extends Service {
 							btConn.getAddress() + "\n" + e.getMessage(),
 							Toast.LENGTH_LONG);
 				bt2 = null;
+				Log.e("A2DPVol:", e.toString());
 			}
 
 			if (notify)
 				updateNot(false, null);
-			
+
 			// if we opened a package for this device, close it now
-			if(bt2.pname.length() > 3)
-			{
-				stopApp(bt2.pname); 
+			if (bt2.pname.length() > 3) {
+				stopApp(bt2.pname);
 			}
-			
+
 			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
 				// make sure we turn OFF the location listener if we don't get a
 				// loc in MAX_TIME
@@ -529,11 +556,22 @@ public class service extends Service {
 		 */
 		@Override
 		public void onReceive(Context context3, Intent intent3) {
-			// make sure we turn OFF the location listener if we don't get a
-			// loc in MAX_TIME
-
-			btDevice bt2 = DB.getBTD("1");
-			btdConn = bt2;
+			
+			btDevice bt2 = null;
+			try {
+				//Log.d("Dock:", intent3.toString());
+				if(intent3.getAction().equalsIgnoreCase("android.app.action.EXIT_CAR_MODE"))
+					bt2 = DB.getBTD("1");
+				else
+					bt2 = DB.getBTD("2");
+			} catch (Exception e) {
+				Log.e("A2DPVol:", e.toString());
+			}
+			if(bt2.mac == null) 
+				return;
+			else
+				btdConn = bt2;
+			
 			dtime = System.currentTimeMillis(); // catch the time we
 												// disconnected
 			location2 = null; // clear this so a new location is stored
@@ -541,9 +579,8 @@ public class service extends Service {
 			if (notify)
 				updateNot(false, null);
 			// if we opened a package for this device, close it now
-			if(bt2.pname.length() > 3)
-			{
-				stopApp(bt2.pname); 
+			if (bt2.pname.length() > 3) {
+				stopApp(bt2.pname);
 			}
 			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
 				new CountDownTimer(MAX_TIME, 5000) {
@@ -907,13 +944,13 @@ public class service extends Service {
 							+ "Longitude: "
 							+ l.getLongitude();
 				}
-				
-				if(local){
-					FileOutputStream fos = openFileOutput(file.getName(),Context.MODE_WORLD_READABLE);
+
+				if (local) {
+					FileOutputStream fos = openFileOutput(file.getName(),
+							Context.MODE_WORLD_READABLE);
 					fos.write(temp.getBytes());
 					fos.close();
-				}
-				else{
+				} else {
 					FileOutputStream fos = new FileOutputStream(file);
 					fos.write(temp.getBytes());
 					fos.close();
@@ -923,10 +960,12 @@ public class service extends Service {
 				Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
+				Log.e("A2DPVol", "Error " + e.getMessage());
 			} catch (IOException e) {
 				Toast.makeText(a2dp.Vol.service.this, "IOException",
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
+				Log.e("A2DPVol", "Error " + e.getMessage());
 			}
 		}
 		// reset all the location variables
@@ -971,24 +1010,26 @@ public class service extends Service {
 			} catch (ActivityNotFoundException err) {
 				Toast t = Toast.makeText(getApplicationContext(),
 						R.string.app_not_found, Toast.LENGTH_SHORT);
-				t.show();
+				if (notify)
+					t.show();
 			}
 		}
 	}
-	
+
 	protected void stopApp(String packageName) {
 		Intent mIntent = getPackageManager().getLaunchIntentForPackage(
 				packageName);
 		if (mIntent != null) {
 			try {
-				ActivityManager act1 = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
-				//act1.restartPackage(packageName);
+				ActivityManager act1 = (ActivityManager) this
+						.getSystemService(ACTIVITY_SERVICE);
+				// act1.restartPackage(packageName);
 				act1.killBackgroundProcesses(packageName);
 				List<ActivityManager.RunningAppProcessInfo> processes;
 				processes = act1.getRunningAppProcesses();
-				for(ActivityManager.RunningAppProcessInfo info: processes) {					
-					for(int i = 0; i < info.pkgList.length; i++){
-						if(info.pkgList[i].matches(packageName)){
+				for (ActivityManager.RunningAppProcessInfo info : processes) {
+					for (int i = 0; i < info.pkgList.length; i++) {
+						if (info.pkgList[i].matches(packageName)) {
 							android.os.Process.killProcess(info.pid);
 						}
 					}
@@ -996,7 +1037,8 @@ public class service extends Service {
 			} catch (ActivityNotFoundException err) {
 				Toast t = Toast.makeText(getApplicationContext(),
 						R.string.app_not_found, Toast.LENGTH_SHORT);
-				t.show();
+				if (notify)
+					t.show();
 			}
 		}
 	}
@@ -1005,11 +1047,57 @@ public class service extends Service {
 
 		IBluetoothA2dp ibta = getIBluetoothA2dp();
 		try {
-			// Log.d("Felix", "Here: " + ibta.getSinkPriority(device));
-			ibta.connectSink(device);
+			Log.d("A2DPVol", "Here: " + ibta.getSinkPriority(device));
+			if(ibta.connectSink(device))return;
+
+			// AndroidManifest.xml must have the following permission:
+			// <uses-permission android:name="android.permission.BLUETOOTH"/>
+			/*
+			 * This code is loose here but you will likely use it inside a
+			 * thread
+			 * 
+			 * Make sure you have the 'device' variable (BluetoothDevice) at the
+			 * point you insert this code
+			 */
+
+			// UUID for your application
+			UUID MY_UUID = UUID.fromString("a2dp.Vol");
+
+			// Get the adapter
+			BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+
+			// The socket
+			BluetoothSocket socket = null;
+			try {
+				// Your app UUID string (is also used by the server)
+				socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+			} catch (IOException e) {
+				Log.e("A2DPVol", "Error " + e.getMessage());
+			}
+
+			// For performance reasons
+			btAdapter.cancelDiscovery();
+
+			try {
+				// Be aware that this is a blocking operation. You probably want
+				// to use this in a thread
+				socket.connect();
+
+			} catch (IOException connectException) {
+				// Unable to connect; close the socket and get out
+				try {
+					socket.close();
+				} catch (IOException closeException) {
+					Log.e("A2DPVol", "Error " + closeException.getMessage());
+				}
+				return;
+			}
+
+			// Now manage your connection (in a separate thread)
+			//myConnectionManager(socket);
 		} catch (Exception e) {
 			// * TODO Auto-generated catch block
-			// e.printStackTrace();
+			Log.e("A2DPVol", "Error " + e.getMessage());
 		}
 
 	}
@@ -1025,7 +1113,7 @@ public class service extends Service {
 			Method m2 = c2.getDeclaredMethod("getService", String.class);
 			IBinder b = (IBinder) m2.invoke(null, "bluetooth_a2dp");
 
-			// Log.d("Felix", "Test2: " + b.getInterfaceDescriptor());
+			Log.d("A2DPVol", "Test2: " + b.getInterfaceDescriptor());
 
 			Class c3 = Class.forName("android.bluetooth.IBluetoothA2dp");
 
@@ -1039,7 +1127,7 @@ public class service extends Service {
 			ibta = (IBluetoothA2dp) m.invoke(null, b);
 
 		} catch (Exception e) {
-			// Log.e("flowlab", "Erroraco!!! " + e.getMessage());
+			Log.e("A2DPVol", "Error " + e.getMessage());
 		}
 		return ibta;
 	}

@@ -102,4 +102,7 @@
     <string name="PrefsUseLocatStorageON">El uso de dispositivos de almacenamiento de archivos</string>
     <string name="PrefsUseLocalStorageOFF">Uso de la tarjeta SD de almacenamiento de archivos</string>
     <string name="PrefsUseLocalStorage">El uso del almacenamiento de archivos locales?</string>
+    <string name="PrefsHomeDockOFF">No responda a base doméstica</string>
+    <string name="PrefsHomeDock">Responder a base doméstica</string>
+    <string name="PrefsHomeDockON">Responder a base doméstica</string>
 </resources>
