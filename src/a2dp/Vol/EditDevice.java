@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 public class EditDevice extends Activity {
 
@@ -157,10 +158,21 @@ public class EditDevice extends Activity {
 		connbt.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
 				final Vector<btDevice> vec = myDB.selectAlldb();
+				int j = vec.size();
+				for(int i = 0; i<j; i++){
+					if((vec.get(i).mac.length() < 17) || btd.equalsIgnoreCase(vec.get(i).mac) ){
+						vec.remove(i);
+						j--; 
+						i--;
+					}
+				}
+
+				vec.trimToSize();
 				final String[] lstring = new String[vec.size()];
 				for(int i=0; i<vec.size(); i++){
 					lstring[i] = vec.get(i).desc2;
 				}
+					
 				AlertDialog.Builder builder = new AlertDialog.Builder(a2dp.Vol.EditDevice.this);
 				builder.setTitle("Bluetooth Device");
 				builder.setItems(lstring, new DialogInterface.OnClickListener() {
