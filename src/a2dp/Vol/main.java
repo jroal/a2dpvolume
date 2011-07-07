@@ -611,14 +611,6 @@ public class main extends Activity {
 					.show();
 			return 0;
 		}
-		// AndroidManifest.xml must have the following permission:
-		// <uses-permission
-		// android:name="android.permission.BLUETOOTH"/>
-		/*
-		 * This number is used to identify this request ("Enable Bluetooth")
-		 * when the callback method onActivityResult() is called. Your
-		 * interaction with the Bluetooth stack will probably start there.
-		 */
 
 		// If Bluetooth is not yet enabled, enable it
 		if (!mBTA.isEnabled()) {
