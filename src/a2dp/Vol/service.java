@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import android.app.ActivityManager;
@@ -29,6 +30,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -80,6 +82,8 @@ public class service extends Service {
 	WifiManager wifiManager;
 	String a2dpDir = "";
 	boolean local;
+	private static final String LOG_TAG = "A2DP_Volume";
+	private static final String MY_UUID_STRING = "af87c0d0-faac-11de-a839-0800200c9a66";
 
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
@@ -323,18 +327,14 @@ public class service extends Service {
 			if (bt2.bdevice != null)
 				if (bt2.bdevice.length() == 17) {
 					try {
-						BluetoothAdapter bta = BluetoothAdapter
-								.getDefaultAdapter();
-						bta.getBondedDevices();
-						BluetoothDevice device = bta
-								.getRemoteDevice(bt2.bdevice);
-						connectBluetoothA2dp(device);
-						Log.d("A2DP Vol:", device.getAddress());
+
+						connectBluetoothA2dp(bt2.bdevice);
+						Log.d(LOG_TAG, bt2.bdevice);
 					} catch (Exception e) {
 						Toast.makeText(application,
 								"Unable to connect bluetooth: " + e.toString(),
 								Toast.LENGTH_LONG).show();
-						Log.e("A2DPVol", "Error " + e.getMessage());
+						Log.e(LOG_TAG, "Error " + e.getMessage());
 					}
 				}
 
@@ -371,7 +371,7 @@ public class service extends Service {
 
 			btDevice bt2 = null;
 			try {
-				Log.d("Dock:", intent.toString());
+				Log.d(LOG_TAG, intent.toString());
 				if (intent.getAction().equalsIgnoreCase(
 						"android.app.action.ENTER_CAR_MODE"))
 					bt2 = DB.getBTD("1");
@@ -380,11 +380,10 @@ public class service extends Service {
 
 			} catch (Exception e) {
 				if (toasts)
-					Toast.makeText(context,e.getMessage(),
-							Toast.LENGTH_LONG);
+					Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
 				bt2 = null;
 				btdConn = null;
-				Log.e("A2DPVol:", e.toString());
+				Log.e(LOG_TAG, e.toString());
 			}
 
 			if (bt2.mac != null) {
@@ -416,7 +415,7 @@ public class service extends Service {
 					Toast.makeText(application,
 							"Unable to access wifi: " + e.toString(),
 							Toast.LENGTH_LONG).show();
-					Log.e("A2DPVol:", e.toString());
+					Log.e(LOG_TAG, e.toString());
 				}
 			}
 
@@ -425,17 +424,13 @@ public class service extends Service {
 				// bt2.bdevice.length(), Toast.LENGTH_LONG).show();
 				if (bt2.bdevice.length() == 17) {
 					try {
-						BluetoothAdapter bta = BluetoothAdapter
-								.getDefaultAdapter();
-						bta.getBondedDevices();
-						BluetoothDevice device = bta
-								.getRemoteDevice(bt2.bdevice);
-						connectBluetoothA2dp(device);
+						
+						connectBluetoothA2dp(bt2.bdevice);
 					} catch (Exception e) {
 						Toast.makeText(application,
 								"Unable to connect bluetooth: " + e.toString(),
 								Toast.LENGTH_LONG).show();
-						Log.e("A2DPVol", "Error " + e.getMessage());
+						Log.e(LOG_TAG, "Error " + e.getMessage());
 					}
 				}
 
@@ -472,7 +467,7 @@ public class service extends Service {
 							btConn.getAddress() + "\n" + e.getMessage(),
 							Toast.LENGTH_LONG);
 				bt2 = null;
-				Log.e("A2DPVol:", e.toString());
+				Log.e(LOG_TAG, e.toString());
 			}
 
 			if (notify && (bt2.mac != null))
@@ -562,19 +557,18 @@ public class service extends Service {
 
 			btDevice bt2 = null;
 			try {
-				// Log.d("Dock:", intent3.toString());
+				// Log.d(LOG_TAG, intent3.toString());
 				if (intent3.getAction().equalsIgnoreCase(
 						"android.app.action.EXIT_CAR_MODE"))
 					bt2 = DB.getBTD("1");
 				else
 					bt2 = DB.getBTD("2");
 			} catch (Exception e) {
-				Log.e("A2DPVol:", e.toString());
+				Log.e(LOG_TAG, e.toString());
 			}
 			if (bt2.mac == null)
 				return;
-			else
-			{
+			else {
 				btdConn = bt2;
 				if (notify)
 					updateNot(false, null);
@@ -965,12 +959,12 @@ public class service extends Service {
 				Toast.makeText(a2dp.Vol.service.this, "FileNotFound",
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
-				Log.e("A2DPVol", "Error " + e.getMessage());
+				Log.e(LOG_TAG, "Error " + e.getMessage());
 			} catch (IOException e) {
 				Toast.makeText(a2dp.Vol.service.this, "IOException",
 						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
-				Log.e("A2DPVol", "Error " + e.getMessage());
+				Log.e(LOG_TAG, "Error " + e.getMessage());
 			}
 		}
 		// reset all the location variables
@@ -1048,97 +1042,113 @@ public class service extends Service {
 		}
 	}
 
-	private void connectBluetoothA2dp(BluetoothDevice device) {
+	private class ConnectBt extends AsyncTask<String, Void, Boolean> {
 
-		IBluetoothA2dp ibta = getIBluetoothA2dp();
-		try {
+		BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
+		protected void onPreExecute() {}
+		
+		@Override
+		protected Boolean doInBackground(String... arg0) {
 
-
-			// AndroidManifest.xml must have the following permission:
-			// <uses-permission android:name="android.permission.BLUETOOTH"/>
-			/*
-			 * This code is loose here but you will likely use it inside a
-			 * thread
-			 * 
-			 * Make sure you have the 'device' variable (BluetoothDevice) at the
-			 * point you insert this code
-			 */
-
-			// UUID for your application
-			UUID MY_UUID = UUID.fromString("a2dp.Vol");
-
-			// Get the adapter
-			BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-
-			// The socket
-			BluetoothSocket socket = null;
+			boolean try2 = true;
+			
+			Set<BluetoothDevice> pairedDevices = bta.getBondedDevices();
+			BluetoothDevice device = null;
+			for (BluetoothDevice dev : pairedDevices) {
+				if(dev.getAddress().equalsIgnoreCase(arg0[0]))device = dev;
+			}
+			if(device == null)return false;
+			
+			IBluetoothA2dp ibta = getIBluetoothA2dp();
 			try {
-				// Your app UUID string (is also used by the server)
-				socket = device.createRfcommSocketToServiceRecord(MY_UUID);
-			} catch (IOException e) {
-				Log.e("A2DPVol", "Error " + e.getMessage());
+				Log.d(LOG_TAG, "Here: " + ibta.getSinkPriority(device));
+				if (ibta.connectSink(device))
+					Toast.makeText(application,
+							"Connected 1: " + device.getName(),
+							Toast.LENGTH_LONG).show();
+				try2 = false;
+			} catch (Exception e) {
+				Log.e(LOG_TAG, "Error " + e.getMessage());
+				try2 = true;
 			}
 
-			// For performance reasons
-			btAdapter.cancelDiscovery();
-
-			try {
-				// Be aware that this is a blocking operation. You probably want
-				// to use this in a thread
-				socket.connect();
-
-			} catch (IOException connectException) {
-				// Unable to connect; close the socket and get out
-				Log.e("A2DPVol", "Error " + connectException.getMessage());
+			// if the above does not work, give below a try...
+			if (try2) {
+				// UUID for your application
+				UUID MY_UUID = UUID.fromString(MY_UUID_STRING);
+				// Get the adapter
+				BluetoothAdapter btAdapter = BluetoothAdapter
+						.getDefaultAdapter();
+				// The socket
+				BluetoothSocket socket = null;
+				Log.d(LOG_TAG, "BT connect 1 failed, trying 2...");
 				try {
-					socket.close();
-				} catch (IOException closeException) {
-					Log.e("A2DPVol", "Error " + closeException.getMessage());
+					// Your app UUID string (is also used by the server)
+					socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+				} catch (IOException e) {
+					Log.e(LOG_TAG, "Error " + e.getMessage());
 				}
-				return;
+				// For performance reasons
+				btAdapter.cancelDiscovery();
+				try {
+					// Be aware that this is a blocking operation. You probably
+					// want
+					// to use this in a thread
+					socket.connect();
+					Toast.makeText(application,
+							"Connected 2: " + device.getName(),
+							Toast.LENGTH_LONG).show();
+				} catch (IOException connectException) {
+					// Unable to connect; close the socket and get out
+					Log.e(LOG_TAG, "Error " + connectException.getMessage());
+					try {
+						socket.close();
+					} catch (IOException closeException) {
+						Log.e(LOG_TAG, "Error " + closeException.getMessage());
+					}
+					return false;
+				}
 			}
 
 			// Now manage your connection (in a separate thread)
 			// myConnectionManager(socket);
-			
-			// also try method 2
-			Log.d("A2DPVol", "Here: " + ibta.getSinkPriority(device));
-			ibta.connectSink(device);
-			
-		} catch (Exception e) {
-			// * TODO Auto-generated catch block
-			Log.e("A2DPVol", "Error " + e.getMessage());
+
+			return true;
 		}
 
-	}
+		private IBluetoothA2dp getIBluetoothA2dp() {
 
-	private IBluetoothA2dp getIBluetoothA2dp() {
+			IBluetoothA2dp ibta = null;
 
-		IBluetoothA2dp ibta = null;
+			try {
 
-		try {
+				Class<?> c2 = Class.forName("android.os.ServiceManager");
 
-			Class c2 = Class.forName("android.os.ServiceManager");
+				Method m2 = c2.getDeclaredMethod("getService", String.class);
+				IBinder b = (IBinder) m2.invoke(null, "bluetooth_a2dp");
 
-			Method m2 = c2.getDeclaredMethod("getService", String.class);
-			IBinder b = (IBinder) m2.invoke(null, "bluetooth_a2dp");
+				Log.d(LOG_TAG, "Test2: " + b.getInterfaceDescriptor());
 
-			Log.d("A2DPVol", "Test2: " + b.getInterfaceDescriptor());
+				Class<?> c3 = Class.forName("android.bluetooth.IBluetoothA2dp");
 
-			Class c3 = Class.forName("android.bluetooth.IBluetoothA2dp");
+				Class[] s2 = c3.getDeclaredClasses();
 
-			Class[] s2 = c3.getDeclaredClasses();
+				Class<?> c = s2[0];
+				// printMethods(c);
+				Method m = c.getDeclaredMethod("asInterface", IBinder.class);
 
-			Class c = s2[0];
-			// printMethods(c);
-			Method m = c.getDeclaredMethod("asInterface", IBinder.class);
+				m.setAccessible(true);
+				ibta = (IBluetoothA2dp) m.invoke(null, b);
 
-			m.setAccessible(true);
-			ibta = (IBluetoothA2dp) m.invoke(null, b);
-
-		} catch (Exception e) {
-			Log.e("A2DPVol", "Error " + e.getMessage());
+			} catch (Exception e) {
+				Log.e(LOG_TAG, "Error " + e.getMessage());
+			}
+			return ibta;
 		}
-		return ibta;
 	}
+
+	private void connectBluetoothA2dp(String device) {
+		new ConnectBt().execute(device);
+	}
+
 }
