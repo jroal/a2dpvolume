@@ -205,7 +205,7 @@ public class main extends Activity {
 
 		IntentFilter filter6 = new IntentFilter("a2dp.vol.preferences.UPDATED");
 		this.registerReceiver(mReceiver6, filter6);
-
+		
 		vec = new Vector<btDevice>();
 		
 		VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));

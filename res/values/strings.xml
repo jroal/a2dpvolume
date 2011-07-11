@@ -105,4 +105,7 @@
     <string name="PrefsHomeDockOFF">Do not respond to Home Dock</string>
     <string name="PrefsHomeDock">Respond to Home Dock</string>
     <string name="PrefsHomeDockON">Respond to Home Dock</string>
+    <string name="ea_ti_app">App To Launch</string>
+    <string name="ae_stop_app_warning_title">What app is this?</string>
+    <string name="ae_stop_app_warning_message">If you want AppAlarm to stop a custom intent or home screen shortcut, you must select which app your custom intent represents. If you ignore this message, the \"Force App Restart On Launch\" and \"Stop App On Dismiss/Timeout\" features will be disabled.</string>
 </resources>
