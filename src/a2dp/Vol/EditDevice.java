@@ -1,7 +1,10 @@
 package a2dp.Vol;
 
+import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Vector;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,6 +16,8 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,6 +54,7 @@ public class EditDevice extends Activity {
 	private static final int ACTION_CUSTOM_INTENT = 6;
 	private static final int ACTION_CHOOSE_FROM_PROVIDER = 11;
 	private static final int ACTION_CREATE_HOME_SCREEN_SHORTCUT = 14;
+	private static final int FETCH_HOME_SCREEN_SHORTCUT = 15;
 	private static final int ACTION_CHOOSE_APP_CUSTOM = 16;
 	private CheckBox mChkStopApp, mChkForceRestart;
 	private AppItem mAppItem;
@@ -74,7 +80,7 @@ public class EditDevice extends Activity {
 		this.fapp = (EditText) this.findViewById(R.id.editApp);
 		this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
 		this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
-		
+		mAppItem = new AppItem();
 		
 		btd = getIntent().getStringExtra("btd"); // get the mac address of the device to edit
 		
@@ -210,9 +216,67 @@ public class EditDevice extends Activity {
 	}
 	
 	protected void onActivityResult (int requestCode, int resultCode, Intent data){
-		if(resultCode == RESULT_OK){
-			fapp.setText(data.getStringExtra("package_name"));
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case ACTION_CHOOSE_APP:
+				mAppItem.set(AppItem.KEY_PACKAGE_NAME, data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME));
+				mAppItem.set(AppItem.KEY_CUSTOM_ACTION, "");
+				mAppItem.set(AppItem.KEY_CUSTOM_DATA, "");
+				mAppItem.set(AppItem.KEY_CUSTOM_TYPE, "");
+				vUpdateApp();
+				break;
+/*			case ACTION_INPUT_LABEL:
+				mAppItem.set(AppItem.KEY_LABEL, data.getStringExtra(StringInputDialog.EXTRA_VALUE));
+				vUpdateLabel();
+				break;*/
+			case ACTION_CHOOSE_APP_CUSTOM:
+				mAppItem.set(AppItem.KEY_PACKAGE_NAME, data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME));
+				vUpdateApp();
+				break;
+			case ACTION_CHOOSE_FROM_PROVIDER:
+				processShortcut(data);
+				break;
+			case ACTION_CUSTOM_INTENT:
+				String dataString = data.getStringExtra(AppItem.KEY_CUSTOM_DATA);
+				mAppItem.set(AppItem.KEY_PACKAGE_NAME, "");
+				mAppItem.set(AppItem.KEY_CUSTOM_ACTION, data.getStringExtra(AppItem.KEY_CUSTOM_ACTION));
+				mAppItem.set(AppItem.KEY_CUSTOM_DATA, dataString);
+				mAppItem.set(AppItem.KEY_CUSTOM_TYPE, data.getStringExtra(AppItem.KEY_CUSTOM_TYPE));
+				if (mAppItem.isShortcutIntent()) {
+					try {
+						mAppItem.set(AppItem.KEY_PACKAGE_NAME, Intent.getIntent(mAppItem.getString(AppItem.KEY_CUSTOM_DATA)).getComponent().getPackageName());
+					} catch (URISyntaxException e) {
+						mAppItem.set(AppItem.KEY_PACKAGE_NAME, "custom");
+						e.printStackTrace();
+					}
+				}
+				if (mAppItem.getString(AppItem.KEY_PACKAGE_NAME).equals("")) {
+					mAppItem.set(AppItem.KEY_PACKAGE_NAME, "custom");
+				}
+				vUpdateApp();
+				break;
+
+			case ACTION_CREATE_HOME_SCREEN_SHORTCUT:
+				startActivityForResult(data, FETCH_HOME_SCREEN_SHORTCUT);
+				break;
+			case FETCH_HOME_SCREEN_SHORTCUT:
+				processShortcut(data);
+				break;
+			}
+			
+		
+		} else {
+			switch (requestCode) {
+			case ACTION_CHOOSE_APP_CUSTOM:
+				mChkStopApp.setChecked(false);
+			}
 		}
+		
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		/*if(resultCode == RESULT_OK){
+			fapp.setText(data.getStringExtra("package_name"));
+		}*/
 	};
 	
 	private DialogInterface.OnClickListener mAppTypeDialogOnClick = new DialogInterface.OnClickListener() {
@@ -291,6 +355,39 @@ public class EditDevice extends Activity {
 		if ((mAppItem.getBool(AppItem.KEY_STOP_APP_ON_TIMEOUT) || mAppItem.getBool(AppItem.KEY_FORCE_RESTART)) && mAppItem.isCustomIntent()) {
 			showDialog(DIALOG_WARN_STOP_APP);
 		}
+	}
+	private void processShortcut(Intent data) {
+		Intent i = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT);
+		mAppItem.set(AppItem.KEY_CUSTOM_DATA, getIntentUri(i));
+		if (data.hasExtra(ProviderList.EXTRA_PACKAGE_NAME)) {
+			mAppItem.set(AppItem.KEY_PACKAGE_NAME, data.getStringExtra(ProviderList.EXTRA_PACKAGE_NAME));
+		} else {
+			try {
+				mAppItem.set(AppItem.KEY_PACKAGE_NAME, i.getComponent().getPackageName());
+			} catch (Exception e) {
+				mAppItem.set(AppItem.KEY_PACKAGE_NAME, "");
+				e.printStackTrace();
+			}			
+
+		}
+
+		if (!mAppItem.hasPackageName()) {
+			mAppItem.set(AppItem.KEY_PACKAGE_NAME, "custom");
+		}
+		mAppItem.set(AppItem.KEY_CUSTOM_ACTION, data.getStringExtra(Intent.EXTRA_SHORTCUT_NAME));
+		mAppItem.set(AppItem.KEY_CUSTOM_TYPE, "");
+		vUpdateApp();
+	}
+	
+	public static String getIntentUri(Intent i) {
+		String rtr = "";
+		try {
+			Method m = Intent.class.getMethod("toUri", new Class[] {int.class});
+			rtr = (String) m.invoke(i, Intent.class.getField("URI_INTENT_SCHEME").getInt(null));
+		} catch (Exception e) {
+			rtr = i.toURI();
+		}
+		return rtr;
 	}
 	
 	@Override

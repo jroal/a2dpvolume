@@ -40,6 +40,8 @@
         <activity android:name=".EditDevice"/>
         <activity android:name=".ListViewer"/>
         <activity android:name="AppChooser"/>
+        <activity android:name="CustomIntentMaker"></activity>
+        <activity android:name="ProviderList"></activity>
     </application>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-sdk android:minSdkVersion="8"/>

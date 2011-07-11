@@ -93,7 +93,7 @@ public class AppItem extends SimplePropertyCollection {
 	
 	public String getAppName(PackageManager pm) {
 		if (getString(KEY_PACKAGE_NAME) == null || getString(KEY_PACKAGE_NAME).equals("")) {
-			return "No app selected.";
+			return "";
 		}
 		if (isShortcutIntent()) {
 			return getString(KEY_CUSTOM_ACTION);
