@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Vector;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +21,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.Toast;
+
 
 public class EditDevice extends Activity {
 
@@ -36,8 +39,20 @@ public class EditDevice extends Activity {
 	private btDevice device;
 	private MyApplication application;
 	private DeviceDB myDB; // database of device data stored in SQlite
+	
 
-
+	private static final int DIALOG_PICK_APP_TYPE = 3;
+	private static final int DIALOG_WARN_STOP_APP = 5;
+	private static final int DIALOG_BITLY = 6;
+	private static final String[] APP_TYPE_OPTIONS = {"Choose App", "Create Shortcut", "Home Screen Shortcut", "Pandora Radio Station", "Custom Intent", "Clear App Selection"};
+	private static final int ACTION_CHOOSE_APP = 2;
+	private static final int ACTION_CUSTOM_INTENT = 6;
+	private static final int ACTION_CHOOSE_FROM_PROVIDER = 11;
+	private static final int ACTION_CREATE_HOME_SCREEN_SHORTCUT = 14;
+	private static final int ACTION_CHOOSE_APP_CUSTOM = 16;
+	private CheckBox mChkStopApp, mChkForceRestart;
+	private AppItem mAppItem;
+	
 	/**
 	 * @see android.app.Activity#onCreate(Bundle)
 	 */
@@ -150,9 +165,16 @@ public class EditDevice extends Activity {
 
 		// The more friendly app chooser.  However, this loads slow.
 		startapp.setOnClickListener(new OnClickListener(){			
-			public void onClick(View arg0) {				
-				Intent in = new Intent(getBaseContext(), AppChooser.class);
-				startActivityForResult(in, 0);	
+			public void onClick(View arg0) {	
+				
+				AlertDialog.Builder adb2 = new AlertDialog.Builder(a2dp.Vol.EditDevice.this);
+				adb2.setTitle(R.string.ea_ti_app);
+				adb2.setItems(APP_TYPE_OPTIONS, mAppTypeDialogOnClick);
+				adb2.create();
+				adb2.show();
+				 
+				//Intent in = new Intent(getBaseContext(), AppChooser.class);
+				//startActivityForResult(in, 0);	
 			}} );
 
 		connbt.setOnClickListener(new OnClickListener(){
@@ -192,4 +214,128 @@ public class EditDevice extends Activity {
 			fapp.setText(data.getStringExtra("package_name"));
 		}
 	};
+	
+	private DialogInterface.OnClickListener mAppTypeDialogOnClick = new DialogInterface.OnClickListener() {
+
+		public void onClick(DialogInterface dialog, int which) {
+			Intent i;
+			switch (which) {
+			case 0:
+				//Select App
+				i = new Intent(getBaseContext(), AppChooser.class);
+				startActivityForResult(i, ACTION_CHOOSE_APP);
+				break;
+			case 1:
+				//Create Shortcut
+				i = new Intent(Intent.ACTION_PICK_ACTIVITY);
+				i.putExtra(Intent.EXTRA_INTENT, new Intent(Intent.ACTION_CREATE_SHORTCUT));
+				i.putExtra(Intent.EXTRA_TITLE, "Create a Shortcut");
+				startActivityForResult(i, ACTION_CREATE_HOME_SCREEN_SHORTCUT);
+				break;
+			case 2:
+				//Home Screen Shortcut
+				i = new Intent(getBaseContext(), ProviderList.class);
+				i.putExtra(ProviderList.EXTRA_PROVIDER, ProviderList.PROVIDER_HOMESCREEN);
+				startActivityForResult(i, ACTION_CHOOSE_FROM_PROVIDER);
+				break;
+			case 3:
+				//Pandora Station
+				i = new Intent(getBaseContext(), ProviderList.class);
+				i.putExtra(ProviderList.EXTRA_PROVIDER, ProviderList.PROVIDER_PANDORA);
+				startActivityForResult(i, ACTION_CHOOSE_FROM_PROVIDER);
+				break;
+//			case 4:
+//				//Google Listen Feed
+//				//TODO: Need to check out what queue looks like in db
+//				i = new Intent(getBaseContext(), CustomActionActivity.class);
+//				i.putExtra(CustomActionActivity.EXTRA_ACTION_TYPE, CustomActionActivity.ACTION_TYPE_LATEST_UNHEARD_LISTEN_PODCAST);
+//				mAlarmItem.packageName = CustomActionActivity.GOOGLE_LISTEN_PACKAGE_NAME);
+//				mAlarmItem.customAction = "Latest Podcast on Google Listen";
+//				mAlarmItem.customData = AalService.getIntentUri(i);
+//				mAlarmItem.customType = "";
+//				vUpdateApp();
+//				break;
+			case 4:
+				//Custom Intent
+				i = new Intent(getBaseContext(), CustomIntentMaker.class);
+				i.putExtra(AppItem.KEY_CUSTOM_ACTION, mAppItem.getString(AppItem.KEY_CUSTOM_ACTION));
+				i.putExtra(AppItem.KEY_CUSTOM_DATA, mAppItem.getString(AppItem.KEY_CUSTOM_DATA));
+				i.putExtra(AppItem.KEY_CUSTOM_TYPE, mAppItem.getString(AppItem.KEY_CUSTOM_TYPE));
+//				i.putExtra(AppItem.KEY_PACKAGE_NAME, mAlarmItem.packageName);
+				startActivityForResult(i, ACTION_CUSTOM_INTENT);
+				break;
+
+			case 5:
+				//Clear App
+				mAppItem.set(AppItem.KEY_PACKAGE_NAME, "");
+				mAppItem.set(AppItem.KEY_CUSTOM_ACTION, "");
+				mAppItem.set(AppItem.KEY_CUSTOM_DATA, "");
+				mAppItem.set(AppItem.KEY_CUSTOM_TYPE, "");
+				vUpdateApp();
+				break;
+			}
+		}
+		
+	};
+	
+	private void vUpdateApp() {
+		PackageManager pm = getPackageManager();
+		//mTvApp.setText(mAppItem.getAppName(pm));
+		//mAppItem.setAppIconInImageView(mIvAppIcon, pm);
+		fapp.setText(mAppItem.getAppName(pm));
+		checkCustomAppPackage();
+		pm = null;
+	}
+	
+	private void checkCustomAppPackage() {
+		if ((mAppItem.getBool(AppItem.KEY_STOP_APP_ON_TIMEOUT) || mAppItem.getBool(AppItem.KEY_FORCE_RESTART)) && mAppItem.isCustomIntent()) {
+			showDialog(DIALOG_WARN_STOP_APP);
+		}
+	}
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch(id) {
+
+		case DIALOG_PICK_APP_TYPE:
+			AlertDialog.Builder adb2 = new AlertDialog.Builder(this);
+			adb2.setTitle(R.string.ea_ti_app);
+			adb2.setItems(APP_TYPE_OPTIONS, mAppTypeDialogOnClick);
+			return adb2.create();
+
+		case DIALOG_BITLY:
+			ProgressDialog pd = new ProgressDialog(this);
+			pd.setIndeterminate(true);
+			pd.setMessage("Shortenting Url with Bit.ly...");
+			pd.setCancelable(false);
+			return pd;
+		case DIALOG_WARN_STOP_APP:
+			AlertDialog.Builder adb4 = new AlertDialog.Builder(this);
+			adb4.setTitle(R.string.ae_stop_app_warning_title);
+			adb4.setMessage(R.string.ae_stop_app_warning_message);
+			adb4.setCancelable(false);
+			adb4.setPositiveButton("Select App", new DialogInterface.OnClickListener() {
+
+				public void onClick(DialogInterface dialog, int which) {
+					Intent i = new Intent(getBaseContext(), AppChooser.class);
+					startActivityForResult(i, ACTION_CHOOSE_APP_CUSTOM);
+				}
+				
+			});
+			adb4.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
+
+				public void onClick(DialogInterface dialog, int which) {
+					mChkStopApp.setChecked(false);
+					mChkForceRestart.setChecked(false);
+				}
+				
+			});
+			return adb4.create();
+			
+		}
+		
+		return super.onCreateDialog(id);
+	}
+
+
 }
