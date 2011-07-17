@@ -5,11 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -25,10 +25,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -84,13 +86,14 @@ public class service extends Service {
 	boolean local;
 	private static final String LOG_TAG = "A2DP_Volume";
 	private static final String MY_UUID_STRING = "af87c0d0-faac-11de-a839-0800200c9a66";
-
+	private PackageManager mPackageManager;
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
 	// oldest acceptable time
 	SharedPreferences preferences;
 	private MyApplication application;
+	AppItem mCurrentAppItem;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -137,6 +140,7 @@ public class service extends Service {
 			Toast.makeText(this, "prefs failed to load " + str,
 					Toast.LENGTH_LONG).show();
 			e.printStackTrace();
+			Log.e(LOG_TAG, "prefs failed to load " + e.getMessage());
 		}
 
 		registerRecievers();
@@ -188,6 +192,7 @@ public class service extends Service {
 			Toast.makeText(this, R.string.ServiceStarted, Toast.LENGTH_LONG)
 					.show();
 
+		mPackageManager = getPackageManager();
 		// test location file maker
 		/*
 		 * FileOutputStream fos; try { fos = openFileOutput("My_Last_Location",
@@ -371,7 +376,7 @@ public class service extends Service {
 
 			btDevice bt2 = null;
 			try {
-				Log.d(LOG_TAG, intent.toString());
+				//Log.d(LOG_TAG, intent.toString());
 				if (intent.getAction().equalsIgnoreCase(
 						"android.app.action.ENTER_CAR_MODE"))
 					bt2 = DB.getBTD("1");
@@ -383,7 +388,7 @@ public class service extends Service {
 					Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
 				bt2 = null;
 				btdConn = null;
-				Log.e(LOG_TAG, e.toString());
+				Log.e(LOG_TAG, "Error" + e.toString());
 			}
 
 			if (bt2.mac != null) {
@@ -415,7 +420,7 @@ public class service extends Service {
 					Toast.makeText(application,
 							"Unable to access wifi: " + e.toString(),
 							Toast.LENGTH_LONG).show();
-					Log.e(LOG_TAG, e.toString());
+					Log.e(LOG_TAG, "Error" + e.toString());
 				}
 			}
 
@@ -457,19 +462,23 @@ public class service extends Service {
 												// disconnected
 			location2 = null; // clear this so a new location is stored
 
-			try {
-				String addres = btConn.getAddress();
-				bt2 = DB.getBTD(addres);
-				btdConn = bt2;
-			} catch (Exception e) {
-				if (toasts)
-					Toast.makeText(context2,
-							btConn.getAddress() + "\n" + e.getMessage(),
-							Toast.LENGTH_LONG);
-				bt2 = null;
-				Log.e(LOG_TAG, e.toString());
+			if (btConn != null) {
+				try {
+					String addres = btConn.getAddress();
+					bt2 = DB.getBTD(addres);
+					btdConn = bt2;
+				} catch (Exception e) {
+					if (toasts)
+						Toast.makeText(context2,
+								btConn.getAddress() + "\n" + e.getMessage(),
+								Toast.LENGTH_LONG);
+					bt2 = null;
+					Log.e(LOG_TAG, "Error" + e.toString());
+				}
 			}
-
+			else
+				return;
+			
 			if (notify && (bt2.mac != null))
 				updateNot(false, null);
 
@@ -1000,6 +1009,44 @@ public class service extends Service {
 		mNotificationManager.notify(1, not);
 	}
 
+	private Intent getAppIntent() {
+		Intent i;
+		String pname = mCurrentAppItem.getString(AppItem.KEY_PACKAGE_NAME);
+		String cAction = mCurrentAppItem.getString(AppItem.KEY_CUSTOM_ACTION);
+		String cData = mCurrentAppItem.getString(AppItem.KEY_CUSTOM_DATA);
+		String cType = mCurrentAppItem.getString(AppItem.KEY_CUSTOM_TYPE);
+		
+		if (pname == null || pname.equals("")) {
+			return null;
+		} else if (mCurrentAppItem.isShortcutIntent()) {
+			try {
+				i = Intent.getIntent(cData);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				return null;			
+			}
+		} else if (!cAction.equals("")) {
+			i = new Intent();
+			i.setAction(cAction);
+			if (!cData.equals("")) {
+				i.setData(Uri.parse(cData));
+			}
+			if (!cType.equals("")) {
+				i.setType(cType);
+			}
+		}  else {
+			try {
+				i =  mPackageManager.getLaunchIntentForPackage(pname);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		return i;
+	}
+	
+	
 	protected void launchApp(String packageName) {
 		Intent mIntent = getPackageManager().getLaunchIntentForPackage(
 				packageName);

@@ -1,12 +1,10 @@
 package a2dp.Vol;
 
 import java.io.BufferedReader;
-import java.util.Calendar;
 
-import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.RingtoneManager;
+
 import android.widget.ImageView;
 
 public class AppItem extends SimplePropertyCollection {

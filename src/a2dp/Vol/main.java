@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -63,6 +64,7 @@ public class main extends Activity {
 	boolean carMode = false;
 	boolean homeDock = false;
 	private String a2dpDir = "";
+	private static final String LOG_TAG = "A2DP_Volume";
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -139,8 +141,7 @@ public class main extends Activity {
 			pinfo = getPackageManager().getPackageInfo(comp.getPackageName(), 0);
 			ver = pinfo.versionName;
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(LOG_TAG, "error" + e.getMessage());
 		}
 		
 		setTitle(getResources().getString(R.string.app_name) + " Version: " + ver);
@@ -169,8 +170,7 @@ public class main extends Activity {
 			carMode = preferences.getBoolean("car_mode", true);
 			homeDock = preferences.getBoolean("home_dock", false);
 		} catch (Exception e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
+			Log.e(LOG_TAG, "error" +  e2.getMessage());
 		}
 
 		am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -226,8 +226,7 @@ public class main extends Activity {
 				}
 			}
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			Log.e(LOG_TAG, "error" +  e1.getMessage());
 		}
 
 		this.ladapt = new ArrayAdapter<String>(application,
@@ -328,8 +327,8 @@ public class main extends Activity {
 
 								if (!exportDir.exists())
 									return;
-
-								String file = "content://com.android.htmlfileprovider"
+								//String file = "content://com.android.htmlfileprovider"
+								String file = "file:///"
 										+ exportDir.getPath()
 										+ "/"
 										+ car.replaceAll(" ", "_") + ".html";
@@ -441,11 +440,11 @@ public class main extends Activity {
 				} catch (FileNotFoundException e) {
 					Toast.makeText(a2dp.Vol.main.this, R.string.NoData,
 							Toast.LENGTH_LONG).show();
-					e.printStackTrace();
+					Log.e(LOG_TAG, "error" +  e.getMessage());
 				} catch (IOException e) {
 					Toast.makeText(a2dp.Vol.main.this, "Some IO issue",
 							Toast.LENGTH_LONG).show();
-					e.printStackTrace();
+					Log.e(LOG_TAG, "error" + e.getMessage());
 				}
 				return false;
 			}
@@ -483,6 +482,7 @@ public class main extends Activity {
 				} catch (Exception x) {
 					servrun = false;
 					serv.setText(R.string.StartService);
+					Log.e(LOG_TAG, "error" + x.getMessage());
 				}
 			}
 
@@ -498,6 +498,7 @@ public class main extends Activity {
 				} catch (Exception x) {
 					servrun = false;
 					serv.setText(R.string.StartService);
+					Log.e(LOG_TAG, "error" + x.getMessage());
 				}
 			}
 		}.start();
@@ -507,6 +508,7 @@ public class main extends Activity {
 			btCon = service.btConn;
 		} catch (Exception e) {
 			btCon = null;
+			Log.e(LOG_TAG, "error" + e.getMessage());
 		}
 		// load the list from the database
 		refreshList(loadFromDB());
@@ -527,11 +529,11 @@ public class main extends Activity {
 		} catch (FileNotFoundException e) {
 			Toast.makeText(a2dp.Vol.main.this, R.string.NoData,
 					Toast.LENGTH_LONG).show();
-			e.printStackTrace();
+			Log.e(LOG_TAG, "error" +  e.getMessage());
 		} catch (IOException e) {
 			Toast.makeText(a2dp.Vol.main.this, "Some IO issue",
 					Toast.LENGTH_LONG).show();
-			e.printStackTrace();
+			Log.e(LOG_TAG, "error" + e.getMessage());
 		}
 	}
 
@@ -757,12 +759,24 @@ public class main extends Activity {
 	private final BroadcastReceiver mReceiver3 = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(
-					BluetoothDevice.EXTRA_DEVICE);
-			btCon = bt;
-			// Toast.makeText(context, bt.getName() + " " + bt.getAddress(),
-			// Toast.LENGTH_LONG).show();
-			refreshList(vec.size());
+			try {
+				BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(
+						BluetoothDevice.EXTRA_DEVICE);
+				btCon = bt;
+				btDevice btd = new btDevice();
+				btd.setBluetoothDevice(btCon, btCon.getName(),
+						am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+				btDevice bt2 = myDB.getBTD(btd.mac);
+				// if this device is not in the database, add it now.
+				if (bt2.mac == null) {
+					a2dp.Vol.main.this.myDB.insert(btd);
+				}
+				// fix the device list
+				refreshList(loadFromDB());
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e(LOG_TAG, "error:" + e.getMessage());
+			}
 		}
 	};
 
@@ -772,9 +786,10 @@ public class main extends Activity {
 	private final BroadcastReceiver mReceiver4 = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
-
 			btCon = null;
 			refreshList(vec.size());
+
+			
 		}
 	};
 
@@ -807,8 +822,7 @@ public class main extends Activity {
 					exportDir.mkdirs();
 				}
 			} catch (Exception e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
+				Log.e(LOG_TAG, "error" + e2.getMessage());
 			}
 
 			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
@@ -831,6 +845,7 @@ public class main extends Activity {
 			} catch (Exception x) {
 				servrun = false;
 				serv.setText(R.string.StartService);
+				Log.e(LOG_TAG, "error" + x.getMessage());
 			}
 
 		}
