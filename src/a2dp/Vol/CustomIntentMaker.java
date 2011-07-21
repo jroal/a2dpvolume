@@ -99,9 +99,7 @@ public class CustomIntentMaker extends Activity {
 				am.setSpeakerphoneOn(true);
 				am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL), AudioManager.FLAG_SHOW_UI);
 
-				Thread t = new Thread(mSetSpeakerphoneTask);
-				t.setDaemon(true);
-				t.start();
+				
 			}
 			
 			//TEST CODE
@@ -120,23 +118,6 @@ public class CustomIntentMaker extends Activity {
 		return lcase.startsWith("intent:") || lcase.contains("#intent");
 	}
 	
-	private final Runnable mSetSpeakerphoneTask = new Runnable() {
-
-		public void run() {
-
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			AudioManager am = (AudioManager)getBaseContext().getSystemService(AUDIO_SERVICE);
-			am.setMode(AudioManager.MODE_IN_CALL);
-			if (!am.isSpeakerphoneOn()) {
-				am.setSpeakerphoneOn(true);
-				am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL), AudioManager.FLAG_SHOW_UI);
-			}	
-		}
-		
-	};
+	
 
 }

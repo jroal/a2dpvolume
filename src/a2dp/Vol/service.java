@@ -93,7 +93,6 @@ public class service extends Service {
 	// oldest acceptable time
 	SharedPreferences preferences;
 	private MyApplication application;
-	AppItem mCurrentAppItem;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -312,11 +311,10 @@ public class service extends Service {
 				setVolume(maxvol, a2dp.Vol.service.this);
 
 			// If we defined an app to auto-start then run it on connect
-			if (bt2.getApp().get(AppItem.KEY_PACKAGE_NAME) != null) {
-				if (bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME).length() > 3) {
+			if (bt2.getPname() != null) {
+				if (bt2.getPname().length() > 3) {
 					// launchApp(bt2.app);
-					mCurrentAppItem = bt2.getApp();
-					launchApp();
+					runApp(bt2);
 				}
 			}
 
@@ -410,11 +408,10 @@ public class service extends Service {
 				setVolume(maxvol, a2dp.Vol.service.this);
 
 			// If we defined an app to auto-start then run it on connect
-			if (bt2.getApp().get(AppItem.KEY_PACKAGE_NAME) != null) {
-				if (bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME).length() > 3) {
+			if (bt2.getPname() != null) {
+				if (bt2.getPname().length() > 3) {
 					// launchApp(bt2.app);
-					mCurrentAppItem = bt2.getApp();
-					launchApp();
+					runApp(bt2);
 				}
 			}
 
@@ -488,8 +485,8 @@ public class service extends Service {
 				updateNot(false, null);
 
 			// if we opened a package for this device, close it now
-			if (bt2 != null && bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME).length() > 3) {
-				stopApp(bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME));
+			if (bt2 != null && bt2.getPname().length() > 3) {
+				stopApp(bt2.getPname());
 			}
 
 			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
@@ -592,8 +589,8 @@ public class service extends Service {
 			location2 = null; // clear this so a new location is stored
 
 			// if we opened a package for this device, close it now
-			if (bt2 != null && bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME).length() > 3) {
-				stopApp(bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME));
+			if (bt2 != null && bt2.getPname().length() > 3) {
+				stopApp(bt2.getPname());
 			}
 			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
 				new CountDownTimer(MAX_TIME, 5000) {
@@ -1014,21 +1011,21 @@ public class service extends Service {
 		mNotificationManager.notify(1, not);
 	}
 
-	private Intent getAppIntent() {
+	private boolean runApp(btDevice bx) {
 		Intent i;
-		String pname = mCurrentAppItem.getString(AppItem.KEY_PACKAGE_NAME);
-		String cAction = mCurrentAppItem.getString(AppItem.KEY_CUSTOM_ACTION);
-		String cData = mCurrentAppItem.getString(AppItem.KEY_CUSTOM_DATA);
-		String cType = mCurrentAppItem.getString(AppItem.KEY_CUSTOM_TYPE);
+		String pname = bx.getPname();
+		String cAction = bx.getAppaction();
+		String cData = bx.getAppdata();
+		String cType = bx.getApptype();
 
 		if (pname == null || pname.equals("")) {
-			return null;
-		} else if (mCurrentAppItem.isShortcutIntent()) {
+			return false;
+		} else if (cData.length() > 1) {
 			try {
 				i = Intent.getIntent(cData);
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
-				return null;
+				return false;
 			}
 		} else if (!cAction.equals("")) {
 			i = new Intent();
@@ -1044,33 +1041,23 @@ public class service extends Service {
 				i = mPackageManager.getLaunchIntentForPackage(pname);
 			} catch (Exception e) {
 				e.printStackTrace();
-				return null;
+				return false;
 			}
 		}
 		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		return i;
-	}
 
-	private void launchApp() {
-		Intent targetIntent = getAppIntent();
-		if (targetIntent != null) {
-			startActivity(targetIntent);
+		try {
+			startActivity(i);
+			return true;
+		} catch (Exception e) {
+			Toast t = Toast.makeText(getApplicationContext(),
+					R.string.app_not_found, Toast.LENGTH_SHORT);
+			if (notify)
+				t.show();
+			e.printStackTrace();
+			return false;
 		}
-	}
 
-	protected void launchApp(String packageName) {
-		Intent mIntent = getPackageManager().getLaunchIntentForPackage(
-				packageName);
-		if (mIntent != null) {
-			try {
-				startActivity(mIntent);
-			} catch (ActivityNotFoundException err) {
-				Toast t = Toast.makeText(getApplicationContext(),
-						R.string.app_not_found, Toast.LENGTH_SHORT);
-				if (notify)
-					t.show();
-			}
-		}
 	}
 
 	protected void stopApp(String packageName) {

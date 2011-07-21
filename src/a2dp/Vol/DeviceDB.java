@@ -45,13 +45,13 @@ public class DeviceDB {
 		vals.put("maxv", (long) bt.getDefVol());
 		vals.put("setv", bt.islSetV());
 		vals.put("getl", (long) bt.islGetLoc());
-		vals.put("pname", bt.getApp().getString(AppItem.KEY_PACKAGE_NAME));
+		vals.put("pname", bt.getPname());
 		vals.put("bdevice", bt.getBdevice());
 		vals.put("wifi", (long) bt.islWifi());
-		vals.put("appaction", bt.getApp().getString(AppItem.KEY_CUSTOM_ACTION));
-		vals.put("appdata", bt.getApp().getString(AppItem.KEY_CUSTOM_DATA));
-		vals.put("apptype", bt.getApp().getString(AppItem.KEY_CUSTOM_TYPE));
-		vals.put("appaction", bt.getFR());
+		vals.put("appaction", bt.getAppaction());
+		vals.put("appdata", bt.getAppdata());
+		vals.put("apptype", bt.getApptype());
+		vals.put("apprestart", bt.lApprestart());
 		this.db.update(TABLE_NAME, vals, "mac='" + bt.mac + "'", null);
 	}
 
@@ -81,13 +81,13 @@ public class DeviceDB {
 		this.insertStmt.bindLong(4, (long) btd.getDefVol());
 		this.insertStmt.bindLong(5, (long) btd.islSetV());
 		this.insertStmt.bindLong(6, (long) btd.islGetLoc());
-		this.insertStmt.bindString(7, btd.getApp().getString(AppItem.KEY_PACKAGE_NAME));
+		this.insertStmt.bindString(7, btd.getPname());
 		this.insertStmt.bindString(8, btd.getBdevice());
 		this.insertStmt.bindLong(9, (long) btd.islWifi());
-		this.insertStmt.bindString(10, btd.getApp().getString(AppItem.KEY_CUSTOM_ACTION));
-		this.insertStmt.bindString(11, btd.getApp().getString(AppItem.KEY_CUSTOM_DATA));
-		this.insertStmt.bindString(12, btd.getApp().getString(AppItem.KEY_CUSTOM_TYPE));
-		this.insertStmt.bindLong(13, btd.getFR());
+		this.insertStmt.bindString(10, btd.getAppaction());
+		this.insertStmt.bindString(11, btd.getAppdata());
+		this.insertStmt.bindString(12, btd.getApptype());
+		this.insertStmt.bindLong(13, btd.lApprestart());
 		return this.insertStmt.executeInsert();
 	}
 
@@ -110,18 +110,13 @@ public class DeviceDB {
 				bt.setDefVol((int) cs.getInt(3));
 				bt.setSetV(cs.getInt(4));
 				bt.setGetLoc(cs.getInt(5));
-				AppItem app = new AppItem();
-				app.set(AppItem.KEY_PACKAGE_NAME, cs.getString(6));
-				app.set(AppItem.KEY_CUSTOM_ACTION, cs.getString(9));
-				app.set(AppItem.KEY_CUSTOM_DATA, cs.getString(10));
-				app.set(AppItem.KEY_CUSTOM_TYPE, cs.getString(11));
-				boolean fr;
-				if(cs.getInt(12) > 0)fr = true;
-				else fr = false;
-				app.set(AppItem.KEY_FORCE_RESTART, fr);
-				bt.setApp(app);
+				bt.setPname(cs.getString(6));
 				bt.setBdevice(cs.getString(7));
 				bt.setWifi(cs.getInt(8));
+				bt.setAppaction(cs.getString(9));
+				bt.setAppdata(cs.getString(10));
+				bt.setApptype(cs.getString(11));
+				bt.setApprestart(cs.getInt(12));
 			}
 		} catch (Exception e) {
 			bt.mac = null;
@@ -191,18 +186,14 @@ public class DeviceDB {
 				bt.setSetV(cursor.getInt(4));
 				bt.setDefVol(cursor.getInt(3));
 				bt.setGetLoc(cursor.getInt(5));
+				bt.setPname(cursor.getString(6));
 				bt.setBdevice(cursor.getString(7));
 				bt.setWifi(cursor.getInt(8));
-				AppItem app = new AppItem();
-				app.set(AppItem.KEY_PACKAGE_NAME, cursor.getString(6));
-				app.set(AppItem.KEY_CUSTOM_ACTION, cursor.getString(9));
-				app.set(AppItem.KEY_CUSTOM_DATA, cursor.getString(10));
-				app.set(AppItem.KEY_CUSTOM_TYPE, cursor.getString(11));
-				boolean fr;
-				if(cursor.getInt(12) > 0)fr = true;
-				else fr = false;
-				app.set(AppItem.KEY_FORCE_RESTART, fr);
-				bt.setApp(app);
+				bt.setAppaction(cursor.getString(9));
+				bt.setAppdata(cursor.getString(10));
+				bt.setApptype(cursor.getString(11));
+				bt.setApprestart(cursor.getInt(12));
+				
 				list.add(bt);
 			} while (cursor.moveToNext());
 		}
