@@ -92,7 +92,7 @@ public class EditDevice extends Activity {
 		fsetvol.setChecked(device.isSetV());
 		fvol.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 		fvol.setProgress(device.defVol);
-		fapp.setText(device.getPname());
+		fapp.setText(device.app.getString(AppItem.KEY_PACKAGE_NAME));
 		fbt.setText(device.getBdevice());
 		fwifi.setChecked(device.isWifi());
 		if (device == null)
@@ -108,7 +108,7 @@ public class EditDevice extends Activity {
 				device.setSetV(fsetvol.isChecked());
 				device.setDefVol(fvol.getProgress());
 				device.setGetLoc(fgloc.isChecked());
-				device.setPname(fapp.getText().toString());
+				device.setApp(mAppItem);
 				device.setBdevice(fbt.getText().toString());
 				device.setWifi(fwifi.isChecked());
 				sb.setText("Saving");
@@ -372,15 +372,14 @@ public class EditDevice extends Activity {
 		PackageManager pm = getPackageManager();
 		// mTvApp.setText(mAppItem.getAppName(pm));
 		// mAppItem.setAppIconInImageView(mIvAppIcon, pm);
-		//fapp.setText(mAppItem.getAppName(pm));
-		fapp.setText(mAppItem.toString());
+		fapp.setText(mAppItem.getAppName(pm));
+		//fapp.setText(mAppItem.toString());
 		checkCustomAppPackage();
 		pm = null;
 	}
 
 	private void checkCustomAppPackage() {
-		if ((mAppItem.getBool(AppItem.KEY_STOP_APP_ON_TIMEOUT) || mAppItem
-				.getBool(AppItem.KEY_FORCE_RESTART))
+		if ((mAppItem.getBool(AppItem.KEY_FORCE_RESTART))
 				&& mAppItem.isCustomIntent()) {
 			showDialog(DIALOG_WARN_STOP_APP);
 		}

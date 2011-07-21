@@ -19,13 +19,14 @@ import java.util.Vector;
 public class DeviceDB {
 
 	private static final String DATABASE_NAME = "btdevices.db";
-	private static final int DATABASE_VERSION = 6;
+	private static final int DATABASE_VERSION = 7;
 	private static final String TABLE_NAME = "devices";
 	private Context context;
 	private SQLiteDatabase db;
 	private SQLiteStatement insertStmt;
 	private static final String INSERT = "insert into " + TABLE_NAME
-			+ "(desc1, desc2, mac, maxv, setv, getl, pname, bdevice, wifi) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			+ "(desc1, desc2, mac, maxv, setv, getl, pname, bdevice, wifi, appaction, appdata, apptype, apprestart) " +
+					"values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?)";
 
 	public DeviceDB(Context context) {
 		this.context = context;
@@ -44,9 +45,13 @@ public class DeviceDB {
 		vals.put("maxv", (long) bt.getDefVol());
 		vals.put("setv", bt.islSetV());
 		vals.put("getl", (long) bt.islGetLoc());
-		vals.put("pname", bt.getPname());
+		vals.put("pname", bt.getApp().getString(AppItem.KEY_PACKAGE_NAME));
 		vals.put("bdevice", bt.getBdevice());
 		vals.put("wifi", (long) bt.islWifi());
+		vals.put("appaction", bt.getApp().getString(AppItem.KEY_CUSTOM_ACTION));
+		vals.put("appdata", bt.getApp().getString(AppItem.KEY_CUSTOM_DATA));
+		vals.put("apptype", bt.getApp().getString(AppItem.KEY_CUSTOM_TYPE));
+		vals.put("appaction", bt.getFR());
 		this.db.update(TABLE_NAME, vals, "mac='" + bt.mac + "'", null);
 	}
 
@@ -76,9 +81,13 @@ public class DeviceDB {
 		this.insertStmt.bindLong(4, (long) btd.getDefVol());
 		this.insertStmt.bindLong(5, (long) btd.islSetV());
 		this.insertStmt.bindLong(6, (long) btd.islGetLoc());
-		this.insertStmt.bindString(7, btd.getPname());
+		this.insertStmt.bindString(7, btd.getApp().getString(AppItem.KEY_PACKAGE_NAME));
 		this.insertStmt.bindString(8, btd.getBdevice());
 		this.insertStmt.bindLong(9, (long) btd.islWifi());
+		this.insertStmt.bindString(10, btd.getApp().getString(AppItem.KEY_CUSTOM_ACTION));
+		this.insertStmt.bindString(11, btd.getApp().getString(AppItem.KEY_CUSTOM_DATA));
+		this.insertStmt.bindString(12, btd.getApp().getString(AppItem.KEY_CUSTOM_TYPE));
+		this.insertStmt.bindLong(13, btd.getFR());
 		return this.insertStmt.executeInsert();
 	}
 
@@ -101,7 +110,16 @@ public class DeviceDB {
 				bt.setDefVol((int) cs.getInt(3));
 				bt.setSetV(cs.getInt(4));
 				bt.setGetLoc(cs.getInt(5));
-				bt.setPname(cs.getString(6));
+				AppItem app = new AppItem();
+				app.set(AppItem.KEY_PACKAGE_NAME, cs.getString(6));
+				app.set(AppItem.KEY_CUSTOM_ACTION, cs.getString(9));
+				app.set(AppItem.KEY_CUSTOM_DATA, cs.getString(10));
+				app.set(AppItem.KEY_CUSTOM_TYPE, cs.getString(11));
+				boolean fr;
+				if(cs.getInt(12) > 0)fr = true;
+				else fr = false;
+				app.set(AppItem.KEY_FORCE_RESTART, fr);
+				bt.setApp(app);
 				bt.setBdevice(cs.getString(7));
 				bt.setWifi(cs.getInt(8));
 			}
@@ -162,7 +180,7 @@ public class DeviceDB {
 	public Vector<btDevice> selectAlldb() {
 		Vector<btDevice> list = new Vector<btDevice>();
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1",
-				"desc2", "mac", "maxv", "setv", "getl", "pname" , "bdevice", "wifi"}, null, null, null,
+				"desc2", "mac", "maxv", "setv", "getl", "pname" , "bdevice", "wifi", "appaction", "appdata", "apptype", "apprestart"}, null, null, null,
 				null, "desc2");
 		if (cursor.moveToFirst()) {
 			do {
@@ -173,9 +191,18 @@ public class DeviceDB {
 				bt.setSetV(cursor.getInt(4));
 				bt.setDefVol(cursor.getInt(3));
 				bt.setGetLoc(cursor.getInt(5));
-				bt.setPname(cursor.getString(6));
 				bt.setBdevice(cursor.getString(7));
 				bt.setWifi(cursor.getInt(8));
+				AppItem app = new AppItem();
+				app.set(AppItem.KEY_PACKAGE_NAME, cursor.getString(6));
+				app.set(AppItem.KEY_CUSTOM_ACTION, cursor.getString(9));
+				app.set(AppItem.KEY_CUSTOM_DATA, cursor.getString(10));
+				app.set(AppItem.KEY_CUSTOM_TYPE, cursor.getString(11));
+				boolean fr;
+				if(cursor.getInt(12) > 0)fr = true;
+				else fr = false;
+				app.set(AppItem.KEY_FORCE_RESTART, fr);
+				bt.setApp(app);
 				list.add(bt);
 			} while (cursor.moveToNext());
 		}
@@ -194,16 +221,18 @@ public class DeviceDB {
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("CREATE TABLE "
 					+ TABLE_NAME
-					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER, getl INTEGER, pname TEXT, bdevice TEXT, wifi INTEGER)");
+					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER, getl INTEGER, pname TEXT, " +
+							"bdevice TEXT, wifi INTEGER, appaction TEXT, appdata TEXT, apptype TEXT, apprestart INTEGER)");
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			if (newVersion < 4 && oldVersion < 4) {
+			if ((newVersion < 4 && oldVersion < 4) || (oldVersion > DATABASE_VERSION || newVersion > DATABASE_VERSION ) ) {
 				Log.w("Example",
 						"Upgrading database, this will drop tables and recreate.");
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 				onCreate(db);
+				return;
 			} 
 			if(oldVersion < 4 && newVersion >= 4){
 				Log.w("Update", "Update table and default the new column getl");
@@ -228,7 +257,7 @@ public class DeviceDB {
 					e.printStackTrace();
 				}
 			}
-			if(oldVersion < 6 && newVersion >= 6)
+			if(oldVersion < 6 && newVersion == 6)
 			{
 				Log.w("Update", "Update table and default the new column pname");
 
@@ -242,6 +271,26 @@ public class DeviceDB {
 					e.printStackTrace();
 				}
 			}
+			
+			if(oldVersion < 7 && newVersion == 7)
+			{
+				Log.w("Update", "Update table and default the new column pname");
+
+				try {
+					db.execSQL("ALTER TABLE " + TABLE_NAME
+							+ " ADD COLUMN appaction TEXT");
+					db.execSQL("ALTER TABLE " + TABLE_NAME
+							+ " ADD COLUMN appdata TEXT");
+					db.execSQL("ALTER TABLE " + TABLE_NAME
+							+ " ADD COLUMN apptype TEXT");
+					db.execSQL("ALTER TABLE " + TABLE_NAME
+							+ " ADD COLUMN apprestart INTEGER DEFAULT 0");
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
 		}
 	}
 

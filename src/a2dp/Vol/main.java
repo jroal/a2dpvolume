@@ -374,7 +374,7 @@ public class main extends Activity {
 				builder.setMessage(bt2.desc1 + "\n" + bt2.desc2 + "\n"
 						+ bt2.mac + "\nConnected Volume: " + bt2.defVol
 						+ "\nTrigger Volume: " + bt2.setV + "\nGet Location: "
-						+ bt2.getLoc + "\nAuto Launch: " + bt2.pname);
+						+ bt2.getLoc);
 				builder.setPositiveButton(R.string.OK, null);
 				builder.setNegativeButton(R.string.Delete,
 						new OnClickListener() {
@@ -787,12 +787,14 @@ public class main extends Activity {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
 			btCon = null;
-			refreshList(vec.size());
-
-			
+			refreshList(loadFromDB());			
 		}
 	};
 
+	
+	/**
+	 * received the reload list intent
+	 */
 	private final BroadcastReceiver mReceiver5 = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
@@ -801,7 +803,11 @@ public class main extends Activity {
 			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
 		}
 	};
+	
 
+	/**
+	 * preferences have changed, reload new
+	 */
 	private final BroadcastReceiver mReceiver6 = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
@@ -822,6 +828,7 @@ public class main extends Activity {
 					exportDir.mkdirs();
 				}
 			} catch (Exception e2) {
+				e2.printStackTrace();
 				Log.e(LOG_TAG, "error" + e2.getMessage());
 			}
 
@@ -843,6 +850,7 @@ public class main extends Activity {
 					serv.setText(R.string.StartService);
 				}
 			} catch (Exception x) {
+				x.printStackTrace();
 				servrun = false;
 				serv.setText(R.string.StartService);
 				Log.e(LOG_TAG, "error" + x.getMessage());

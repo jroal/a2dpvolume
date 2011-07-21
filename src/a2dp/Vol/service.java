@@ -312,10 +312,13 @@ public class service extends Service {
 				setVolume(maxvol, a2dp.Vol.service.this);
 
 			// If we defined an app to auto-start then run it on connect
-			if (bt2.pname != null)
-				if (bt2.pname.length() > 3) {
-					launchApp(bt2.pname);
+			if (bt2.getApp().get(AppItem.KEY_PACKAGE_NAME) != null) {
+				if (bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME).length() > 3) {
+					// launchApp(bt2.app);
+					mCurrentAppItem = bt2.getApp();
+					launchApp();
 				}
+			}
 
 			if (bt2.wifi) {
 				try {
@@ -376,7 +379,7 @@ public class service extends Service {
 
 			btDevice bt2 = null;
 			try {
-				//Log.d(LOG_TAG, intent.toString());
+				// Log.d(LOG_TAG, intent.toString());
 				if (intent.getAction().equalsIgnoreCase(
 						"android.app.action.ENTER_CAR_MODE"))
 					bt2 = DB.getBTD("1");
@@ -407,10 +410,13 @@ public class service extends Service {
 				setVolume(maxvol, a2dp.Vol.service.this);
 
 			// If we defined an app to auto-start then run it on connect
-			if (bt2.pname != null && bt2.pname != null)
-				if (bt2.pname.length() > 3) {
-					launchApp(bt2.pname);
+			if (bt2.getApp().get(AppItem.KEY_PACKAGE_NAME) != null) {
+				if (bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME).length() > 3) {
+					// launchApp(bt2.app);
+					mCurrentAppItem = bt2.getApp();
+					launchApp();
 				}
+			}
 
 			if (bt2 != null && bt2.wifi) {
 				try {
@@ -429,7 +435,7 @@ public class service extends Service {
 				// bt2.bdevice.length(), Toast.LENGTH_LONG).show();
 				if (bt2.bdevice.length() == 17) {
 					try {
-						
+
 						connectBluetoothA2dp(bt2.bdevice);
 					} catch (Exception e) {
 						Toast.makeText(application,
@@ -475,16 +481,15 @@ public class service extends Service {
 					bt2 = null;
 					Log.e(LOG_TAG, "Error" + e.toString());
 				}
-			}
-			else
+			} else
 				return;
-			
+
 			if (notify && (bt2.mac != null))
 				updateNot(false, null);
 
 			// if we opened a package for this device, close it now
-			if (bt2 != null && bt2.pname.length() > 3) {
-				stopApp(bt2.pname);
+			if (bt2 != null && bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME).length() > 3) {
+				stopApp(bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME));
 			}
 
 			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
@@ -587,8 +592,8 @@ public class service extends Service {
 			location2 = null; // clear this so a new location is stored
 
 			// if we opened a package for this device, close it now
-			if (bt2.pname.length() > 3) {
-				stopApp(bt2.pname);
+			if (bt2 != null && bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME).length() > 3) {
+				stopApp(bt2.getApp().getString(AppItem.KEY_PACKAGE_NAME));
 			}
 			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
 				new CountDownTimer(MAX_TIME, 5000) {
@@ -1015,7 +1020,7 @@ public class service extends Service {
 		String cAction = mCurrentAppItem.getString(AppItem.KEY_CUSTOM_ACTION);
 		String cData = mCurrentAppItem.getString(AppItem.KEY_CUSTOM_DATA);
 		String cType = mCurrentAppItem.getString(AppItem.KEY_CUSTOM_TYPE);
-		
+
 		if (pname == null || pname.equals("")) {
 			return null;
 		} else if (mCurrentAppItem.isShortcutIntent()) {
@@ -1023,7 +1028,7 @@ public class service extends Service {
 				i = Intent.getIntent(cData);
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
-				return null;			
+				return null;
 			}
 		} else if (!cAction.equals("")) {
 			i = new Intent();
@@ -1034,9 +1039,9 @@ public class service extends Service {
 			if (!cType.equals("")) {
 				i.setType(cType);
 			}
-		}  else {
+		} else {
 			try {
-				i =  mPackageManager.getLaunchIntentForPackage(pname);
+				i = mPackageManager.getLaunchIntentForPackage(pname);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -1045,8 +1050,14 @@ public class service extends Service {
 		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		return i;
 	}
-	
-	
+
+	private void launchApp() {
+		Intent targetIntent = getAppIntent();
+		if (targetIntent != null) {
+			startActivity(targetIntent);
+		}
+	}
+
 	protected void launchApp(String packageName) {
 		Intent mIntent = getPackageManager().getLaunchIntentForPackage(
 				packageName);
@@ -1092,20 +1103,24 @@ public class service extends Service {
 	private class ConnectBt extends AsyncTask<String, Void, Boolean> {
 
 		BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
-		protected void onPreExecute() {}
-		
+
+		protected void onPreExecute() {
+		}
+
 		@Override
 		protected Boolean doInBackground(String... arg0) {
 
 			boolean try2 = true;
-			
+
 			Set<BluetoothDevice> pairedDevices = bta.getBondedDevices();
 			BluetoothDevice device = null;
 			for (BluetoothDevice dev : pairedDevices) {
-				if(dev.getAddress().equalsIgnoreCase(arg0[0]))device = dev;
+				if (dev.getAddress().equalsIgnoreCase(arg0[0]))
+					device = dev;
 			}
-			if(device == null)return false;
-			
+			if (device == null)
+				return false;
+
 			IBluetoothA2dp ibta = getIBluetoothA2dp();
 			try {
 				Log.d(LOG_TAG, "Here: " + ibta.getSinkPriority(device));
