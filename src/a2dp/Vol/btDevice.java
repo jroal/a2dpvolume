@@ -12,39 +12,114 @@ public class btDevice {
 	public String desc1; // Default device name as read via Bluetooth
 	public String desc2; // Description as assigned by user
 	public String mac; // mac address of the bluetooth device
-	public AppItem app = new AppItem(); // app item to launch
+	public String pname; // package name item to launch
 	public boolean setV; // whether to adjust volume on this device or not
 	public int defVol; // default volume to set to when connected. Normally this
 	// is just max (15)
 	public boolean getLoc; // this sets whether to capture location info for
-	public String bdevice; // this is a bluetooth device to auto connect when this device connects
-	public boolean wifi; // whether to turn OFF wifi on connect or not this device
-	
-	public long getFR(){
-		if(app.getBool(AppItem.KEY_FORCE_RESTART) == true)
+	public String bdevice; // this is a bluetooth device to auto connect when
+							// this device connects
+	public boolean wifi; // whether to turn OFF wifi on connect or not this
+							// device
+	public String appaction; // app action string
+	public String appdata; // app data string
+	public String apptype; // app type string
+	public boolean apprestart; // app restart flag
+
+	/**
+	 * @return the pname
+	 */
+	public String getPname() {
+		return pname;
+	}
+
+	/**
+	 * @param pname
+	 *            the pname to set
+	 */
+	public void setPname(String pname) {
+		this.pname = pname;
+	}
+
+	/**
+	 * @return the appaction
+	 */
+	public String getAppaction() {
+		return appaction;
+	}
+
+	/**
+	 * @param appaction
+	 *            the appaction to set
+	 */
+	public void setAppaction(String appaction) {
+		this.appaction = appaction;
+	}
+
+	/**
+	 * @return the appdata
+	 */
+	public String getAppdata() {
+		return appdata;
+	}
+
+	/**
+	 * @param appdata
+	 *            the appdata to set
+	 */
+	public void setAppdata(String appdata) {
+		this.appdata = appdata;
+	}
+
+	/**
+	 * @return the apptype
+	 */
+	public String getApptype() {
+		return apptype;
+	}
+
+	/**
+	 * @param apptype
+	 *            the apptype to set
+	 */
+	public void setApptype(String apptype) {
+		this.apptype = apptype;
+	}
+
+	/**
+	 * @return the apprestart
+	 */
+	public boolean isApprestart() {
+		return apprestart;
+	}
+
+	/**
+	 * @param apprestart
+	 *            the apprestart to set
+	 */
+	public void setApprestart(boolean apprestart) {
+		this.apprestart = apprestart;
+	}
+
+	/**
+	 * @return the apprestart
+	 */
+	public long lApprestart() {
+		if (apprestart)
 			return 1;
 		else
 			return 0;
 	}
-	
-	public void setFR(long r){
-		if(r > 0.5)
-			app.set(AppItem.KEY_FORCE_RESTART, true);
-		else
-			app.set(AppItem.KEY_FORCE_RESTART, false);
-	}
-	/**
-	 * @return the app
-	 */
-	public AppItem getApp() {
-		return app;
-	}
 
 	/**
-	 * @param app the app to set
+	 * @param apprestart
+	 *            the apprestart to set
 	 */
-	public void setApp(AppItem app) {
-		this.app = app;
+	public void setApprestart(int apprestart) {
+		if (apprestart > 0)
+			this.apprestart = true;
+		else
+			this.apprestart = false;
 	}
 
 	/**
@@ -55,7 +130,8 @@ public class btDevice {
 	}
 
 	/**
-	 * @param bdevice the bdevice to set
+	 * @param bdevice
+	 *            the bdevice to set
 	 */
 	public void setBdevice(String bdevice) {
 		this.bdevice = bdevice;
@@ -68,31 +144,31 @@ public class btDevice {
 		return wifi;
 	}
 
-	
-	public long islWifi(){
-		if(wifi)
+	public long islWifi() {
+		if (wifi)
 			return 1;
 		else
-			return 0; 
+			return 0;
 	}
+
 	/**
-	 * @param wifi the wifi to set
+	 * @param wifi
+	 *            the wifi to set
 	 */
 	public void setWifi(boolean wifi) {
 		this.wifi = wifi;
 	}
 
 	/**
-	 * @param wifi the wifi to set
+	 * @param wifi
+	 *            the wifi to set
 	 */
 	public void setWifi(int swifi) {
-		if(swifi > 0)
+		if (swifi > 0)
 			this.wifi = true;
 		else
 			this.wifi = false;
 	}
-
-
 
 	/**
 	 * @return the getLoc. This is the flag used to determine if location should
@@ -254,24 +330,27 @@ public class btDevice {
 		this.setV = true;
 		this.defVol = vol;
 		this.getLoc = true;
-		this.app = new AppItem();
+		this.pname = "";
 		this.bdevice = "";
 		this.wifi = false;
+		this.appaction = "";
+		this.appdata = "";
+		this.apptype = "";
+		this.apprestart = false;
 	}
 
-/*	*//**
+	/*	*//**
 	 * @return the pname
-	 *//*
-	public String getPname() {
-		return pname;
-	}
-
-	*//**
-	 * @param pname the pname to set
-	 *//*
-	public void setPname(String pname) {
-		this.pname = pname;
-	}*/
+	 */
+	/*
+	 * public String getPname() { return pname; }
+	 *//**
+	 * @param pname
+	 *            the pname to set
+	 */
+	/*
+	 * public void setPname(String pname) { this.pname = pname; }
+	 */
 
 	/**
 	 * @param s1
@@ -292,8 +371,12 @@ public class btDevice {
 		this.setV = true;
 		this.defVol = vol;
 		this.getLoc = true;
-		this.app = new AppItem();
+		this.pname = "";
 		this.bdevice = "";
 		this.wifi = false;
+		this.appaction = "";
+		this.appdata = "";
+		this.apptype = "";
+		this.apprestart = false;
 	}
 }

@@ -43,6 +43,12 @@ public class EditDevice extends Activity {
 	private btDevice device;
 	private MyApplication application;
 	private DeviceDB myDB; // database of device data stored in SQlite
+	private String pname;
+	private String appaction;
+	private String appdata;
+	private String apptype;
+	private boolean apprestart;
+	
 
 	private static final int DIALOG_PICK_APP_TYPE = 3;
 	private static final int DIALOG_WARN_STOP_APP = 5;
@@ -57,7 +63,6 @@ public class EditDevice extends Activity {
 	private static final int FETCH_HOME_SCREEN_SHORTCUT = 15;
 	private static final int ACTION_CHOOSE_APP_CUSTOM = 16;
 	private CheckBox mChkStopApp, mChkForceRestart;
-	private AppItem mAppItem;
 
 	/**
 	 * @see android.app.Activity#onCreate(Bundle)
@@ -80,8 +85,7 @@ public class EditDevice extends Activity {
 		this.fapp = (EditText) this.findViewById(R.id.editApp);
 		this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
 		this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
-		mAppItem = new AppItem();
-
+		
 		btd = getIntent().getStringExtra("btd"); // get the mac address of the
 													// device to edit
 
@@ -92,7 +96,7 @@ public class EditDevice extends Activity {
 		fsetvol.setChecked(device.isSetV());
 		fvol.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 		fvol.setProgress(device.defVol);
-		fapp.setText(device.app.getString(AppItem.KEY_PACKAGE_NAME));
+		fapp.setText(device.getPname());
 		fbt.setText(device.getBdevice());
 		fwifi.setChecked(device.isWifi());
 		if (device == null)
@@ -108,9 +112,13 @@ public class EditDevice extends Activity {
 				device.setSetV(fsetvol.isChecked());
 				device.setDefVol(fvol.getProgress());
 				device.setGetLoc(fgloc.isChecked());
-				device.setApp(mAppItem);
+				device.setPname(pname);
 				device.setBdevice(fbt.getText().toString());
 				device.setWifi(fwifi.isChecked());
+				device.setAppaction(appaction);
+				device.setAppdata(appdata);
+				device.setApptype(apptype);
+				device.setApprestart(apprestart);
 				sb.setText("Saving");
 				try {
 					myDB.update(device);
@@ -227,11 +235,11 @@ public class EditDevice extends Activity {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case ACTION_CHOOSE_APP:
-				mAppItem.set(AppItem.KEY_PACKAGE_NAME,
-						data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME));
-				mAppItem.set(AppItem.KEY_CUSTOM_ACTION, "");
-				mAppItem.set(AppItem.KEY_CUSTOM_DATA, "");
-				mAppItem.set(AppItem.KEY_CUSTOM_TYPE, "");
+				pname = data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME);
+				appaction = "";
+				apptype = "";
+				appdata = "";
+			
 				vUpdateApp();
 				break;
 			/*
@@ -240,36 +248,30 @@ public class EditDevice extends Activity {
 			 * vUpdateLabel(); break;
 			 */
 			case ACTION_CHOOSE_APP_CUSTOM:
-				mAppItem.set(AppItem.KEY_PACKAGE_NAME,
-						data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME));
+				pname = data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME);
 				vUpdateApp();
 				break;
 			case ACTION_CHOOSE_FROM_PROVIDER:
 				processShortcut(data);
 				break;
 			case ACTION_CUSTOM_INTENT:
-				String dataString = data
-						.getStringExtra(AppItem.KEY_CUSTOM_DATA);
-				mAppItem.set(AppItem.KEY_PACKAGE_NAME, "");
-				mAppItem.set(AppItem.KEY_CUSTOM_ACTION,
-						data.getStringExtra(AppItem.KEY_CUSTOM_ACTION));
-				mAppItem.set(AppItem.KEY_CUSTOM_DATA, dataString);
-				mAppItem.set(AppItem.KEY_CUSTOM_TYPE,
-						data.getStringExtra(AppItem.KEY_CUSTOM_TYPE));
-				if (mAppItem.isShortcutIntent()) {
+				
+				pname = "";
+				appaction = data.getStringExtra("alarm_custom_action");
+				appdata = data.getStringExtra("alarm_custom_data");
+				apptype = data.getStringExtra("alarm_custom_type");
+
+				if (appdata.length() > 3) {
 					try {
-						mAppItem.set(
-								AppItem.KEY_PACKAGE_NAME,
-								Intent.getIntent(
-										mAppItem.getString(AppItem.KEY_CUSTOM_DATA))
-										.getComponent().getPackageName());
+						pname = Intent.getIntent(pname)
+										.getComponent().getPackageName();
 					} catch (URISyntaxException e) {
-						mAppItem.set(AppItem.KEY_PACKAGE_NAME, "custom");
+						pname = "custom";
 						e.printStackTrace();
 					}
 				}
-				if (mAppItem.getString(AppItem.KEY_PACKAGE_NAME).equals("")) {
-					mAppItem.set(AppItem.KEY_PACKAGE_NAME, "custom");
+				if (pname.equals("")) {
+					pname = "custom";
 				}
 				vUpdateApp();
 				break;
@@ -345,22 +347,20 @@ public class EditDevice extends Activity {
 			case 4:
 				// Custom Intent
 				i = new Intent(getBaseContext(), CustomIntentMaker.class);
-				i.putExtra(AppItem.KEY_CUSTOM_ACTION,
-						mAppItem.getString(AppItem.KEY_CUSTOM_ACTION));
-				i.putExtra(AppItem.KEY_CUSTOM_DATA,
-						mAppItem.getString(AppItem.KEY_CUSTOM_DATA));
-				i.putExtra(AppItem.KEY_CUSTOM_TYPE,
-						mAppItem.getString(AppItem.KEY_CUSTOM_TYPE));
-				// i.putExtra(AppItem.KEY_PACKAGE_NAME, mAlarmItem.packageName);
+				i.putExtra("alarm_custom_action",appaction);
+				i.putExtra("alarm_custom_data", appdata);
+				i.putExtra("alarm_custom_type", apptype);
+				i.putExtra("alarm_package_name", pname);
 				startActivityForResult(i, ACTION_CUSTOM_INTENT);
 				break;
 
 			case 5:
 				// Clear App
-				mAppItem.set(AppItem.KEY_PACKAGE_NAME, "");
-				mAppItem.set(AppItem.KEY_CUSTOM_ACTION, "");
-				mAppItem.set(AppItem.KEY_CUSTOM_DATA, "");
-				mAppItem.set(AppItem.KEY_CUSTOM_TYPE, "");
+				pname = "";
+				appaction = "";
+				appdata = "";
+				apptype = "";
+				
 				vUpdateApp();
 				break;
 			}
@@ -369,45 +369,43 @@ public class EditDevice extends Activity {
 	};
 
 	private void vUpdateApp() {
-		PackageManager pm = getPackageManager();
+		// PackageManager pm = getPackageManager();
 		// mTvApp.setText(mAppItem.getAppName(pm));
 		// mAppItem.setAppIconInImageView(mIvAppIcon, pm);
-		fapp.setText(mAppItem.getAppName(pm));
+		fapp.setText(pname);
 		//fapp.setText(mAppItem.toString());
-		checkCustomAppPackage();
-		pm = null;
+		//checkCustomAppPackage();
+		//pm = null;
 	}
 
-	private void checkCustomAppPackage() {
+	/*private void checkCustomAppPackage() {
 		if ((mAppItem.getBool(AppItem.KEY_FORCE_RESTART))
 				&& mAppItem.isCustomIntent()) {
 			showDialog(DIALOG_WARN_STOP_APP);
 		}
-	}
+	}*/
 
 	private void processShortcut(Intent data) {
 		Intent i = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT);
-		mAppItem.set(AppItem.KEY_CUSTOM_DATA, getIntentUri(i));
+		appdata =  getIntentUri(i);
 		if (data.hasExtra(ProviderList.EXTRA_PACKAGE_NAME)) {
-			mAppItem.set(AppItem.KEY_PACKAGE_NAME,
-					data.getStringExtra(ProviderList.EXTRA_PACKAGE_NAME));
+			pname = data.getStringExtra(ProviderList.EXTRA_PACKAGE_NAME);
 		} else {
 			try {
-				mAppItem.set(AppItem.KEY_PACKAGE_NAME, i.getComponent()
-						.getPackageName());
+				pname = i.getComponent()
+						.getPackageName();
 			} catch (Exception e) {
-				mAppItem.set(AppItem.KEY_PACKAGE_NAME, "");
+				pname = "";
 				e.printStackTrace();
 			}
 
 		}
 
-		if (!mAppItem.hasPackageName()) {
-			mAppItem.set(AppItem.KEY_PACKAGE_NAME, "custom");
+		if (pname.length() < 3) {
+			pname = "custom";
 		}
-		mAppItem.set(AppItem.KEY_CUSTOM_ACTION,
-				data.getStringExtra(Intent.EXTRA_SHORTCUT_NAME));
-		mAppItem.set(AppItem.KEY_CUSTOM_TYPE, "");
+		appaction = data.getStringExtra(Intent.EXTRA_SHORTCUT_NAME);
+		apptype =  "";
 		vUpdateApp();
 	}
 
