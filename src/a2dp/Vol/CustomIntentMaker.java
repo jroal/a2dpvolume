@@ -25,6 +25,8 @@ public class CustomIntentMaker extends Activity {
 		
 		initViews();
 		assignListeners();
+		//mBtnOk.setClickable(false);
+		mBtnOk.setEnabled(false);
 		//Bundle extras = getIntent().getExtras();
 	}
 	
@@ -71,6 +73,7 @@ public class CustomIntentMaker extends Activity {
 			String action = mEtAction.getText().toString();
 			String data = mEtData.getText().toString();
 			String type = mEtType.getText().toString();
+			if(action.length() < 3 && data.length() < 3 && type.length() < 3) return;
 			
 			Intent i;
 			if (isShortcutIntent(data)) {
@@ -83,9 +86,15 @@ public class CustomIntentMaker extends Activity {
 				}
 			} else {
 				i = new Intent();
+				if(action != null && !action.equals(""))
 				i.setAction(action);
 				if (!data.equals("")) {
-					i.setData(Uri.parse(data));
+					try {
+						i.setData(Uri.parse(data));
+					} catch (Exception e) {
+						e.printStackTrace();
+						return;
+					}
 				}
 				if (!type.equals("")) {
 					i.setType(type);
@@ -109,7 +118,14 @@ public class CustomIntentMaker extends Activity {
 //			i.putExtra(mEtAction.getText().toString(), true);
 //			mEtData.setText(i.toUri(Intent.URI_INTENT_SCHEME));
 			
-			startActivity(i);
+			try {
+				startActivity(i);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+			mBtnOk.setEnabled(true);
 		}
 		
 	};

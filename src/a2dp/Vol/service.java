@@ -589,7 +589,8 @@ public class service extends Service {
 			location2 = null; // clear this so a new location is stored
 
 			// if we opened a package for this device, close it now
-			if (bt2 != null && bt2.getPname().length() > 3) {
+			if(bt2 != null)
+			if (bt2.getPname() != null && bt2.getPname().length() > 3) {
 				stopApp(bt2.getPname());
 			}
 			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
@@ -1079,6 +1080,7 @@ public class service extends Service {
 					}
 				}
 			} catch (ActivityNotFoundException err) {
+				err.printStackTrace();
 				Toast t = Toast.makeText(getApplicationContext(),
 						R.string.app_not_found, Toast.LENGTH_SHORT);
 				if (notify)
