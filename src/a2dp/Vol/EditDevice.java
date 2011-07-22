@@ -372,7 +372,10 @@ public class EditDevice extends Activity {
 		// PackageManager pm = getPackageManager();
 		// mTvApp.setText(mAppItem.getAppName(pm));
 		// mAppItem.setAppIconInImageView(mIvAppIcon, pm);
+		if(pname != null && pname.length() > 3)
 		fapp.setText(pname);
+		else 
+			fapp.setText("Custom");
 		//fapp.setText(mAppItem.toString());
 		//checkCustomAppPackage();
 		//pm = null;
