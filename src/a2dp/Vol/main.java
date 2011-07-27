@@ -59,7 +59,7 @@ public class main extends Activity {
 	public static final String PREFS_NAME = "btVol";
 	String[] lstring = null; // string array used for the listview
 	ArrayAdapter<String> ladapt; // listview adapter
-	BluetoothDevice btCon;
+	btDevice btCon;
 	static final int ENABLE_BLUETOOTH = 1;
 	boolean carMode = false;
 	boolean homeDock = false;
@@ -138,13 +138,15 @@ public class main extends Activity {
 		PackageInfo pinfo;
 		String ver = null;
 		try {
-			pinfo = getPackageManager().getPackageInfo(comp.getPackageName(), 0);
+			pinfo = getPackageManager()
+					.getPackageInfo(comp.getPackageName(), 0);
 			ver = pinfo.versionName;
 		} catch (NameNotFoundException e) {
 			Log.e(LOG_TAG, "error" + e.getMessage());
 		}
-		
-		setTitle(getResources().getString(R.string.app_name) + " Version: " + ver);
+
+		setTitle(getResources().getString(R.string.app_name) + " Version: "
+				+ ver);
 		// get "Application" object for shared state or creating of expensive
 		// resources - like DataHelper
 		// (this is not recreated as often as each Activity)
@@ -170,7 +172,7 @@ public class main extends Activity {
 			carMode = preferences.getBoolean("car_mode", true);
 			homeDock = preferences.getBoolean("home_dock", false);
 		} catch (Exception e2) {
-			Log.e(LOG_TAG, "error" +  e2.getMessage());
+			Log.e(LOG_TAG, "error" + e2.getMessage());
 		}
 
 		am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -203,16 +205,19 @@ public class main extends Activity {
 				"a2dp.vol.ManageData.RELOAD_LIST");
 		this.registerReceiver(mReceiver5, filter5);
 
+		IntentFilter filter7 = new IntentFilter("a2dp.vol.service.RELOAD_LIST");
+		this.registerReceiver(mReceiver5, filter7);
+
 		IntentFilter filter6 = new IntentFilter("a2dp.vol.preferences.UPDATED");
 		this.registerReceiver(mReceiver6, filter6);
-		
+
 		vec = new Vector<btDevice>();
-		
+
 		VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 
 		lstring = new String[] { "no data" };
 
-		this.myDB = new DeviceDB(this);
+		this.myDB = new DeviceDB(application);
 
 		try {
 			if (myDB.getLength() < 1) {
@@ -226,7 +231,7 @@ public class main extends Activity {
 				}
 			}
 		} catch (Exception e1) {
-			Log.e(LOG_TAG, "error" +  e1.getMessage());
+			Log.e(LOG_TAG, "error" + e1.getMessage());
 		}
 
 		this.ladapt = new ArrayAdapter<String>(application,
@@ -327,11 +332,11 @@ public class main extends Activity {
 
 								if (!exportDir.exists())
 									return;
-								//String file = "content://com.android.htmlfileprovider"
-								String file = "file:///"
-										+ exportDir.getPath()
-										+ "/"
-										+ car.replaceAll(" ", "_") + ".html";
+								// String file =
+								// "content://com.android.htmlfileprovider"
+								String file = "file:///" + exportDir.getPath()
+										+ "/" + car.replaceAll(" ", "_")
+										+ ".html";
 								String st = new String(file).trim();
 
 								Uri uri = Uri.parse(st);
@@ -440,7 +445,7 @@ public class main extends Activity {
 				} catch (FileNotFoundException e) {
 					Toast.makeText(a2dp.Vol.main.this, R.string.NoData,
 							Toast.LENGTH_LONG).show();
-					Log.e(LOG_TAG, "error" +  e.getMessage());
+					Log.e(LOG_TAG, "error" + e.getMessage());
 				} catch (IOException e) {
 					Toast.makeText(a2dp.Vol.main.this, "Some IO issue",
 							Toast.LENGTH_LONG).show();
@@ -503,13 +508,6 @@ public class main extends Activity {
 			}
 		}.start();
 
-		// see if a device is already connected in the service
-		try {
-			btCon = service.btConn;
-		} catch (Exception e) {
-			btCon = null;
-			Log.e(LOG_TAG, "error" + e.getMessage());
-		}
 		// load the list from the database
 		refreshList(loadFromDB());
 	}
@@ -529,7 +527,7 @@ public class main extends Activity {
 		} catch (FileNotFoundException e) {
 			Toast.makeText(a2dp.Vol.main.this, R.string.NoData,
 					Toast.LENGTH_LONG).show();
-			Log.e(LOG_TAG, "error" +  e.getMessage());
+			Log.e(LOG_TAG, "error" + e.getMessage());
 		} catch (IOException e) {
 			Toast.makeText(a2dp.Vol.main.this, "Some IO issue",
 					Toast.LENGTH_LONG).show();
@@ -544,7 +542,6 @@ public class main extends Activity {
 	 */
 	private int getBtDevices() {
 
-		
 		int i = 0;
 		vec.clear();
 
@@ -581,8 +578,8 @@ public class main extends Activity {
 				vec.add(fbt);
 			} else
 				vec.add(fbt2);
-			
-			refreshList(loadFromDB()); // make sure it is relisted 
+
+			refreshList(loadFromDB()); // make sure it is relisted
 		}
 
 		if (homeDock) {
@@ -597,11 +594,10 @@ public class main extends Activity {
 				vec.add(fbt);
 			} else
 				vec.add(fbt2);
-			
-			refreshList(loadFromDB()); // make sure it is relisted 
+
+			refreshList(loadFromDB()); // make sure it is relisted
 		}
-		
-		
+
 		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 
 		if (mBTA == null) {
@@ -644,7 +640,7 @@ public class main extends Activity {
 							vec.add(bt2);
 					}
 				}
-				
+
 			}
 		}
 
@@ -725,7 +721,7 @@ public class main extends Activity {
 				lstring[i] = vec.get(i).toString();
 				if (btCon != null)
 					if (vec.get(i).getMac()
-							.equalsIgnoreCase(btCon.getAddress()))
+							.equalsIgnoreCase(btCon.getMac()))
 						lstring[i] += " **";
 			}
 		} else {
@@ -741,9 +737,9 @@ public class main extends Activity {
 
 	// this just loads the bluetooth device array from the database
 	private int loadFromDB() {
+		myDB.getDb().close();
 		if (!myDB.getDb().isOpen())
-			main.this.myDB = new DeviceDB(main.this); // this doesn't really
-		// work
+			myDB = new DeviceDB(application); 
 
 		vec = myDB.selectAlldb();
 		if (vec.isEmpty() || vec == null)
@@ -762,9 +758,8 @@ public class main extends Activity {
 			try {
 				BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(
 						BluetoothDevice.EXTRA_DEVICE);
-				btCon = bt;
 				btDevice btd = new btDevice();
-				btd.setBluetoothDevice(btCon, btCon.getName(),
+				btd.setBluetoothDevice(bt, bt.getName(),
 						am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 				btDevice bt2 = myDB.getBTD(btd.mac);
 				// if this device is not in the database, add it now.
@@ -772,6 +767,7 @@ public class main extends Activity {
 					a2dp.Vol.main.this.myDB.insert(btd);
 				}
 				// fix the device list
+				btCon = btd;
 				refreshList(loadFromDB());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -786,24 +782,28 @@ public class main extends Activity {
 	private final BroadcastReceiver mReceiver4 = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
+			
 			btCon = null;
-			refreshList(loadFromDB());			
+			refreshList(loadFromDB());
 		}
 	};
 
-	
 	/**
 	 * received the reload list intent
 	 */
 	private final BroadcastReceiver mReceiver5 = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
-
+			String str = intent2.getExtras().getString("device");
+			if(str != null)
+				btCon = myDB.getBTD(str);
+			else
+				btCon = null;
+			
 			refreshList(loadFromDB());
 			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
 		}
 	};
-	
 
 	/**
 	 * preferences have changed, reload new

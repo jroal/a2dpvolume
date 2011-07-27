@@ -60,7 +60,6 @@ public class service extends Service {
 	Integer OldVol2 = 5;
 	public static boolean run = false;
 	LocationManager lm2 = null;
-	public static BluetoothDevice btConn = null;
 	static btDevice btdConn = null; // n the device in the database that has
 									// connected
 	private DeviceDB DB; // database of device data stored in SQlite
@@ -93,6 +92,9 @@ public class service extends Service {
 	// oldest acceptable time
 	SharedPreferences preferences;
 	private MyApplication application;
+	private Intent recievedIntent = null;
+	private boolean connecting = false;
+	private boolean disconnecting = false;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -111,7 +113,7 @@ public class service extends Service {
 		dtime = System.currentTimeMillis();
 		try {
 			preferences = PreferenceManager
-					.getDefaultSharedPreferences(this.application);
+					.getDefaultSharedPreferences(application);
 
 			carMode = preferences.getBoolean("car_mode", true);
 			homeDock = preferences.getBoolean("home_dock", false);
@@ -149,7 +151,7 @@ public class service extends Service {
 		// set run flag to true. This is used for the GUI
 		run = true;
 		// open database instance
-		this.DB = new DeviceDB(this);
+		this.DB = new DeviceDB(application);
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -163,7 +165,7 @@ public class service extends Service {
 		final String IRun = "a2dp.vol.service.RUNNING";
 		Intent i = new Intent();
 		i.setAction(IRun);
-		this.application.sendBroadcast(i);
+		application.sendBroadcast(i);
 
 		if (notify) {
 			// set up the notification and start foreground
@@ -220,24 +222,24 @@ public class service extends Service {
 			// Create listener for when car mode disconnects
 			IntentFilter filter3 = new IntentFilter(
 					android.app.UiModeManager.ACTION_EXIT_CAR_MODE);
-			this.registerReceiver(mReceiver3, filter3);
+			this.registerReceiver(mReceiver2, filter3);
 
 			// Create listener for when car mode connects
 			IntentFilter filter4 = new IntentFilter(
 					android.app.UiModeManager.ACTION_ENTER_CAR_MODE);
-			this.registerReceiver(mReceiver4, filter4);
+			this.registerReceiver(mReceiver, filter4);
 		}
 
 		if (homeDock) {
 			// Create listener for when car mode disconnects
 			IntentFilter filter5 = new IntentFilter(
 					android.app.UiModeManager.ACTION_EXIT_DESK_MODE);
-			this.registerReceiver(mReceiver3, filter5);
+			this.registerReceiver(mReceiver2, filter5);
 
 			// Create listener for when car mode connects
 			IntentFilter filter6 = new IntentFilter(
 					android.app.UiModeManager.ACTION_ENTER_DESK_MODE);
-			this.registerReceiver(mReceiver4, filter6);
+			this.registerReceiver(mReceiver, filter6);
 		}
 	}
 
@@ -276,172 +278,12 @@ public class service extends Service {
 		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			int maxvol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-			boolean setvol = true;
-			getOldvol();
-			BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(
-					BluetoothDevice.EXTRA_DEVICE);
-			btConn = bt;
-
-			btDevice bt2 = null;
-			try {
-				String addres = btConn.getAddress();
-				bt2 = DB.getBTD(addres);
-				btdConn = bt2;
-				if (toasts)
-					Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG)
-							.show();
-			} catch (Exception e) {
-				if (toasts)
-					Toast.makeText(context,
-							btConn.getAddress() + "\n" + e.getMessage(),
-							Toast.LENGTH_LONG);
-				bt2 = null;
+			if (!connecting) {
+				recievedIntent = intent;
+				connecting = true;
+				new BTconnected().execute();
 			}
-
-			if (bt2.mac != null) {
-				maxvol = bt2.getDefVol();
-				setvol = bt2.isSetV();
-				if (notify)
-					updateNot(true, bt2.toString());
-			}
-
-			if (setvol)
-				setVolume(maxvol, a2dp.Vol.service.this);
-
-			// If we defined an app to auto-start then run it on connect
-			if (bt2.getPname() != null) {
-				if (bt2.getPname().length() > 3) {
-					// launchApp(bt2.app);
-					runApp(bt2);
-				}
-			}
-
-			if (bt2.wifi) {
-				try {
-					oldwifistate = wifiManager.isWifiEnabled();
-					dowifi(false);
-				} catch (Exception e) {
-					Toast.makeText(application,
-							"Unable to access wifi: " + e.toString(),
-							Toast.LENGTH_LONG).show();
-					e.printStackTrace();
-				}
-			}
-
-			if (bt2.bdevice != null)
-				if (bt2.bdevice.length() == 17) {
-					try {
-
-						connectBluetoothA2dp(bt2.bdevice);
-						Log.d(LOG_TAG, bt2.bdevice);
-					} catch (Exception e) {
-						Toast.makeText(application,
-								"Unable to connect bluetooth: " + e.toString(),
-								Toast.LENGTH_LONG).show();
-						Log.e(LOG_TAG, "Error " + e.getMessage());
-					}
-				}
-
-		}
-	};
-
-	// disable wifi is requested
-	private void dowifi(boolean s) {
-		try {
-			wifiManager.setWifiEnabled(s);
-		} catch (Exception e) {
-			Toast.makeText(application,
-					"Unable to switch wifi: " + e.toString(), Toast.LENGTH_LONG)
-					.show();
-			e.printStackTrace();
-		}
-	}
-
-	// a Car Dock or home dock has just connected. Do the on connect stuff
-	private final BroadcastReceiver mReceiver4 = new BroadcastReceiver() {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
-		 * android.content.Intent)
-		 */
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			int maxvol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
-			boolean setvol = true;
-			getOldvol();
-
-			btDevice bt2 = null;
-			try {
-				// Log.d(LOG_TAG, intent.toString());
-				if (intent.getAction().equalsIgnoreCase(
-						"android.app.action.ENTER_CAR_MODE"))
-					bt2 = DB.getBTD("1");
-				else
-					bt2 = DB.getBTD("2");
-
-			} catch (Exception e) {
-				if (toasts)
-					Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
-				bt2 = null;
-				btdConn = null;
-				Log.e(LOG_TAG, "Error" + e.toString());
-			}
-
-			if (bt2.mac != null) {
-				maxvol = bt2.getDefVol();
-				setvol = bt2.isSetV();
-				if (notify)
-					updateNot(true, bt2.toString());
-				btdConn = bt2;
-				if (toasts)
-					Toast.makeText(context, bt2.desc2, Toast.LENGTH_LONG)
-							.show();
-			} else
-				return;
-
-			if (setvol)
-				setVolume(maxvol, a2dp.Vol.service.this);
-
-			// If we defined an app to auto-start then run it on connect
-			if (bt2.getPname() != null) {
-				if (bt2.getPname().length() > 3) {
-					// launchApp(bt2.app);
-					runApp(bt2);
-				}
-			}
-
-			if (bt2 != null && bt2.wifi) {
-				try {
-					oldwifistate = wifiManager.isWifiEnabled();
-					dowifi(false);
-				} catch (Exception e) {
-					Toast.makeText(application,
-							"Unable to access wifi: " + e.toString(),
-							Toast.LENGTH_LONG).show();
-					Log.e(LOG_TAG, "Error" + e.toString());
-				}
-			}
-
-			if (bt2.bdevice != null)
-				// Toast.makeText(application, bt2.bdevice + " L:" +
-				// bt2.bdevice.length(), Toast.LENGTH_LONG).show();
-				if (bt2.bdevice.length() == 17) {
-					try {
-
-						connectBluetoothA2dp(bt2.bdevice);
-					} catch (Exception e) {
-						Toast.makeText(application,
-								"Unable to connect bluetooth: " + e.toString(),
-								Toast.LENGTH_LONG).show();
-						Log.e(LOG_TAG, "Error " + e.getMessage());
-					}
-				}
-
 		}
 	};
 
@@ -456,210 +298,25 @@ public class service extends Service {
 		 */
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
-			BluetoothDevice bt = (BluetoothDevice) intent2.getExtras().get(
-					BluetoothDevice.EXTRA_DEVICE);
-			btConn = bt;
-
-			btDevice bt2 = null;
-			dtime = System.currentTimeMillis(); // catch the time we
-												// disconnected
-			location2 = null; // clear this so a new location is stored
-
-			if (btConn != null) {
-				try {
-					String addres = btConn.getAddress();
-					bt2 = DB.getBTD(addres);
-					btdConn = bt2;
-				} catch (Exception e) {
-					if (toasts)
-						Toast.makeText(context2,
-								btConn.getAddress() + "\n" + e.getMessage(),
-								Toast.LENGTH_LONG);
-					bt2 = null;
-					Log.e(LOG_TAG, "Error" + e.toString());
-				}
-			} else
-				return;
-
-			if (notify && (bt2.mac != null))
-				updateNot(false, null);
-
-			// if we opened a package for this device, close it now
-			if (bt2 != null && bt2.getPname().length() > 3) {
-				stopApp(bt2.getPname());
-			}
-
-			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
-				// make sure we turn OFF the location listener if we don't get a
-				// loc in MAX_TIME
-				gettingLoc = true;
-				if (MAX_TIME > 0) {
-					new CountDownTimer(MAX_TIME, 5000) {
-
-						public void onTick(long millisUntilFinished) {
-							if (toasts)
-								Toast.makeText(
-										a2dp.Vol.service.this,
-										"Time left: " + millisUntilFinished
-												/ 1000, Toast.LENGTH_LONG)
-										.show();
-						}
-
-						public void onFinish() {
-							clearLoc(true);
-						}
-					}.start();
-
-					// start location provider GPS
-					// Register the listener with the Location Manager to
-					// receive location updates
-
-					if (locationManager
-							.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-						locationManager.requestLocationUpdates(
-								LocationManager.GPS_PROVIDER, 0, 0,
-								locationListener);
-					}
-					if (useNet
-							&& locationManager
-									.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-						locationManager.requestLocationUpdates(
-								LocationManager.NETWORK_PROVIDER, 0, 0,
-								locationListener);
-					}
-					if (usePass
-							&& locationManager
-									.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
-						locationManager.requestLocationUpdates(
-								LocationManager.PASSIVE_PROVIDER, 0, 0,
-								locationListener);
-					}
-
-				}
-				// get best location and store it
-				grabGPS();
-			} else if (!gettingLoc)
-				btConn = null;
-
-			/*
-			 * if(notify){ not.icon = R.drawable.icon5;
-			 * mNotificationManager.notify(1, not); }
-			 */
-			if ((bt2 != null && bt2.isSetV()) || bt2 == null)
-				setVolume(OldVol2, a2dp.Vol.service.this);
-
-			if (bt2.wifi) {
-				dowifi(oldwifistate);
+			if (!disconnecting) {
+				recievedIntent = intent2;
+				connecting = true;
+				new BTdisconnected().execute();
 			}
 		}
 	};
 
-	// car mode exit
-	private final BroadcastReceiver mReceiver3 = new BroadcastReceiver() {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
-		 * android.content.Intent) Triggered car mode exit
-		 */
-		@Override
-		public void onReceive(Context context3, Intent intent3) {
-
-			btDevice bt2 = null;
-			try {
-				// Log.d(LOG_TAG, intent3.toString());
-				if (intent3.getAction().equalsIgnoreCase(
-						"android.app.action.EXIT_CAR_MODE"))
-					bt2 = DB.getBTD("1");
-				else
-					bt2 = DB.getBTD("2");
-			} catch (Exception e) {
-				Log.e(LOG_TAG, e.toString());
-			}
-			if (bt2.mac == null)
-				return;
-			else {
-				btdConn = bt2;
-				if (notify)
-					updateNot(false, null);
-			}
-			dtime = System.currentTimeMillis(); // catch the time we
-												// disconnected
-			location2 = null; // clear this so a new location is stored
-
-			// if we opened a package for this device, close it now
-			if(bt2 != null)
-			if (bt2.getPname() != null && bt2.getPname().length() > 3) {
-				stopApp(bt2.getPname());
-			}
-			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
-				new CountDownTimer(MAX_TIME, 5000) {
-
-					public void onTick(long millisUntilFinished) {
-						if (toasts)
-							Toast.makeText(a2dp.Vol.service.this,
-									"Time left: " + millisUntilFinished / 1000,
-									Toast.LENGTH_LONG).show();
-					}
-
-					public void onFinish() {
-						clearLoc(true);
-					}
-				}.start();
-
-				// start location provider GPS
-				// Register the listener with the Location Manager to
-				// receive location updates
-
-				if (locationManager
-						.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-					locationManager.requestLocationUpdates(
-							LocationManager.GPS_PROVIDER, 0, 0,
-							locationListener);
-				}
-				if (useNet
-						&& locationManager
-								.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-					locationManager.requestLocationUpdates(
-							LocationManager.NETWORK_PROVIDER, 0, 0,
-							locationListener);
-				}
-				if (usePass
-						&& locationManager
-								.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
-					locationManager.requestLocationUpdates(
-							LocationManager.PASSIVE_PROVIDER, 0, 0,
-							locationListener);
-				}
-				// get best location and store it
-				grabGPS();
-			}
-			if ((bt2 != null && bt2.isSetV()) || bt2 == null)
-				setVolume(OldVol2, a2dp.Vol.service.this);
-
-			if (bt2.wifi) {
-				dowifi(oldwifistate);
-			}
-
-		}
-	};
 
 	// makes the volume adjustment
-	public static int setVolume(int inputVol, Context sender) {
-		int outVol, curvol;
+	public static int setVolume(int inputVol) {
+		int outVol;
 		if (inputVol < 0)
 			inputVol = 0;
 		if (inputVol > am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
 			inputVol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-		curvol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 		am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, 0);
 		outVol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
-
-		Toast.makeText(sender,
-				"Old Volume:" + curvol + "  New Volume:" + outVol,
-				Toast.LENGTH_LONG).show();
 		return outVol;
 	}
 
@@ -832,7 +489,6 @@ public class service extends Service {
 	// kills the location listener and writes the location file
 	private void clearLoc(boolean doGps) {
 		locationManager.removeUpdates(locationListener);
-		btConn = null;
 		gettingLoc = false;
 		String car = "My Car";
 		DecimalFormat df = new DecimalFormat("#.#");
@@ -983,6 +639,7 @@ public class service extends Service {
 		l = null; // the most recent location
 		l3 = null; // the most accurate location
 		l4 = null; // the best location
+		btdConn = null;
 		// Toast.makeText(a2dp.Vol.service.this, " Location Manager stopped",
 		// Toast.LENGTH_LONG).show();
 	}
@@ -1089,6 +746,7 @@ public class service extends Service {
 		}
 	}
 
+
 	private class ConnectBt extends AsyncTask<String, Void, Boolean> {
 
 		BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
@@ -1100,7 +758,10 @@ public class service extends Service {
 		protected Boolean doInBackground(String... arg0) {
 
 			boolean try2 = true;
-
+			BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
+			if(mBTA == null || !mBTA.isEnabled()) 
+				return false;
+			
 			Set<BluetoothDevice> pairedDevices = bta.getBondedDevices();
 			BluetoothDevice device = null;
 			for (BluetoothDevice dev : pairedDevices) {
@@ -1114,10 +775,7 @@ public class service extends Service {
 			try {
 				Log.d(LOG_TAG, "Here: " + ibta.getSinkPriority(device));
 				if (ibta.connectSink(device))
-					Toast.makeText(application,
-							"Connected 1: " + device.getName(),
-							Toast.LENGTH_LONG).show();
-				try2 = false;
+					try2 = false;
 			} catch (Exception e) {
 				Log.e(LOG_TAG, "Error " + e.getMessage());
 				try2 = true;
@@ -1146,10 +804,7 @@ public class service extends Service {
 					// want
 					// to use this in a thread
 					socket.connect();
-					Toast.makeText(application,
-							"Connected 2: " + device.getName(),
-							Toast.LENGTH_LONG).show();
-				} catch (IOException connectException) {
+					} catch (IOException connectException) {
 					// Unable to connect; close the socket and get out
 					Log.e(LOG_TAG, "Error " + connectException.getMessage());
 					try {
@@ -1200,6 +855,315 @@ public class service extends Service {
 
 	private void connectBluetoothA2dp(String device) {
 		new ConnectBt().execute(device);
+	}
+
+	// this async task handles all the on-connect stuff in a background thread
+	private class BTconnected extends AsyncTask<String, Void, Boolean> {
+		String results = "";
+		btDevice connectedDevice = null;
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			if(recievedIntent == null)return false;
+			getOldvol();
+			BluetoothDevice bt = (BluetoothDevice) recievedIntent.getExtras()
+					.get(BluetoothDevice.EXTRA_DEVICE);
+
+			btDevice bt2 = null;
+
+			// first see if a bluetooth device connected
+			if (bt != null) {
+				try {
+					String addres = bt.getAddress();
+					bt2 = DB.getBTD(addres);
+					results = bt2.toString();
+				} catch (Exception e) {
+					results = e.getMessage();
+					bt2 = null;
+					return false;
+				}
+			}
+			else
+				// if not a bluetooth device, must be a special device
+			{
+				try {
+					// Log.d(LOG_TAG, intent.toString());
+					if (recievedIntent.getAction().equalsIgnoreCase(
+							"android.app.action.ENTER_CAR_MODE")){
+						bt2 = DB.getBTD("1"); // get car mode data
+					}
+					else if (recievedIntent.getAction().equalsIgnoreCase(
+					"android.app.action.ENTER_DESK_MODE")){
+						bt2 = DB.getBTD("2"); // get home dock data
+					}
+					else
+						return false;
+
+				} catch (Exception e) {
+					results = e.getMessage();
+					bt2 = null;
+					Log.e(LOG_TAG, "Error" + e.toString());
+				}
+			}
+				
+			connectedDevice = bt2;
+			// If we defined an app to auto-start then run it on connect
+			if (bt2.hasIntent()) 
+				runApp(bt2);
+
+
+			if (bt2.wifi) {
+				try {
+					oldwifistate = wifiManager.isWifiEnabled();
+					dowifi(false);
+				} catch (Exception e) {
+					e.printStackTrace();
+					results += " Unable to access wifi: " + e.toString();
+					Log.e(LOG_TAG, "Error " + e.getMessage());
+				}
+			}
+
+			if (bt2.bdevice != null)
+				if (bt2.bdevice.length() == 17) {
+					try {
+
+						connectBluetoothA2dp(bt2.bdevice);
+						Log.d(LOG_TAG, bt2.bdevice);
+					} catch (Exception e) {
+						e.printStackTrace();
+						results +=
+								"Unable to connect bluetooth: " + e.toString();
+						Log.e(LOG_TAG, "Error " + e.getMessage());
+					}
+				}
+			return true;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onCancelled()
+		 */
+		@Override
+		protected void onCancelled() {
+			// TODO Auto-generated method stub
+			super.onCancelled();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			connecting = false;
+			if (result) {
+				btdConn = connectedDevice;
+				if (connectedDevice.isSetV())
+					setVolume(connectedDevice.getDefVol());
+				if (notify)
+					updateNot(true, connectedDevice.toString());
+				if (toasts)
+					Toast.makeText(application, connectedDevice.toString(),
+							Toast.LENGTH_LONG).show();
+			}
+			else
+				Toast.makeText(application, results,
+						Toast.LENGTH_LONG).show();
+			String Ireload = "a2dp.vol.service.RELOAD_LIST";
+			Intent itent = new Intent();
+			itent.setAction(Ireload);
+			itent.putExtra("device", connectedDevice.getMac());
+			application.sendBroadcast(itent);
+			super.onPostExecute(result);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPreExecute()
+		 */
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+
+	}
+	
+
+	// do the on-disconnect stuff
+	private class BTdisconnected extends AsyncTask<String, Void, Boolean> {
+		String results = "";
+		btDevice bt2 = null;
+		Intent itent = null;
+		
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPreExecute()
+		 */
+		@Override
+		protected void onPreExecute() {
+			itent = recievedIntent;
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			
+			if(itent == null)return false;
+			BluetoothDevice bt = (BluetoothDevice) itent.getExtras().get(
+					BluetoothDevice.EXTRA_DEVICE);
+			
+			dtime = System.currentTimeMillis(); // catch the time we
+												// disconnected
+			location2 = null; // clear this so a new location is stored
+
+			if (bt != null) {
+				try {
+					String addres = bt.getAddress();
+					bt2 = DB.getBTD(addres);
+				} catch (Exception e) {
+						results = bt.getAddress() + "\n" + e.getMessage();
+					bt2 = null;
+					Log.e(LOG_TAG, "Error" + e.toString());
+				}
+			} else
+				try {
+					// Log.d(LOG_TAG, intent3.toString());
+					if (itent.getAction().equalsIgnoreCase(
+							"android.app.action.EXIT_CAR_MODE"))
+						bt2 = DB.getBTD("1");
+					else if (itent.getAction().equalsIgnoreCase(
+					"android.app.action.EXIT_DESK_MODE"))
+						bt2 = DB.getBTD("2");
+					else
+						return false;
+				} catch (Exception e) {
+					Log.e(LOG_TAG, e.toString());
+				}
+
+			if (notify && (bt2.mac != null))
+				updateNot(false, null);
+
+			// if we opened a package for this device, close it now
+			if (bt2.hasIntent() && bt2.getPname().length() > 3) {
+				stopApp(bt2.getPname());
+			}
+
+			if (bt2 != null && bt2.isGetLoc() && !gettingLoc) {
+				// make sure we turn OFF the location listener if we don't get a
+				// loc in MAX_TIME
+				gettingLoc = true;
+
+				if (MAX_TIME > 0) {
+					CountDownTimer T = new CountDownTimer(MAX_TIME, 5000) {
+
+						public void onTick(long millisUntilFinished) {
+							if (toasts)
+								Toast.makeText(
+										a2dp.Vol.service.this,
+										"Time left: " + millisUntilFinished
+												/ 1000, Toast.LENGTH_LONG)
+										.show();
+						}
+
+						public void onFinish() {
+							clearLoc(true);
+						}
+					};
+					T.start();
+					
+					// start location provider GPS
+					// Register the listener with the Location Manager to
+					// receive location updates
+
+					if (locationManager
+							.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+						locationManager.requestLocationUpdates(
+								LocationManager.GPS_PROVIDER, 0, 0,
+								locationListener);
+					}
+					if (useNet
+							&& locationManager
+									.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+						locationManager.requestLocationUpdates(
+								LocationManager.NETWORK_PROVIDER, 0, 0,
+								locationListener);
+					}
+					if (usePass
+							&& locationManager
+									.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+						locationManager.requestLocationUpdates(
+								LocationManager.PASSIVE_PROVIDER, 0, 0,
+								locationListener);
+					}
+
+				}
+				// get best location and store it
+				grabGPS();
+			} 
+			
+			/*
+			 * if(notify){ not.icon = R.drawable.icon5;
+			 * mNotificationManager.notify(1, not); }
+			 */
+			if ((bt2 != null && bt2.isSetV()) || bt2 == null)
+				setVolume(OldVol2);
+
+			if (bt2.wifi) {
+				dowifi(oldwifistate);
+			}
+			return true;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onCancelled()
+		 */
+		@Override
+		protected void onCancelled() {
+			// TODO Auto-generated method stub
+			super.onCancelled();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			recievedIntent = null;
+			disconnecting = false;
+			if (result) {
+				if(!bt2.isGetLoc())btdConn = null;
+				final String Ireload = "a2dp.vol.service.RELOAD_LIST";
+				Intent itent = new Intent();
+				itent.setAction(Ireload);
+				itent.putExtra("device", "");
+				application.sendBroadcast(itent);
+			}
+			else
+				Toast.makeText(application, results, Toast.LENGTH_SHORT).show();
+			super.onPostExecute(result);
+		}
+
+
+	}
+
+	// disable wifi is requested
+	private void dowifi(boolean s) {
+		try {
+			wifiManager.setWifiEnabled(s);
+		} catch (Exception e) {
+			Toast.makeText(application,
+					"Unable to switch wifi: " + e.toString(), Toast.LENGTH_LONG)
+					.show();
+			e.printStackTrace();
+		}
 	}
 
 }

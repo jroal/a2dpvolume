@@ -339,19 +339,7 @@ public class btDevice {
 		this.apprestart = false;
 	}
 
-	/*	*//**
-	 * @return the pname
-	 */
-	/*
-	 * public String getPname() { return pname; }
-	 *//**
-	 * @param pname
-	 *            the pname to set
-	 */
-	/*
-	 * public void setPname(String pname) { this.pname = pname; }
-	 */
-
+	
 	/**
 	 * @param s1
 	 *            is the default device name
@@ -378,5 +366,13 @@ public class btDevice {
 		this.appdata = "";
 		this.apptype = "";
 		this.apprestart = false;
+	}
+	
+	public boolean hasIntent(){
+		if(this.pname == null || this.appdata == null) return false;
+		if(this.pname.length() < 3 && this.appdata.length() < 3)return false;
+		if(this.pname.equalsIgnoreCase("Custom") && this.appdata.length() < 3)return false;
+		return true;
+		
 	}
 }

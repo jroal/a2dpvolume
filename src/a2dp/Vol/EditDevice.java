@@ -73,7 +73,7 @@ public class EditDevice extends Activity {
 		this.setContentView(R.layout.edit_item);
 
 		this.application = (MyApplication) this.getApplication();
-		this.myDB = new DeviceDB(this);
+		this.myDB = new DeviceDB(application);
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		this.sb = (Button) this.findViewById(R.id.EditDevSavebutton);
 		this.startapp = (Button) this.findViewById(R.id.chooseAppButton);
@@ -126,6 +126,7 @@ public class EditDevice extends Activity {
 					final String Ireload = "a2dp.vol.ManageData.RELOAD_LIST";
 					Intent itent = new Intent();
 					itent.setAction(Ireload);
+					itent.putExtra("device", "");
 					application.sendBroadcast(itent);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -369,16 +370,14 @@ public class EditDevice extends Activity {
 	};
 
 	private void vUpdateApp() {
-		// PackageManager pm = getPackageManager();
-		// mTvApp.setText(mAppItem.getAppName(pm));
-		// mAppItem.setAppIconInImageView(mIvAppIcon, pm);
-		if(pname != null && pname.length() > 3)
-		fapp.setText(pname);
-		else 
-			fapp.setText("Custom");
-		//fapp.setText(mAppItem.toString());
-		//checkCustomAppPackage();
-		//pm = null;
+		if (device.hasIntent()) {
+			if (pname != null && pname.length() > 3)
+				fapp.setText(pname);
+			else
+				fapp.setText("Custom");
+		}
+		else
+			fapp.setText("");
 	}
 
 	/*private void checkCustomAppPackage() {
