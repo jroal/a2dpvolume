@@ -335,6 +335,7 @@ public class ManageData extends Activity {
 				final String Ireload = "a2dp.vol.ManageData.RELOAD_LIST";
 				Intent itent = new Intent();
 				itent.setAction(Ireload);
+				itent.putExtra("device", "");
 				application.sendBroadcast(itent);
 				Toast.makeText(ManageData.this, R.string.ImportCompletedText,
 						Toast.LENGTH_SHORT).show();
