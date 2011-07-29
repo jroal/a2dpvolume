@@ -51,7 +51,7 @@ public class main extends Activity {
 	static Button serv;
 	boolean servrun = false;
 	ListView lvl = null; // listview used on main screen for showing devices
-	Vector<btDevice> vec; // vector of bluetooth devices
+	Vector<btDevice> vec = new Vector<btDevice>(); // vector of bluetooth devices
 	private DeviceDB myDB; // database of device data stored in SQlite
 	String activebt = null;
 	private MyApplication application;
@@ -182,16 +182,6 @@ public class main extends Activity {
 		final Button locbtn = (Button) findViewById(R.id.Locationbtn);
 		serv = (Button) findViewById(R.id.ServButton);
 
-		// create intent filter for a bluetooth stream connection
-		IntentFilter filter = new IntentFilter(
-				android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED);
-		this.registerReceiver(mReceiver3, filter);
-
-		// create intent filter for a bluetooth stream disconnection
-		IntentFilter filter2 = new IntentFilter(
-				android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED);
-		this.registerReceiver(mReceiver4, filter2);
-
 		// these 2 intents are sent from the service to inform us of the running
 		// state
 		IntentFilter filter3 = new IntentFilter("a2dp.vol.service.RUNNING");
@@ -201,17 +191,14 @@ public class main extends Activity {
 				"a2dp.vol.service.STOPPED_RUNNING");
 		this.registerReceiver(sRunning, filter4);
 
-		IntentFilter filter5 = new IntentFilter(
-				"a2dp.vol.ManageData.RELOAD_LIST");
+		// this reciever is used to tell this main activity about devices connecting and disconnecting.
+		IntentFilter filter5 = new IntentFilter("a2dp.Vol.main.RELOAD_LIST");
 		this.registerReceiver(mReceiver5, filter5);
-
-		IntentFilter filter7 = new IntentFilter("a2dp.vol.service.RELOAD_LIST");
-		this.registerReceiver(mReceiver5, filter7);
 
 		IntentFilter filter6 = new IntentFilter("a2dp.vol.preferences.UPDATED");
 		this.registerReceiver(mReceiver6, filter6);
 
-		vec = new Vector<btDevice>();
+		
 
 		VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 
@@ -221,14 +208,7 @@ public class main extends Activity {
 
 		try {
 			if (myDB.getLength() < 1) {
-				int test = getBtDevices();
-				if (test > 0) {
-					lstring = new String[test];
-					for (int i = 0; i < test; i++) {
-						lstring[i] = vec.get(i).toString();
-					}
-					refreshList(loadFromDB());
-				}
+				getBtDevices();
 			}
 		} catch (Exception e1) {
 			Log.e(LOG_TAG, "error" + e1.getMessage());
@@ -720,8 +700,7 @@ public class main extends Activity {
 			for (int i = 0; i < test; i++) {
 				lstring[i] = vec.get(i).toString();
 				if (btCon != null)
-					if (vec.get(i).getMac()
-							.equalsIgnoreCase(btCon.getMac()))
+					if (vec.get(i).getMac().equalsIgnoreCase(btCon.getMac()))
 						lstring[i] += " **";
 			}
 		} else {
@@ -739,7 +718,7 @@ public class main extends Activity {
 	private int loadFromDB() {
 		myDB.getDb().close();
 		if (!myDB.getDb().isOpen())
-			myDB = new DeviceDB(application); 
+			myDB = new DeviceDB(application);
 
 		vec = myDB.selectAlldb();
 		if (vec.isEmpty() || vec == null)
@@ -748,45 +727,6 @@ public class main extends Activity {
 		return vec.size();
 	}
 
-	/**
-	 * Triggered when a bluetooth device connects. Retrieves the device that
-	 * connected.
-	 */
-	private final BroadcastReceiver mReceiver3 = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			try {
-				BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(
-						BluetoothDevice.EXTRA_DEVICE);
-				btDevice btd = new btDevice();
-				btd.setBluetoothDevice(bt, bt.getName(),
-						am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-				btDevice bt2 = myDB.getBTD(btd.mac);
-				// if this device is not in the database, add it now.
-				if (bt2.mac == null) {
-					a2dp.Vol.main.this.myDB.insert(btd);
-				}
-				// fix the device list
-				btCon = btd;
-				refreshList(loadFromDB());
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.e(LOG_TAG, "error:" + e.getMessage());
-			}
-		}
-	};
-
-	/**
-	 * Triggered when a bluetooth device disconnects
-	 */
-	private final BroadcastReceiver mReceiver4 = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context2, Intent intent2) {
-			
-			btCon = null;
-			refreshList(loadFromDB());
-		}
-	};
 
 	/**
 	 * received the reload list intent
@@ -795,11 +735,11 @@ public class main extends Activity {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
 			String str = intent2.getExtras().getString("device");
-			if(str != null)
+			if (str != null && str.length() > 0)
 				btCon = myDB.getBTD(str);
 			else
 				btCon = null;
-			
+
 			refreshList(loadFromDB());
 			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
 		}
