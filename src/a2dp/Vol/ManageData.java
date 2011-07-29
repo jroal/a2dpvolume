@@ -332,7 +332,7 @@ public class ManageData extends Activity {
 				ManageData.this.path.setText("Imported from: " + pathstr);
 				
 				//Reload the device list in the main page
-				final String Ireload = "a2dp.vol.ManageData.RELOAD_LIST";
+				final String Ireload = "a2dp.vol.Main.RELOAD_LIST";
 				Intent itent = new Intent();
 				itent.setAction(Ireload);
 				itent.putExtra("device", "");
