@@ -101,6 +101,11 @@ public class EditDevice extends Activity {
 		fwifi.setChecked(device.isWifi());
 		if (device == null)
 			connbt.setEnabled(false);
+		pname = device.getPname();
+		appaction = device.getAppaction();
+		appdata = device.getAppdata();
+		apptype = device.getApptype();
+		vUpdateApp();
 
 		sb.setOnClickListener(new OnClickListener() {
 			public void onClick(final View v) {
@@ -370,9 +375,17 @@ public class EditDevice extends Activity {
 	};
 
 	private void vUpdateApp() {
+		device.setAppaction(appaction);
+		device.setAppdata(appdata);
+		device.setApptype(apptype);
+		device.setPname(pname);
 		if (device.hasIntent()) {
 			if (pname != null && pname.length() > 3)
 				fapp.setText(pname);
+			else if(appdata != null)
+				fapp.setText(appdata);
+			else if(appaction != null)
+				fapp.setText(appaction);
 			else
 				fapp.setText("Custom");
 		}
