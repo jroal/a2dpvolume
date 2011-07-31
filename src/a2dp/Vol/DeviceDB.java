@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -129,8 +130,7 @@ public class DeviceDB {
 	 * Removes the data table from the database that stores all the btDevices.
 	 */
 	public void deleteAll() {
-		this.db.delete(TABLE_NAME, null, null);
-		
+		this.db.delete(TABLE_NAME, null, null);	
 	}
 
 	public SQLiteDatabase getDb() {
@@ -218,6 +218,7 @@ public class DeviceDB {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		
 			if ((newVersion < 4 && oldVersion < 4) || (oldVersion > DATABASE_VERSION || newVersion > DATABASE_VERSION ) ) {
 				Log.w("Example",
 						"Upgrading database, this will drop tables and recreate.");
@@ -227,62 +228,75 @@ public class DeviceDB {
 			} 
 			if(oldVersion < 4 && newVersion >= 4){
 				Log.w("Update", "Update table and default the new column getl");
-
+				
 				try {
+					
 					db.execSQL("ALTER TABLE " + TABLE_NAME
-							+ " ADD COLUMN getl INTEGER DEFAULT 1");
+							+ " ADD COLUMN getl INTEGER DEFAULT 1;");
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+					onCreate(db);
+					return;
 				}
 			} 
-			if(oldVersion < 5 && newVersion >= 5)
+			if(newVersion >= 5)
 			{
 				Log.w("Update", "Update table and default the new column pname");
-
+				
 				try {
-					db.execSQL("ALTER TABLE " + TABLE_NAME
-							+ " ADD COLUMN pname TEXT");
+					List<String> columns = GetColumns(db, TABLE_NAME);
+					db.execSQL("ALTER table " + TABLE_NAME + " RENAME TO temp_" + TABLE_NAME);
+					onCreate(db);
+					columns.retainAll(GetColumns(db, TABLE_NAME));
+					String cols = join(columns, ",");
+					db.execSQL(String.format( "INSERT INTO %s (%s) SELECT %s from temp_%s", TABLE_NAME, cols, cols, TABLE_NAME));
+					db.execSQL("DROP table temp_" + TABLE_NAME);
+					return;
+					
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+					// if anything goes wrong, just start over
 					e.printStackTrace();
+					db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+					onCreate(db);
+					return;
 				}
+				
 			}
-			if(oldVersion < 6 && newVersion == 6)
-			{
-				Log.w("Update", "Update table and default the new column pname");
 
-				try {
-					db.execSQL("ALTER TABLE " + TABLE_NAME
-							+ " ADD COLUMN bdevice TEXT");
-					db.execSQL("ALTER TABLE " + TABLE_NAME
-							+ " ADD COLUMN wifi INTEGER DEFAULT 0");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			if(oldVersion < 7 && newVersion == 7)
-			{
-				Log.w("Update", "Update table and default the new column pname");
-
-				try {
-					db.execSQL("ALTER TABLE " + TABLE_NAME
-							+ " ADD COLUMN appaction TEXT");
-					db.execSQL("ALTER TABLE " + TABLE_NAME
-							+ " ADD COLUMN appdata TEXT");
-					db.execSQL("ALTER TABLE " + TABLE_NAME
-							+ " ADD COLUMN apptype TEXT");
-					db.execSQL("ALTER TABLE " + TABLE_NAME
-							+ " ADD COLUMN apprestart INTEGER DEFAULT 0");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 			
 		}
+		
+		public static List<String> GetColumns(SQLiteDatabase db, String tableName) {
+		    List<String> ar = null;
+		    Cursor c = null;
+		    try {
+		        c = db.rawQuery("select * from " + tableName + " limit 1", null);
+		        if (c != null) {
+		            ar = new ArrayList<String>(Arrays.asList(c.getColumnNames()));
+		        }
+		    } catch (Exception e) {
+		        Log.v(tableName, e.getMessage(), e);
+		        e.printStackTrace();
+		    } finally {
+		        if (c != null)
+		            c.close();
+		    }
+		    return ar;
+		}
+
+		public static String join(List<String> list, String delim) {
+		    StringBuilder buf = new StringBuilder();
+		    int num = list.size();
+		    for (int i = 0; i < num; i++) {
+		        if (i != 0)
+		            buf.append(delim);
+		        buf.append((String) list.get(i));
+		    }
+		    return buf.toString();
+		}
+
 	}
 
 }
