@@ -619,7 +619,7 @@ public class main extends Activity {
 						btDevice bt2 = myDB.getBTD(bt.mac);
 
 						if (bt2.mac == null) {
-							a2dp.Vol.main.this.myDB.insert(bt);
+							myDB.insert(bt);
 							vec.add(bt);
 						} else
 							vec.add(bt2);
