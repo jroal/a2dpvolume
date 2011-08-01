@@ -97,7 +97,7 @@ public class DeviceDB {
 			rtn = 0;
 			e.printStackTrace();
 		}
-		this.insertStmt.close();
+		//this.insertStmt.close();
 		return rtn;
 	}
 
