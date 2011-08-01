@@ -24,6 +24,16 @@ import java.util.List;
  *         the database used to store devices
  */
 public class ManageData extends Activity {
+	//private DeviceDB myDB; // database of device data stored in SQlite
+	/* (non-Javadoc)
+	 * @see android.app.Activity#finish()
+	 */
+	@Override
+	public void finish() {
+		Intent i = new Intent();
+		this.setResult(Activity.RESULT_OK, i);
+		super.finish();
+	}
 
 	String a2dpDir;
 	/* (non-Javadoc)
@@ -31,7 +41,8 @@ public class ManageData extends Activity {
 	 */
 	@Override
 	protected void onDestroy() {
-		
+		Intent i = new Intent();
+		this.setResult(Activity.RESULT_OK, i);
 		super.onDestroy();
 	}
 
@@ -293,6 +304,8 @@ public class ManageData extends Activity {
 
 		// can use UI thread here
 		protected void onPreExecute() {
+			// close the database
+			//application.getDeviceDB().getDb().close();
 			this.dialog.setMessage("Importing database...");
 			this.dialog.show();
 		}
@@ -303,7 +316,7 @@ public class ManageData extends Activity {
 			// File dbFile = new File(Environment.getDataDirectory() +
 			// "/data/a2dp.vol/databases/btdevices.db");
 			File dbFile = new File(application.getDeviceDB().getDb().getPath());
-			// application.getDeviceDB().getDb().close();
+			
 			File exportDir = new File(a2dpDir);
 
 			if (!exportDir.exists()) {
@@ -330,7 +343,8 @@ public class ManageData extends Activity {
 				// Toast.makeText(ManageData.this, "Import successful!",
 				// Toast.LENGTH_SHORT).show();
 				ManageData.this.path.setText("Imported from: " + pathstr);
-				
+				// reopen the database
+				//myDB = new DeviceDB(application);
 				//Reload the device list in the main page
 				final String Ireload = "a2dp.vol.Main.RELOAD_LIST";
 				Intent itent = new Intent();
@@ -339,7 +353,7 @@ public class ManageData extends Activity {
 				application.sendBroadcast(itent);
 				Toast.makeText(ManageData.this, R.string.ImportCompletedText,
 						Toast.LENGTH_SHORT).show();
-
+				
 			} else {
 				Toast.makeText(ManageData.this, "Import failed",
 						Toast.LENGTH_SHORT).show();
@@ -361,6 +375,7 @@ public class ManageData extends Activity {
 		}
 
 	}
+	
 
 	// export location
 	private class ExportLocationTask extends AsyncTask<String, Void, Boolean> {

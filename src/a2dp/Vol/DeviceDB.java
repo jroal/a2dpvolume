@@ -54,6 +54,7 @@ public class DeviceDB {
 		vals.put("apptype", bt.getApptype());
 		vals.put("apprestart", bt.lApprestart());
 		this.db.update(TABLE_NAME, vals, "mac='" + bt.mac + "'", null);
+		vals = null;
 	}
 
 	/**
@@ -72,6 +73,7 @@ public class DeviceDB {
 	 */
 	public long insert(btDevice btd) {
 		String temp1 = btd.desc1;
+		long rtn;
 		if(temp1 == null) temp1 = "Unknown Device";  // make sure stirng1 is not null
 		this.insertStmt.bindString(1, temp1);
 		String temp2 = btd.desc2;
@@ -89,7 +91,14 @@ public class DeviceDB {
 		this.insertStmt.bindString(11, btd.getAppdata());
 		this.insertStmt.bindString(12, btd.getApptype());
 		this.insertStmt.bindLong(13, btd.lApprestart());
-		return this.insertStmt.executeInsert();
+		try {
+			rtn = this.insertStmt.executeInsert();
+		} catch (Exception e) {
+			rtn = 0;
+			e.printStackTrace();
+		}
+		this.insertStmt.close();
+		return rtn;
 	}
 
 	/**
@@ -100,10 +109,10 @@ public class DeviceDB {
 	 */
 	public btDevice getBTD(String imac) {
 		btDevice bt = new btDevice();
-
+		Cursor cs = this.db.query(TABLE_NAME, null, "mac = ?",
+				new String[] { imac }, null, null, null, null);
 		try {
-			Cursor cs = this.db.query(TABLE_NAME, null, "mac = ?",
-					new String[] { imac }, null, null, null, null);
+			
 			if (cs.moveToFirst()) {
 				bt.setDesc1(cs.getString(0));
 				bt.setDesc2(cs.getString(1));
@@ -121,8 +130,10 @@ public class DeviceDB {
 			}
 		} catch (Exception e) {
 			bt.mac = null;
+			
 			// e.printStackTrace();
 		}
+		if(cs != null && !cs.isClosed()) cs.close();
 		return bt;
 	}
 
@@ -212,8 +223,8 @@ public class DeviceDB {
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("CREATE TABLE "
 					+ TABLE_NAME
-					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER, getl INTEGER, pname TEXT, " +
-							"bdevice TEXT, wifi INTEGER, appaction TEXT, appdata TEXT, apptype TEXT, apprestart INTEGER)");
+					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER DEFAULT 1, getl INTEGER DEFAULT 1, pname TEXT, " +
+							"bdevice TEXT, wifi INTEGER DEFAULT 0, appaction TEXT, appdata TEXT, apptype TEXT, apprestart INTEGER DEFAULT 0)");
 		}
 
 		@Override
@@ -226,33 +237,20 @@ public class DeviceDB {
 				onCreate(db);
 				return;
 			} 
-			if(oldVersion < 4 && newVersion >= 4){
-				Log.w("Update", "Update table and default the new column getl");
-				
-				try {
-					
-					db.execSQL("ALTER TABLE " + TABLE_NAME
-							+ " ADD COLUMN getl INTEGER DEFAULT 1;");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-					onCreate(db);
-					return;
-				}
-			} 
+
 			if(newVersion >= 5)
 			{
 				Log.w("Update", "Update table and default the new column pname");
 				
 				try {
-					List<String> columns = GetColumns(db, TABLE_NAME);
-					db.execSQL("ALTER table " + TABLE_NAME + " RENAME TO temp_" + TABLE_NAME);
+
+					List<String> columns = GetColumns(db, TABLE_NAME);				
+					db.execSQL("ALTER table " + TABLE_NAME + " RENAME TO 'temp_" + TABLE_NAME + "'");
 					onCreate(db);
 					columns.retainAll(GetColumns(db, TABLE_NAME));
 					String cols = join(columns, ",");
 					db.execSQL(String.format( "INSERT INTO %s (%s) SELECT %s from temp_%s", TABLE_NAME, cols, cols, TABLE_NAME));
-					db.execSQL("DROP table temp_" + TABLE_NAME);
+					db.execSQL("DROP table 'temp_" + TABLE_NAME + "'");
 					return;
 					
 				} catch (SQLException e) {
@@ -260,7 +258,6 @@ public class DeviceDB {
 					e.printStackTrace();
 					db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 					onCreate(db);
-					return;
 				}
 				
 			}
