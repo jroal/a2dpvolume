@@ -29,6 +29,16 @@ import android.widget.SeekBar;
 
 public class EditDevice extends Activity {
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		closedb();
+		EditDevice.this.finish();
+		super.onBackPressed();
+	}
+
 	private Button sb;
 	private Button startapp;
 	private Button connbt;
@@ -137,6 +147,7 @@ public class EditDevice extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				closedb();
 				EditDevice.this.finish();
 			}
 		});
@@ -237,6 +248,10 @@ public class EditDevice extends Activity {
 		});
 	}
 
+	private void closedb(){
+		myDB.getDb().close();
+	}
+	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {

@@ -61,10 +61,13 @@ public class main extends Activity {
 	ArrayAdapter<String> ladapt; // listview adapter
 	btDevice btCon;
 	static final int ENABLE_BLUETOOTH = 1;
+	static final int RELOAD = 2;
+	
 	boolean carMode = false;
 	boolean homeDock = false;
 	private String a2dpDir = "";
 	private static final String LOG_TAG = "A2DP_Volume";
+	private static int resourceID =  android.R.layout.simple_list_item_1;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,8 +85,9 @@ public class main extends Activity {
 
 		switch (item.getItemId()) {
 		case R.id.Manage_data: // used to export the data
-			Intent i = new Intent(a2dp.Vol.main.this, ManageData.class);
-			startActivity(i);
+			this.myDB.getDb().close();
+			Intent i = new Intent(getBaseContext(), ManageData.class);
+			startActivityForResult(i, RELOAD);
 			return true;
 
 		case R.id.Exit:
@@ -128,7 +132,8 @@ public class main extends Activity {
 		}
 		return false;
 	}
-
+	
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -205,6 +210,7 @@ public class main extends Activity {
 		lstring = new String[] { "no data" };
 
 		this.myDB = new DeviceDB(application);
+		//this.myDB = application.getDeviceDB();
 
 		try {
 			if (myDB.getLength() < 1) {
@@ -215,7 +221,7 @@ public class main extends Activity {
 		}
 
 		this.ladapt = new ArrayAdapter<String>(application,
-				android.R.layout.simple_list_item_1, lstring);
+				resourceID, lstring);
 		this.lvl = (ListView) findViewById(R.id.ListView01);
 		this.lvl.setAdapter(ladapt);
 
@@ -521,7 +527,6 @@ public class main extends Activity {
 	 * @return the number of devices listed
 	 */
 	private int getBtDevices() {
-
 		int i = 0;
 		vec.clear();
 
@@ -633,27 +638,33 @@ public class main extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// See which child activity is calling us back.
 
-		switch (requestCode) {
-		case ENABLE_BLUETOOTH:
-			// This is the standard resultCode that is sent back if the
-			// activity crashed or didn't doesn't supply an explicit result.
-			if (resultCode == RESULT_CANCELED) {
-				Toast.makeText(application, R.string.btEnableFail,
-						Toast.LENGTH_LONG).show();
-				refreshList(loadFromDB());
-			} else {
-
-				int test = getBtDevices();
-				if (test > 0) {
-					lstring = new String[test];
-					for (int i = 0; i < test; i++) {
-						lstring[i] = vec.get(i).toString();
-					}
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case ENABLE_BLUETOOTH:
+				// This is the standard resultCode that is sent back if the
+				// activity crashed or didn't doesn't supply an explicit result.
+				if (resultCode == RESULT_CANCELED) {
+					Toast.makeText(application, R.string.btEnableFail,
+							Toast.LENGTH_LONG).show();
 					refreshList(loadFromDB());
+				} else {
+
+					int test = getBtDevices();
+					if (test > 0) {
+						lstring = new String[test];
+						for (int i = 0; i < test; i++) {
+							lstring[i] = vec.get(i).toString();
+						}
+						refreshList(loadFromDB());
+					}
 				}
+				break;
+			case RELOAD:
+				refreshList(loadFromDB());
+				break;
+			default:
+				break;
 			}
-		default:
-			break;
 		}
 	}
 
@@ -709,7 +720,7 @@ public class main extends Activity {
 			// Toast.makeText(this, "No data", Toast.LENGTH_LONG);
 		}
 		a2dp.Vol.main.this.lvl.setAdapter(new ArrayAdapter<String>(application,
-				android.R.layout.simple_list_item_1, lstring));
+				resourceID, lstring));
 		a2dp.Vol.main.this.lvl.invalidateViews();
 		a2dp.Vol.main.this.lvl.forceLayout();
 	}
@@ -718,6 +729,7 @@ public class main extends Activity {
 	private int loadFromDB() {
 		myDB.getDb().close();
 		if (!myDB.getDb().isOpen())
+			//this.myDB = application.getDeviceDB();
 			myDB = new DeviceDB(application);
 
 		vec = myDB.selectAlldb();
