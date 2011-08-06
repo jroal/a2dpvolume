@@ -107,5 +107,16 @@
     <string name="PrefsHomeDockON">Respond to Home Dock</string>
     <string name="ea_ti_app">App To Launch</string>
     <string name="ae_stop_app_warning_title">What app is this?</string>
-    <string name="ae_stop_app_warning_message">If you want AppAlarm to stop a custom intent or home screen shortcut, you must select which app your custom intent represents. If you ignore this message, the \"Force App Restart On Launch\" and \"Stop App On Dismiss/Timeout\" features will be disabled.</string>
+    <string name="ae_stop_app_warning_message">Intents without a package name can not be stopped by A2DP Volume</string>
+    <string name="connectedTo">Connected to</string>
+    <string name="PrefsCatOther">Other Settings</string>
+    <string name="PrefsOtherConnectedIcon">Connected Icon</string>
+    <string-array name="PrefsOtherIcons">
+        <item>Car</item>
+        <item>Headset</item>
+    </string-array>
+    <string-array name="PrefsOtherIcons_items">
+        <item>Car</item>
+        <item>Headset</item>
+    </string-array>
 </resources>
