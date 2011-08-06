@@ -51,7 +51,8 @@ public class main extends Activity {
 	static Button serv;
 	boolean servrun = false;
 	ListView lvl = null; // listview used on main screen for showing devices
-	Vector<btDevice> vec = new Vector<btDevice>(); // vector of bluetooth devices
+	Vector<btDevice> vec = new Vector<btDevice>(); // vector of bluetooth
+													// devices
 	private DeviceDB myDB; // database of device data stored in SQlite
 	String activebt = null;
 	private MyApplication application;
@@ -59,15 +60,15 @@ public class main extends Activity {
 	public static final String PREFS_NAME = "btVol";
 	String[] lstring = null; // string array used for the listview
 	ArrayAdapter<String> ladapt; // listview adapter
-	btDevice btCon;
+	int connects;
 	static final int ENABLE_BLUETOOTH = 1;
 	static final int RELOAD = 2;
-	
+
 	boolean carMode = false;
 	boolean homeDock = false;
 	private String a2dpDir = "";
 	private static final String LOG_TAG = "A2DP_Volume";
-	private static int resourceID =  android.R.layout.simple_list_item_1;
+	private static int resourceID = android.R.layout.simple_list_item_1;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -132,12 +133,11 @@ public class main extends Activity {
 		}
 		return false;
 	}
-	
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.main);
 		ComponentName comp = new ComponentName("a2dp.Vol", "main");
 		PackageInfo pinfo;
@@ -179,7 +179,7 @@ public class main extends Activity {
 		} catch (Exception e2) {
 			Log.e(LOG_TAG, "error" + e2.getMessage());
 		}
-
+		connects = 0;
 		am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		final Button btn = (Button) findViewById(R.id.Button01);
 		final SeekBar VolSeek = (SeekBar) findViewById(R.id.VolSeekBar);
@@ -196,21 +196,20 @@ public class main extends Activity {
 				"a2dp.vol.service.STOPPED_RUNNING");
 		this.registerReceiver(sRunning, filter4);
 
-		// this reciever is used to tell this main activity about devices connecting and disconnecting.
+		// this reciever is used to tell this main activity about devices
+		// connecting and disconnecting.
 		IntentFilter filter5 = new IntentFilter("a2dp.Vol.main.RELOAD_LIST");
 		this.registerReceiver(mReceiver5, filter5);
 
 		IntentFilter filter6 = new IntentFilter("a2dp.vol.preferences.UPDATED");
 		this.registerReceiver(mReceiver6, filter6);
 
-		
-
 		VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 
 		lstring = new String[] { "no data" };
 
 		this.myDB = new DeviceDB(application);
-		//this.myDB = application.getDeviceDB();
+		// this.myDB = application.getDeviceDB();
 
 		try {
 			if (myDB.getLength() < 1) {
@@ -220,8 +219,7 @@ public class main extends Activity {
 			Log.e(LOG_TAG, "error" + e1.getMessage());
 		}
 
-		this.ladapt = new ArrayAdapter<String>(application,
-				resourceID, lstring);
+		this.ladapt = new ArrayAdapter<String>(application, resourceID, lstring);
 		this.lvl = (ListView) findViewById(R.id.ListView01);
 		this.lvl.setAdapter(ladapt);
 
@@ -229,31 +227,14 @@ public class main extends Activity {
 		// start the service. The intent will report when the service has
 		// started and toggle button text
 		startService(new Intent(a2dp.Vol.main.this, service.class));
-		servrun = true;
-
-		// capture original media volume to be used when returning from
-		// bluetooth connection
-		if (OldVol < am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) {
-			OldVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-		} else {
-			OldVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		}
 
 		// set the seek bar position for media volume
-		VolSeek.setProgress(OldVol);
+		VolSeek.setProgress(am.getStreamVolume(AudioManager.STREAM_MUSIC));
 
 		// find bonded devices and load into the database and listview
 		btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-
-				int test = getBtDevices();
-				if (test > 0) {
-					lstring = new String[test];
-					for (int i = 0; i < test; i++) {
-						lstring[i] = vec.get(i).toString();
-					}
-					refreshList(loadFromDB());
-				}
+				getBtDevices();
 			}
 		});
 
@@ -345,7 +326,7 @@ public class main extends Activity {
 						});
 				builder.show();
 
-				return servrun;
+				return true;
 			}
 		});
 
@@ -482,6 +463,8 @@ public class main extends Activity {
 					if (a2dp.Vol.service.run) {
 						servrun = true;
 						serv.setText(R.string.StopService);
+						getConnects();
+						refreshList(loadFromDB());
 					} else {
 						servrun = false;
 						serv.setText(R.string.StartService);
@@ -495,7 +478,68 @@ public class main extends Activity {
 		}.start();
 
 		// load the list from the database
+		getConnects();
 		refreshList(loadFromDB());
+		super.onCreate(savedInstanceState);
+	}
+
+	private void getConnects(){
+		if(servrun){
+			connects = 0;
+			for(int i = 0; i< a2dp.Vol.service.btdConn.length;i++){
+				if(a2dp.Vol.service.btdConn[i] != null)connects++;
+			}
+		}
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		/*this.unregisterReceiver(sRunning);
+		this.unregisterReceiver(mReceiver5);
+		this.unregisterReceiver(mReceiver6);
+		this.myDB.getDb().close();*/
+		// We need an Editor object to make preference changes.
+		// All objects are from android.context.Context
+	/*	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+
+		// Commit the edits!
+		editor.commit();*/
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		getConnects();
+		refreshList(loadFromDB());
+		super.onResume();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onRestart()
+	 */
+	@Override
+	protected void onRestart() {
+
+		super.onRestart();
 	}
 
 	/**
@@ -691,36 +735,33 @@ public class main extends Activity {
 		return outVol;
 	}
 
-	@Override
-	protected void onStop() {
-		super.onStop();
-
-		// We need an Editor object to make preference changes.
-		// All objects are from android.context.Context
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-
-		// Commit the edits!
-		editor.commit();
-	}
 
 	// this is called to update the list from the database
 	private void refreshList(int test) {
+		
 		if (test > 0) {
 			lstring = new String[test];
 			for (int i = 0; i < test; i++) {
 				lstring[i] = vec.get(i).toString();
-				if (btCon != null)
-					if (vec.get(i).getMac().equalsIgnoreCase(btCon.getMac()))
-						lstring[i] += " **";
+				if (connects > 0 && servrun) {
+					for (int j = 0; j < a2dp.Vol.service.btdConn.length; j++) {
+						if(a2dp.Vol.service.btdConn[j] != null)
+						if (vec.get(i)
+								.getMac()
+								.equalsIgnoreCase(
+										a2dp.Vol.service.btdConn[j].getMac()))
+							lstring[i] += " **";
+					}
+				}
 			}
 		} else {
 			lstring = new String[] { "no data" };
 
 			// Toast.makeText(this, "No data", Toast.LENGTH_LONG);
 		}
-		a2dp.Vol.main.this.lvl.setAdapter(new ArrayAdapter<String>(application,
-				resourceID, lstring));
+		a2dp.Vol.main.this.ladapt = new ArrayAdapter<String>(application, resourceID, lstring);
+		a2dp.Vol.main.this.lvl.setAdapter(ladapt);
+		a2dp.Vol.main.this.ladapt.notifyDataSetChanged();
 		a2dp.Vol.main.this.lvl.invalidateViews();
 		a2dp.Vol.main.this.lvl.forceLayout();
 	}
@@ -729,7 +770,7 @@ public class main extends Activity {
 	private int loadFromDB() {
 		myDB.getDb().close();
 		if (!myDB.getDb().isOpen())
-			//this.myDB = application.getDeviceDB();
+			// this.myDB = application.getDeviceDB();
 			myDB = new DeviceDB(application);
 
 		vec = myDB.selectAlldb();
@@ -739,18 +780,27 @@ public class main extends Activity {
 		return vec.size();
 	}
 
-
 	/**
 	 * received the reload list intent
 	 */
 	private final BroadcastReceiver mReceiver5 = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
-			String str = intent2.getExtras().getString("device");
-			if (str != null && str.length() > 0)
-				btCon = myDB.getBTD(str);
-			else
-				btCon = null;
+			String connected = intent2.getExtras().getString("connect");
+			String disconnected = intent2.getExtras().getString("disconnect");
+			if (connected != null) {
+				connects++;
+			}
+			if (disconnected != null) {
+				connects--;
+				if(connects < 0)connects = 0;
+			}
+			/*
+			 * boolean done = false; do{ int changes = 0; for(int h=0; h<4;h++){
+			 * if(btCon[h] == null && btCon[h+1]!= null){ btCon[h] = btCon[h+1];
+			 * btCon[h+1] = null; changes++; } } if(changes == 0)done = true;
+			 * }while(!done);
+			 */
 
 			refreshList(loadFromDB());
 			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
@@ -797,17 +847,20 @@ public class main extends Activity {
 				if (a2dp.Vol.service.run) {
 					servrun = true;
 					serv.setText(R.string.StopService);
+					getConnects();
 				} else {
 					servrun = false;
 					serv.setText(R.string.StartService);
+					connects = 0;
 				}
 			} catch (Exception x) {
 				x.printStackTrace();
 				servrun = false;
 				serv.setText(R.string.StartService);
+				connects = 0;
 				Log.e(LOG_TAG, "error" + x.getMessage());
 			}
-
+			refreshList(loadFromDB());
 		}
 
 	};
