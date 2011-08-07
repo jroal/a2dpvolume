@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -19,6 +21,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.widget.Toast;
@@ -47,6 +50,7 @@ public class StoreLoc extends Service {
 	Location l3 = null; // the most accurate location
 	Location l4 = null; // the best location
 	boolean gpsEnabled = false;
+	int formatFlags;
 	/**
 	 * @see android.app.Service#onBind(Intent)
 	 */
@@ -141,6 +145,9 @@ public class StoreLoc extends Service {
 		this.application = (MyApplication) this.getApplication();
 		// open database instance
 		this.DB = new DeviceDB(application);
+		formatFlags = DateUtils.FORMAT_SHOW_YEAR;
+		formatFlags |= DateUtils.FORMAT_SHOW_DATE;
+		formatFlags |= DateUtils.FORMAT_SHOW_TIME;
 	}
 	
 	// finds the most recent and most accurate locations
@@ -217,19 +224,22 @@ public class StoreLoc extends Service {
 		DecimalFormat df = new DecimalFormat("#.#");
 		// figure out which device we are disconnecting from
 		if (btdConn != null)
-			car = btdConn.getDesc2();
-
+			try {
+				car = URLEncoder.encode(btdConn.getDesc2(), "UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				car = URLEncoder.encode(btdConn.getDesc2());
+				e1.printStackTrace();
+			}
+		String locTime = "";
 		// store the best location
 		if (l4 != null) {
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location",
 						Context.MODE_WORLD_READABLE);
-
-				Time t = new Time();
-				t.set((long) l4.getTime());
+				locTime = DateUtils.formatDateTime(application, l4.getTime(), formatFlags);
 				String temp = "http://maps.google.com/maps?q="
 						+ l4.getLatitude() + "," + l4.getLongitude() + "+"
-						+ "(" + car + " " + t.format("%D, %r") + " acc="
+						+ "(" + car + " " + locTime + " acc="
 						+ df.format(l4.getAccuracy()) + ")";
 				fos.write(temp.getBytes());
 				fos.close();
@@ -251,11 +261,10 @@ public class StoreLoc extends Service {
 			try {
 				FileOutputStream fos = openFileOutput("My_Last_Location2",
 						Context.MODE_WORLD_READABLE);
-				Time t = new Time();
-				t.set((long) l3.getTime());
+				locTime = DateUtils.formatDateTime(application, l3.getTime(), formatFlags);
 				String temp = "http://maps.google.com/maps?q="
 						+ l3.getLatitude() + "," + l3.getLongitude() + "+"
-						+ "(" + car + " " + t.format("%D, %r") + " acc="
+						+ "(" + car + " " + locTime + " acc="
 						+ df.format(l3.getAccuracy()) + ")";
 				fos.write(temp.getBytes());
 				fos.close();
@@ -303,7 +312,14 @@ public class StoreLoc extends Service {
 		// figure out which device we are disconnecting from
 		if (btdConn != null)
 			car = btdConn.getDesc2();
-
+		String encodedCar = "";
+		try {
+			encodedCar = URLEncoder.encode(car, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			encodedCar = URLEncoder.encode(car);
+			e1.printStackTrace();
+		}
+		String locTime = "";
 		// store this vehicles location
 		if (doGps) {
 			try {
@@ -315,26 +331,25 @@ public class StoreLoc extends Service {
 				File file = new File(exportDir, car.replaceAll(" ", "_")
 						+ ".html");
 
-				Time t = new Time();
 				String temp = null;
-
+				
 				if (l4 != null) {
-					t.set((long) l4.getTime());
+					locTime = DateUtils.formatDateTime(application, l4.getTime(), formatFlags);
 					temp = "<hr /><bold><a href=\"http://maps.google.com/maps?q="
 							+ l4.getLatitude()
 							+ ","
 							+ l4.getLongitude()
 							+ "+"
 							+ "("
-							+ car
+							+ encodedCar
 							+ " "
-							+ t.format("%D, %r")
+							+ locTime
 							+ " acc="
 							+ df.format(l4.getAccuracy())
 							+ ")\">"
 							+ car
 							+ "</a></bold> Best Location<br>Time: "
-							+ t.format("%D, %r")
+							+ locTime
 							+ "<br>"
 							+ "Location type: "
 							+ l4.getProvider()
@@ -351,26 +366,27 @@ public class StoreLoc extends Service {
 							+ "Longitude: "
 							+ l4.getLongitude();
 				} else {
-					t.set(dtime);
-					temp = "No Best Location Captured " + t.format("%D, %r")+ "<br>";
+					
+					locTime = DateUtils.formatDateTime(application, dtime, formatFlags);
+					temp = "No Best Location Captured " + locTime + "<br>";
 				}
 				if (l3 != null) {
-					t.set((long) l3.getTime());
+					locTime = DateUtils.formatDateTime(application, l3.getTime(), formatFlags);
 					temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
 							+ l3.getLatitude()
 							+ ","
 							+ l3.getLongitude()
 							+ "+"
 							+ "("
-							+ car
+							+ encodedCar
 							+ " "
-							+ t.format("%D, %r")
+							+ locTime
 							+ " acc="
 							+ df.format(l3.getAccuracy())
 							+ ")\">"
 							+ car
 							+ "</a></bold> Most Accurate Location<br>Time: "
-							+ t.format("%D, %r")
+							+ locTime
 							+ "<br>"
 							+ "Location type: "
 							+ l3.getProvider()
@@ -388,26 +404,26 @@ public class StoreLoc extends Service {
 							+ l3.getLongitude();
 				}
 				else {
-					t.set(dtime);
-					temp += "No Most Accurate Location Captured " + t.format("%D, %r")+ "<br>";
+					locTime = DateUtils.formatDateTime(application, dtime, formatFlags);
+					temp += "No Most Accurate Location Captured " + locTime + "<br>";
 				}
 				if (l != null) {
-					t.set((long) l.getTime());
+					locTime = DateUtils.formatDateTime(application, l.getTime(), formatFlags);
 					temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
 							+ l.getLatitude()
 							+ ","
 							+ l.getLongitude()
 							+ "+"
 							+ "("
-							+ car
+							+ encodedCar
 							+ " "
-							+ t.format("%D, %r")
+							+ locTime
 							+ " acc="
 							+ df.format(l.getAccuracy())
 							+ ")\">"
 							+ car
 							+ "</a></bold> Most Recent Location<br>Time: "
-							+ t.format("%D, %r")
+							+ locTime
 							+ "<br>"
 							+ "Location type: "
 							+ l.getProvider()
@@ -424,8 +440,8 @@ public class StoreLoc extends Service {
 							+ "Longitude: "
 							+ l.getLongitude();
 				}else {
-					t.set(dtime);
-					temp += "No Most Recent Location Captured " + t.format("%D, %r")+ "<br>";
+					locTime = DateUtils.formatDateTime(application, dtime, formatFlags);
+					temp += "No Most Recent Location Captured " + locTime + "<br>";
 				}
 
 				if(!gpsEnabled) temp += "<br>GPS was not enabled";
