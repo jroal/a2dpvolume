@@ -674,7 +674,7 @@ public class main extends Activity {
 		}
 
 		refreshList(loadFromDB());
-
+		Toast.makeText(application, "Found " + i + " Bluetooth Devices", Toast.LENGTH_LONG).show();
 		return i;
 	}
 
