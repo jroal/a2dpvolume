@@ -48,7 +48,7 @@ public class service extends Service {
 
 	static AudioManager am2 = (AudioManager) null;
 	Integer OldVol2 = 5;
-	Integer connects = 0;
+	public static Integer connects = 0;
 	public static boolean run = false;
 
 	public static btDevice[] btdConn = new btDevice[5]; // n the devices in the
@@ -232,16 +232,22 @@ public class service extends Service {
 		run = false;
 		// in case the location listener is running, stop it
 		stopService(new Intent(application, StoreLoc.class));
+		// close the database
+		this.unregisterReceiver(mReceiver);
+		this.unregisterReceiver(mReceiver2);
+		this.unregisterReceiver(btOFFReciever);
+		DB.getDb().close();
 		// Tell the world we are not running
 		final String IStop = "a2dp.vol.service.STOPPED_RUNNING";
 		Intent i = new Intent();
 		i.setAction(IStop);
 		this.application.sendBroadcast(i);
-		this.stopForeground(true);
+		
 		// let the user know the service stopped
 		if (toasts)
 			Toast.makeText(this, R.string.ServiceStopped, Toast.LENGTH_LONG)
 					.show();
+		this.stopForeground(true);
 	}
 
 	public void onStart() {
@@ -342,7 +348,8 @@ public class service extends Service {
 						Log.e(LOG_TAG, "Error" + e.toString());
 					}
 				}
-
+				if(bt2.getMac() == null)return;
+				
 				boolean done = false;
 				int l = 0;
 				for (int k = 0; k < btdConn.length; k++) {
@@ -460,6 +467,8 @@ public class service extends Service {
 						Log.e(LOG_TAG, e.toString());
 					}
 
+					if(bt2.getMac() == null)return;
+					
 				if (notify && (bt2.mac != null))
 					updateNot(false, null);
 

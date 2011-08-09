@@ -63,7 +63,6 @@ public class main extends Activity {
 	int connects;
 	static final int ENABLE_BLUETOOTH = 1;
 	static final int RELOAD = 2;
-
 	boolean carMode = false;
 	boolean homeDock = false;
 	private String a2dpDir = "";
@@ -224,9 +223,10 @@ public class main extends Activity {
 		this.lvl.setAdapter(ladapt);
 
 		serv.setText(R.string.StartService);
-		// start the service. The intent will report when the service has
+		// start the service if this is the first time through. The intent will report when the service has
 		// started and toggle button text
-		startService(new Intent(a2dp.Vol.main.this, service.class));
+		
+		if(savedInstanceState == null)startService(new Intent(a2dp.Vol.main.this, service.class));
 
 		// set the seek bar position for media volume
 		VolSeek.setProgress(am.getStreamVolume(AudioManager.STREAM_MUSIC));
@@ -430,12 +430,10 @@ public class main extends Activity {
 
 				if (servrun) {
 					stopService(new Intent(a2dp.Vol.main.this, service.class));
-					// serv.setText(R.string.StartService);
-					// servrun = false;
+					
 				} else {
 					startService(new Intent(a2dp.Vol.main.this, service.class));
-					// serv.setText(R.string.StopService);
-					// servrun = true;
+					
 				}
 			}
 		});
@@ -485,27 +483,28 @@ public class main extends Activity {
 
 	private void getConnects(){
 		if(servrun){
-			connects = 0;
-			for(int i = 0; i< a2dp.Vol.service.btdConn.length;i++){
-				if(a2dp.Vol.service.btdConn[i] != null)connects++;
-			}
+			connects = a2dp.Vol.service.connects;	
 		}
+		else connects = 0;
 	}
 	
 	@Override
 	protected void onStop() {
+		
 		super.onStop();
-		/*this.unregisterReceiver(sRunning);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onDestroy()
+	 */
+	@Override
+	protected void onDestroy() {
+		this.unregisterReceiver(sRunning);
 		this.unregisterReceiver(mReceiver5);
 		this.unregisterReceiver(mReceiver6);
-		this.myDB.getDb().close();*/
-		// We need an Editor object to make preference changes.
-		// All objects are from android.context.Context
-	/*	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-
-		// Commit the edits!
-		editor.commit();*/
+		this.myDB.getDb().close();
+		super.onDestroy();
 	}
 
 	/*
@@ -538,7 +537,7 @@ public class main extends Activity {
 	 */
 	@Override
 	protected void onRestart() {
-
+		
 		super.onRestart();
 	}
 
@@ -786,22 +785,7 @@ public class main extends Activity {
 	private final BroadcastReceiver mReceiver5 = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
-			String connected = intent2.getExtras().getString("connect");
-			String disconnected = intent2.getExtras().getString("disconnect");
-			if (connected != null) {
-				connects++;
-			}
-			if (disconnected != null) {
-				connects--;
-				if(connects < 0)connects = 0;
-			}
-			/*
-			 * boolean done = false; do{ int changes = 0; for(int h=0; h<4;h++){
-			 * if(btCon[h] == null && btCon[h+1]!= null){ btCon[h] = btCon[h+1];
-			 * btCon[h+1] = null; changes++; } } if(changes == 0)done = true;
-			 * }while(!done);
-			 */
-
+			getConnects();
 			refreshList(loadFromDB());
 			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
 		}
