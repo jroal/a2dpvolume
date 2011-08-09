@@ -36,12 +36,12 @@
         <item>30</item>
     </string-array>
     <string name="ListName">Bluetooth Geräte</string>
-    <string name="GetLocButtonString">Gespeicherte Position</string>
+    <string name="GetLocButtonString">Gesp. Position</string>
     <string name="CapLocationButton">Position aufzeichnen</string>
     <string name="StartService">Dienst starten</string>
     <string name="StopService">Dienst beenden</string>
     <string name="FindDevices">Geräte suchen</string>
-    <string name="MediaVolume">Medienlautstärke</string>
+    <string name="MediaVolume">Medien-Lautstärke</string>
     <string name="ServiceStarted">A2DP-Volume-Dienst gestartet</string>
     <string name="ServiceStopped">A2DP-Volume-Dienst beendet</string>
     <string name="ExportDB">Exportiere Daten auf SD-Karte</string>
@@ -56,8 +56,8 @@
     <string name="PrefsGPSInaccuracyTitle">Maximale GPS-Ungenauigkeit</string>
     <string name="PrefsGPSInaccuracy">Gibt die maximale GPS-Ungenauigkeit an, an der der GPS-Listener aufhört zu versuchen, die Positionsbestimmung zu verbessern.</string>
     <string name="PrefsCarModeON">Reagiere auf Automodus.</string>
-    <string name="PrefsCarModeOFF">Reagiere nicht auf den Automodus.</string>
-    <string name="PrefsCarMode">Reaktion auf Automodus</string>
+    <string name="PrefsCarModeOFF">Reagiere nicht auf Automodus.</string>
+    <string name="PrefsCarMode">Reaktion auf Automodus?</string>
     <string name="PrefsCatGPS">Einstellungen der GPS-Positionsbestimmung</string>
     <string name="PrefsCatGen">Allgemeine Einstellungen</string>
     <string name="PrefsBootstart">Nach dem Hochfahren starten?</string>
@@ -85,8 +85,8 @@
     <string name="btEnableFail">Konnte Bluetooth nicht aktivieren.</string>
     <string name="usePassiveOff">Keine passiven Positionsdaten abfragen</string>
     <string name="usePassiveOn">Passive Positionsdaten abfragen</string>
-    <string name="usePassiveTitle">Passive Positionsdaten</string>
-    <string name="useNetworkTitle">Netzwerk-Positionsdaten</string>
+    <string name="usePassiveTitle">Benutze passive Positionsdaten?</string>
+    <string name="useNetworkTitle">Benutze Netzwerk-Positionsdaten?</string>
     <string name="useNetworkON">Benutze auch vom Netzwerk (WLAN, GSM) bereitgestellte Positionsdaten</string>
     <string name="useNetworkOFF">Benutze keine vom Netzwerk (WLAN, GSM) bereitgestellten Positionsdaten</string>
     <string name="LocationString">Lokalisierung</string>
@@ -97,17 +97,17 @@
     <string name="setVol">Setze Lautstärke bei Verbindung?</string>
     <string name="connectBT">Verbinde außerdem mit Bluetooth Gerät</string>
     <string name="startApp">Starte App bei Verbindung</string>
-    <string name="wifiDisconnect">Deaktiviere WIFI bei Verbindung</string>
+    <string name="wifiDisconnect">Deaktiviere WIFI bei Verbindung?</string>
     <string name="save">Speichern</string>
     <string name="PrefsUseLocatStorageON">Benutze Telefonspeicher</string>
     <string name="PrefsUseLocalStorageOFF">Benutze SD-Karte</string>
     <string name="PrefsUseLocalStorage">Speicherort</string>
-    <string name="PrefsHomeDockOFF">Reagiert nicht auf Home Dock.</string>
-    <string name="PrefsHomeDock">Reaktion auf Home Dock</string>
-    <string name="PrefsHomeDockON">Reagiert auf Home Dock.</string>
+    <string name="PrefsHomeDockOFF">Reagiere nicht auf Home Dock.</string>
+    <string name="PrefsHomeDock">Reaktion auf Home Dock?</string>
+    <string name="PrefsHomeDockON">Reagiere auf Home Dock.</string>
     <string name="ea_ti_app">Zu startende Anwendung</string>
     <string name="ae_stop_app_warning_title">Um welche Anwendung handelt es sich?</string>
-    <string name="ae_stop_app_warning_message">Intents ohne Package Name können durch A2DP Volume nicht beendet werden</string>
+    <string name="ae_stop_app_warning_message">Intents ohne Paketnamen können durch A2DP Volume nicht beendet werden</string>
     <string name="connectedTo">Verbunden mit</string>
     <string name="PrefsCatOther">Andere Einstellungen</string>
     <string name="PrefsOtherConnectedIcon">Icon bei Verbindung</string>

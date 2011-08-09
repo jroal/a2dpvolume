@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<manifest package="a2dp.Vol" xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionName="2.0.15" android:versionCode="40">
+<manifest package="a2dp.Vol" xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="41" android:versionName="2.0.16">
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
