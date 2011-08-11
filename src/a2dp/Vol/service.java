@@ -329,7 +329,6 @@ public class service extends Service {
 					} catch (Exception e) {
 						results = e.getMessage();
 						bt2 = null;
-						return;
 					}
 				} else
 				// if not a bluetooth device, must be a special device
@@ -343,7 +342,7 @@ public class service extends Service {
 								"android.app.action.ENTER_DESK_MODE")) {
 							bt2 = DB.getBTD("2"); // get home dock data
 						} else
-							return;
+							bt2 = null;
 
 					} catch (Exception e) {
 						results = e.getMessage();
@@ -351,9 +350,10 @@ public class service extends Service {
 						Log.e(LOG_TAG, "Error" + e.toString());
 					}
 				}
-				if (bt2 == null || bt2.getMac() == null)
+				if (bt2 == null || bt2.getMac() == null){
+					connecting = false;
 					return;
-
+				}
 				boolean done = false;
 				int l = 0;
 				for (int k = 0; k < btdConn.length; k++) {
@@ -449,12 +449,9 @@ public class service extends Service {
 					try {
 						String addres = bt.getAddress();
 						bt2 = DB.getBTD(addres);
-						if (bt2 == null)
-							return;
 					} catch (Exception e) {
 						bt2 = null;
 						Log.e(LOG_TAG, "Error" + e.toString());
-						return;
 					}
 				} else
 					try {
@@ -466,14 +463,16 @@ public class service extends Service {
 								"android.app.action.EXIT_DESK_MODE"))
 							bt2 = DB.getBTD("2");
 						else
-							return;
+							bt2 = null;
 					} catch (Exception e) {
+						bt2 = null;
 						Log.e(LOG_TAG, e.toString());
 					}
 
-				if (bt2 == null || bt2.getMac() == null)
+				if (bt2 == null || bt2.getMac() == null){
+					disconnecting = false;
 					return;
-
+				}
 				if (notify && (bt2.mac != null))
 					updateNot(false, null);
 
