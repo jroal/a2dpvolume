@@ -76,9 +76,9 @@ public class service extends Service {
 	// oldest acceptable time
 	SharedPreferences preferences;
 	private MyApplication application;
-	private Intent recievedIntent = null;
-	private boolean connecting = false;
-	private boolean disconnecting = false;
+	private volatile Intent recievedIntent = null;
+	private volatile boolean connecting = false;
+	private volatile boolean disconnecting = false;
 	private int connectedIcon;
 
 	@Override
