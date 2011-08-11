@@ -119,4 +119,5 @@
         <item>Car</item>
         <item>Headset</item>
     </string-array>
+    <string name="app_restart">Erzwinge Neustart der App?</string>
 </resources>
