@@ -74,7 +74,7 @@ public class DeviceDB {
 	public long insert(btDevice btd) {
 		String temp1 = btd.desc1;
 		long rtn;
-		if(temp1 == null) temp1 = "Unknown Device";  // make sure stirng1 is not null
+		if(temp1 == null) temp1 = "Unknown Device";  // make sure string1 is not null
 		this.insertStmt.bindString(1, temp1);
 		String temp2 = btd.desc2;
 		if(temp2 == null)temp2 = temp1; // make sure string2 is not null

@@ -114,11 +114,13 @@ public class service extends Service {
 			else
 				a2dpDir = Environment.getExternalStorageDirectory()
 						+ "/A2DPVol";
-			
+
 			String icon = preferences.getString("connectedIcon", "Car");
-			if(icon.equalsIgnoreCase("Headset"))connectedIcon = R.drawable.headset;
-			else connectedIcon = R.drawable.car2;
-			
+			if (icon.equalsIgnoreCase("Headset"))
+				connectedIcon = R.drawable.headset;
+			else
+				connectedIcon = R.drawable.car2;
+
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
 			MAX_TIME = 15000;
@@ -242,7 +244,7 @@ public class service extends Service {
 		Intent i = new Intent();
 		i.setAction(IStop);
 		this.application.sendBroadcast(i);
-		
+
 		// let the user know the service stopped
 		if (toasts)
 			Toast.makeText(this, R.string.ServiceStopped, Toast.LENGTH_LONG)
@@ -260,7 +262,8 @@ public class service extends Service {
 
 	}
 
-	// used to clear all the Bluetooth connections if the Bluetooth adapter has been turned OFF.
+	// used to clear all the Bluetooth connections if the Bluetooth adapter has
+	// been turned OFF.
 	private final BroadcastReceiver btOFFReciever = new BroadcastReceiver() {
 
 		@Override
@@ -348,8 +351,9 @@ public class service extends Service {
 						Log.e(LOG_TAG, "Error" + e.toString());
 					}
 				}
-				if(bt2.getMac() == null)return;
-				
+				if (bt2 == null || bt2.getMac() == null)
+					return;
+
 				boolean done = false;
 				int l = 0;
 				for (int k = 0; k < btdConn.length; k++) {
@@ -467,8 +471,9 @@ public class service extends Service {
 						Log.e(LOG_TAG, e.toString());
 					}
 
-					if(bt2.getMac() == null)return;
-					
+				if (bt2 == null || bt2.getMac() == null)
+					return;
+
 				if (notify && (bt2.mac != null))
 					updateNot(false, null);
 
@@ -574,7 +579,17 @@ public class service extends Service {
 		String cAction = bt.getAppaction();
 		String cData = bt.getAppdata();
 		String cType = bt.getApptype();
+		boolean restart = bt.isApprestart();
 
+		if(restart && pname != null && pname.length() > 3){
+			try {
+				ActivityManager act1 = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+				//act1.restartPackage(pname);
+				act1.killBackgroundProcesses(pname);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		if (pname == null || pname.equals("")) {
 			return false;
 		} else if (cData.length() > 1) {

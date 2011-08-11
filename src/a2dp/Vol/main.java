@@ -208,25 +208,33 @@ public class main extends Activity {
 		lstring = new String[] { "no data" };
 
 		this.myDB = new DeviceDB(application);
-		// this.myDB = application.getDeviceDB();
-
-		try {
-			if (myDB.getLength() < 1) {
-				getBtDevices();
+		
+		// do this stuff if it is the first time through for this power cycle.
+		if (savedInstanceState == null) {
+			int devicemin = 1;
+			if(carMode)devicemin++;
+			if(homeDock)devicemin++;
+			try {
+				if (myDB.getLength() < devicemin) {
+					getBtDevices();
+				}
+			} catch (Exception e1) {
+				Log.e(LOG_TAG, "error" + e1.getMessage());
 			}
-		} catch (Exception e1) {
-			Log.e(LOG_TAG, "error" + e1.getMessage());
-		}
 
-		this.ladapt = new ArrayAdapter<String>(application, resourceID, lstring);
+			
+			serv.setText(R.string.StartService);
+			// start the service if this is the first time through. The intent
+			// will report when the service has
+			// started and toggle button text
+
+			startService(new Intent(a2dp.Vol.main.this, service.class));
+		}
+		
+		this.ladapt = new ArrayAdapter<String>(application, resourceID,
+				lstring);
 		this.lvl = (ListView) findViewById(R.id.ListView01);
 		this.lvl.setAdapter(ladapt);
-
-		serv.setText(R.string.StartService);
-		// start the service if this is the first time through. The intent will report when the service has
-		// started and toggle button text
-		
-		if(savedInstanceState == null)startService(new Intent(a2dp.Vol.main.this, service.class));
 
 		// set the seek bar position for media volume
 		VolSeek.setProgress(am.getStreamVolume(AudioManager.STREAM_MUSIC));
@@ -430,10 +438,10 @@ public class main extends Activity {
 
 				if (servrun) {
 					stopService(new Intent(a2dp.Vol.main.this, service.class));
-					
+
 				} else {
 					startService(new Intent(a2dp.Vol.main.this, service.class));
-					
+
 				}
 			}
 		});
@@ -481,21 +489,23 @@ public class main extends Activity {
 		super.onCreate(savedInstanceState);
 	}
 
-	private void getConnects(){
-		if(servrun){
-			connects = a2dp.Vol.service.connects;	
-		}
-		else connects = 0;
-	}
-	
-	@Override
-	protected void onStop() {
-		
-		super.onStop();
-		
+	private void getConnects() {
+		if (servrun) {
+			connects = a2dp.Vol.service.connects;
+		} else
+			connects = 0;
 	}
 
-	/* (non-Javadoc)
+	@Override
+	protected void onStop() {
+
+		super.onStop();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onDestroy()
 	 */
 	@Override
@@ -537,7 +547,7 @@ public class main extends Activity {
 	 */
 	@Override
 	protected void onRestart() {
-		
+
 		super.onRestart();
 	}
 
@@ -673,7 +683,8 @@ public class main extends Activity {
 		}
 
 		refreshList(loadFromDB());
-		Toast.makeText(application, "Found " + i + " Bluetooth Devices", Toast.LENGTH_LONG).show();
+		Toast.makeText(application, "Found " + i + " Bluetooth Devices",
+				Toast.LENGTH_LONG).show();
 		return i;
 	}
 
@@ -734,22 +745,22 @@ public class main extends Activity {
 		return outVol;
 	}
 
-
 	// this is called to update the list from the database
 	private void refreshList(int test) {
-		
+
 		if (test > 0) {
 			lstring = new String[test];
 			for (int i = 0; i < test; i++) {
 				lstring[i] = vec.get(i).toString();
 				if (connects > 0 && servrun) {
 					for (int j = 0; j < a2dp.Vol.service.btdConn.length; j++) {
-						if(a2dp.Vol.service.btdConn[j] != null)
-						if (vec.get(i)
-								.getMac()
-								.equalsIgnoreCase(
-										a2dp.Vol.service.btdConn[j].getMac()))
-							lstring[i] += " **";
+						if (a2dp.Vol.service.btdConn[j] != null)
+							if (vec.get(i)
+									.getMac()
+									.equalsIgnoreCase(
+											a2dp.Vol.service.btdConn[j]
+													.getMac()))
+								lstring[i] += " **";
 					}
 				}
 			}
@@ -758,7 +769,8 @@ public class main extends Activity {
 
 			// Toast.makeText(this, "No data", Toast.LENGTH_LONG);
 		}
-		a2dp.Vol.main.this.ladapt = new ArrayAdapter<String>(application, resourceID, lstring);
+		a2dp.Vol.main.this.ladapt = new ArrayAdapter<String>(application,
+				resourceID, lstring);
 		a2dp.Vol.main.this.lvl.setAdapter(ladapt);
 		a2dp.Vol.main.this.ladapt.notifyDataSetChanged();
 		a2dp.Vol.main.this.lvl.invalidateViews();
@@ -817,7 +829,16 @@ public class main extends Activity {
 				e2.printStackTrace();
 				Log.e(LOG_TAG, "error" + e2.getMessage());
 			}
-
+			int devicemin = 1;
+			if(carMode)devicemin++;
+			if(homeDock)devicemin++;
+			try {
+				if (myDB.getLength() < devicemin) {
+					getBtDevices();
+				}
+			} catch (Exception e1) {
+				Log.e(LOG_TAG, "error" + e1.getMessage());
+			}
 			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
 		}
 	};

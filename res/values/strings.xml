@@ -57,7 +57,7 @@
     <string name="PrefsGPSInaccuracy">GPS maximum inaccuracy in meters before listener will stop looking for a better value.</string>
     <string name="PrefsCarModeON">Respond to Car Mode</string>
     <string name="PrefsCarModeOFF">Does not respond to Car Mode.</string>
-    <string name="PrefsCarMode">Respond to Car Mode</string>
+    <string name="PrefsCarMode">Respond to Car Mode?</string>
     <string name="PrefsCatGPS">Location Capture Settings</string>
     <string name="PrefsCatGen">General Settings</string>
     <string name="PrefsBootstart">Start at Boot?</string>
@@ -85,7 +85,7 @@
     <string name="btEnableFail">Failed to enable bluetooth</string>
     <string name="usePassiveOff">Do not use passive location listener</string>
     <string name="usePassiveOn">Also use passive location listener</string>
-    <string name="usePassiveTitle">Use Passive Locations</string>
+    <string name="usePassiveTitle">Use Passive Locations?</string>
     <string name="useNetworkTitle">Use Network Locations</string>
     <string name="useNetworkON">Also use network location listener</string>
     <string name="useNetworkOFF">Do not use network location listener</string>
@@ -97,13 +97,13 @@
     <string name="setVol">Set volume on connect?</string>
     <string name="connectBT">Also connect to bluetooth device</string>
     <string name="startApp">Start app on connect</string>
-    <string name="wifiDisconnect">Disconnect WIFI when bluetooth connects</string>
+    <string name="wifiDisconnect">Disconnect WIFI when bluetooth connects?</string>
     <string name="save">Save</string>
     <string name="PrefsUseLocatStorageON">Use device file storage</string>
     <string name="PrefsUseLocalStorageOFF">Use SD Card file storage</string>
     <string name="PrefsUseLocalStorage">Use Local File Storage?</string>
     <string name="PrefsHomeDockOFF">Do not respond to Home Dock</string>
-    <string name="PrefsHomeDock">Respond to Home Dock</string>
+    <string name="PrefsHomeDock">Respond to Home Dock?</string>
     <string name="PrefsHomeDockON">Respond to Home Dock</string>
     <string name="ea_ti_app">App To Launch</string>
     <string name="ae_stop_app_warning_title">What app is this?</string>
@@ -119,4 +119,5 @@
         <item>Car</item>
         <item>Headset</item>
     </string-array>
+    <string name="app_restart">Force App Restart?</string>
 </resources>

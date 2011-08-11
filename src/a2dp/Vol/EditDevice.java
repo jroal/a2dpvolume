@@ -49,6 +49,7 @@ public class EditDevice extends Activity {
 	private EditText fapp;
 	private EditText fbt;
 	private CheckBox fwifi;
+	private CheckBox fapprestart;
 	public String btd;
 	private btDevice device;
 	private MyApplication application;
@@ -93,6 +94,7 @@ public class EditDevice extends Activity {
 		this.fsetvol = (CheckBox) this.findViewById(R.id.checkSetVol);
 		this.fvol = (SeekBar) this.findViewById(R.id.seekBarVol);
 		this.fapp = (EditText) this.findViewById(R.id.editApp);
+		this.fapprestart = (CheckBox) this.findViewById(R.id.appRestartCheckbox);
 		this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
 		this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
 		
@@ -115,6 +117,8 @@ public class EditDevice extends Activity {
 		appaction = device.getAppaction();
 		appdata = device.getAppdata();
 		apptype = device.getApptype();
+		apprestart = device.isApprestart();
+		fapprestart.setChecked(apprestart);
 		vUpdateApp();
 
 		sb.setOnClickListener(new OnClickListener() {
@@ -133,6 +137,7 @@ public class EditDevice extends Activity {
 				device.setAppaction(appaction);
 				device.setAppdata(appdata);
 				device.setApptype(apptype);
+				apprestart = fapprestart.isChecked();
 				device.setApprestart(apprestart);
 				sb.setText("Saving");
 				try {
