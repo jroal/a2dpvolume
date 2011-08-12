@@ -34,8 +34,6 @@ public class StoreLoc extends Service {
 	SharedPreferences preferences;
 	private MyApplication application;
 	private LocationManager locationManager;
-	private Location location2;
-	private Location location_old;
 	private boolean toasts = true;
 	private boolean usePass = false;
 	private boolean useNet = true;
@@ -50,6 +48,8 @@ public class StoreLoc extends Service {
 	Location l4 = null; // the best location
 	boolean gpsEnabled = false;
 	int formatFlags;
+	int formatFlags2;
+
 	/**
 	 * @see android.app.Service#onBind(Intent)
 	 */
@@ -58,11 +58,16 @@ public class StoreLoc extends Service {
 		// TODO Put your code here
 		return null;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Service#onStart(android.content.Intent, int)
 	 */
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Service#onStartCommand(android.content.Intent, int, int)
 	 */
 	@Override
@@ -98,16 +103,16 @@ public class StoreLoc extends Service {
 		l3 = null; // the most accurate location
 		l4 = null; // the best location
 		// get the device that just connected
-		String device = intent.getStringExtra("device"); // get the mac address of the
+		String device = intent.getStringExtra("device"); // get the mac address
+															// of the
 		btdConn = DB.getBTD(device);
-		
+
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
-		location2 = locationManager
-				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		dtime = System.currentTimeMillis(); // catch the time we disconnected
 		
+		dtime = System.currentTimeMillis(); // catch the time we disconnected
+
 		// spawn the location listeners
 		registerListeners();
 		// start the timer
@@ -119,22 +124,19 @@ public class StoreLoc extends Service {
 					if (toasts)
 						Toast.makeText(
 								application,
-								"Time left: " + (millisUntilFinished  + 20)
-										/ 1000, Toast.LENGTH_LONG)
-								.show();
+								"Time left: " + (millisUntilFinished + 20)
+										/ 1000, Toast.LENGTH_LONG).show();
 				}
 
 				public void onFinish() {
 					clearLoc(true);
 				}
 			};
-			T.start();}
-		
+			T.start();
+		}
 
 		return super.onStartCommand(intent, flags, startId);
 	}
-	
-
 
 	/**
 	 * @see android.app.Service#onCreate()
@@ -149,7 +151,16 @@ public class StoreLoc extends Service {
 		formatFlags |= DateUtils.FORMAT_SHOW_TIME;
 		formatFlags |= DateUtils.FORMAT_SHOW_YEAR;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see android.app.Service#onDestroy()
+	 */
+	@Override
+	public void onDestroy() {
+		this.DB.getDb().close();
+		super.onDestroy();
+	}
+
 	// finds the most recent and most accurate locations
 	// get the location and write it to a file.
 	void grabGPS() {
@@ -163,10 +174,16 @@ public class StoreLoc extends Service {
 		float oldacc = 99999999;
 		float bestacc = 99999999;
 		Location l2 = null; // the temporary last known location
+
 		if (l4 != null)
 			if (l4.hasAccuracy())
 				bestacc = l4.getAccuracy();
-
+		if (l3 != null)
+			if (l3.hasAccuracy())
+				oldacc = l3.getAccuracy();
+		if(l != null)
+			olddt = System.currentTimeMillis() - l.getTime();
+		
 		try {
 
 			if (!providers.isEmpty()) {
@@ -174,10 +191,6 @@ public class StoreLoc extends Service {
 					l2 = lm.getLastKnownLocation(providers.get(i));
 
 					if (l2 != null) {
-						if (location_old != null)
-							if (location_old.getTime() < (dtime - MAX_TIME))
-								location_old = l2; // reset this if its too old
-
 						if (l2.hasAccuracy()) // if we have accuracy, capture
 												// the best
 						{
@@ -188,7 +201,7 @@ public class StoreLoc extends Service {
 							}
 							if ((acc < bestacc)
 									&& (l2.getTime() > (dtime - MAX_TIME))) {
-								l4 = l2; // the best sample since 15s before
+								l4 = l2; // the best sample since MAX_TIME before
 											// disconnect
 								bestacc = acc;
 							}
@@ -205,15 +218,13 @@ public class StoreLoc extends Service {
 			} else
 				return; // if no location data just abort here
 
-			if (l4 != null)
-				location_old = l4;
 
 			// If we have a good location, turn OFF the gps listener.
-			if (locationListener != null && l4 != null && location2 != null) {
-				float x = location2.getAccuracy();
+			if (locationListener != null && l4 != null) {
+				float x = l4.getAccuracy();
 				if (x < MAX_ACC
 						&& x > 0
-						&& (System.currentTimeMillis() - location2.getTime()) < MAX_TIME)
+						&& (System.currentTimeMillis() - l4.getTime()) < MAX_TIME)
 					clearLoc(true);
 			}
 
@@ -224,21 +235,23 @@ public class StoreLoc extends Service {
 		DecimalFormat df = new DecimalFormat("#.#");
 		// figure out which device we are disconnecting from
 		if (btdConn != null)
-				car = btdConn.getDesc2();
-			
+			car = btdConn.getDesc2();
+
 		String locTime = "";
 		// store the best location
 		if (l4 != null) {
-			locTime = DateUtils.formatDateTime(application, l4.getTime(), formatFlags);
+			locTime = DateUtils.formatDateTime(application, l4.getTime(),
+					formatFlags);
 			String urlStr;
 			try {
-				urlStr = URLEncoder.encode(l4.getLatitude() + "," + l4.getLongitude()
-							+ "(" + car + " " + locTime + " acc="
-							+ df.format(l4.getAccuracy()) + ")", "UTF-8");
+				urlStr = URLEncoder.encode(
+						l4.getLatitude() + "," + l4.getLongitude() + "(" + car
+								+ " " + locTime + " acc="
+								+ df.format(l4.getAccuracy()) + ")", "UTF-8");
 			} catch (UnsupportedEncodingException e1) {
-				urlStr = URLEncoder.encode(l4.getLatitude() + "," + l4.getLongitude() 
-						+ "(" + car + " " + locTime + " acc="
-						+ df.format(l4.getAccuracy()) + ")");
+				urlStr = URLEncoder.encode(l4.getLatitude() + ","
+						+ l4.getLongitude() + "(" + car + " " + locTime
+						+ " acc=" + df.format(l4.getAccuracy()) + ")");
 				e1.printStackTrace();
 			}
 			try {
@@ -250,28 +263,30 @@ public class StoreLoc extends Service {
 				// Toast.makeText(a2dp.Vol.service.this, temp,
 				// Toast.LENGTH_LONG).show();
 			} catch (FileNotFoundException e) {
-				Toast.makeText(application, "FileNotFound",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(application, "FileNotFound", Toast.LENGTH_LONG)
+						.show();
 				e.printStackTrace();
 			} catch (IOException e) {
-				Toast.makeText(application, "IOException",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(application, "IOException", Toast.LENGTH_LONG)
+						.show();
 				e.printStackTrace();
 			}
 		}
 
 		// store most accurate location
 		if (l3 != null) {
-			locTime = DateUtils.formatDateTime(application, l3.getTime(), formatFlags);
+			locTime = DateUtils.formatDateTime(application, l3.getTime(),
+					formatFlags);
 			String urlStr;
 			try {
-				urlStr = URLEncoder.encode(l3.getLatitude() + "," + l3.getLongitude() 
-							+ "(" + car + " " + locTime + " acc="
-							+ df.format(l3.getAccuracy()) + ")", "UTF-8");
+				urlStr = URLEncoder.encode(
+						l3.getLatitude() + "," + l3.getLongitude() + "(" + car
+								+ " " + locTime + " acc="
+								+ df.format(l3.getAccuracy()) + ")", "UTF-8");
 			} catch (UnsupportedEncodingException e1) {
-				urlStr = URLEncoder.encode(l3.getLatitude() + "," + l3.getLongitude() 
-						+ "(" + car + " " + locTime + " acc="
-						+ df.format(l3.getAccuracy()) + ")");
+				urlStr = URLEncoder.encode(l3.getLatitude() + ","
+						+ l3.getLongitude() + "(" + car + " " + locTime
+						+ " acc=" + df.format(l3.getAccuracy()) + ")");
 				e1.printStackTrace();
 			}
 			try {
@@ -283,12 +298,12 @@ public class StoreLoc extends Service {
 				// Toast.makeText(a2dp.Vol.service.this, temp,
 				// Toast.LENGTH_LONG).show();
 			} catch (FileNotFoundException e) {
-				Toast.makeText(application, "FileNotFound",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(application, "FileNotFound", Toast.LENGTH_LONG)
+						.show();
 				e.printStackTrace();
 			} catch (IOException e) {
-				Toast.makeText(application, "IOException",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(application, "IOException", Toast.LENGTH_LONG)
+						.show();
 				e.printStackTrace();
 			}
 		}
@@ -299,7 +314,6 @@ public class StoreLoc extends Service {
 		public void onLocationChanged(Location location) {
 			// Called when a new location is found by the gps location
 			// provider.
-			location2 = location;
 			grabGPS();
 		}
 
@@ -324,7 +338,7 @@ public class StoreLoc extends Service {
 		// figure out which device we are disconnecting from
 		if (btdConn != null)
 			car = btdConn.getDesc2();
-		
+
 		String locTime = "";
 		// store this vehicles location
 		if (doGps) {
@@ -338,32 +352,24 @@ public class StoreLoc extends Service {
 						+ ".html");
 
 				String temp = null;
-				
+
 				if (l4 != null) {
-					locTime = DateUtils.formatDateTime(application, l4.getTime(), formatFlags);
+					locTime = DateUtils.formatDateTime(application,
+							l4.getTime(), formatFlags);
 					String urlStr;
 					try {
-						urlStr = URLEncoder.encode(l4.getLatitude()
-								+ ","
-								+ l4.getLongitude()
-								+ "("
-								+ car
-								+ " "
-								+ locTime
-								+ " acc="
-								+ df.format(l4.getAccuracy()) + ")", "UTF-8");
+						urlStr = URLEncoder.encode(
+								l4.getLatitude() + "," + l4.getLongitude()
+										+ "(" + car + " " + locTime + " acc="
+										+ df.format(l4.getAccuracy()) + ")",
+								"UTF-8");
 					} catch (Exception e) {
-						urlStr = URLEncoder.encode(l4.getLatitude()
-								+ ","
-								+ l4.getLongitude()
-								+ "("
-								+ car
-								+ " "
-								+ locTime
-								+ " acc="
-								+ df.format(l4.getAccuracy()) + ")");
+						urlStr = URLEncoder.encode(l4.getLatitude() + ","
+								+ l4.getLongitude() + "(" + car + " " + locTime
+								+ " acc=" + df.format(l4.getAccuracy()) + ")");
 						e.printStackTrace();
 					}
+					
 					temp = "<hr /><bold><a href=\"http://maps.google.com/maps?q="
 							+ urlStr
 							+ "\">"
@@ -382,39 +388,30 @@ public class StoreLoc extends Service {
 							+ " meters<br>"
 							+ "Lattitude: "
 							+ l4.getLatitude()
-							+ "<br>"
-							+ "Longitude: "
-							+ l4.getLongitude();
+							+ "<br>" + "Longitude: " + l4.getLongitude();
 				} else {
-					
-					locTime = DateUtils.formatDateTime(application, dtime, formatFlags);
+
+					locTime = DateUtils.formatDateTime(application, dtime,
+							formatFlags);
 					temp = "No Best Location Captured " + locTime + "<br>";
 				}
 				if (l3 != null) {
-					locTime = DateUtils.formatDateTime(application, l3.getTime(), formatFlags);
+					locTime = DateUtils.formatDateTime(application,
+							l3.getTime(), formatFlags);
 					String urlStr;
 					try {
-						urlStr = URLEncoder.encode(l3.getLatitude()
-								+ ","
-								+ l3.getLongitude()
-								+ "("
-								+ car
-								+ " "
-								+ locTime
-								+ " acc="
-								+ df.format(l3.getAccuracy()) + ")", "UTF-8");
+						urlStr = URLEncoder.encode(
+								l3.getLatitude() + "," + l3.getLongitude()
+										+ "(" + car + " " + locTime + " acc="
+										+ df.format(l3.getAccuracy()) + ")",
+								"UTF-8");
 					} catch (Exception e) {
-						urlStr = URLEncoder.encode(l3.getLatitude()
-								+ ","
-								+ l3.getLongitude()
-								+ "("
-								+ car
-								+ " "
-								+ locTime
-								+ " acc="
-								+ df.format(l3.getAccuracy()) + ")");
+						urlStr = URLEncoder.encode(l3.getLatitude() + ","
+								+ l3.getLongitude() + "(" + car + " " + locTime
+								+ " acc=" + df.format(l3.getAccuracy()) + ")");
 						e.printStackTrace();
 					}
+					
 					temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
 							+ urlStr
 							+ "\">"
@@ -436,36 +433,29 @@ public class StoreLoc extends Service {
 							+ "<br>"
 							+ "Longitude: "
 							+ l3.getLongitude();
-				}
-				else {
-					locTime = DateUtils.formatDateTime(application, dtime, formatFlags);
-					temp += "No Most Accurate Location Captured " + locTime + "<br>";
+				} else {
+					locTime = DateUtils.formatDateTime(application, dtime,
+							formatFlags);
+					temp += "No Most Accurate Location Captured " + locTime
+							+ "<br>";
 				}
 				if (l != null) {
-					locTime = DateUtils.formatDateTime(application, l.getTime(), formatFlags);
+					locTime = DateUtils.formatDateTime(application,
+							l.getTime(), formatFlags);
 					String urlStr;
 					try {
-						urlStr = URLEncoder.encode(l.getLatitude()
-								+ ","
-								+ l.getLongitude()
-								+ "("
-								+ car
-								+ " "
-								+ locTime
-								+ " acc="
-								+ df.format(l.getAccuracy()) + ")", "UTF-8");
+						urlStr = URLEncoder.encode(
+								l.getLatitude() + "," + l.getLongitude() + "("
+										+ car + " " + locTime + " acc="
+										+ df.format(l.getAccuracy()) + ")",
+								"UTF-8");
 					} catch (Exception e) {
-						urlStr = URLEncoder.encode(l.getLatitude()
-								+ ","
-								+ l.getLongitude()
-								+ "("
-								+ car
-								+ " "
-								+ locTime
-								+ " acc="
-								+ df.format(l.getAccuracy()) + ")");
+						urlStr = URLEncoder.encode(l.getLatitude() + ","
+								+ l.getLongitude() + "(" + car + " " + locTime
+								+ " acc=" + df.format(l.getAccuracy()) + ")");
 						e.printStackTrace();
 					}
+					
 					temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
 							+ urlStr
 							+ "\">"
@@ -487,13 +477,16 @@ public class StoreLoc extends Service {
 							+ "<br>"
 							+ "Longitude: "
 							+ l.getLongitude();
-				}else {
-					locTime = DateUtils.formatDateTime(application, dtime, formatFlags);
-					temp += "No Most Recent Location Captured " + locTime + "<br>";
+				} else {
+					locTime = DateUtils.formatDateTime(application, dtime,
+							formatFlags);
+					temp += "No Most Recent Location Captured " + locTime
+							+ "<br>";
 				}
 
-				if(!gpsEnabled) temp += "<br>GPS was not enabled";
-				
+				if (!gpsEnabled)
+					temp += "<br>GPS was not enabled";
+
 				if (local) {
 					FileOutputStream fos = openFileOutput(file.getName(),
 							Context.MODE_WORLD_READABLE);
@@ -506,13 +499,13 @@ public class StoreLoc extends Service {
 				}
 
 			} catch (FileNotFoundException e) {
-				Toast.makeText(application, "FileNotFound",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(application, "FileNotFound", Toast.LENGTH_LONG)
+						.show();
 				e.printStackTrace();
 				Log.e(LOG_TAG, "Error " + e.getMessage());
 			} catch (IOException e) {
-				Toast.makeText(application, "IOException",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(application, "IOException", Toast.LENGTH_LONG)
+						.show();
 				e.printStackTrace();
 				Log.e(LOG_TAG, "Error " + e.getMessage());
 			}
@@ -522,37 +515,31 @@ public class StoreLoc extends Service {
 		l3 = null; // the most accurate location
 		l4 = null; // the best location
 		btdConn = null;
-		location_old = null;
 		// capture complete, close
 		this.stopSelf();
 	}
 
-	private void registerListeners(){
+	private void registerListeners() {
 		// start location provider GPS
 		// Register the listener with the Location Manager to
 		// receive location updates
-		if (locationManager
-				.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, 0, 0,
-					locationListener);
+					LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 			gpsEnabled = true;
-		}
-		else
+		} else
 			gpsEnabled = false;
 		if (useNet
 				&& locationManager
 						.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 			locationManager.requestLocationUpdates(
-					LocationManager.NETWORK_PROVIDER, 0, 0,
-					locationListener);
+					LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 		}
 		if (usePass
 				&& locationManager
 						.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
 			locationManager.requestLocationUpdates(
-					LocationManager.PASSIVE_PROVIDER, 0, 0,
-					locationListener);
+					LocationManager.PASSIVE_PROVIDER, 0, 0, locationListener);
 		}
 	}
 }

@@ -76,7 +76,7 @@ public class service extends Service {
 	// oldest acceptable time
 	SharedPreferences preferences;
 	private MyApplication application;
-	private volatile Intent recievedIntent = null;
+
 	private volatile boolean connecting = false;
 	private volatile boolean disconnecting = false;
 	private int connectedIcon;
@@ -225,7 +225,6 @@ public class service extends Service {
 					android.app.UiModeManager.ACTION_ENTER_DESK_MODE);
 			this.registerReceiver(mReceiver, filter6);
 		}
-
 	}
 
 	@Override
@@ -310,12 +309,9 @@ public class service extends Service {
 		public void onReceive(Context context, Intent intent) {
 			String results = "";
 			if (!connecting) {
-				recievedIntent = intent;
 				connecting = true;
-				if (recievedIntent == null)
-					return;
-
-				BluetoothDevice bt = (BluetoothDevice) recievedIntent
+				
+				BluetoothDevice bt = (BluetoothDevice) intent
 						.getExtras().get(BluetoothDevice.EXTRA_DEVICE);
 
 				btDevice bt2 = null;
@@ -335,10 +331,10 @@ public class service extends Service {
 				{
 					try {
 						// Log.d(LOG_TAG, intent.toString());
-						if (recievedIntent.getAction().equalsIgnoreCase(
+						if (intent.getAction().equalsIgnoreCase(
 								"android.app.action.ENTER_CAR_MODE")) {
 							bt2 = DB.getBTD("1"); // get car mode data
-						} else if (recievedIntent.getAction().equalsIgnoreCase(
+						} else if (intent.getAction().equalsIgnoreCase(
 								"android.app.action.ENTER_DESK_MODE")) {
 							bt2 = DB.getBTD("2"); // get home dock data
 						} else
@@ -350,6 +346,7 @@ public class service extends Service {
 						Log.e(LOG_TAG, "Error" + e.toString());
 					}
 				}
+				// if it is none of the devices in the database, exit here
 				if (bt2 == null || bt2.getMac() == null){
 					connecting = false;
 					return;
@@ -468,7 +465,7 @@ public class service extends Service {
 						bt2 = null;
 						Log.e(LOG_TAG, e.toString());
 					}
-
+					//if it is none of the devices in the database, exit here
 				if (bt2 == null || bt2.getMac() == null){
 					disconnecting = false;
 					return;
@@ -476,7 +473,7 @@ public class service extends Service {
 				if (notify && (bt2.mac != null))
 					updateNot(false, null);
 
-				// if we opened a package for this device, close it now
+				// if we opened a package for this device, try to close it now
 				if (bt2.hasIntent() && bt2.getPname().length() > 3) {
 					stopApp(bt2.getPname());
 				}
