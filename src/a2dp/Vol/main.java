@@ -65,6 +65,7 @@ public class main extends Activity {
 	static final int RELOAD = 2;
 	boolean carMode = false;
 	boolean homeDock = false;
+	boolean headsetPlug = false;
 	private String a2dpDir = "";
 	private static final String LOG_TAG = "A2DP_Volume";
 	private static int resourceID = android.R.layout.simple_list_item_1;
@@ -175,6 +176,7 @@ public class main extends Activity {
 
 			carMode = preferences.getBoolean("car_mode", true);
 			homeDock = preferences.getBoolean("home_dock", false);
+			headsetPlug = preferences.getBoolean("headset", false);
 		} catch (Exception e2) {
 			Log.e(LOG_TAG, "error" + e2.getMessage());
 		}
@@ -635,7 +637,22 @@ public class main extends Activity {
 
 			refreshList(loadFromDB()); // make sure it is relisted
 		}
+		if (headsetPlug) {
+			// add the headset plug false device if headset plug check is enabled
+			btDevice fbt = new btDevice();
+			fbt.setBluetoothDevice("Headset Plug", "Headset Plug", "3",
+					am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+			btDevice fbt2 = myDB.getBTD(fbt.mac);
+			if (fbt2.mac == null) {
+				fbt.setGetLoc(false);
+				a2dp.Vol.main.this.myDB.insert(fbt);
+				vec.add(fbt);
+			} else
+				vec.add(fbt2);
 
+			refreshList(loadFromDB()); // make sure it is relisted
+		}
+		
 		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 
 		if (mBTA == null) {
@@ -809,9 +826,14 @@ public class main extends Activity {
 	private final BroadcastReceiver mReceiver6 = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context2, Intent intent2) {
+			boolean carModeOld = carMode;
+			boolean homeDockOld = homeDock;
+			boolean headsetPlugOld = headsetPlug;
+			
 			try {
 				carMode = preferences.getBoolean("car_mode", true);
 				homeDock = preferences.getBoolean("home_dock", true);
+				headsetPlug = preferences.getBoolean("headset", false);
 				boolean local = preferences
 						.getBoolean("useLocalStorage", false);
 				if (local)
@@ -829,17 +851,9 @@ public class main extends Activity {
 				e2.printStackTrace();
 				Log.e(LOG_TAG, "error" + e2.getMessage());
 			}
-			int devicemin = 1;
-			if(carMode)devicemin++;
-			if(homeDock)devicemin++;
-			try {
-				if (myDB.getLength() < devicemin) {
-					getBtDevices();
-				}
-			} catch (Exception e1) {
-				Log.e(LOG_TAG, "error" + e1.getMessage());
-			}
-			// Toast.makeText(context2, "mReceiver5", Toast.LENGTH_LONG).show();
+			// if we added a special device make sure to insert it in the database
+			if((!carModeOld && carMode) || (!homeDockOld && homeDock) || (!headsetPlugOld && headsetPlug))
+				getBtDevices();
 		}
 	};
 
