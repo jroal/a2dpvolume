@@ -245,6 +245,7 @@ public class service extends Service {
 		this.unregisterReceiver(mReceiver);
 		this.unregisterReceiver(mReceiver2);
 		this.unregisterReceiver(btOFFReciever);
+		this.unregisterReceiver(headSetReceiver);
 		DB.getDb().close();
 		// Tell the world we are not running
 		final String IStop = "a2dp.vol.service.STOPPED_RUNNING";
@@ -316,10 +317,12 @@ public class service extends Service {
 				e.printStackTrace();
 				return;
 			}
-			if (bt2 != null && bt2.getMac().equalsIgnoreCase("3")) {
+			if (bt2 != null && bt2.getMac() != null && bt2.getMac().equalsIgnoreCase("3")) {
 				if (state == 0 && connects > 0) {
+					disconnecting = true;
 					DoDisconnected(bt2);
 				} else if (state == 1) {
+					connecting = true;
 					DoConnected(bt2);
 				}
 			}
