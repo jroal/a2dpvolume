@@ -120,4 +120,7 @@
         <item>Headset</item>
     </string-array>
     <string name="app_restart">Force App Restart?</string>
+    <string name="PrefsHeadsetON">Respond to headset</string>
+    <string name="PrefsHeadset">Respond to Headset?</string>
+    <string name="PrefsHeadsetOFF">Do not respond to headset</string>
 </resources>
