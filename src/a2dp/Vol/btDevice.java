@@ -21,6 +21,8 @@ public class btDevice {
 							// this device connects
 	public boolean wifi; // whether to turn OFF wifi on connect or not this
 							// device
+	public boolean enableTTS; // enable the Text To Speech service for this
+								// device?
 	public String appaction; // app action string
 	public String appdata; // app data string
 	public String apptype; // app type string
@@ -120,6 +122,35 @@ public class btDevice {
 			this.apprestart = true;
 		else
 			this.apprestart = false;
+	}
+
+	/**
+	 * @return the enableTTS
+	 */
+	public boolean isEnableTTS() {
+		return enableTTS;
+	}
+
+	public long islEnableTTS() {
+		if (enableTTS)
+			return 1;
+		else
+			return 0;
+	}
+
+	/**
+	 * @param enableTTS
+	 *            the enableTTS to set
+	 */
+	public void setEnableTTS(boolean enableTTS) {
+		this.enableTTS = enableTTS;
+	}
+
+	public void setEnableTTS(int value) {
+		if (value > 0)
+			this.enableTTS = true;
+		else
+			this.enableTTS = false;
 	}
 
 	/**
@@ -337,9 +368,9 @@ public class btDevice {
 		this.appdata = "";
 		this.apptype = "";
 		this.apprestart = false;
+		this.enableTTS = false;
 	}
 
-	
 	/**
 	 * @param s1
 	 *            is the default device name
@@ -366,13 +397,17 @@ public class btDevice {
 		this.appdata = "";
 		this.apptype = "";
 		this.apprestart = false;
+		this.enableTTS = false;
 	}
-	
-	public boolean hasIntent(){
-		if(this.pname == null || this.appdata == null) return false;
-		if(this.pname.length() < 3 && this.appdata.length() < 3)return false;
-		if(this.pname.equalsIgnoreCase("Custom") && this.appdata.length() < 3)return false;
+
+	public boolean hasIntent() {
+		if (this.pname == null || this.appdata == null)
+			return false;
+		if (this.pname.length() < 3 && this.appdata.length() < 3)
+			return false;
+		if (this.pname.equalsIgnoreCase("Custom") && this.appdata.length() < 3)
+			return false;
 		return true;
-		
+
 	}
 }

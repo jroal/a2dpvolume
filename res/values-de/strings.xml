@@ -120,4 +120,7 @@
         <item>Headset</item>
     </string-array>
     <string name="app_restart">Erzwinge Neustart der App?</string>
+    <string name="PrefsHeadsetON">Reagiere auf Kopfhörer</string>
+    <string name="PrefsHeadset">Reaktion auf Kopfhörer?</string>
+    <string name="PrefsHeadsetOFF">Reagiere nicht auf Kopfhörer</string>
 </resources>
