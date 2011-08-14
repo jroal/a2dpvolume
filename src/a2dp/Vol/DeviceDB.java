@@ -20,14 +20,14 @@ import java.util.Vector;
 public class DeviceDB {
 
 	private static final String DATABASE_NAME = "btdevices.db";
-	private static final int DATABASE_VERSION = 7;
+	private static final int DATABASE_VERSION = 8;
 	private static final String TABLE_NAME = "devices";
 	private Context context;
 	private SQLiteDatabase db;
 	private SQLiteStatement insertStmt;
 	private static final String INSERT = "insert into " + TABLE_NAME
-			+ "(desc1, desc2, mac, maxv, setv, getl, pname, bdevice, wifi, appaction, appdata, apptype, apprestart) " +
-					"values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?)";
+			+ "(desc1, desc2, mac, maxv, setv, getl, pname, bdevice, wifi, appaction, appdata, apptype, apprestart, tts) " +
+					"values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?)";
 
 	public DeviceDB(Context context) {
 		this.context = context;
@@ -53,6 +53,7 @@ public class DeviceDB {
 		vals.put("appdata", bt.getAppdata());
 		vals.put("apptype", bt.getApptype());
 		vals.put("apprestart", bt.lApprestart());
+		vals.put("tts", bt.islEnableTTS());
 		this.db.update(TABLE_NAME, vals, "mac='" + bt.mac + "'", null);
 		vals = null;
 	}
@@ -91,6 +92,7 @@ public class DeviceDB {
 		this.insertStmt.bindString(11, btd.getAppdata());
 		this.insertStmt.bindString(12, btd.getApptype());
 		this.insertStmt.bindLong(13, btd.lApprestart());
+		this.insertStmt.bindLong(14, btd.islEnableTTS());
 		try {
 			rtn = this.insertStmt.executeInsert();
 		} catch (Exception e) {
@@ -127,6 +129,7 @@ public class DeviceDB {
 				bt.setAppdata(cs.getString(10));
 				bt.setApptype(cs.getString(11));
 				bt.setApprestart(cs.getInt(12));
+				bt.setEnableTTS(cs.getInt(13));
 			}
 		} catch (Exception e) {
 			bt.mac = null;
@@ -186,7 +189,7 @@ public class DeviceDB {
 	public Vector<btDevice> selectAlldb() {
 		Vector<btDevice> list = new Vector<btDevice>();
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1",
-				"desc2", "mac", "maxv", "setv", "getl", "pname" , "bdevice", "wifi", "appaction", "appdata", "apptype", "apprestart"}, null, null, null,
+				"desc2", "mac", "maxv", "setv", "getl", "pname" , "bdevice", "wifi", "appaction", "appdata", "apptype", "apprestart", "tts"}, null, null, null,
 				null, "desc2");
 		if (cursor.moveToFirst()) {
 			do {
@@ -204,6 +207,7 @@ public class DeviceDB {
 				bt.setAppdata(cursor.getString(10));
 				bt.setApptype(cursor.getString(11));
 				bt.setApprestart(cursor.getInt(12));
+				bt.setEnableTTS(cursor.getInt(13));
 				
 				list.add(bt);
 			} while (cursor.moveToNext());
@@ -224,7 +228,8 @@ public class DeviceDB {
 			db.execSQL("CREATE TABLE "
 					+ TABLE_NAME
 					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER DEFAULT 1, getl INTEGER DEFAULT 1, pname TEXT, " +
-							"bdevice TEXT, wifi INTEGER DEFAULT 0, appaction TEXT, appdata TEXT, apptype TEXT, apprestart INTEGER DEFAULT 0)");
+							"bdevice TEXT, wifi INTEGER DEFAULT 0, appaction TEXT, appdata TEXT, apptype TEXT, apprestart INTEGER DEFAULT 0, " +
+							"tts INTEGER DEFAULT 0)");
 		}
 
 		@Override

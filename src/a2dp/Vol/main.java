@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,9 +64,11 @@ public class main extends Activity {
 	int connects;
 	static final int ENABLE_BLUETOOTH = 1;
 	static final int RELOAD = 2;
+	static final int CHECK_TTS = 3;
 	boolean carMode = false;
 	boolean homeDock = false;
 	boolean headsetPlug = false;
+	boolean enableTTS = false;
 	private String a2dpDir = "";
 	private static final String LOG_TAG = "A2DP_Volume";
 	private static int resourceID = android.R.layout.simple_list_item_1;
@@ -177,6 +180,7 @@ public class main extends Activity {
 			carMode = preferences.getBoolean("car_mode", true);
 			homeDock = preferences.getBoolean("home_dock", false);
 			headsetPlug = preferences.getBoolean("headset", false);
+			enableTTS = preferences.getBoolean("enableTTS", false);
 		} catch (Exception e2) {
 			Log.e(LOG_TAG, "error" + e2.getMessage());
 		}
@@ -231,6 +235,13 @@ public class main extends Activity {
 			// started and toggle button text
 
 			startService(new Intent(a2dp.Vol.main.this, service.class));
+		}
+		
+		if(enableTTS){
+			// Fire off an intent to check if a TTS engine is installed
+	        Intent checkIntent = new Intent();
+	        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+	        startActivityForResult(checkIntent, CHECK_TTS);
 		}
 		
 		this.ladapt = new ArrayAdapter<String>(application, resourceID,
@@ -737,7 +748,23 @@ public class main extends Activity {
 				break;
 			}
 		}
+		if (requestCode == CHECK_TTS) {
+			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+				// success, create the TTS instance
+				if(servrun)
+					service.mTtsReady = true;
+				// mTts.setLanguage(Locale.US);
+				Toast.makeText(application, "TTS Ready", Toast.LENGTH_SHORT).show();
+			} else {
+				// missing data, install it
+				Intent installIntent = new Intent();
+				installIntent
+						.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+				startActivityForResult(installIntent, CHECK_TTS);
+			}
+		}
 	}
+	
 
 	// This function handles the media volume adjustments.
 	/**
@@ -834,6 +861,7 @@ public class main extends Activity {
 				carMode = preferences.getBoolean("car_mode", true);
 				homeDock = preferences.getBoolean("home_dock", true);
 				headsetPlug = preferences.getBoolean("headset", false);
+				enableTTS = preferences.getBoolean("enableTTS", false);
 				boolean local = preferences
 						.getBoolean("useLocalStorage", false);
 				if (local)
@@ -854,6 +882,13 @@ public class main extends Activity {
 			// if we added a special device make sure to insert it in the database
 			if((!carModeOld && carMode) || (!homeDockOld && homeDock) || (!headsetPlugOld && headsetPlug))
 				getBtDevices();
+			
+			if(enableTTS){
+				// Fire off an intent to check if a TTS engine is installed
+		        Intent checkIntent = new Intent();
+		        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+		        startActivityForResult(checkIntent, CHECK_TTS);
+			}
 		}
 	};
 

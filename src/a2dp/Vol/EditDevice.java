@@ -50,6 +50,7 @@ public class EditDevice extends Activity {
 	private EditText fbt;
 	private CheckBox fwifi;
 	private CheckBox fapprestart;
+	private CheckBox fenableTTS;
 	public String btd;
 	private btDevice device;
 	private MyApplication application;
@@ -59,6 +60,7 @@ public class EditDevice extends Activity {
 	private String appdata;
 	private String apptype;
 	private boolean apprestart;
+	private boolean enableTTS;
 	
 
 	private static final int DIALOG_PICK_APP_TYPE = 3;
@@ -97,6 +99,7 @@ public class EditDevice extends Activity {
 		this.fapprestart = (CheckBox) this.findViewById(R.id.appRestartCheckbox);
 		this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
 		this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
+		this.fenableTTS = (CheckBox) this.findViewById(R.id.enableTTSBox);
 		
 		btd = getIntent().getStringExtra("btd"); // get the mac address of the
 													// device to edit
@@ -119,6 +122,7 @@ public class EditDevice extends Activity {
 		apptype = device.getApptype();
 		apprestart = device.isApprestart();
 		fapprestart.setChecked(apprestart);
+		fenableTTS.setChecked(device.isEnableTTS());
 		vUpdateApp();
 
 		sb.setOnClickListener(new OnClickListener() {
@@ -139,6 +143,7 @@ public class EditDevice extends Activity {
 				device.setApptype(apptype);
 				apprestart = fapprestart.isChecked();
 				device.setApprestart(apprestart);
+				device.setEnableTTS(fenableTTS.isChecked());
 				sb.setText("Saving");
 				try {
 					myDB.update(device);

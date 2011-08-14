@@ -26,9 +26,12 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
+import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -46,6 +49,8 @@ public class service extends Service {
 		return START_STICKY;
 	}
 
+	private TextToSpeech mTts;
+	public static boolean mTtsReady = false;
 	static AudioManager am2 = (AudioManager) null;
 	Integer OldVol2 = 5;
 	public static Integer connects = 0;
@@ -59,6 +64,7 @@ public class service extends Service {
 	private boolean carMode = true;
 	private boolean homeDock = false;
 	private boolean headsetPlug = false;
+	private boolean enableTTS = false;
 	private boolean toasts = true;
 	private boolean notify = false;
 	private Notification not = null;
@@ -104,6 +110,7 @@ public class service extends Service {
 			headsetPlug = preferences.getBoolean("headset", false);
 			toasts = preferences.getBoolean("toasts", true);
 			notify = preferences.getBoolean("notify1", false);
+			enableTTS = preferences.getBoolean("enableTTS", false);
 			Long yyy = new Long(preferences.getString("gpsTime", "15000"));
 			MAX_TIME = yyy;
 
@@ -187,7 +194,20 @@ public class service extends Service {
 		 * catch block e.printStackTrace(); }
 		 */
 		// end test file maker
+		if (enableTTS) {
+			mTts = new TextToSpeech(application, listenerStarted);
+		}
 	}
+
+	TextToSpeech.OnInitListener listenerStarted = new TextToSpeech.OnInitListener() {
+
+		public void onInit(int status) {
+			if (status == TextToSpeech.SUCCESS) {
+				mTtsReady = true;
+			}
+
+		}
+	};
 
 	private void registerRecievers() {
 		// create intent filter for a bluetooth stream connection
@@ -242,11 +262,17 @@ public class service extends Service {
 		// in case the location listener is running, stop it
 		stopService(new Intent(application, StoreLoc.class));
 		// close the database
-		this.unregisterReceiver(mReceiver);
-		this.unregisterReceiver(mReceiver2);
-		this.unregisterReceiver(btOFFReciever);
-		this.unregisterReceiver(headSetReceiver);
-		DB.getDb().close();
+		try {
+			this.unregisterReceiver(mReceiver);
+			this.unregisterReceiver(mReceiver2);
+			this.unregisterReceiver(btOFFReciever);
+			this.unregisterReceiver(headSetReceiver);
+			// this.unregisterReceiver(SMScatcher);
+			mTts.shutdown();
+			DB.getDb().close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		// Tell the world we are not running
 		final String IStop = "a2dp.vol.service.STOPPED_RUNNING";
 		Intent i = new Intent();
@@ -317,7 +343,7 @@ public class service extends Service {
 				e.printStackTrace();
 				return;
 			}
-			if (bt2 != null && bt2.getMac() != null && bt2.getMac().equalsIgnoreCase("3")) {
+			if (bt2 != null && "3".equalsIgnoreCase(bt2.getMac())) {
 				if (state == 0 && connects > 0) {
 					disconnecting = true;
 					DoDisconnected(bt2);
@@ -341,7 +367,7 @@ public class service extends Service {
 		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			String results = "";
+
 			if (!connecting) {
 				connecting = true;
 
@@ -355,9 +381,9 @@ public class service extends Service {
 					try {
 						String addres = bt.getAddress();
 						bt2 = DB.getBTD(addres);
-						results = bt2.toString();
+
 					} catch (Exception e) {
-						results = e.getMessage();
+
 						bt2 = null;
 					}
 				} else
@@ -375,7 +401,7 @@ public class service extends Service {
 							bt2 = null;
 
 					} catch (Exception e) {
-						results = e.getMessage();
+
 						bt2 = null;
 						Log.e(LOG_TAG, "Error" + e.toString());
 					}
@@ -452,6 +478,10 @@ public class service extends Service {
 		if (bt2.hasIntent())
 			runApp(bt2);
 
+		if (mTtsReady && bt2.isEnableTTS())
+			this.registerReceiver(SMScatcher, new IntentFilter(
+					"android.provider.Telephony.SMS_RECEIVED"));
+
 		String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
 		itent.setAction(Ireload);
@@ -504,8 +534,7 @@ public class service extends Service {
 				// if it is none of the devices in the database, exit here
 				if (bt2 == null || bt2.getMac() == null) {
 					disconnecting = false;
-				}
-				else 
+				} else
 					DoDisconnected(bt2);
 			}
 		}
@@ -543,6 +572,13 @@ public class service extends Service {
 					btdConn[k] = null;
 
 		getConnects();
+
+		if (mTtsReady && (bt2.isEnableTTS() || connects < 1))
+			try {
+				this.unregisterReceiver(SMScatcher);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 		final String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
@@ -841,4 +877,54 @@ public class service extends Service {
 			}
 		}
 	}
+
+	private final BroadcastReceiver SMScatcher = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (intent.getAction().equals(
+					"android.provider.Telephony.SMS_RECEIVED")) {
+				// if(message starts with SMStretcher recognize BYTE)
+				StringBuilder sb = new StringBuilder();
+
+				/*
+				 * The SMS-Messages are 'hiding' within the extras of the
+				 * Intent.
+				 */
+				Bundle bundle = intent.getExtras();
+				if (bundle != null) {
+					/* Get all messages contained in the Intent */
+					Object[] pdusObj = (Object[]) bundle.get("pdus");
+					SmsMessage[] messages = new SmsMessage[pdusObj.length];
+					for (int i = 0; i < pdusObj.length; i++) {
+						messages[i] = SmsMessage
+								.createFromPdu((byte[]) pdusObj[i]);
+					}
+					/* Feed the StringBuilder with all Messages found. */
+					for (SmsMessage currentMessage : messages) {
+						sb.append(".. Message From: ");
+						/* Sender-Number */
+						sb.append(currentMessage.getDisplayOriginatingAddress());
+						sb.append(".. ");
+						/* Actual Message-Content */
+						sb.append(currentMessage.getDisplayMessageBody());
+					}
+					// Toast.makeText(application, sb.toString(),
+					// Toast.LENGTH_LONG).show();
+					if (mTtsReady) {
+						try {
+							mTts.speak(sb.toString(), TextToSpeech.QUEUE_ADD,
+									null);
+						} catch (Exception e) {
+							Toast.makeText(application, "TTS Not ready",
+									Toast.LENGTH_LONG).show();
+							e.printStackTrace();
+						}
+					}
+				}
+
+			}
+		}
+	};
+
 }
