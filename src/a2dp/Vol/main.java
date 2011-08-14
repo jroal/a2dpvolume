@@ -40,8 +40,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
 
 public class main extends Activity {
@@ -231,7 +229,6 @@ public class main extends Activity {
 			// started and toggle button text
 
 			startService(new Intent(a2dp.Vol.main.this, service.class));
-
 			if (enableTTS) {
 				// Fire off an intent to check if a TTS engine is installed
 				Intent checkIntent = new Intent();
@@ -494,9 +491,14 @@ public class main extends Activity {
 	 */
 	@Override
 	protected void onDestroy() {
-		this.unregisterReceiver(sRunning);
-		this.unregisterReceiver(mReceiver5);
-		this.unregisterReceiver(mReceiver6);
+		try {
+			this.unregisterReceiver(sRunning);
+			this.unregisterReceiver(mReceiver5);
+			this.unregisterReceiver(mReceiver6);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.myDB.getDb().close();
 		super.onDestroy();
 	}
@@ -623,7 +625,8 @@ public class main extends Activity {
 			// add the headset plug false device if headset plug check is
 			// enabled
 			btDevice fbt = new btDevice();
-			fbt.setBluetoothDevice("Headset Plug", "Headset Plug", "3",
+			String str = getString(R.string.audioJackName);
+			fbt.setBluetoothDevice(str, str , "3",
 					am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 			btDevice fbt2 = myDB.getBTD(fbt.mac);
 			if (fbt2.mac == null) {
@@ -730,35 +733,25 @@ public class main extends Activity {
 						.show();
 			} else {
 				// missing data, install it
-				Intent installIntent = new Intent();
-				installIntent
-						.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-				startActivityForResult(installIntent, CHECK_TTS);
+				android.app.AlertDialog.Builder builder = new AlertDialog.Builder(
+						a2dp.Vol.main.this);
+				builder.setTitle(getString(R.string.app_name));
+				builder.setPositiveButton(R.string.Yes,
+						new OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Intent installIntent = new Intent();
+								installIntent
+										.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+								startActivityForResult(installIntent, CHECK_TTS);
+							}
+						});
+				builder.setNegativeButton(R.string.No, null);
+				builder.setMessage(R.string.needTTS);
+				builder.show();
+				
 			}
 		}
-	}
-
-	// This function handles the media volume adjustments.
-	/**
-	 * @param inputVol
-	 *            is the media volume to set to
-	 * @param sender
-	 *            is who called this function
-	 * @return
-	 */
-	private static int setVolume(int inputVol, Context sender) {
-		int outVol;
-		if (inputVol < 0)
-			inputVol = 0;
-		if (inputVol > am.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
-			inputVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
-		am.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, 0);
-		outVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-
-		// Toast.makeText(sender, "Stored Volume:" + OldVol + "  New Volume:" +
-		// outVol, Toast.LENGTH_LONG).show();
-		return outVol;
 	}
 
 	// this is called to update the list from the database
