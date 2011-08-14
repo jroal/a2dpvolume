@@ -46,9 +46,7 @@ import android.widget.Toast;
 
 public class main extends Activity {
 
-	public static Integer OldVol = 5;
 	static AudioManager am = (AudioManager) null;
-	static SeekBar VolSeek;
 	static Button serv;
 	boolean servrun = false;
 	ListView lvl = null; // listview used on main screen for showing devices
@@ -187,7 +185,6 @@ public class main extends Activity {
 		connects = 0;
 		am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		final Button btn = (Button) findViewById(R.id.Button01);
-		final SeekBar VolSeek = (SeekBar) findViewById(R.id.VolSeekBar);
 
 		final Button locbtn = (Button) findViewById(R.id.Locationbtn);
 		serv = (Button) findViewById(R.id.ServButton);
@@ -209,17 +206,17 @@ public class main extends Activity {
 		IntentFilter filter6 = new IntentFilter("a2dp.vol.preferences.UPDATED");
 		this.registerReceiver(mReceiver6, filter6);
 
-		VolSeek.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-
 		lstring = new String[] { "no data" };
 
 		this.myDB = new DeviceDB(application);
-		
+
 		// do this stuff if it is the first time through for this power cycle.
 		if (savedInstanceState == null) {
 			int devicemin = 1;
-			if(carMode)devicemin++;
-			if(homeDock)devicemin++;
+			if (carMode)
+				devicemin++;
+			if (homeDock)
+				devicemin++;
 			try {
 				if (myDB.getLength() < devicemin) {
 					getBtDevices();
@@ -228,29 +225,25 @@ public class main extends Activity {
 				Log.e(LOG_TAG, "error" + e1.getMessage());
 			}
 
-			
 			serv.setText(R.string.StartService);
 			// start the service if this is the first time through. The intent
 			// will report when the service has
 			// started and toggle button text
 
 			startService(new Intent(a2dp.Vol.main.this, service.class));
+
+			if (enableTTS) {
+				// Fire off an intent to check if a TTS engine is installed
+				Intent checkIntent = new Intent();
+				checkIntent
+						.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+				startActivityForResult(checkIntent, CHECK_TTS);
+			}
 		}
-		
-		if(enableTTS){
-			// Fire off an intent to check if a TTS engine is installed
-	        Intent checkIntent = new Intent();
-	        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-	        startActivityForResult(checkIntent, CHECK_TTS);
-		}
-		
-		this.ladapt = new ArrayAdapter<String>(application, resourceID,
-				lstring);
+
+		this.ladapt = new ArrayAdapter<String>(application, resourceID, lstring);
 		this.lvl = (ListView) findViewById(R.id.ListView01);
 		this.lvl.setAdapter(ladapt);
-
-		// set the seek bar position for media volume
-		VolSeek.setProgress(am.getStreamVolume(AudioManager.STREAM_MUSIC));
 
 		// find bonded devices and load into the database and listview
 		btn.setOnClickListener(new View.OnClickListener() {
@@ -387,28 +380,6 @@ public class main extends Activity {
 				});
 				builder.show();
 			}
-		});
-
-		// simple media volume adjusters. They also reset the default volume
-
-		VolSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
-				OldVol = setVolume(progress, a2dp.Vol.main.this);
-
-			}
-
-			public void onStartTrackingTouch(SeekBar seekBar) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public void onStopTrackingTouch(SeekBar seekBar) {
-				// TODO Auto-generated method stub
-
-			}
-
 		});
 
 		locbtn.setOnClickListener(new View.OnClickListener() {
@@ -649,7 +620,8 @@ public class main extends Activity {
 			refreshList(loadFromDB()); // make sure it is relisted
 		}
 		if (headsetPlug) {
-			// add the headset plug false device if headset plug check is enabled
+			// add the headset plug false device if headset plug check is
+			// enabled
 			btDevice fbt = new btDevice();
 			fbt.setBluetoothDevice("Headset Plug", "Headset Plug", "3",
 					am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
@@ -663,7 +635,7 @@ public class main extends Activity {
 
 			refreshList(loadFromDB()); // make sure it is relisted
 		}
-		
+
 		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 
 		if (mBTA == null) {
@@ -751,10 +723,11 @@ public class main extends Activity {
 		if (requestCode == CHECK_TTS) {
 			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 				// success, create the TTS instance
-				if(servrun)
+				if (servrun)
 					service.mTtsReady = true;
 				// mTts.setLanguage(Locale.US);
-				Toast.makeText(application, "TTS Ready", Toast.LENGTH_SHORT).show();
+				Toast.makeText(application, "TTS Ready", Toast.LENGTH_SHORT)
+						.show();
 			} else {
 				// missing data, install it
 				Intent installIntent = new Intent();
@@ -764,7 +737,6 @@ public class main extends Activity {
 			}
 		}
 	}
-	
 
 	// This function handles the media volume adjustments.
 	/**
@@ -856,7 +828,7 @@ public class main extends Activity {
 			boolean carModeOld = carMode;
 			boolean homeDockOld = homeDock;
 			boolean headsetPlugOld = headsetPlug;
-			
+
 			try {
 				carMode = preferences.getBoolean("car_mode", true);
 				homeDock = preferences.getBoolean("home_dock", true);
@@ -879,15 +851,18 @@ public class main extends Activity {
 				e2.printStackTrace();
 				Log.e(LOG_TAG, "error" + e2.getMessage());
 			}
-			// if we added a special device make sure to insert it in the database
-			if((!carModeOld && carMode) || (!homeDockOld && homeDock) || (!headsetPlugOld && headsetPlug))
+			// if we added a special device make sure to insert it in the
+			// database
+			if ((!carModeOld && carMode) || (!homeDockOld && homeDock)
+					|| (!headsetPlugOld && headsetPlug))
 				getBtDevices();
-			
-			if(enableTTS){
+
+			if (enableTTS) {
 				// Fire off an intent to check if a TTS engine is installed
-		        Intent checkIntent = new Intent();
-		        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-		        startActivityForResult(checkIntent, CHECK_TTS);
+				Intent checkIntent = new Intent();
+				checkIntent
+						.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+				startActivityForResult(checkIntent, CHECK_TTS);
 			}
 		}
 	};
