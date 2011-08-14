@@ -266,9 +266,9 @@ public class service extends Service {
 			this.unregisterReceiver(mReceiver);
 			this.unregisterReceiver(mReceiver2);
 			this.unregisterReceiver(btOFFReciever);
-			this.unregisterReceiver(headSetReceiver);
+			if(headsetPlug)this.unregisterReceiver(headSetReceiver);
 			// this.unregisterReceiver(SMScatcher);
-			mTts.shutdown();
+			if(mTtsReady)mTts.shutdown();
 			DB.getDb().close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -611,12 +611,6 @@ public class service extends Service {
 			OldVol2 = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 		} else {
 			OldVol2 = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		}
-		try {
-			main.OldVol = OldVol2;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
