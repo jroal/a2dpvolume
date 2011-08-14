@@ -896,7 +896,8 @@ public class service extends Service {
 					}
 					/* Feed the StringBuilder with all Messages found. */
 					for (SmsMessage currentMessage : messages) {
-						sb.append(".. Message From: ");
+						// periods are to pause
+						sb.append("... Message From: ");
 						/* Sender-Number */
 						sb.append(currentMessage.getDisplayOriginatingAddress());
 						sb.append(".. ");
