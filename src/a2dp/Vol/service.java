@@ -3,6 +3,7 @@ package a2dp.Vol;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -65,6 +66,7 @@ public class service extends Service {
 	private boolean homeDock = false;
 	private boolean headsetPlug = false;
 	private boolean enableTTS = false;
+	HashMap<String, String> myHash;
 	private boolean toasts = true;
 	private boolean notify = false;
 	private Notification not = null;
@@ -195,19 +197,33 @@ public class service extends Service {
 		 */
 		// end test file maker
 		if (enableTTS) {
-			mTts = new TextToSpeech(application, listenerStarted);
+			myHash = new HashMap<String, String>();
+			/*myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+					String.valueOf(AudioManager.STREAM_VOICE_CALL));*/
+			myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,
+					"A2DP_Vol");
+			mTts = new TextToSpeech(application, listenerStarted);	
 		}
 	}
 
-	TextToSpeech.OnInitListener listenerStarted = new TextToSpeech.OnInitListener() {
+	public TextToSpeech.OnInitListener listenerStarted = new TextToSpeech.OnInitListener() {
 
 		public void onInit(int status) {
 			if (status == TextToSpeech.SUCCESS) {
 				mTtsReady = true;
+				mTts.setOnUtteranceCompletedListener(utteranceDone);
 			}
-
 		}
 	};
+	public TextToSpeech.OnUtteranceCompletedListener utteranceDone = new TextToSpeech.OnUtteranceCompletedListener() {
+		public void onUtteranceCompleted(String uttId) {
+			if ("A2DP_Vol".equalsIgnoreCase(uttId)) {
+				// unmute the stream
+				//am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
+			}
+		}
+	};
+	
 
 	private void registerRecievers() {
 		// create intent filter for a bluetooth stream connection
@@ -255,6 +271,7 @@ public class service extends Service {
 		}
 	}
 
+
 	@Override
 	public void onDestroy() {
 		// let the GUI know we closed
@@ -266,9 +283,11 @@ public class service extends Service {
 			this.unregisterReceiver(mReceiver);
 			this.unregisterReceiver(mReceiver2);
 			this.unregisterReceiver(btOFFReciever);
-			if(headsetPlug)this.unregisterReceiver(headSetReceiver);
+			if (headsetPlug)
+				this.unregisterReceiver(headSetReceiver);
 			// this.unregisterReceiver(SMScatcher);
-			if(mTtsReady)mTts.shutdown();
+			if (mTtsReady)
+				mTts.shutdown();
 			DB.getDb().close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -478,10 +497,11 @@ public class service extends Service {
 		if (bt2.hasIntent())
 			runApp(bt2);
 
-		if (mTtsReady && bt2.isEnableTTS())
+		if (mTtsReady && bt2.isEnableTTS()) {
 			this.registerReceiver(SMScatcher, new IntentFilter(
 					"android.provider.Telephony.SMS_RECEIVED"));
-
+			am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
+		}
 		String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
 		itent.setAction(Ireload);
@@ -573,13 +593,14 @@ public class service extends Service {
 
 		getConnects();
 
-		if (mTtsReady && (bt2.isEnableTTS() || connects < 1))
+		if (mTtsReady && (bt2.isEnableTTS() || connects < 1)) {
 			try {
 				this.unregisterReceiver(SMScatcher);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
+			am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
+		}
 		final String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
 		itent.setAction(Ireload);
@@ -907,9 +928,10 @@ public class service extends Service {
 					// Toast.makeText(application, sb.toString(),
 					// Toast.LENGTH_LONG).show();
 					if (mTtsReady) {
+						//am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
 						try {
 							mTts.speak(sb.toString(), TextToSpeech.QUEUE_ADD,
-									null);
+									myHash);
 						} catch (Exception e) {
 							Toast.makeText(application, "TTS Not ready",
 									Toast.LENGTH_LONG).show();
@@ -920,6 +942,8 @@ public class service extends Service {
 
 			}
 		}
+
 	};
 
+	
 }
