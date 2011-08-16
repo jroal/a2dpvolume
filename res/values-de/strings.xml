@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">A2DP Volume</string>
+    <string-array name="gpsDistance">
+        <item>2 m</item>
+        <item>5 m</item>
+        <item>10 m</item>
+        <item>15 m</item>
+        <item>20 m</item>
+        <item>30 m</item>
+    </string-array>
+    <string-array name="gpsTimeout">
+        <item>GPS-Listener deaktivieren</item>
+        <item>5 Sekunden</item>
+        <item>10 Sekunden</item>
+        <item>15 Sekunden</item>
+        <item>20 Sekunden</item>
+        <item>30 Sekunden</item>
+        <item>45 Sekunden</item>
+    </string-array>
+    <string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>45000</item>
+    </string-array>
+    <string-array name="gpsDistance_items">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string name="ListName">Bluetooth Geräte</string>
+    <string name="GetLocButtonString">Gesp. Position</string>
+    <string name="CapLocationButton">Position aufzeichnen</string>
+    <string name="StartService">Dienst starten</string>
+    <string name="StopService">Dienst beenden</string>
+    <string name="FindDevices">Geräte suchen</string>
+    <string name="MediaVolume">Medien-Lautstärke</string>
+    <string name="ServiceStarted">A2DP-Volume-Dienst gestartet</string>
+    <string name="ServiceStopped">A2DP-Volume-Dienst beendet</string>
+    <string name="ExportDB">Exportiere Daten auf SD-Karte</string>
+    <string name="ExportXML">Exportiere Daten als XML auf SD-Karte</string>
+    <string name="ImportDB">Importiere Daten von SD-Karte</string>
+    <string name="ExportLocation">Exportiere letzte Positionsdaten</string>
+    <string name="PrefsNotifySummaryON">Der Dienst wird als Vordergrundjob mit Symbol in der Benachrichtigungsleiste gestartet.</string>
+    <string name="PrefsNotifySummaryOFF">Der Dienst wird als Hintergrundjob ohne Symbol in der Benachrichtigungsleiste gestartet.</string>
+    <string name="PrefsNotify">Benachrichtigung im Vordergrund?</string>
+    <string name="PrefsGPSTimeoutTitle">GPS-Listener Timeout</string>
+    <string name="PrefsGPSTimeout">Gibt die maximale Zeit an, in der der GPS-Listener versucht, die Positionsbestimmung nach einer Bluetooth-Verbindungstrennung zu verbessern.</string>
+    <string name="PrefsGPSInaccuracyTitle">Maximale GPS-Ungenauigkeit</string>
+    <string name="PrefsGPSInaccuracy">Gibt die maximale GPS-Ungenauigkeit an, an der der GPS-Listener aufhört zu versuchen, die Positionsbestimmung zu verbessern.</string>
+    <string name="PrefsCarModeON">Reagiere auf Automodus.</string>
+    <string name="PrefsCarModeOFF">Reagiere nicht auf Automodus.</string>
+    <string name="PrefsCarMode">Reaktion auf Automodus?</string>
+    <string name="PrefsCatGPS">Einstellungen der GPS-Positionsbestimmung</string>
+    <string name="PrefsCatGen">Allgemeine Einstellungen</string>
+    <string name="PrefsBootstart">Nach dem Hochfahren starten?</string>
+    <string name="PrefsBootstartON">Der Dienst wird nach dem Hochfahren des Telefons gestartet.</string>
+    <string name="PrefsBootstartOFF">Der Dienst wird nicht nach dem Hochfahren des Telefons gestartet.</string>
+    <string name="PrefsToasts">Zeige Popups?</string>
+    <string name="PrefsToastsON">Es werden Nachrichten beim Starten und Stoppen des Dienstes angezeigt.</string>
+    <string name="PrefsToastsOFF">Es werden keine Nachrichten beim Starten und Stoppen des Dienstes angezeigt.</string>
+    <string name="PrefsToastsSummary">Nachrichten beim Starten und Stoppen des Dienstes anzeigen?</string>
+    <string name="MenuExit">Beenden</string>
+    <string name="MenumanageData">Daten verwalten</string>
+    <string name="MenuDeleteData">Alle Daten löschen</string>
+    <string name="MenuPrefs">Einstellungen</string>
+    <string name="MenuHelp">Hilfe</string>
+    <string name="DeleteDataMsg">Wollen Sie wirklich alle Gerätedaten von A2DP Volume löschen?</string>
+    <string name="Yes">Ja</string>
+    <string name="No">Nein</string>
+    <string name="OK">OK</string>
+    <string name="Delete">Löschen</string>
+    <string name="Edit">Editieren</string>
+    <string name="NoData">Keine Daten</string>
+    <string name="ServRunning">A2DP-Volume-Dienst läuft</string>
+    <string name="ImportCompletedText">Import erfolgreich</string>
+    <string name="NobtSupport">Das Telefon unterstützt kein Bluetooth.</string>
+    <string name="btEnableFail">Konnte Bluetooth nicht aktivieren.</string>
+    <string name="usePassiveOff">Keine passiven Positionsdaten abfragen</string>
+    <string name="usePassiveOn">Passive Positionsdaten abfragen</string>
+    <string name="usePassiveTitle">Benutze passive Positionsdaten?</string>
+    <string name="useNetworkTitle">Benutze Netzwerk-Positionsdaten?</string>
+    <string name="useNetworkON">Benutze auch vom Netzwerk (WLAN, GSM) bereitgestellte Positionsdaten</string>
+    <string name="useNetworkOFF">Benutze keine vom Netzwerk (WLAN, GSM) bereitgestellten Positionsdaten</string>
+    <string name="LocationString">Lokalisierung</string>
+    <string name="btNotOn">Keine Geräteinformationen vorhanden</string>
+    <string name="app_not_found">Anwendung nicht gefunden</string>
+    <string name="deviceName">Geben Sie einen Namen für dieses Gerät ein</string>
+    <string name="getLoc">Positionsbestimmung bei Verbindungstrennung?</string>
+    <string name="setVol">Setze Lautstärke bei Verbindung?</string>
+    <string name="connectBT">Verbinde außerdem mit Bluetooth Gerät</string>
+    <string name="startApp">Starte App bei Verbindung</string>
+    <string name="wifiDisconnect">Deaktiviere WIFI bei Verbindung?</string>
+    <string name="save">Speichern</string>
+    <string name="PrefsUseLocatStorageON">Benutze Telefonspeicher</string>
+    <string name="PrefsUseLocalStorageOFF">Benutze SD-Karte</string>
+    <string name="PrefsUseLocalStorage">Speicherort</string>
+    <string name="PrefsHomeDockOFF">Reagiere nicht auf Home Dock.</string>
+    <string name="PrefsHomeDock">Reaktion auf Home Dock?</string>
+    <string name="PrefsHomeDockON">Reagiere auf Home Dock.</string>
+    <string name="ea_ti_app">Zu startende Anwendung</string>
+    <string name="ae_stop_app_warning_title">Um welche Anwendung handelt es sich?</string>
+    <string name="ae_stop_app_warning_message">Intents ohne Paketnamen können durch A2DP Volume nicht beendet werden</string>
+    <string name="connectedTo">Verbunden mit</string>
+    <string name="PrefsCatOther">Andere Einstellungen</string>
+    <string name="PrefsOtherConnectedIcon">Icon bei Verbindung</string>
+    <string-array name="PrefsOtherIcons">
+        <item>Auto</item>
+        <item>Kopfhörer</item>
+    </string-array>
+    <string-array name="PrefsOtherIcons_items">
+        <item>Car</item>
+        <item>Headset</item>
+    </string-array>
+    <string name="app_restart">Erzwinge Neustart der App?</string>
+    <string name="PrefsHeadsetON">Reagiere auf Kopfhörerbuchse.</string>
+    <string name="PrefsHeadset">Reaktion auf Kopfhörerbuchse?</string>
+    <string name="PrefsHeadsetOFF">Reagiere nicht auf Kopfhörerbuchse.</string>
+    <string name="PrefsTTSON">SMS können vorgelesen werden, wenn Gerät verbunden.</string>
+    <string name="PrefsTTS">Lese SMS vor?</string>
+    <string name="PrefsTTSOFF">SMS werden nicht vorgelesen.</string>
+    <string name="audioJackName">Kopfhörerbuchse</string>
+    <string name="needTTS">Text-in-Sprache-Daten sind nicht vorhanden. Jetzt installieren?</string>
+    <string name="msgFrom">Nachricht von</string>
+    <string name="TTSready">Text-in-Sprache bereit</string>
+    <string name="TTSNotReady">Text-in-Sprache nicht bereit</string>
+    <string name="carDockName">Automodus</string>
+    <string name="homeDockName">Home Dock</string>
+</resources>

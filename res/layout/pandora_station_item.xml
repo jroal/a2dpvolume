@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_height="wrap_content" android:orientation="vertical" android:layout_width="fill_parent" android:padding="20dip">
+<TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/psi_tv_station_name" android:textColor="#FFF" android:textSize="20dip"></TextView>
+</LinearLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:id="@+id/prefs" android:menuCategory="container" android:orderInCategory="1" android:title="@string/MenuPrefs"></item>
+<item android:enabled="true" android:checked="true" android:checkable="true" android:menuCategory="container" android:orderInCategory="2" android:visible="true" android:id="@+id/DelData" android:title="@string/MenuDeleteData"></item>
+
+<item android:enabled="true" android:orderInCategory="4" android:menuCategory="container" android:visible="true" android:id="@+id/Manage_data" android:title="@string/MenumanageData"></item>
+<item android:orderInCategory="4" android:menuCategory="container" android:enabled="true" android:visible="true" android:id="@+id/Exit" android:title="@string/MenuExit"></item>
+
+
+<item android:enabled="true" android:visible="true" android:menuCategory="container" android:id="@+id/help" android:orderInCategory="5" android:title="@string/MenuHelp"></item>
+</menu>
