@@ -594,7 +594,8 @@ public class main extends Activity {
 		if (carMode) {
 			// add the car dock false device if car mode check is enabled
 			btDevice fbt = new btDevice();
-			fbt.setBluetoothDevice("Car Dock", "Car Dock", "1",
+			String str = getString(R.string.carDockName);
+			fbt.setBluetoothDevice(str, str, "1",
 					am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 			btDevice fbt2 = myDB.getBTD(fbt.mac);
 			if (fbt2.mac == null) {
@@ -609,7 +610,8 @@ public class main extends Activity {
 		if (homeDock) {
 			// add the home dock false device if car mode check is enabled
 			btDevice fbt = new btDevice();
-			fbt.setBluetoothDevice("Home Dock", "Home Dock", "2",
+			String str = getString(R.string.homeDockName);
+			fbt.setBluetoothDevice(str, str, "2",
 					am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 			btDevice fbt2 = myDB.getBTD(fbt.mac);
 			if (fbt2.mac == null) {
@@ -729,7 +731,7 @@ public class main extends Activity {
 				if (servrun)
 					service.mTtsReady = true;
 				// mTts.setLanguage(Locale.US);
-				Toast.makeText(application, "TTS Ready", Toast.LENGTH_SHORT)
+				Toast.makeText(application, R.string.TTSready, Toast.LENGTH_SHORT)
 						.show();
 			} else {
 				// missing data, install it

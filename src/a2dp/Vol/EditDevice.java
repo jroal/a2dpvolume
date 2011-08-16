@@ -60,8 +60,6 @@ public class EditDevice extends Activity {
 	private String appdata;
 	private String apptype;
 	private boolean apprestart;
-	private boolean enableTTS;
-	
 
 	private static final int DIALOG_PICK_APP_TYPE = 3;
 	private static final int DIALOG_WARN_STOP_APP = 5;
