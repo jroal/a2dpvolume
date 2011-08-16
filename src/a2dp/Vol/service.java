@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.text.MessageFormat;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -904,7 +905,6 @@ public class service extends Service {
 			if (intent.getAction().equals(
 					"android.provider.Telephony.SMS_RECEIVED")) {
 				// if(message starts with SMStretcher recognize BYTE)
-				StringBuilder sb = new StringBuilder();
 
 				/*
 				 * The SMS-Messages are 'hiding' within the extras of the
@@ -919,23 +919,18 @@ public class service extends Service {
 						messages[i] = SmsMessage
 								.createFromPdu((byte[]) pdusObj[i]);
 					}
-					/* Feed the StringBuilder with all Messages found. */
+					/* Feed StringBuilder with all Messages found. */
+					final StringBuilder sb = new StringBuilder();
 					for (SmsMessage currentMessage : messages) {
-						// periods are to pause to help get past notifications and connect delays
-						sb.append("... ");
-						sb.append(getString(R.string.msgFrom));
-						sb.append(": ");
-						/* Sender-Number */
-						sb.append(currentMessage.getDisplayOriginatingAddress());
-						sb.append(" .. ");
-						/* Actual Message-Content */
-						sb.append(currentMessage.getDisplayMessageBody());
+						sb.append(MessageFormat.format(getString(R.string.msgTemplate),
+							currentMessage.getDisplayOriginatingAddress(),
+							currentMessage.getDisplayMessageBody()
+						)).append(' ');
 					}
-					// Toast.makeText(application, sb.toString(),
-					// Toast.LENGTH_LONG).show();
+					final String str = sb.toString().trim();
+					// Toast.makeText(application, str, Toast.LENGTH_LONG).show();
 					if (mTtsReady) {
 						//am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
-						final String str = sb.toString();
 						new CountDownTimer(10000, 5000){
 
 							@Override
