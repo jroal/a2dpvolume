@@ -128,7 +128,7 @@
     <string name="PrefsTTSOFF">Text messages will not be read</string>
     <string name="audioJackName">Audio Jack</string>
     <string name="needTTS">TTS data missing.  Install it now?</string>
-    <string name="msgFrom">Message From</string>
+    <string name="msgTemplate">... Message From: {0} .. {1}</string>
     <string name="TTSready">TTS Ready</string>
     <string name="TTSNotReady">TTS Not ready</string>
     <string name="carDockName">Car Dock</string>
