@@ -28,6 +28,7 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -143,9 +144,8 @@ public class service extends Service {
 
 		registerRecievers();
 
-		// capture original volume
+		// create audio manager instance
 		am2 = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
 		// open database instance
 		this.DB = new DeviceDB(application);
 
@@ -219,7 +219,11 @@ public class service extends Service {
 		public void onUtteranceCompleted(String uttId) {
 			if ("A2DP_Vol".equalsIgnoreCase(uttId)) {
 				// unmute the stream
-				//am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
+				am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
+					    AudioManager.AUDIOFOCUS_LOSS);
+				am2.abandonAudioFocus(changed);
+				//am2.setStreamSolo(AudioManager.STREAM_VOICE_CALL, false);
+				//am2.setSpeakerphoneOn(false);
 			}
 		}
 	};
@@ -500,7 +504,7 @@ public class service extends Service {
 		if (mTtsReady && bt2.isEnableTTS()) {
 			this.registerReceiver(SMScatcher, new IntentFilter(
 					"android.provider.Telephony.SMS_RECEIVED"));
-			am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
+			//am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
 		}
 		String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
@@ -599,7 +603,7 @@ public class service extends Service {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
+			//am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
 		}
 		final String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
@@ -917,11 +921,13 @@ public class service extends Service {
 					}
 					/* Feed the StringBuilder with all Messages found. */
 					for (SmsMessage currentMessage : messages) {
-						// periods are to pause
-						sb.append("... Message From: ");
+						// periods are to pause to help get past notifications and connect delays
+						sb.append("... ");
+						sb.append(getString(R.string.msgFrom));
+						sb.append(": ");
 						/* Sender-Number */
 						sb.append(currentMessage.getDisplayOriginatingAddress());
-						sb.append(".. ");
+						sb.append(" .. ");
 						/* Actual Message-Content */
 						sb.append(currentMessage.getDisplayMessageBody());
 					}
@@ -929,14 +935,33 @@ public class service extends Service {
 					// Toast.LENGTH_LONG).show();
 					if (mTtsReady) {
 						//am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
-						try {
-							mTts.speak(sb.toString(), TextToSpeech.QUEUE_ADD,
-									myHash);
-						} catch (Exception e) {
-							Toast.makeText(application, "TTS Not ready",
-									Toast.LENGTH_LONG).show();
-							e.printStackTrace();
-						}
+						final String str = sb.toString();
+						new CountDownTimer(10000, 5000){
+
+							@Override
+							public void onFinish() {
+								try {
+									am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
+										    AudioManager.AUDIOFOCUS_GAIN);
+									mTts.speak(str, TextToSpeech.QUEUE_ADD,
+											myHash);
+								} catch (Exception e) {
+									Toast.makeText(application, R.string.TTSNotReady,
+											Toast.LENGTH_LONG).show();
+									e.printStackTrace();
+								}
+								
+							}
+
+							@Override
+							public void onTick(long arg0) {
+								//am2.setStreamSolo(AudioManager.STREAM_VOICE_CALL, true);
+								//am2.setSpeakerphoneOn(true);
+								
+							}
+							
+						}.start();
+						
 					}
 				}
 
@@ -944,6 +969,15 @@ public class service extends Service {
 		}
 
 	};
-
+	
+	AudioManager.OnAudioFocusChangeListener changed = new AudioManager.OnAudioFocusChangeListener() {
+		
+		public void onAudioFocusChange(int focusChange) {
+			if (focusChange != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+			    // could not get audio focus.
+			}
+			
+		}
+	};
 	
 }
