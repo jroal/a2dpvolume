@@ -128,7 +128,7 @@
     <string name="PrefsTTSOFF">SMS werden nicht vorgelesen.</string>
     <string name="audioJackName">Kopfhörerbuchse</string>
     <string name="needTTS">Text-in-Sprache-Daten sind nicht vorhanden. Jetzt installieren?</string>
-    <string name="msgTemplate">... Nachricht von: {0} .. {1}</string>
+    <string name="msgFrom">Nachricht von</string>
     <string name="TTSready">Text-in-Sprache bereit</string>
     <string name="TTSNotReady">Text-in-Sprache nicht bereit</string>
     <string name="carDockName">Automodus</string>
