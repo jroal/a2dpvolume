@@ -120,7 +120,17 @@
         <item>Headset</item>
     </string-array>
     <string name="app_restart">Erzwinge Neustart der App?</string>
-    <string name="PrefsHeadsetON">Reagiere auf Kopfhörer</string>
-    <string name="PrefsHeadset">Reaktion auf Kopfhörer?</string>
-    <string name="PrefsHeadsetOFF">Reagiere nicht auf Kopfhörer</string>
+    <string name="PrefsHeadsetON">Reagiere auf Kopfhörerbuchse.</string>
+    <string name="PrefsHeadset">Reaktion auf Kopfhörerbuchse?</string>
+    <string name="PrefsHeadsetOFF">Reagiere nicht auf Kopfhörerbuchse.</string>
+    <string name="PrefsTTSON">SMS können vorgelesen werden, wenn Gerät verbunden.</string>
+    <string name="PrefsTTS">Lese SMS vor?</string>
+    <string name="PrefsTTSOFF">SMS werden nicht vorgelesen.</string>
+    <string name="audioJackName">Kopfhörerbuchse</string>
+    <string name="needTTS">Text-in-Sprache-Daten sind nicht vorhanden. Jetzt installieren?</string>
+    <string name="msgFrom">Nachricht von</string>
+    <string name="TTSready">Text-in-Sprache bereit</string>
+    <string name="TTSNotReady">Text-in-Sprache nicht bereit</string>
+    <string name="carDockName">Automodus</string>
+    <string name="homeDockName">Home Dock</string>
 </resources>
