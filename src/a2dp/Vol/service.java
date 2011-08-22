@@ -55,7 +55,7 @@ public class service extends Service {
 	private TextToSpeech mTts;
 	public static boolean mTtsReady = false;
 	static AudioManager am2 = (AudioManager) null;
-	Integer OldVol2 = 5;
+	private static Integer OldVol2 = 5;
 	public static Integer connects = 0;
 	public static boolean run = false;
 
@@ -80,6 +80,7 @@ public class service extends Service {
 	boolean local;
 	private static final String LOG_TAG = "A2DP_Volume";
 	private static final String MY_UUID_STRING = "af87c0d0-faac-11de-a839-0800200c9a66";
+	private static final String OLD_VOLUME = "old_vol";
 	private PackageManager mPackageManager;
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
@@ -134,6 +135,7 @@ public class service extends Service {
 			else
 				connectedIcon = R.drawable.car2;
 
+			OldVol2 = preferences.getInt(OLD_VOLUME, 10);
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
 			MAX_TIME = 15000;
@@ -199,11 +201,12 @@ public class service extends Service {
 		// end test file maker
 		if (enableTTS) {
 			myHash = new HashMap<String, String>();
-			/*myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-					String.valueOf(AudioManager.STREAM_VOICE_CALL));*/
-			myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,
-					"A2DP_Vol");
-			mTts = new TextToSpeech(application, listenerStarted);	
+			/*
+			 * myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+			 * String.valueOf(AudioManager.STREAM_VOICE_CALL));
+			 */
+			myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "A2DP_Vol");
+			mTts = new TextToSpeech(application, listenerStarted);
 		}
 	}
 
@@ -221,14 +224,13 @@ public class service extends Service {
 			if ("A2DP_Vol".equalsIgnoreCase(uttId)) {
 				// unmute the stream
 				am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
-					    AudioManager.AUDIOFOCUS_LOSS);
+						AudioManager.AUDIOFOCUS_LOSS);
 				am2.abandonAudioFocus(changed);
-				//am2.setStreamSolo(AudioManager.STREAM_VOICE_CALL, false);
-				//am2.setSpeakerphoneOn(false);
+				// am2.setStreamSolo(AudioManager.STREAM_VOICE_CALL, false);
+				// am2.setSpeakerphoneOn(false);
 			}
 		}
 	};
-	
 
 	private void registerRecievers() {
 		// create intent filter for a bluetooth stream connection
@@ -275,7 +277,6 @@ public class service extends Service {
 			this.registerReceiver(headSetReceiver, filter7);
 		}
 	}
-
 
 	@Override
 	public void onDestroy() {
@@ -505,7 +506,7 @@ public class service extends Service {
 		if (mTtsReady && bt2.isEnableTTS()) {
 			this.registerReceiver(SMScatcher, new IntentFilter(
 					"android.provider.Telephony.SMS_RECEIVED"));
-			//am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
+			// am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
 		}
 		String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
@@ -604,7 +605,7 @@ public class service extends Service {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			//am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
+			// am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
 		}
 		final String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
@@ -617,17 +618,13 @@ public class service extends Service {
 
 	// makes the volume adjustment
 	public static int setVolume(int inputVol, Context sender) {
-		int outVol, curvol;
+		int outVol;
 		if (inputVol < 0)
 			inputVol = 0;
 		if (inputVol > am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
 			inputVol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		curvol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
-		am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, 0);
+		am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, AudioManager.FLAG_SHOW_UI);
 		outVol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
-		Toast.makeText(sender,
-				"Old Volume:" + curvol + "  New Volume:" + outVol,
-				Toast.LENGTH_LONG).show();
 		return outVol;
 	}
 
@@ -638,6 +635,11 @@ public class service extends Service {
 		} else {
 			OldVol2 = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		}
+		// Store the old volume in preferences so it can be extracted if another
+		// instance starts or the service is killed and restarted
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(OLD_VOLUME, OldVol2);
+		editor.commit();
 	}
 
 	private void updateNot(boolean connect, String car) {
@@ -922,41 +924,50 @@ public class service extends Service {
 					/* Feed StringBuilder with all Messages found. */
 					final StringBuilder sb = new StringBuilder();
 					for (SmsMessage currentMessage : messages) {
-						sb.append(MessageFormat.format(getString(R.string.msgTemplate),
-							currentMessage.getDisplayOriginatingAddress(),
-							currentMessage.getDisplayMessageBody()
-						)).append(' ');
+						sb.append(
+								MessageFormat
+										.format(getString(R.string.msgTemplate),
+												currentMessage
+														.getDisplayOriginatingAddress(),
+												currentMessage
+														.getDisplayMessageBody()))
+								.append(' ');
 					}
 					final String str = sb.toString().trim();
-					// Toast.makeText(application, str, Toast.LENGTH_LONG).show();
+					// Toast.makeText(application, str,
+					// Toast.LENGTH_LONG).show();
 					if (mTtsReady) {
-						//am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
-						new CountDownTimer(10000, 5000){
+						// am2.setStreamMute(AudioManager.STREAM_NOTIFICATION,
+						// true);
+						new CountDownTimer(10000, 5000) {
 
 							@Override
 							public void onFinish() {
 								try {
-									am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
-										    AudioManager.AUDIOFOCUS_GAIN);
+									am2.requestAudioFocus(changed,
+											AudioManager.STREAM_MUSIC,
+											AudioManager.AUDIOFOCUS_GAIN);
 									mTts.speak(str, TextToSpeech.QUEUE_ADD,
 											myHash);
 								} catch (Exception e) {
-									Toast.makeText(application, R.string.TTSNotReady,
+									Toast.makeText(application,
+											R.string.TTSNotReady,
 											Toast.LENGTH_LONG).show();
 									e.printStackTrace();
 								}
-								
+
 							}
 
 							@Override
 							public void onTick(long arg0) {
-								//am2.setStreamSolo(AudioManager.STREAM_VOICE_CALL, true);
-								//am2.setSpeakerphoneOn(true);
-								
+								// am2.setStreamSolo(AudioManager.STREAM_VOICE_CALL,
+								// true);
+								// am2.setSpeakerphoneOn(true);
+
 							}
-							
+
 						}.start();
-						
+
 					}
 				}
 
@@ -964,15 +975,15 @@ public class service extends Service {
 		}
 
 	};
-	
+
 	AudioManager.OnAudioFocusChangeListener changed = new AudioManager.OnAudioFocusChangeListener() {
-		
+
 		public void onAudioFocusChange(int focusChange) {
 			if (focusChange != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-			    // could not get audio focus.
+				// could not get audio focus.
 			}
-			
+
 		}
 	};
-	
+
 }
