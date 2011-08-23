@@ -27,6 +27,47 @@ public class btDevice {
 	public String appdata; // app data string
 	public String apptype; // app type string
 	public boolean apprestart; // app restart flag
+	public boolean setpv; // whether to adjust phone volume or not
+	public int phonev; // what to adjust phone volume to
+
+	/**
+	 * @return the setpv
+	 */
+	public boolean isSetpv() {
+		return setpv;
+	}
+	public long islSetpv() {
+		if (isSetpv())
+			return 1;
+		else
+			return 0;
+	}
+	/**
+	 * @param setpv the setpv to set
+	 */
+	public void setSetpv(boolean setpv) {
+		this.setpv = setpv;
+	}
+
+	public void setSetpv(int sV) {
+		if (sV > 0)
+			this.setpv = true;
+		else
+			this.setpv = false;
+	}
+	/**
+	 * @return the phonev
+	 */
+	public int getPhonev() {
+		return phonev;
+	}
+
+	/**
+	 * @param phonev the phonev to set
+	 */
+	public void setPhonev(int phonev) {
+		this.phonev = phonev;
+	}
 
 	/**
 	 * @return the pname
@@ -369,6 +410,8 @@ public class btDevice {
 		this.apptype = "";
 		this.apprestart = false;
 		this.enableTTS = false;
+		this.phonev = 10;
+		this.setpv = false;
 	}
 
 	/**
@@ -398,6 +441,8 @@ public class btDevice {
 		this.apptype = "";
 		this.apprestart = false;
 		this.enableTTS = false;
+		this.phonev = 10;
+		this.setpv = false;
 	}
 
 	public boolean hasIntent() {

@@ -111,10 +111,6 @@
     <string name="connectedTo">Verbunden mit</string>
     <string name="PrefsCatOther">Andere Einstellungen</string>
     <string name="PrefsOtherConnectedIcon">Icon bei Verbindung</string>
-    <string-array name="PrefsOtherIcons">
-        <item>Auto</item>
-        <item>Kopfhörer</item>
-    </string-array>
     <string-array name="PrefsOtherIcons_items">
         <item>Car</item>
         <item>Headset</item>
@@ -133,4 +129,8 @@
     <string name="TTSNotReady">Text-in-Sprache nicht bereit</string>
     <string name="carDockName">Automodus</string>
     <string name="homeDockName">Home Dock</string>
+    <string-array name="PrefsOtherIcons">
+        <item>Auto</item>
+        <item>Kopfhörer</item>
+    </string-array>
 </resources>

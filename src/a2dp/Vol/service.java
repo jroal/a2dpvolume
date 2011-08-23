@@ -55,6 +55,7 @@ public class service extends Service {
 	private TextToSpeech mTts;
 	public static boolean mTtsReady = false;
 	static AudioManager am2 = (AudioManager) null;
+	private static Integer OldVol = 5;
 	private static Integer OldVol2 = 5;
 	public static Integer connects = 0;
 	public static boolean run = false;
@@ -81,6 +82,7 @@ public class service extends Service {
 	private static final String LOG_TAG = "A2DP_Volume";
 	private static final String MY_UUID_STRING = "af87c0d0-faac-11de-a839-0800200c9a66";
 	private static final String OLD_VOLUME = "old_vol";
+	private static final String OLD_PH_VOL = "old_phone_vol";
 	private PackageManager mPackageManager;
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
@@ -136,6 +138,7 @@ public class service extends Service {
 				connectedIcon = R.drawable.car2;
 
 			OldVol2 = preferences.getInt(OLD_VOLUME, 10);
+			OldVol = preferences.getInt(OLD_PH_VOL, 5);
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
 			MAX_TIME = 15000;
@@ -464,8 +467,10 @@ public class service extends Service {
 			} while (!done);
 		}
 		getConnects();
-		if (connects <= 1)
+		if (connects <= 1) {
 			getOldvol();
+			getOldPvol();
+		}
 
 		if (bt2.wifi) {
 			try {
@@ -493,6 +498,9 @@ public class service extends Service {
 
 		if (bt2.isSetV())
 			setVolume(bt2.getDefVol(), application);
+		if (bt2.isSetpv()) {
+			setPVolume(bt2.getPhonev());
+		}
 		if (notify)
 			updateNot(true, bt2.toString());
 		if (toasts)
@@ -588,6 +596,8 @@ public class service extends Service {
 		 */
 		if ((bt2 != null && bt2.isSetV()) || bt2 == null)
 			setVolume(OldVol2, application);
+		if ((bt2 != null && bt2.isSetpv()) || bt2 == null)
+			setPVolume(OldVol);
 
 		if (bt2.wifi) {
 			dowifi(oldwifistate);
@@ -616,14 +626,15 @@ public class service extends Service {
 
 	}
 
-	// makes the volume adjustment
+	// makes the media volume adjustment
 	public static int setVolume(int inputVol, Context sender) {
 		int outVol;
 		if (inputVol < 0)
 			inputVol = 0;
 		if (inputVol > am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
 			inputVol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, AudioManager.FLAG_SHOW_UI);
+		am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol,
+				AudioManager.FLAG_SHOW_UI);
 		outVol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 		return outVol;
 	}
@@ -640,6 +651,33 @@ public class service extends Service {
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.putInt(OLD_VOLUME, OldVol2);
 		editor.commit();
+	}
+
+	// captures the phone volume so it can be later restored
+	private void getOldPvol() {
+		if (OldVol < am2.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)) {
+			OldVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+		} else {
+			OldVol = am2.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
+		}
+		// Store the old volume in preferences so it can be extracted if another
+		// instance starts or the service is killed and restarted
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(OLD_PH_VOL, OldVol);
+		editor.commit();
+	}
+
+	// makes the phone volume adjustment
+	public static int setPVolume(int inputVol) {
+		int outVol;
+		if (inputVol < 0)
+			inputVol = 0;
+		if (inputVol > am2.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL))
+			inputVol = am2.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
+		am2.setStreamVolume(AudioManager.STREAM_VOICE_CALL, inputVol,
+				AudioManager.FLAG_SHOW_UI);
+		outVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+		return outVol;
 	}
 
 	private void updateNot(boolean connect, String car) {
