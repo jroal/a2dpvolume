@@ -94,7 +94,7 @@
     <string name="app_not_found">Application Not Found</string>
     <string name="deviceName">Enter a name for this device</string>
     <string name="getLoc">Capture location on disconnect?</string>
-    <string name="setVol">Set volume on connect?</string>
+    <string name="setVol">Set media volume on connect?</string>
     <string name="connectBT">Also connect to bluetooth device</string>
     <string name="startApp">Start app on connect</string>
     <string name="wifiDisconnect">Disconnect WIFI when bluetooth connects?</string>
@@ -111,10 +111,6 @@
     <string name="connectedTo">Connected to</string>
     <string name="PrefsCatOther">Other Settings</string>
     <string name="PrefsOtherConnectedIcon">Connected Icon</string>
-    <string-array name="PrefsOtherIcons">
-        <item>Car</item>
-        <item>Headset</item>
-    </string-array>
     <string-array name="PrefsOtherIcons_items">
         <item>Car</item>
         <item>Headset</item>
@@ -133,4 +129,10 @@
     <string name="TTSNotReady">TTS Not ready</string>
     <string name="carDockName">Car Dock</string>
     <string name="homeDockName">Home Dock</string>
+    <string name="Editsetpv">Set in-call phone volume on connect?</string>
+    <string name="EditPhoneVolume">In-Call Phone Volume</string>
+    <string-array name="PrefsOtherIcons">
+        <item>Car</item>
+        <item>Headset</item>
+    </string-array>
 </resources>

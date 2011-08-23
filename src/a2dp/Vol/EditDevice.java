@@ -51,6 +51,9 @@ public class EditDevice extends Activity {
 	private CheckBox fwifi;
 	private CheckBox fapprestart;
 	private CheckBox fenableTTS;
+	private CheckBox fsetpv;
+	private SeekBar fphonev;
+	
 	public String btd;
 	private btDevice device;
 	private MyApplication application;
@@ -98,6 +101,8 @@ public class EditDevice extends Activity {
 		this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
 		this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
 		this.fenableTTS = (CheckBox) this.findViewById(R.id.enableTTSBox);
+		this.fsetpv = (CheckBox) this.findViewById(R.id.checkSetpv);
+		this.fphonev = (SeekBar) this.findViewById(R.id.seekPhoneVol);
 		
 		btd = getIntent().getStringExtra("btd"); // get the mac address of the
 													// device to edit
@@ -121,6 +126,9 @@ public class EditDevice extends Activity {
 		apprestart = device.isApprestart();
 		fapprestart.setChecked(apprestart);
 		fenableTTS.setChecked(device.isEnableTTS());
+		fsetpv.setChecked(device.isSetpv());
+		fphonev.setMax(am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL));
+		fphonev.setProgress(device.getPhonev());
 		vUpdateApp();
 
 		sb.setOnClickListener(new OnClickListener() {
@@ -142,6 +150,8 @@ public class EditDevice extends Activity {
 				apprestart = fapprestart.isChecked();
 				device.setApprestart(apprestart);
 				device.setEnableTTS(fenableTTS.isChecked());
+				device.setSetpv(fsetpv.isChecked());
+				device.setPhonev(fphonev.getProgress());
 				sb.setText("Saving");
 				try {
 					myDB.update(device);
