@@ -204,10 +204,8 @@ public class service extends Service {
 		// end test file maker
 		if (enableTTS) {
 			myHash = new HashMap<String, String>();
-			/*
-			 * myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-			 * String.valueOf(AudioManager.STREAM_VOICE_CALL));
-			 */
+			myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+					String.valueOf(AudioManager.STREAM_VOICE_CALL));
 			myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "A2DP_Vol");
 			mTts = new TextToSpeech(application, listenerStarted);
 		}
@@ -226,11 +224,13 @@ public class service extends Service {
 		public void onUtteranceCompleted(String uttId) {
 			if ("A2DP_Vol".equalsIgnoreCase(uttId)) {
 				// unmute the stream
-				am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
-						AudioManager.AUDIOFOCUS_LOSS);
+				if (am2.isBluetoothScoAvailableOffCall()) {
+					am2.setSpeakerphoneOn(false);
+					am2.stopBluetoothSco();
+				}				
+				/*am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
+						AudioManager.AUDIOFOCUS_LOSS);*/
 				am2.abandonAudioFocus(changed);
-				// am2.setStreamSolo(AudioManager.STREAM_VOICE_CALL, false);
-				// am2.setSpeakerphoneOn(false);
 			}
 		}
 	};
@@ -982,9 +982,6 @@ public class service extends Service {
 							@Override
 							public void onFinish() {
 								try {
-									am2.requestAudioFocus(changed,
-											AudioManager.STREAM_MUSIC,
-											AudioManager.AUDIOFOCUS_GAIN);
 									mTts.speak(str, TextToSpeech.QUEUE_ADD,
 											myHash);
 								} catch (Exception e) {
@@ -1000,7 +997,13 @@ public class service extends Service {
 							public void onTick(long arg0) {
 								// am2.setStreamSolo(AudioManager.STREAM_VOICE_CALL,
 								// true);
-								// am2.setSpeakerphoneOn(true);
+								/*am2.requestAudioFocus(changed,
+										AudioManager.STREAM_MUSIC,
+										AudioManager.AUDIOFOCUS_GAIN);*/
+								if (am2.isBluetoothScoAvailableOffCall()) {
+									am2.startBluetoothSco();
+									am2.setSpeakerphoneOn(true);
+								}
 
 							}
 
