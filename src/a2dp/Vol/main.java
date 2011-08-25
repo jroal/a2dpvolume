@@ -190,11 +190,21 @@ public class main extends Activity {
 		// these 2 intents are sent from the service to inform us of the running
 		// state
 		IntentFilter filter3 = new IntentFilter("a2dp.vol.service.RUNNING");
-		this.registerReceiver(sRunning, filter3);
+		try {
+			this.registerReceiver(sRunning, filter3);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 
 		IntentFilter filter4 = new IntentFilter(
 				"a2dp.vol.service.STOPPED_RUNNING");
-		this.registerReceiver(sRunning, filter4);
+		try {
+			this.registerReceiver(sRunning, filter4);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 
 		// this reciever is used to tell this main activity about devices
 		// connecting and disconnecting.
