@@ -59,6 +59,8 @@ public class service extends Service {
 	private static Integer OldVol2 = 5;
 	public static Integer connects = 0;
 	public static boolean run = false;
+	private static boolean mvolsLeft = false;
+	private static boolean pvolsLeft = false;
 
 	public static btDevice[] btdConn = new btDevice[5]; // n the devices in the
 														// database that has
@@ -227,9 +229,11 @@ public class service extends Service {
 				if (am2.isBluetoothScoAvailableOffCall()) {
 					am2.setSpeakerphoneOn(false);
 					am2.stopBluetoothSco();
-				}				
-				/*am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
-						AudioManager.AUDIOFOCUS_LOSS);*/
+				}
+				/*
+				 * am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
+				 * AudioManager.AUDIOFOCUS_LOSS);
+				 */
 				am2.abandonAudioFocus(changed);
 			}
 		}
@@ -239,12 +243,11 @@ public class service extends Service {
 		// create intent filter for a bluetooth stream connection
 		IntentFilter filter = new IntentFilter(
 				android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED);
-		this.registerReceiver(mReceiver, filter);
+		// this.registerReceiver(mReceiver, filter);
 
 		// create intent filter for a bluetooth stream disconnection
 		IntentFilter filter2 = new IntentFilter(
 				android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED);
-		this.registerReceiver(mReceiver2, filter2);
 
 		IntentFilter btNotEnabled = new IntentFilter(
 				android.bluetooth.BluetoothAdapter.ACTION_STATE_CHANGED);
@@ -252,26 +255,18 @@ public class service extends Service {
 
 		if (carMode) {
 			// Create listener for when car mode disconnects
-			IntentFilter filter3 = new IntentFilter(
-					android.app.UiModeManager.ACTION_EXIT_CAR_MODE);
-			this.registerReceiver(mReceiver2, filter3);
+			filter2.addAction(android.app.UiModeManager.ACTION_EXIT_CAR_MODE);
 
 			// Create listener for when car mode connects
-			IntentFilter filter4 = new IntentFilter(
-					android.app.UiModeManager.ACTION_ENTER_CAR_MODE);
-			this.registerReceiver(mReceiver, filter4);
+			filter.addAction(android.app.UiModeManager.ACTION_ENTER_CAR_MODE);
 		}
 
 		if (homeDock) {
 			// Create listener for when car mode disconnects
-			IntentFilter filter5 = new IntentFilter(
-					android.app.UiModeManager.ACTION_EXIT_DESK_MODE);
-			this.registerReceiver(mReceiver2, filter5);
+			filter2.addAction(android.app.UiModeManager.ACTION_EXIT_DESK_MODE);
 
 			// Create listener for when car mode connects
-			IntentFilter filter6 = new IntentFilter(
-					android.app.UiModeManager.ACTION_ENTER_DESK_MODE);
-			this.registerReceiver(mReceiver, filter6);
+			filter.addAction(android.app.UiModeManager.ACTION_ENTER_DESK_MODE);
 		}
 
 		if (headsetPlug) {
@@ -279,6 +274,8 @@ public class service extends Service {
 			IntentFilter filter7 = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
 			this.registerReceiver(headSetReceiver, filter7);
 		}
+		this.registerReceiver(mReceiver, filter);
+		this.registerReceiver(mReceiver2, filter2);
 	}
 
 	@Override
@@ -347,7 +344,8 @@ public class service extends Service {
 				if (mac != "") {
 					if (notify)
 						updateNot(false, null);
-					setVolume(OldVol2, application);
+					if(!mvolsLeft)setVolume(OldVol2, application);
+					if(!pvolsLeft)setPVolume(OldVol);
 					dowifi(oldwifistate);
 				}
 				String Ireload = "a2dp.Vol.main.RELOAD_LIST";
@@ -399,8 +397,14 @@ public class service extends Service {
 			if (!connecting) {
 				connecting = true;
 
-				BluetoothDevice bt = (BluetoothDevice) intent.getExtras().get(
-						BluetoothDevice.EXTRA_DEVICE);
+				BluetoothDevice bt;
+				try {
+					bt = (BluetoothDevice) intent.getExtras().get(
+							BluetoothDevice.EXTRA_DEVICE);
+				} catch (Exception e1) {
+					bt = null;
+					e1.printStackTrace();
+				}
 
 				btDevice bt2 = null;
 
@@ -539,8 +543,14 @@ public class service extends Service {
 			if (!disconnecting) {
 				disconnecting = true;
 
-				BluetoothDevice bt = (BluetoothDevice) intent2.getExtras().get(
-						BluetoothDevice.EXTRA_DEVICE);
+				BluetoothDevice bt;
+				try {
+					bt = (BluetoothDevice) intent2.getExtras().get(
+							BluetoothDevice.EXTRA_DEVICE);
+				} catch (Exception e1) {
+					bt = null;
+					e1.printStackTrace();
+				}
 
 				if (bt != null) {
 					try {
@@ -575,9 +585,6 @@ public class service extends Service {
 	};
 
 	protected void DoDisconnected(btDevice bt2) {
-		if (notify && (bt2.mac != null))
-			updateNot(false, null);
-
 		// if we opened a package for this device, try to close it now
 		if (bt2.hasIntent() && bt2.getPname().length() > 3) {
 			stopApp(bt2.getPname());
@@ -590,15 +597,6 @@ public class service extends Service {
 			startService(dolock);
 		}
 
-		/*
-		 * if(notify){ not.icon = R.drawable.icon5;
-		 * mNotificationManager.notify(1, not); }
-		 */
-		if ((bt2 != null && bt2.isSetV()) || bt2 == null)
-			setVolume(OldVol2, application);
-		if ((bt2 != null && bt2.isSetpv()) || bt2 == null)
-			setPVolume(OldVol);
-
 		if (bt2.wifi) {
 			dowifi(oldwifistate);
 		}
@@ -608,7 +606,12 @@ public class service extends Service {
 					btdConn[k] = null;
 
 		getConnects();
-
+		if ((bt2 != null && bt2.isSetV()) || bt2 == null)
+			if(!mvolsLeft)setVolume(OldVol2, application);
+		if ((bt2 != null && bt2.isSetpv()) || bt2 == null)
+			if(!pvolsLeft)setPVolume(OldVol);
+		if (notify && (bt2.mac != null))
+			updateNot(false, null);
 		if (mTtsReady && (bt2.isEnableTTS() || connects < 1)) {
 			try {
 				this.unregisterReceiver(SMScatcher);
@@ -640,12 +643,8 @@ public class service extends Service {
 	}
 
 	// captures the media volume so it can be later restored
-	private void getOldvol() {
-		if (OldVol2 < am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) {
-			OldVol2 = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
-		} else {
-			OldVol2 = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		}
+	private void getOldvol() {		
+		OldVol2 = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 		// Store the old volume in preferences so it can be extracted if another
 		// instance starts or the service is killed and restarted
 		SharedPreferences.Editor editor = preferences.edit();
@@ -655,11 +654,7 @@ public class service extends Service {
 
 	// captures the phone volume so it can be later restored
 	private void getOldPvol() {
-		if (OldVol < am2.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)) {
-			OldVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
-		} else {
-			OldVol = am2.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
-		}
+		OldVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
 		// Store the old volume in preferences so it can be extracted if another
 		// instance starts or the service is killed and restarted
 		SharedPreferences.Editor editor = preferences.edit();
@@ -685,8 +680,18 @@ public class service extends Service {
 		String temp = car;
 		if (car != null)
 			temp = getResources().getString(R.string.connectedTo) + " " + car;
-		else
-			temp = getResources().getString(R.string.ServRunning);
+		else {
+			if (connects > 0) {
+				String tmp = null;
+				for (int k = 0; k < btdConn.length; k++)
+					if (btdConn[k] != null)
+						tmp = btdConn[k].toString();
+				
+				temp = getResources().getString(R.string.connectedTo) + " " + tmp;
+				connect = true;
+			} else
+				temp = getResources().getString(R.string.ServRunning);
+		}
 
 		Context context = getApplicationContext();
 		CharSequence contentTitle = getResources().getString(R.string.app_name);
@@ -931,9 +936,14 @@ public class service extends Service {
 	private void getConnects() {
 		if (true) {
 			connects = 0;
-			for (int i = 0; i < a2dp.Vol.service.btdConn.length; i++) {
-				if (a2dp.Vol.service.btdConn[i] != null)
-					connects++;
+			mvolsLeft = false;
+			pvolsLeft = false;
+			for (int i = 0; i < btdConn.length; i++) {
+				if (btdConn[i] != null){
+				connects++;
+				if(btdConn[i].isSetV())mvolsLeft = true;
+				if(btdConn[i].isSetpv())pvolsLeft = true;
+				}
 			}
 		}
 	}
@@ -997,9 +1007,11 @@ public class service extends Service {
 							public void onTick(long arg0) {
 								// am2.setStreamSolo(AudioManager.STREAM_VOICE_CALL,
 								// true);
-								/*am2.requestAudioFocus(changed,
-										AudioManager.STREAM_MUSIC,
-										AudioManager.AUDIOFOCUS_GAIN);*/
+								/*
+								 * am2.requestAudioFocus(changed,
+								 * AudioManager.STREAM_MUSIC,
+								 * AudioManager.AUDIOFOCUS_GAIN);
+								 */
 								if (am2.isBluetoothScoAvailableOffCall()) {
 									am2.startBluetoothSco();
 									am2.setSpeakerphoneOn(true);
