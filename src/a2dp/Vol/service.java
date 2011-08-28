@@ -89,6 +89,7 @@ public class service extends Service {
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
+	private long SMS_DELAY = 3000; // delay before reading SMS
 	// oldest acceptable time
 	SharedPreferences preferences;
 	private MyApplication application;
@@ -126,6 +127,9 @@ public class service extends Service {
 			Float xxx = new Float(preferences.getString("gpsDistance", "10"));
 			MAX_ACC = xxx;
 
+			long zz = new Long(preferences.getString("SMSdelay", "3000"));
+			SMS_DELAY = zz;
+			
 			local = preferences.getBoolean("useLocalStorage", false);
 			if (local)
 				a2dpDir = getFilesDir().toString();
@@ -205,10 +209,6 @@ public class service extends Service {
 		 */
 		// end test file maker
 		if (enableTTS) {
-			myHash = new HashMap<String, String>();
-			myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-					String.valueOf(AudioManager.STREAM_VOICE_CALL));
-			myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "A2DP_Vol");
 			mTts = new TextToSpeech(application, listenerStarted);
 		}
 	}
@@ -230,10 +230,10 @@ public class service extends Service {
 					am2.setSpeakerphoneOn(false);
 					am2.stopBluetoothSco();
 				}
-				/*
-				 * am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
-				 * AudioManager.AUDIOFOCUS_LOSS);
-				 */
+				else{
+				 am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
+				 AudioManager.AUDIOFOCUS_LOSS);
+				}
 				am2.abandonAudioFocus(changed);
 			}
 		}
@@ -985,9 +985,18 @@ public class service extends Service {
 					// Toast.makeText(application, str,
 					// Toast.LENGTH_LONG).show();
 					if (mTtsReady) {
-						// am2.setStreamMute(AudioManager.STREAM_NOTIFICATION,
-						// true);
-						new CountDownTimer(10000, 5000) {
+						myHash = new HashMap<String, String>();
+						if (am2.isBluetoothScoAvailableOffCall()){
+						myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+								String.valueOf(AudioManager.STREAM_VOICE_CALL));
+						}
+						else{
+							myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+									String.valueOf(AudioManager.STREAM_MUSIC));
+						}
+						myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "A2DP_Vol");
+						
+						new CountDownTimer(SMS_DELAY, SMS_DELAY/2) {
 
 							@Override
 							public void onFinish() {
@@ -1005,16 +1014,14 @@ public class service extends Service {
 
 							@Override
 							public void onTick(long arg0) {
-								// am2.setStreamSolo(AudioManager.STREAM_VOICE_CALL,
-								// true);
-								/*
-								 * am2.requestAudioFocus(changed,
-								 * AudioManager.STREAM_MUSIC,
-								 * AudioManager.AUDIOFOCUS_GAIN);
-								 */
+
 								if (am2.isBluetoothScoAvailableOffCall()) {
 									am2.startBluetoothSco();
 									am2.setSpeakerphoneOn(true);
+								}
+								else{
+									am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
+									AudioManager.AUDIOFOCUS_GAIN);
 								}
 
 							}
