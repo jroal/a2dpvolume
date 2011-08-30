@@ -76,6 +76,7 @@ public class service extends Service {
 	private boolean notify = false;
 	private Notification not = null;
 	private NotificationManager mNotificationManager = null;
+	private boolean speakerPhoneWasOn = true;
 
 	boolean oldwifistate = true;
 	WifiManager wifiManager;
@@ -90,6 +91,7 @@ public class service extends Service {
 	float MAX_ACC = 20; // worst acceptable location in meters
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
 	private long SMS_DELAY = 3000; // delay before reading SMS
+	private int SMSstream = 1;
 	// oldest acceptable time
 	SharedPreferences preferences;
 	private MyApplication application;
@@ -145,6 +147,9 @@ public class service extends Service {
 
 			OldVol2 = preferences.getInt(OLD_VOLUME, 10);
 			OldVol = preferences.getInt(OLD_PH_VOL, 5);
+			
+			SMSstream = Integer.valueOf(preferences.getString("SMSstream", "1"));
+			
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
 			MAX_TIME = 15000;
@@ -158,6 +163,7 @@ public class service extends Service {
 
 		// create audio manager instance
 		am2 = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		
 		// open database instance
 		this.DB = new DeviceDB(application);
 
@@ -226,15 +232,22 @@ public class service extends Service {
 		public void onUtteranceCompleted(String uttId) {
 			if ("A2DP_Vol".equalsIgnoreCase(uttId)) {
 				// unmute the stream
-				if (am2.isBluetoothScoAvailableOffCall()) {
-					am2.setSpeakerphoneOn(false);
-					am2.stopBluetoothSco();
+				
+				if(SMSstream == 1){
+					if (am2.isBluetoothScoAvailableOffCall()) {
+						am2.stopBluetoothSco();
+					}
+					if(!speakerPhoneWasOn){
+						am2.setSpeakerphoneOn(false);
+					}
+					/*am2.requestAudioFocus(changed, AudioManager.STREAM_VOICE_CALL,
+							 AudioManager.AUDIOFOCUS_LOSS);*/
 				}
 				else{
-				 am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
-				 AudioManager.AUDIOFOCUS_LOSS);
+				 /*am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
+				 AudioManager.AUDIOFOCUS_LOSS);*/
 				}
-				am2.abandonAudioFocus(changed);
+				am2.abandonAudioFocus(null);
 			}
 		}
 	};
@@ -986,15 +999,30 @@ public class service extends Service {
 					// Toast.LENGTH_LONG).show();
 					if (mTtsReady) {
 						myHash = new HashMap<String, String>();
-						if (am2.isBluetoothScoAvailableOffCall()){
-						myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-								String.valueOf(AudioManager.STREAM_VOICE_CALL));
+						
+						myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "A2DP_Vol");
+						
+						
+						if(SMSstream == 1){
+							if (am2.isBluetoothScoAvailableOffCall()) {
+								am2.startBluetoothSco();
+							}
+							if(!am2.isSpeakerphoneOn()){
+								speakerPhoneWasOn = false;
+								am2.setSpeakerphoneOn(true);
+							}
+							myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+									String.valueOf(AudioManager.STREAM_VOICE_CALL));
+							am2.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL,
+									AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+							
 						}
 						else{
+							am2.requestAudioFocus(null, AudioManager.STREAM_MUSIC,
+							AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 							myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
 									String.valueOf(AudioManager.STREAM_MUSIC));
 						}
-						myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "A2DP_Vol");
 						
 						new CountDownTimer(SMS_DELAY, SMS_DELAY/2) {
 
@@ -1014,16 +1042,7 @@ public class service extends Service {
 
 							@Override
 							public void onTick(long arg0) {
-
-								if (am2.isBluetoothScoAvailableOffCall()) {
-									am2.startBluetoothSco();
-									am2.setSpeakerphoneOn(true);
-								}
-								else{
-									am2.requestAudioFocus(changed, AudioManager.STREAM_MUSIC,
-									AudioManager.AUDIOFOCUS_GAIN);
-								}
-
+	
 							}
 
 						}.start();
@@ -1036,14 +1055,15 @@ public class service extends Service {
 
 	};
 
-	AudioManager.OnAudioFocusChangeListener changed = new AudioManager.OnAudioFocusChangeListener() {
+   /* OnAudioFocusChangeListener changed = new AudioManager.OnAudioFocusChangeListener() {
 
-		public void onAudioFocusChange(int focusChange) {
-			if (focusChange != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-				// could not get audio focus.
-			}
+        public void onAudioFocusChange(int focusChange) {
+                if (focusChange != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                        // could not get audio focus.
+                }
 
-		}
-	};
+        }
+};*/
+
 
 }

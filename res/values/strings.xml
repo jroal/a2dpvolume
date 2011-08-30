@@ -147,4 +147,13 @@
     </string-array>
     <string name="SMSdelay_title">SMS Delay</string>
     <string name="SMSDelayText">Delay for reading text message</string>
+    <string name="SMSstream_title">Text Message Stream</string>
+    <string-array name="SMSstream_list">
+        <item>Music Stream</item>
+        <item>Voice Call Stream</item>
+    </string-array>
+    <string-array name="SMSstream_items">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
 </resources>
