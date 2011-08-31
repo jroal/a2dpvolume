@@ -13,17 +13,22 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.SeekBar;
 
@@ -51,6 +56,11 @@ public class EditDevice extends Activity {
 	private CheckBox fwifi;
 	private CheckBox fapprestart;
 	private CheckBox fenableTTS;
+	private CheckBox fsetpv;
+	private SeekBar fphonev;
+	SharedPreferences preferences;
+	private boolean TTsEnabled;
+	
 	public String btd;
 	private btDevice device;
 	private MyApplication application;
@@ -98,6 +108,11 @@ public class EditDevice extends Activity {
 		this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
 		this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
 		this.fenableTTS = (CheckBox) this.findViewById(R.id.enableTTSBox);
+		this.fsetpv = (CheckBox) this.findViewById(R.id.checkSetpv);
+		this.fphonev = (SeekBar) this.findViewById(R.id.seekPhoneVol);
+		
+		preferences = PreferenceManager.getDefaultSharedPreferences(application);
+		TTsEnabled = preferences.getBoolean("enableTTS", false);
 		
 		btd = getIntent().getStringExtra("btd"); // get the mac address of the
 													// device to edit
@@ -121,6 +136,9 @@ public class EditDevice extends Activity {
 		apprestart = device.isApprestart();
 		fapprestart.setChecked(apprestart);
 		fenableTTS.setChecked(device.isEnableTTS());
+		fsetpv.setChecked(device.isSetpv());
+		fphonev.setMax(am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL));
+		fphonev.setProgress(device.getPhonev());
 		vUpdateApp();
 
 		sb.setOnClickListener(new OnClickListener() {
@@ -142,6 +160,16 @@ public class EditDevice extends Activity {
 				apprestart = fapprestart.isChecked();
 				device.setApprestart(apprestart);
 				device.setEnableTTS(fenableTTS.isChecked());
+				device.setSetpv(fsetpv.isChecked());
+				device.setPhonev(fphonev.getProgress());
+				
+				// if the user want TTS but it was not enabled
+				if(!TTsEnabled && fenableTTS.isChecked()){
+					SharedPreferences.Editor editor = preferences.edit();
+					editor.putBoolean("enableTTS", true);
+					editor.commit();
+				}
+				
 				sb.setText("Saving");
 				try {
 					myDB.update(device);
@@ -255,6 +283,7 @@ public class EditDevice extends Activity {
 
 		});
 	}
+	
 
 	private void closedb(){
 		myDB.getDb().close();
