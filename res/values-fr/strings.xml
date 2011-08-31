@@ -150,7 +150,7 @@
     <string name="SMSstream_title">Flux de message texte</string>
     <string-array name="SMSstream_list">
         <item>Flux de musique</item>
-        <item>Flux d'appel vocal</item>
+        <item>Flux d\'appel vocal</item>
     </string-array>
     <string-array name="SMSstream_items">
         <item>0</item>
