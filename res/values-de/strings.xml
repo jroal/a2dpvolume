@@ -94,7 +94,7 @@
     <string name="app_not_found">Anwendung nicht gefunden</string>
     <string name="deviceName">Geben Sie einen Namen für dieses Gerät ein</string>
     <string name="getLoc">Positionsbestimmung bei Verbindungstrennung?</string>
-    <string name="setVol">Setze Lautstärke bei Verbindung?</string>
+    <string name="setVol">Setze Medienlautstärke bei Verbindung?</string>
     <string name="connectBT">Verbinde außerdem mit Bluetooth Gerät</string>
     <string name="startApp">Starte App bei Verbindung</string>
     <string name="wifiDisconnect">Deaktiviere WIFI bei Verbindung?</string>
@@ -129,6 +129,8 @@
     <string name="TTSNotReady">Text-in-Sprache nicht bereit</string>
     <string name="carDockName">Automodus</string>
     <string name="homeDockName">Home Dock</string>
+    <string name="Editsetpv">Setze Gesprächslautstärke bei Verbindung?</string>
+    <string name="EditPhoneVolume">Gesprächslautstärke</string>
     <string-array name="PrefsOtherIcons">
         <item>Auto</item>
         <item>Kopfhörer</item>
@@ -142,6 +144,13 @@
         <item>0</item>
         <item>3000</item>
         <item>10000</item>
+    </string-array>
+    <string name="SMSdelay_title">SMS Verzögerung</string>
+    <string name="SMSDelayText">Verzögerung vor dem Lesen einer SMS</string>
+    <string name="SMSstream_title">SMS-Sprach-Ausgabestrom</string>
+    <string-array name="SMSstream_list">
+        <item>Medien-Ausgabestrom</item>
+        <item>Gesprächs-Ausgabestrom</item>
     </string-array>
     <string-array name="SMSstream_items">
         <item>0</item>
