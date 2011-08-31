@@ -61,6 +61,7 @@ public class main extends Activity {
 	static final int ENABLE_BLUETOOTH = 1;
 	static final int RELOAD = 2;
 	static final int CHECK_TTS = 3;
+	static final int EDITED_DATA = 4;
 	boolean carMode = false;
 	boolean homeDock = false;
 	boolean headsetPlug = false;
@@ -190,11 +191,21 @@ public class main extends Activity {
 		// these 2 intents are sent from the service to inform us of the running
 		// state
 		IntentFilter filter3 = new IntentFilter("a2dp.vol.service.RUNNING");
-		this.registerReceiver(sRunning, filter3);
+		try {
+			this.registerReceiver(sRunning, filter3);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 
 		IntentFilter filter4 = new IntentFilter(
 				"a2dp.vol.service.STOPPED_RUNNING");
-		this.registerReceiver(sRunning, filter4);
+		try {
+			this.registerReceiver(sRunning, filter4);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 
 		// this reciever is used to tell this main activity about devices
 		// connecting and disconnecting.
@@ -372,7 +383,7 @@ public class main extends Activity {
 						Intent i = new Intent(a2dp.Vol.main.this,
 								EditDevice.class);
 						i.putExtra("btd", bt.mac);
-						startActivity(i);
+						startActivityForResult(i, EDITED_DATA);
 					}
 				});
 				builder.show();
@@ -721,8 +732,19 @@ public class main extends Activity {
 			case RELOAD:
 				refreshList(loadFromDB());
 				break;
+			
 			default:
 				break;
+			}
+		}
+		if(requestCode == EDITED_DATA){
+			enableTTS = preferences.getBoolean("enableTTS", false);
+			if (enableTTS) {
+				// Fire off an intent to check if a TTS engine is installed
+				Intent checkIntent = new Intent();
+				checkIntent
+						.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+				startActivityForResult(checkIntent, CHECK_TTS);
 			}
 		}
 		if (requestCode == CHECK_TTS) {
