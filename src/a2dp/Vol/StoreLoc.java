@@ -94,7 +94,7 @@ public class StoreLoc extends Service {
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
 			MAX_TIME = 15000;
-			Toast.makeText(this, "prefs failed to load " + e.getMessage(),
+			Toast.makeText(this, "prefs failed to load. " + e.getMessage(),
 					Toast.LENGTH_LONG).show();
 			e.printStackTrace();
 			Log.e(LOG_TAG, "prefs failed to load " + e.getMessage());
@@ -102,10 +102,18 @@ public class StoreLoc extends Service {
 		l = null; // the most recent location
 		l3 = null; // the most accurate location
 		l4 = null; // the best location
-		// get the device that just connected
-		String device = intent.getStringExtra("device"); // get the mac address
-															// of the
-		btdConn = DB.getBTD(device);
+		// get the device that just disconnected
+		String device;
+		try {
+			device = intent.getStringExtra("device");
+			btdConn = DB.getBTD(device);
+		} catch (Exception e) {
+			Toast.makeText(this, "Location service failed to start. " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+			this.stopSelf();
+			e.printStackTrace();
+		}
+		
 
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this

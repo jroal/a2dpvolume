@@ -147,13 +147,20 @@
     </string-array>
     <string name="SMSdelay_title">SMS Delay</string>
     <string name="SMSDelayText">Delay for reading text message</string>
-    <string name="SMSstream_title">Text Message Stream</string>
+    <string name="SMSstream_title">SMS Stream</string>
     <string-array name="SMSstream_list">
         <item>Music Stream</item>
         <item>Voice Call Stream</item>
+        <item>Alarm Stream</item>
     </string-array>
     <string-array name="SMSstream_items">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
+    <string name="Bonded">Bonded</string>
+    <string name="Error">Error</string>
+    <string name="NotBonded">Not Bonded</string>
+    <string name="Bonding">Bonding</string>
+    <string name="Class">Class</string>
 </resources>
