@@ -25,7 +25,7 @@
 <PreferenceCategory android:title="@string/PrefsCatOther">
     <ListPreference android:title="@string/PrefsOtherConnectedIcon" android:entries="@array/PrefsOtherIcons" android:entryValues="@array/PrefsOtherIcons_items" android:key="connectedIcon" android:defaultValue="Car"></ListPreference>
     <ListPreference android:entryValues="@array/SMSdelay_items" android:entries="@array/SMSdelay" android:key="SMSdelay" android:title="@string/SMSdelay_title" android:summary="@string/SMSDelayText" android:defaultValue="3000"></ListPreference>
-    <ListPreference android:entryValues="@array/SMSstream_items" android:key="SMSstream" android:entries="@array/SMSstream_list" android:title="@string/SMSstream_title" android:defaultValue="0"></ListPreference>
+    <ListPreference android:entryValues="@array/SMSstream_items" android:key="SMSstream" android:entries="@array/SMSstream_list" android:title="@string/SMSstream_title" android:defaultValue="0" android:summary="@string/SMS_Stream_desc"></ListPreference>
 </PreferenceCategory>
 
 </PreferenceScreen>

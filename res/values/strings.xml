@@ -163,4 +163,5 @@
     <string name="NotBonded">Not Bonded</string>
     <string name="Bonding">Bonding</string>
     <string name="Class">Class</string>
+    <string name="SMS_Stream_desc">Select a path for the text message sound to travel</string>
 </resources>
