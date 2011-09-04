@@ -22,6 +22,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -66,9 +67,11 @@ public class main extends Activity {
 	boolean homeDock = false;
 	boolean headsetPlug = false;
 	boolean enableTTS = false;
+	boolean toasts = true;
 	private String a2dpDir = "";
 	private static final String LOG_TAG = "A2DP_Volume";
 	private static int resourceID = android.R.layout.simple_list_item_1;
+	Resources res;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -138,6 +141,7 @@ public class main extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
+		res = getResources();
 		setContentView(R.layout.main);
 		ComponentName comp = new ComponentName("a2dp.Vol", "main");
 		PackageInfo pinfo;
@@ -150,7 +154,7 @@ public class main extends Activity {
 			Log.e(LOG_TAG, "error" + e.getMessage());
 		}
 
-		setTitle(getResources().getString(R.string.app_name) + " Version: "
+		setTitle(res.getString(R.string.app_name) + " Version: "
 				+ ver);
 		// get "Application" object for shared state or creating of expensive
 		// resources - like DataHelper
@@ -178,6 +182,7 @@ public class main extends Activity {
 			homeDock = preferences.getBoolean("home_dock", false);
 			headsetPlug = preferences.getBoolean("headset", false);
 			enableTTS = preferences.getBoolean("enableTTS", false);
+			toasts = preferences.getBoolean("toasts", true);
 		} catch (Exception e2) {
 			Log.e(LOG_TAG, "error" + e2.getMessage());
 		}
@@ -215,7 +220,7 @@ public class main extends Activity {
 		IntentFilter filter6 = new IntentFilter("a2dp.vol.preferences.UPDATED");
 		this.registerReceiver(mReceiver6, filter6);
 
-		lstring = new String[] { "no data" };
+		lstring = new String[] { res.getString(R.string.NoData) };
 
 		this.myDB = new DeviceDB(application);
 
@@ -288,25 +293,25 @@ public class main extends Activity {
 				final String car = bt.toString();
 				String mesg;
 				if (btd != null) {
-					mesg = bt.desc1 + "\n" + bt.mac + "\n";
+					mesg = bt.desc1 + "\n" + bt.mac + "\n" + res.getString(R.string.Bonded);
 					switch (btd.getBondState()) {
 					case BluetoothDevice.BOND_BONDED:
-						mesg += "Bonded = Bonded";
+						mesg += " = " + res.getString(R.string.Bonded);
 						break;
 					case BluetoothDevice.BOND_BONDING:
-						mesg += "Bonded = Bonding";
+						mesg += " = " + res.getString(R.string.Bonding);
 						break;
 					case BluetoothDevice.BOND_NONE:
-						mesg += "Bonded = None";
+						mesg += " = " + res.getString(R.string.NotBonded);
 						break;
 					case BluetoothDevice.ERROR:
-						mesg += "Bonded = Error";
+						mesg += " = " + res.getString(R.string.Error);
 						break;
 					}
 
-					mesg += "\nClass = " + getBTClassDev(btd);
-					mesg += "\nMajor Class = " + getBTClassDevMaj(btd);
-					mesg += "\nService Classes = " + getBTClassServ(btd);
+					mesg += "\n" + res.getString(R.string.Class) + " = " + getBTClassDev(btd);
+					mesg += "\nMajor " + res.getString(R.string.Class) + " = " + getBTClassDevMaj(btd);
+					mesg += "\nService " + res.getString(R.string.Class) + " = " + getBTClassServ(btd);
 				} else {
 					mesg = (String) getText(R.string.btNotOn);
 				}
@@ -366,9 +371,7 @@ public class main extends Activity {
 						a2dp.Vol.main.this);
 				builder.setTitle(bt.toString());
 				builder.setMessage(bt2.desc1 + "\n" + bt2.desc2 + "\n"
-						+ bt2.mac + "\nConnected Volume: " + bt2.defVol
-						+ "\nTrigger Volume: " + bt2.setV + "\nGet Location: "
-						+ bt2.getLoc);
+						+ bt2.mac );
 				builder.setPositiveButton(R.string.OK, null);
 				builder.setNegativeButton(R.string.Delete,
 						new OnClickListener() {
@@ -680,7 +683,7 @@ public class main extends Activity {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show in a
 					// ListView
-					if (true) {
+					if (device.getAddress() != null) {
 						btDevice bt = new btDevice();
 						i++;
 						bt.setBluetoothDevice(device, device.getName(), am
@@ -753,7 +756,7 @@ public class main extends Activity {
 				if (servrun)
 					service.mTtsReady = true;
 				// mTts.setLanguage(Locale.US);
-				Toast.makeText(application, R.string.TTSready, Toast.LENGTH_SHORT)
+				if(toasts)Toast.makeText(application, R.string.TTSready, Toast.LENGTH_SHORT)
 						.show();
 			} else {
 				// missing data, install it

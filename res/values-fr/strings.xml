@@ -126,8 +126,8 @@
         <item>10s</item>
     </string-array>
     <string-array name="PrefsOtherIcons_items">
-        <item>Voiture</item>
-        <item>Casque</item>
+        <item>Car</item>
+        <item>Headset</item>
     </string-array>
     <string-array name="SMSdelay_items">
         <item>0</item>
