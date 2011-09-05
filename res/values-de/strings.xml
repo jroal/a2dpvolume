@@ -151,9 +151,17 @@
     <string-array name="SMSstream_list">
         <item>Medien-Ausgabestrom</item>
         <item>Gesprächs-Ausgabestrom</item>
+        <item>Alarm-Ausgabestrom</item>
     </string-array>
     <string-array name="SMSstream_items">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
+    <string name="Bonded">Gepaart</string>
+    <string name="Error">Fehler</string>
+    <string name="NotBonded">Nicht gepaart</string>
+    <string name="Bonding">Paarung</string>
+    <string name="Class">Klasse</string>
+    <string name="SMS_Stream_desc">Wählen Sie einen Ausgabestrom für das Vorlesen von SMS</string>
 </resources>
