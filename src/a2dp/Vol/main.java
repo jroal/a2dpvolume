@@ -754,7 +754,7 @@ public class main extends Activity {
 			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 				// success, create the TTS instance
 				if (servrun)
-					service.mTtsReady = true;
+					//service.mTtsReady = true;
 				// mTts.setLanguage(Locale.US);
 				if(toasts)Toast.makeText(application, R.string.TTSready, Toast.LENGTH_SHORT)
 						.show();

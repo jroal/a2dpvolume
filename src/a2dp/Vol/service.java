@@ -222,21 +222,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		 * catch block e.printStackTrace(); }
 		 */
 		// end test file maker
-		if (enableTTS) {
+		/*if (enableTTS) {
 			mTts = new TextToSpeech(application, listenerStarted);
-		}
+		}*/
 	}
-
-	public TextToSpeech.OnInitListener listenerStarted = new TextToSpeech.OnInitListener() {
-
-		public void onInit(int status) {
-			if (status == TextToSpeech.SUCCESS) {
-				mTtsReady = true;
-				mTts.setOnUtteranceCompletedListener(utteranceDone);
-			}
-		}
-	};
-
 
 	private void registerRecievers() {
 		// create intent filter for a bluetooth stream connection
@@ -514,10 +503,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		if (bt2.hasIntent())
 			runApp(bt2);
 
-		if (mTtsReady && bt2.isEnableTTS()) {
-			this.registerReceiver(SMScatcher, new IntentFilter(
-					"android.provider.Telephony.SMS_RECEIVED"));
-			// am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
+		if (bt2.isEnableTTS()) {
+			mTts = new TextToSpeech(application, listenerStarted);
+			
 		}
 		String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
@@ -618,6 +606,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			updateNot(false, null);
 		if (mTtsReady && (bt2.isEnableTTS() || connects < 1)) {
 			try {
+				if (!clearedTts) {
+					clearTts();
+				}
+				mTts.shutdown();
+				mTtsReady = false;
 				this.unregisterReceiver(SMScatcher);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -629,9 +622,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		itent.setAction(Ireload);
 		itent.putExtra("disconnect", bt2.getMac());
 		application.sendBroadcast(itent);
-		if (!clearedTts) {
-			clearTts();
-		}
 		disconnecting = false;
 		
 	}
@@ -967,6 +957,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				 * The SMS-Messages are 'hiding' within the extras of the
 				 * Intent.
 				 */
+				
 				Bundle bundle = intent.getExtras();
 				if (bundle != null) {
 					/* Get all messages contained in the Intent */
@@ -1058,6 +1049,19 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 	};
 
+	public TextToSpeech.OnInitListener listenerStarted = new TextToSpeech.OnInitListener() {
+
+		public void onInit(int status) {
+			if (status == TextToSpeech.SUCCESS) {
+				mTtsReady = true;
+				a2dp.Vol.service.this.registerReceiver(SMScatcher, new IntentFilter(
+				"android.provider.Telephony.SMS_RECEIVED"));
+				mTts.setOnUtteranceCompletedListener(utteranceDone);
+			}
+		}
+	};
+
+
 	public TextToSpeech.OnUtteranceCompletedListener utteranceDone = new TextToSpeech.OnUtteranceCompletedListener() {
 		public void onUtteranceCompleted(String uttId) {
 			int result = AudioManager.AUDIOFOCUS_REQUEST_FAILED;
@@ -1091,11 +1095,15 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				am2.setMode(AudioManager.MODE_NORMAL);
 			}
 			if(FIX_STREAM.equalsIgnoreCase(uttId)){
-				result = am2.abandonAudioFocus(a2dp.Vol.service.this);
+				result = am2.abandonAudioFocus(a2dp.Vol.service.this);		
 			}
+			
 		}
 	};
+	
 	private void clearTts(){
+		if(!mTtsReady)
+			mTts = new TextToSpeech(application, listenerStarted);
 		HashMap<String, String> myHash2 = new HashMap<String, String>();
 		
 		myHash2.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, FIX_STREAM);
@@ -1104,12 +1112,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 		myHash2.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
 				String.valueOf(AudioManager.STREAM_MUSIC));
-		try {
-			mTts.speak(".", TextToSpeech.QUEUE_ADD, myHash2);
-		} catch (Exception e) {
-			Toast.makeText(application, R.string.TTSNotReady,
-					Toast.LENGTH_LONG).show();
-			e.printStackTrace();
+		if (mTtsReady) {
+			try {
+				mTts.speak(".", TextToSpeech.QUEUE_ADD, myHash2);
+			} catch (Exception e) {
+				Toast.makeText(application, R.string.TTSNotReady,
+						Toast.LENGTH_LONG).show();
+				e.printStackTrace();
+			}
 		}
 		clearedTts = true;
 	}
