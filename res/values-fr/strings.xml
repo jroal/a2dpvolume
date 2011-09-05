@@ -151,9 +151,17 @@
     <string-array name="SMSstream_list">
         <item>Flux de musique</item>
         <item>Flux d\'appel vocal</item>
+        <item>Flux d\'alarme</item>
     </string-array>
     <string-array name="SMSstream_items">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
+    <string name="Class">Classe</string>
+    <string name="SMS_Stream_desc">Selectionner le chemin de sortie pour le son des SMS</string>
+    <string name="NotBonded">Non relié</string>
+    <string name="Bonding">Liaison</string>
+    <string name="Error">Erreur</string>
+    <string name="Bonded">Relié</string>
 </resources>
