@@ -462,6 +462,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		if (connects <= 1) {
 			getOldvol();
 			getOldPvol();
+			oldwifistate = wifiManager.isWifiEnabled();
 		}
 
 		if (bt2.wifi) {
