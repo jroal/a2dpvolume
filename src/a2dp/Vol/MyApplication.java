@@ -17,7 +17,13 @@ public class MyApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		Log.d(APP_NAME, "APPLICATION onCreate");
-		this.dataHelper = new DeviceDB(this);
+		try {
+			this.dataHelper = new DeviceDB(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e(APP_NAME, "APPLICATION onCreate failed to open DB");
+			
+		}
 	}
 
 	@Override
