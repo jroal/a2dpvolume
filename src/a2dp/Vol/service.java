@@ -19,11 +19,13 @@ import android.bluetooth.BluetoothSocket;
 import android.bluetooth.IBluetoothA2dp;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.net.Uri;
@@ -34,6 +36,8 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.PhoneLookup;
 import android.speech.tts.TextToSpeech;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -93,7 +97,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private static final int MUSIC_STREAM = 0;
 	private static final int IN_CALL_STREAM = 1;
 	private static final int ALARM_STREAM = 2;
-	
+
 	private PackageManager mPackageManager;
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
@@ -139,7 +143,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 			long zz = new Long(preferences.getString("SMSdelay", "3000"));
 			SMS_DELAY = zz;
-			
+
 			local = preferences.getBoolean("useLocalStorage", false);
 			if (local)
 				a2dpDir = getFilesDir().toString();
@@ -155,9 +159,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 			OldVol2 = preferences.getInt(OLD_VOLUME, 10);
 			OldVol = preferences.getInt(OLD_PH_VOL, 5);
-			
-			SMSstream = Integer.valueOf(preferences.getString("SMSstream", "0"));
-			
+
+			SMSstream = Integer
+					.valueOf(preferences.getString("SMSstream", "0"));
+
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
 			MAX_TIME = 15000;
@@ -171,7 +176,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		// create audio manager instance
 		am2 = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		
+
 		// open database instance
 		this.DB = new DeviceDB(application);
 
@@ -222,9 +227,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		 * catch block e.printStackTrace(); }
 		 */
 		// end test file maker
-		/*if (enableTTS) {
-			mTts = new TextToSpeech(application, listenerStarted);
-		}*/
+		/*
+		 * if (enableTTS) { mTts = new TextToSpeech(application,
+		 * listenerStarted); }
+		 */
 	}
 
 	private void registerRecievers() {
@@ -332,8 +338,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				if (mac != "") {
 					if (notify)
 						updateNot(false, null);
-					if(!mvolsLeft)setVolume(OldVol2, application);
-					if(!pvolsLeft)setPVolume(OldVol);
+					if (!mvolsLeft)
+						setVolume(OldVol2, application);
+					if (!pvolsLeft)
+						setPVolume(OldVol);
 					dowifi(oldwifistate);
 				}
 				String Ireload = "a2dp.Vol.main.RELOAD_LIST";
@@ -506,7 +514,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		if (bt2.isEnableTTS()) {
 			mTts = new TextToSpeech(application, listenerStarted);
-			
+
 		}
 		String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
@@ -600,9 +608,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		getConnects();
 		if ((bt2 != null && bt2.isSetV()) || bt2 == null)
-			if(!mvolsLeft)setVolume(OldVol2, application);
+			if (!mvolsLeft)
+				setVolume(OldVol2, application);
 		if ((bt2 != null && bt2.isSetpv()) || bt2 == null)
-			if(!pvolsLeft)setPVolume(OldVol);
+			if (!pvolsLeft)
+				setPVolume(OldVol);
 		if (notify && (bt2.mac != null))
 			updateNot(false, null);
 		if (mTtsReady && (bt2.isEnableTTS() || connects < 1)) {
@@ -624,7 +634,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		itent.putExtra("disconnect", bt2.getMac());
 		application.sendBroadcast(itent);
 		disconnecting = false;
-		
+
 	}
 
 	// makes the media volume adjustment
@@ -641,7 +651,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	}
 
 	// captures the media volume so it can be later restored
-	private void getOldvol() {		
+	private void getOldvol() {
 		OldVol2 = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 		// Store the old volume in preferences so it can be extracted if another
 		// instance starts or the service is killed and restarted
@@ -684,8 +694,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				for (int k = 0; k < btdConn.length; k++)
 					if (btdConn[k] != null)
 						tmp = btdConn[k].toString();
-				
-				temp = getResources().getString(R.string.connectedTo) + " " + tmp;
+
+				temp = getResources().getString(R.string.connectedTo) + " "
+						+ tmp;
 				connect = true;
 			} else
 				temp = getResources().getString(R.string.ServRunning);
@@ -937,10 +948,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			mvolsLeft = false;
 			pvolsLeft = false;
 			for (int i = 0; i < btdConn.length; i++) {
-				if (btdConn[i] != null){
-				connects++;
-				if(btdConn[i].isSetV())mvolsLeft = true;
-				if(btdConn[i].isSetpv())pvolsLeft = true;
+				if (btdConn[i] != null) {
+					connects++;
+					if (btdConn[i].isSetV())
+						mvolsLeft = true;
+					if (btdConn[i].isSetpv())
+						pvolsLeft = true;
 				}
 			}
 		}
@@ -958,7 +971,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				 * The SMS-Messages are 'hiding' within the extras of the
 				 * Intent.
 				 */
-				
+
 				Bundle bundle = intent.getExtras();
 				if (bundle != null) {
 					/* Get all messages contained in the Intent */
@@ -974,8 +987,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 						sb.append(
 								MessageFormat
 										.format(getString(R.string.msgTemplate),
-												currentMessage
-														.getDisplayOriginatingAddress(),
+												GetName(currentMessage
+														.getDisplayOriginatingAddress()),
 												currentMessage
 														.getDisplayMessageBody()))
 								.append(' ');
@@ -985,41 +998,46 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					// Toast.LENGTH_LONG).show();
 					if (mTtsReady) {
 						myHash = new HashMap<String, String>();
-						
-						myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, A2DP_Vol);
 
-						switch(SMSstream){
+						myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,
+								A2DP_Vol);
+
+						switch (SMSstream) {
 						case IN_CALL_STREAM:
 							if (am2.isBluetoothScoAvailableOffCall()) {
 								am2.startBluetoothSco();
 							}
-							if(!am2.isSpeakerphoneOn()){
+							if (!am2.isSpeakerphoneOn()) {
 								speakerPhoneWasOn = false;
 								am2.setSpeakerphoneOn(true);
 							}
-							am2.requestAudioFocus(a2dp.Vol.service.this, AudioManager.STREAM_VOICE_CALL,
+							am2.requestAudioFocus(a2dp.Vol.service.this,
+									AudioManager.STREAM_VOICE_CALL,
 									AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-							myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+							myHash.put(
+									TextToSpeech.Engine.KEY_PARAM_STREAM,
 									String.valueOf(AudioManager.STREAM_VOICE_CALL));
 							clearedTts = false;
 							break;
-						
+
 						case MUSIC_STREAM:
-							am2.requestAudioFocus(a2dp.Vol.service.this, AudioManager.STREAM_MUSIC,
-							AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+							am2.requestAudioFocus(a2dp.Vol.service.this,
+									AudioManager.STREAM_MUSIC,
+									AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 							myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
 									String.valueOf(AudioManager.STREAM_MUSIC));
 							break;
 						case ALARM_STREAM:
-							am2.requestAudioFocus(a2dp.Vol.service.this, AudioManager.STREAM_ALARM,
-							AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+							am2.requestAudioFocus(a2dp.Vol.service.this,
+									AudioManager.STREAM_ALARM,
+									AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 							myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
 									String.valueOf(AudioManager.STREAM_ALARM));
 							clearedTts = false;
 							break;
 						}
-						
-						new CountDownTimer(SMS_DELAY, SMS_DELAY/2) {
+
+						new CountDownTimer(SMS_DELAY, SMS_DELAY / 2) {
 
 							@Override
 							public void onFinish() {
@@ -1037,7 +1055,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 							@Override
 							public void onTick(long arg0) {
-	
+
 							}
 
 						}.start();
@@ -1055,28 +1073,28 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		public void onInit(int status) {
 			if (status == TextToSpeech.SUCCESS) {
 				mTtsReady = true;
-				a2dp.Vol.service.this.registerReceiver(SMScatcher, new IntentFilter(
-				"android.provider.Telephony.SMS_RECEIVED"));
+				a2dp.Vol.service.this.registerReceiver(SMScatcher,
+						new IntentFilter(
+								"android.provider.Telephony.SMS_RECEIVED"));
 				mTts.setOnUtteranceCompletedListener(utteranceDone);
 			}
 		}
 	};
-
 
 	public TextToSpeech.OnUtteranceCompletedListener utteranceDone = new TextToSpeech.OnUtteranceCompletedListener() {
 		public void onUtteranceCompleted(String uttId) {
 			int result = AudioManager.AUDIOFOCUS_REQUEST_FAILED;
 			if (A2DP_Vol.equalsIgnoreCase(uttId)) {
 				// unmute the stream
-				switch(SMSstream){
+				switch (SMSstream) {
 				case IN_CALL_STREAM:
 					if (am2.isBluetoothScoAvailableOffCall()) {
-						am2.stopBluetoothSco();					
+						am2.stopBluetoothSco();
 					}
-					if(!speakerPhoneWasOn){
+					if (!speakerPhoneWasOn) {
 						am2.setSpeakerphoneOn(false);
 					}
-					
+
 					result = am2.abandonAudioFocus(a2dp.Vol.service.this);
 					break;
 				case MUSIC_STREAM:
@@ -1089,27 +1107,26 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					result = am2.abandonAudioFocus(a2dp.Vol.service.this);
 					break;
 				}
-				
-				if(result == AudioManager.AUDIOFOCUS_REQUEST_FAILED){
+
+				if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
 					result = am2.abandonAudioFocus(a2dp.Vol.service.this);
 				}
 				am2.setMode(AudioManager.MODE_NORMAL);
 			}
-			if(FIX_STREAM.equalsIgnoreCase(uttId)){
-				result = am2.abandonAudioFocus(a2dp.Vol.service.this);		
+			if (FIX_STREAM.equalsIgnoreCase(uttId)) {
+				result = am2.abandonAudioFocus(a2dp.Vol.service.this);
 			}
-			
+
 		}
 	};
-	
-	private void clearTts(){
-		if(!mTtsReady)
+
+	private void clearTts() {
+		if (!mTtsReady)
 			mTts = new TextToSpeech(application, listenerStarted);
 		HashMap<String, String> myHash2 = new HashMap<String, String>();
-		
+
 		myHash2.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, FIX_STREAM);
-		am2.requestAudioFocus(a2dp.Vol.service.this,
-				AudioManager.STREAM_MUSIC,
+		am2.requestAudioFocus(a2dp.Vol.service.this, AudioManager.STREAM_MUSIC,
 				AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 		myHash2.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
 				String.valueOf(AudioManager.STREAM_MUSIC));
@@ -1124,28 +1141,40 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 		clearedTts = true;
 	}
-	
+
 	public void onAudioFocusChange(int focusChange) {
-		 switch (focusChange) {
-	        case AudioManager.AUDIOFOCUS_GAIN:
-	            	            
-	            break;
+		switch (focusChange) {
+		case AudioManager.AUDIOFOCUS_GAIN:
 
-	        case AudioManager.AUDIOFOCUS_LOSS:
-	           
-	            break;
+			break;
 
-	        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-	            	            
-	            break;
+		case AudioManager.AUDIOFOCUS_LOSS:
 
-	        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-	            	            
-	            break;
-	    }
+			break;
 
+		case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
 
+			break;
+
+		case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+
+			break;
+		}
+
+	}
+
+	private String GetName(String number) {
+		ContentResolver cr = getContentResolver();
 		
+		Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+		Cursor c = cr.query(uri, new String[]{PhoneLookup.DISPLAY_NAME}, null, null, null);
+		 
+	        if (c.moveToFirst()) {
+	            String name = c.getString(c
+	                    .getColumnIndex(PhoneLookup.DISPLAY_NAME));	           
+	            return name;
+	        }
+			return number;
 	}
 
 }
