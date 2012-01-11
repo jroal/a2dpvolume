@@ -233,7 +233,7 @@ public class main extends Activity {
 				devicemin++;
 			try {
 				if (myDB.getLength() < devicemin) {
-					getBtDevices();
+					getBtDevices(1);
 				}
 			} catch (Exception e1) {
 				Log.e(LOG_TAG, "error" + e1.getMessage());
@@ -261,7 +261,7 @@ public class main extends Activity {
 		// find bonded devices and load into the database and listview
 		btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				getBtDevices();
+				getBtDevices(1);
 			}
 		});
 
@@ -579,7 +579,7 @@ public class main extends Activity {
 	/**
 	 * @return the number of devices listed
 	 */
-	private int getBtDevices() {
+	private int getBtDevices(int mode) {
 		int i = 0;
 		vec.clear();
 
@@ -655,55 +655,55 @@ public class main extends Activity {
 			refreshList(loadFromDB()); // make sure it is relisted
 		}
 
-		BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
-
-		if (mBTA == null) {
-			Toast.makeText(application, R.string.NobtSupport, Toast.LENGTH_LONG)
-					.show();
-			return 0;
-		}
-
-		// If Bluetooth is not yet enabled, enable it
-		if (!mBTA.isEnabled()) {
-			Intent enableBluetooth = new Intent(
-					BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH);
-			// Now implement the onActivityResult() and wait for it to
-			// be invoked with ENABLE_BLUETOOTH
-			// onActivityResult(ENABLE_BLUETOOTH, result, enableBluetooth);
-			return 0;
-		}
-
-		if (mBTA != null) {
-			Set<BluetoothDevice> pairedDevices = mBTA.getBondedDevices();
-			// If there are paired devices
-
-			if (pairedDevices.size() > 0) {
-				// Loop through paired devices
-				for (BluetoothDevice device : pairedDevices) {
-					// Add the name and address to an array adapter to show in a
-					// ListView
-					if (device.getAddress() != null) {
-						btDevice bt = new btDevice();
-						i++;
-						bt.setBluetoothDevice(device, device.getName(), am
-								.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-						btDevice bt2 = myDB.getBTD(bt.mac);
-
-						if (bt2.mac == null) {
-							myDB.insert(bt);
-							vec.add(bt);
-						} else
-							vec.add(bt2);
-					}
-				}
-
+		if (mode >= 1) {
+			BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
+			if (mBTA == null) {
+				Toast.makeText(application, R.string.NobtSupport,
+						Toast.LENGTH_LONG).show();
+				return 0;
 			}
-		}
+			// If Bluetooth is not yet enabled, enable it
+			if (!mBTA.isEnabled()) {
+				Intent enableBluetooth = new Intent(
+						BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH);
+				// Now implement the onActivityResult() and wait for it to
+				// be invoked with ENABLE_BLUETOOTH
+				// onActivityResult(ENABLE_BLUETOOTH, result, enableBluetooth);
+				return 0;
+			}
+			if (mBTA != null) {
+				Set<BluetoothDevice> pairedDevices = mBTA.getBondedDevices();
+				// If there are paired devices
 
-		refreshList(loadFromDB());
-		Toast.makeText(application, "Found " + i + " Bluetooth Devices",
-				Toast.LENGTH_LONG).show();
+				if (pairedDevices.size() > 0) {
+					// Loop through paired devices
+					for (BluetoothDevice device : pairedDevices) {
+						// Add the name and address to an array adapter to show in a
+						// ListView
+						if (device.getAddress() != null) {
+							btDevice bt = new btDevice();
+							i++;
+							bt.setBluetoothDevice(
+									device,
+									device.getName(),
+									am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+							btDevice bt2 = myDB.getBTD(bt.mac);
+
+							if (bt2.mac == null) {
+								myDB.insert(bt);
+								vec.add(bt);
+							} else
+								vec.add(bt2);
+						}
+					}
+
+				}
+			}
+			refreshList(loadFromDB());
+			Toast.makeText(application, "Found " + i + " Bluetooth Devices",
+					Toast.LENGTH_LONG).show();
+		}
 		return i;
 	}
 
@@ -722,7 +722,7 @@ public class main extends Activity {
 					refreshList(loadFromDB());
 				} else {
 
-					int test = getBtDevices();
+					int test = getBtDevices(1);
 					if (test > 0) {
 						lstring = new String[test];
 						for (int i = 0; i < test; i++) {
@@ -850,8 +850,8 @@ public class main extends Activity {
 			boolean headsetPlugOld = headsetPlug;
 
 			try {
-				carMode = preferences.getBoolean("car_mode", true);
-				homeDock = preferences.getBoolean("home_dock", true);
+				carMode = preferences.getBoolean("car_mode", false);
+				homeDock = preferences.getBoolean("home_dock", false);
 				headsetPlug = preferences.getBoolean("headset", false);
 				enableTTS = preferences.getBoolean("enableTTS", false);
 				boolean local = preferences
@@ -873,9 +873,8 @@ public class main extends Activity {
 			}
 			// if we added a special device make sure to insert it in the
 			// database
-			if ((!carModeOld && carMode) || (!homeDockOld && homeDock)
-					|| (!headsetPlugOld && headsetPlug))
-				getBtDevices();
+			if ((!carModeOld && carMode) || (!homeDockOld && homeDock) || (!headsetPlugOld && headsetPlug))
+				getBtDevices(0);
 
 			if (enableTTS) {
 				// Fire off an intent to check if a TTS engine is installed
