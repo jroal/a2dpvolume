@@ -1,12 +1,10 @@
 package a2dp.Vol;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.text.MessageFormat;
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -15,7 +13,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.bluetooth.IBluetoothA2dp;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -36,7 +33,6 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 import android.speech.tts.TextToSpeech;
 import android.telephony.SmsMessage;
@@ -764,7 +760,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				return false;
 			}
 		}
-		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		try {
+			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 
 		try {
 			startActivity(i);
@@ -829,7 +829,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		@Override
 		protected Boolean doInBackground(String... arg0) {
 
-			boolean try2 = true;
 			BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 			if (mBTA == null || !mBTA.isEnabled())
 				return false;
@@ -843,54 +842,26 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			if (device == null)
 				return false;
 
-			IBluetoothA2dp ibta = getIBluetoothA2dp();
-			try {
-				Log.d(LOG_TAG, "Here: " + ibta.getSinkPriority(device));
-				if (ibta != null && ibta.connectSink(device))
-					try2 = false;
-			} catch (Exception e) {
-				Log.e(LOG_TAG, "Error " + e.getMessage());
-				try2 = true;
-			}
+			if (android.os.Build.VERSION.SDK_INT < 11) {
 
-			// if the above does not work, give below a try...
-			if (try2) {
-				// UUID for your application
-				UUID MY_UUID = UUID.fromString(MY_UUID_STRING);
-				// Get the adapter
-				BluetoothAdapter btAdapter = BluetoothAdapter
-						.getDefaultAdapter();
-				// The socket
-				BluetoothSocket socket = null;
-				Log.d(LOG_TAG, "BT connect 1 failed, trying 2...");
+				IBluetoothA2dp ibta = getIBluetoothA2dp();
 				try {
-					// Your app UUID string (is also used by the server)
-					socket = device.createRfcommSocketToServiceRecord(MY_UUID);
-				} catch (IOException e) {
+					Log.d(LOG_TAG, "Here: " + ibta.getSinkPriority(device));
+					if (ibta != null)
+						ibta.connectSink(device);
+				} catch (Exception e) {
 					Log.e(LOG_TAG, "Error " + e.getMessage());
 				}
-				// For performance reasons
-				btAdapter.cancelDiscovery();
+			} else {
+				IBluetoothA2dp ibta = getIBluetoothA2dp();
 				try {
-					// Be aware that this is a blocking operation. You probably
-					// want
-					// to use this in a thread
-					socket.connect();
-				} catch (IOException connectException) {
-					// Unable to connect; close the socket and get out
-					Log.e(LOG_TAG, "Error " + connectException.getMessage());
-					try {
-						socket.close();
-					} catch (IOException closeException) {
-						Log.e(LOG_TAG, "Error " + closeException.getMessage());
-					}
-					return false;
+					Log.d(LOG_TAG, "Here: " + ibta.getPriority(device));
+					if (ibta != null)
+						ibta.connect(device);
+				} catch (Exception e) {
+					Log.e(LOG_TAG, "Error " + e.getMessage());
 				}
 			}
-
-			// Now manage your connection (in a separate thread)
-			// myConnectionManager(socket);
-
 			return true;
 		}
 
@@ -923,6 +894,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			}
 			return ibta;
 		}
+
+		
 	}
 
 	/*
@@ -1165,16 +1138,18 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 	private String GetName(String number) {
 		ContentResolver cr = getContentResolver();
-		
-		Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
-		Cursor c = cr.query(uri, new String[]{PhoneLookup.DISPLAY_NAME}, null, null, null);
-		 
-	        if (c.moveToFirst()) {
-	            String name = c.getString(c
-	                    .getColumnIndex(PhoneLookup.DISPLAY_NAME));	           
-	            return name;
-	        }
-			return number;
+
+		Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI,
+				Uri.encode(number));
+		Cursor c = cr.query(uri, new String[] { PhoneLookup.DISPLAY_NAME },
+				null, null, null);
+
+		if (c.moveToFirst()) {
+			String name = c.getString(c
+					.getColumnIndex(PhoneLookup.DISPLAY_NAME));
+			return name;
+		}
+		return number;
 	}
 
 }
