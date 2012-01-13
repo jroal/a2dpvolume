@@ -87,7 +87,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	boolean local;
 	private static final String A2DP_Vol = "A2DP_Vol";
 	private static final String LOG_TAG = "A2DP_Volume";
-	private static final String MY_UUID_STRING = "af87c0d0-faac-11de-a839-0800200c9a66";
+	// private static final String MY_UUID_STRING =
+	// "af87c0d0-faac-11de-a839-0800200c9a66";
 	private static final String OLD_VOLUME = "old_vol";
 	private static final String OLD_PH_VOL = "old_phone_vol";
 	private static final int MUSIC_STREAM = 0;
@@ -493,11 +494,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				}
 			}
 
-		if (bt2.isSetV())
-			setVolume(bt2.getDefVol(), application);
-		if (bt2.isSetpv()) {
-			setPVolume(bt2.getPhonev());
-		}
 		if (notify)
 			updateNot(true, bt2.toString());
 		if (toasts)
@@ -518,6 +514,28 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		itent.putExtra("connect", bt2.getMac());
 		application.sendBroadcast(itent);
 		connecting = false;
+
+		if (bt2.isSetpv())
+			setPVolume(bt2.getPhonev());
+
+		if (bt2.isSetV()) {
+			final int vol = bt2.getDefVol();
+			new CountDownTimer(5100, 5100) {
+
+				@Override
+				public void onFinish() {
+					setVolume(vol, application);
+
+				}
+
+				@Override
+				public void onTick(long arg0) {
+					// TODO Auto-generated method stub
+
+				}
+			}.start();
+		}
+
 	}
 
 	// device disconnected
@@ -895,7 +913,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			return ibta;
 		}
 
-		
 	}
 
 	/*
