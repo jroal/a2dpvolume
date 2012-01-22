@@ -20,15 +20,11 @@ import android.media.AudioManager;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.speech.tts.TextToSpeech;
-
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.SeekBar;
 
@@ -263,10 +259,11 @@ public class EditDevice extends Activity {
 				}
 
 				vec.trimToSize();
-				final String[] lstring = new String[vec.size()];
+				final String[] lstring = new String[vec.size() + 1];
 				for (int i = 0; i < vec.size(); i++) {
 					lstring[i] = vec.get(i).desc2;
 				}
+				lstring[vec.size()] = "none";
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						a2dp.Vol.EditDevice.this);
@@ -274,7 +271,10 @@ public class EditDevice extends Activity {
 				builder.setItems(lstring,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int item) {
-								fbt.setText(vec.get(item).mac);
+								if(item < vec.size())
+									fbt.setText(vec.get(item).mac);
+								else
+									fbt.setText("");
 							}
 						});
 				AlertDialog alert = builder.create();

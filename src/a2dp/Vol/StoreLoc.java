@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 public class StoreLoc extends Service {
 
+	
+
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
@@ -166,9 +168,22 @@ public class StoreLoc extends Service {
 	@Override
 	public void onDestroy() {
 		this.DB.getDb().close();
+		if(locationListener != null)
+		locationManager.removeUpdates(locationListener);
 		super.onDestroy();
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see android.app.Service#finalize()
+	 */
+	@Override
+	protected void finalize() throws Throwable {
+		this.DB.getDb().close();
+		if(locationListener != null)
+		locationManager.removeUpdates(locationListener);
+		super.finalize();
+	}
+	
 	// finds the most recent and most accurate locations
 	// get the location and write it to a file.
 	void grabGPS() {
