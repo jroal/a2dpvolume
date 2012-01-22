@@ -816,8 +816,7 @@ public class main extends Activity {
 	// this just loads the bluetooth device array from the database
 	private int loadFromDB() {
 		myDB.getDb().close();
-		if (!myDB.getDb().isOpen())
-			// this.myDB = application.getDeviceDB();
+		if (!myDB.getDb().isOpen() && !myDB.getDb().isDbLockedByCurrentThread() && !myDB.getDb().isDbLockedByOtherThreads())
 			myDB = new DeviceDB(application);
 
 		vec = myDB.selectAlldb();
