@@ -898,7 +898,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				IBluetoothA2dp ibta = getIBluetoothA2dp();
 				try {
 					Log.d(LOG_TAG, "Here: " + ibta.getPriority(device));
-					if (ibta != null)
+					if (ibta != null && ibta.getConnectionState(device) == 0)
 						ibta.connect(device);
 				} catch (Exception e) {
 					Log.e(LOG_TAG, "Error " + e.getMessage());
