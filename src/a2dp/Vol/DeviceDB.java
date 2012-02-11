@@ -12,6 +12,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -175,14 +177,19 @@ public class DeviceDB {
 		if(!this.db.isOpen())return null;
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1",
 				"desc2" }, null, null, null, null, "desc2");
-		if (cursor.moveToFirst()) {
-			do {
-				String t = cursor.getString(1);
-				if (t.length() < 2)
-					list.add(cursor.getString(0));
-				else
-					list.add(t);
-			} while (cursor.moveToNext());
+		try {
+			if (cursor.moveToFirst()) {
+				do {
+					String t = cursor.getString(1);
+					if (t.length() < 2)
+						list.add(cursor.getString(0));
+					else
+						list.add(t);
+				} while (cursor.moveToNext());
+			}
+		} catch (Exception e) {
+			Toast.makeText(context, "Database corrupt, delete and recreate database", Toast.LENGTH_LONG);
+			e.printStackTrace();
 		}
 		if (cursor != null && !cursor.isClosed()) {
 			cursor.close();

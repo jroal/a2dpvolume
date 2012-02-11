@@ -79,6 +79,7 @@ public class EditDevice extends Activity {
 	private static final int ACTION_CREATE_HOME_SCREEN_SHORTCUT = 14;
 	private static final int FETCH_HOME_SCREEN_SHORTCUT = 15;
 	private static final int ACTION_CHOOSE_APP_CUSTOM = 16;
+	private static final int ACTION_ADD_PACKAGE = 17;
 	private CheckBox mChkStopApp, mChkForceRestart;
 
 	/**
@@ -300,6 +301,10 @@ public class EditDevice extends Activity {
 			
 				vUpdateApp();
 				break;
+			case ACTION_ADD_PACKAGE:
+				pname = data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME);
+				vUpdateApp();
+				break;
 			/*
 			 * case ACTION_INPUT_LABEL: mAppItem.set(AppItem.KEY_LABEL,
 			 * data.getStringExtra(StringInputDialog.EXTRA_VALUE));
@@ -339,14 +344,12 @@ public class EditDevice extends Activity {
 				break;
 			case FETCH_HOME_SCREEN_SHORTCUT:
 				processShortcut(data);
+				if(pname.length() < 3 || pname.equalsIgnoreCase("Custom"))showDialog(DIALOG_WARN_STOP_APP);
 				break;
 			}
 
 		} else {
-			switch (requestCode) {
-			case ACTION_CHOOSE_APP_CUSTOM:
-				mChkStopApp.setChecked(false);
-			}
+			
 		}
 
 		super.onActivityResult(requestCode, resultCode, data);
@@ -431,15 +434,19 @@ public class EditDevice extends Activity {
 		device.setAppdata(appdata);
 		device.setApptype(apptype);
 		device.setPname(pname);
+		
 		if (device.hasIntent()) {
 			if (pname != null && pname.length() > 3)
 				fapp.setText(pname);
-			else if(appdata != null)
+			else if(appdata != null){
 				fapp.setText(appdata);
-			else if(appaction != null)
+			}
+			else if(appaction != null){
 				fapp.setText(appaction);
-			else
+			}
+			else{
 				fapp.setText("Custom");
+			}
 		}
 		else
 			fapp.setText("");
@@ -516,7 +523,7 @@ public class EditDevice extends Activity {
 						public void onClick(DialogInterface dialog, int which) {
 							Intent i = new Intent(getBaseContext(),
 									AppChooser.class);
-							startActivityForResult(i, ACTION_CHOOSE_APP_CUSTOM);
+							startActivityForResult(i, ACTION_ADD_PACKAGE);
 						}
 
 					});
@@ -524,8 +531,7 @@ public class EditDevice extends Activity {
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
-							mChkStopApp.setChecked(false);
-							mChkForceRestart.setChecked(false);
+							
 						}
 
 					});
