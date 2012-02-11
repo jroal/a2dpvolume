@@ -32,11 +32,13 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
 import android.speech.tts.TextToSpeech;
 import android.telephony.SmsMessage;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
 public class service extends Service implements OnAudioFocusChangeListener {
@@ -283,8 +285,18 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			if (headsetPlug)
 				this.unregisterReceiver(headSetReceiver);
 			// this.unregisterReceiver(SMScatcher);
-			if (mTtsReady)
-				mTts.shutdown();
+			if (mTtsReady) {
+				try {
+					if (!clearedTts) {
+						clearTts();
+					}
+					mTts.shutdown();
+					mTtsReady = false;
+					unregisterReceiver(SMScatcher);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			DB.getDb().close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -340,6 +352,18 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					if (!pvolsLeft)
 						setPVolume(OldVol);
 					dowifi(oldwifistate);
+				}
+				if (mTtsReady) {
+					try {
+						if (!clearedTts) {
+							clearTts();
+						}
+						mTts.shutdown();
+						mTtsReady = false;
+						unregisterReceiver(SMScatcher);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 				String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 				Intent itent = new Intent();
@@ -619,9 +643,34 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	};
 
 	protected void DoDisconnected(btDevice bt2) {
-		// if we opened a package for this device, try to close it now
-		if (bt2.hasIntent() && bt2.getPname().length() > 3) {
-			stopApp(bt2.getPname());
+
+		if (bt2.hasIntent()) {
+			// if music is playing, pause it
+			if (am2.isMusicActive()) {
+				// first pause the music so it removes the notify icon
+				Intent i = new Intent("com.android.music.musicservicecommand");
+				i.putExtra("command", "pause");
+				sendBroadcast(i);
+				// for more stubborn players, try this too...
+				long eventtime = SystemClock.uptimeMillis();
+				Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+				KeyEvent downEvent = new KeyEvent(eventtime, eventtime,
+						KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP, 0);
+				downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
+				sendOrderedBroadcast(downIntent, null);
+			}
+			
+			// if we opened a package for this device, try to close it now
+			if (bt2.getPname().length() > 3) {
+				// also open the home screen to make music app revert to
+				// background
+				Intent startMain = new Intent(Intent.ACTION_MAIN);
+				startMain.addCategory(Intent.CATEGORY_HOME);
+				startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(startMain);
+				// now we can kill the app is asked to
+				stopApp(bt2.getPname());
+			}
 		}
 
 		// start the location capture service
@@ -827,6 +876,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				packageName);
 		if (mIntent != null) {
 			try {
+
 				ActivityManager act1 = (ActivityManager) this
 						.getSystemService(ACTIVITY_SERVICE);
 				// act1.restartPackage(packageName);
@@ -835,7 +885,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				processes = act1.getRunningAppProcesses();
 				for (ActivityManager.RunningAppProcessInfo info : processes) {
 					for (int i = 0; i < info.pkgList.length; i++) {
-						if (info.pkgList[i].matches(packageName)) {
+						if (info.pkgList[i].contains(packageName)) {
 							android.os.Process.killProcess(info.pid);
 						}
 					}
@@ -847,6 +897,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				if (notify)
 					t.show();
 			}
+
 		}
 	}
 
@@ -889,7 +940,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				IBluetoothA2dp ibta = getIBluetoothA2dp();
 				try {
 					Log.d(LOG_TAG, "Here: " + ibta.getSinkPriority(device));
-					if (ibta != null)
+					if (ibta != null &&ibta.getSinkState(device) == 0)
 						ibta.connectSink(device);
 				} catch (Exception e) {
 					Log.e(LOG_TAG, "Error " + e.getMessage());
