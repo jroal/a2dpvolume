@@ -73,7 +73,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private boolean carMode = true;
 	private boolean homeDock = false;
 	private boolean headsetPlug = false;
-	private boolean enableTTS = false;
+	private static boolean ramp_vol = false;
 	HashMap<String, String> myHash;
 	private boolean toasts = true;
 	private boolean notify = false;
@@ -103,6 +103,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
 	private long SMS_DELAY = 3000; // delay before reading SMS
 	private int SMSstream = 0;
+	private long vol_delay = 5000; // delay time between the device connection and the volume adjustment
 
 	SharedPreferences preferences;
 	private MyApplication application;
@@ -133,7 +134,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			headsetPlug = preferences.getBoolean("headset", false);
 			toasts = preferences.getBoolean("toasts", true);
 			notify = preferences.getBoolean("notify1", false);
-			enableTTS = preferences.getBoolean("enableTTS", false);
+			ramp_vol = preferences.getBoolean("vol_ramp", false);
 			Long yyy = new Long(preferences.getString("gpsTime", "15000"));
 			MAX_TIME = yyy;
 
@@ -142,6 +143,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 			long zz = new Long(preferences.getString("SMSdelay", "3000"));
 			SMS_DELAY = zz;
+			
+			long aa = new Long(preferences.getString("vol_delay", "5000"));
+			vol_delay = aa;
 
 			local = preferences.getBoolean("useLocalStorage", false);
 			if (local)
@@ -511,7 +515,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				public void onFinish() {
 					try {
 						new ConnectBt().execute(tempBT.getBdevice());
-						Log.d(LOG_TAG, tempBT.getBdevice());
+						//Log.d(LOG_TAG, tempBT.getBdevice());
 					} catch (Exception e) {
 						e.printStackTrace();
 						Log.e(LOG_TAG, "Error " + e.getMessage());
@@ -522,7 +526,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				public void onTick(long arg0) {
 					try {
 						new ConnectBt().execute(tempBT.getBdevice());
-						Log.d(LOG_TAG, tempBT.getBdevice());
+						//Log.d(LOG_TAG, tempBT.getBdevice());
 					} catch (Exception e) {
 						e.printStackTrace();
 						Log.e(LOG_TAG, "Error " + e.getMessage());
@@ -533,7 +537,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			if (bt2.bdevice.length() == 17) {
 				try {
 					new ConnectBt().execute(bt2.getBdevice());
-					Log.d(LOG_TAG, bt2.getBdevice());
+					//Log.d(LOG_TAG, bt2.getBdevice());
 					connectTimer.start();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -568,7 +572,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		if (bt2.isSetV()) {
 			final int vol = bt2.getDefVol();
-			new CountDownTimer(5100, 5100) {
+			new CountDownTimer(vol_delay, vol_delay) {
 
 				@Override
 				public void onFinish() {
@@ -669,7 +673,31 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(startMain);
 				// now we can kill the app is asked to
-				stopApp(bt2.getPname());
+				
+				final String kpackage = bt2.getPname();
+				CountDownTimer killTimer = new CountDownTimer(12000, 3000) {
+					@Override
+					public void onFinish() {
+						try {
+							stopApp(kpackage);
+						} catch (Exception e) {
+							e.printStackTrace();
+							Log.e(LOG_TAG, "Error " + e.getMessage());
+						}
+					}
+
+					@Override
+					public void onTick(long arg0) {
+						try {
+							stopApp(kpackage);
+						} catch (Exception e) {
+							e.printStackTrace();
+							Log.e(LOG_TAG, "Error " + e.getMessage());
+						}
+					}
+				};
+				killTimer.start();
+
 			}
 		}
 
@@ -727,12 +755,37 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	// makes the media volume adjustment
 	public static int setVolume(int inputVol, Context sender) {
 		int outVol;
+		int curvol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 		if (inputVol < 0)
 			inputVol = 0;
 		if (inputVol > am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
 			inputVol = am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol,
-				AudioManager.FLAG_SHOW_UI);
+
+		if (ramp_vol && (inputVol > curvol)) {
+			final int minputVol = inputVol;
+			int vtime = (inputVol - curvol) * 1000;
+			new CountDownTimer(vtime, 1000) {
+
+				@Override
+				public void onFinish() {
+					am2.setStreamVolume(AudioManager.STREAM_MUSIC, minputVol,
+							AudioManager.FLAG_SHOW_UI);
+				}
+
+				@Override
+				public void onTick(long millisUntilFinished) {
+					int cvol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
+					int newvol = cvol;
+					if ((cvol + 1) < minputVol)
+						++newvol;
+					am2.setStreamVolume(AudioManager.STREAM_MUSIC, newvol,
+							AudioManager.FLAG_SHOW_UI);
+				}
+
+			}.start();
+		}
+		else
+		  am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, AudioManager.FLAG_SHOW_UI);
 		outVol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 		return outVol;
 	}
