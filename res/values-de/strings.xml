@@ -168,4 +168,9 @@
     <string name="Bonding">Paarung</string>
     <string name="Class">Klasse</string>
     <string name="SMS_Stream_desc">Wählen Sie einen Ausgabestrom für das Vorlesen von SMS</string>
+    <string name="PrefsVolAdjDelayTitle">Verzögerung der Lautstärkeänderung</string>
+    <string name="PrefsVolAdjDelaySummary">Verzögerung zwischen Geräteverbindung und Lautstärkeänderung.</string>
+    <string name="PrefsVolRampTitle">Dynamischer Lautstärkeanstieg?</string>
+    <string name="PrefsVolRampSummaryOFF">Die Lautstärke wird abrupt angehoben.</string>
+    <string name="PrefsVolRampSummaryON">Die Lautstärke wird dynamisch angehoben.</string>
 </resources>
