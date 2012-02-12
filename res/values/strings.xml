@@ -138,12 +138,16 @@
     <string-array name="SMSdelay">
         <item>0s</item>
         <item>3s</item>
+        <item>5s</item>
         <item>10s</item>
+        <item>15s</item>
     </string-array>
     <string-array name="SMSdelay_items">
         <item>0</item>
         <item>3000</item>
+        <item>5000</item>
         <item>10000</item>
+        <item>15000</item>
     </string-array>
     <string name="SMSdelay_title">SMS Delay</string>
     <string name="SMSDelayText">Delay for reading text message</string>
@@ -164,4 +168,9 @@
     <string name="Bonding">Bonding</string>
     <string name="Class">Class</string>
     <string name="SMS_Stream_desc">Select a path for the text message sound to travel</string>
+    <string name="PrefsVolAdjDelayTitle">Volume Adjust Delay</string>
+    <string name="PrefsVolAdjDelaySummary">Delay between the device connection and the volume adjusting up.</string>
+    <string name="PrefsVolRampTitle">Ramp volume up?</string>
+    <string name="PrefsVolRampSummaryOFF">Volume will not ramp when adjusting.</string>
+    <string name="PrefsVolRampSummaryON">Volume will ramp when adjusting up.</string>
 </resources>
