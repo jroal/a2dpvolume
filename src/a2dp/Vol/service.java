@@ -675,7 +675,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				// now we can kill the app is asked to
 				
 				final String kpackage = bt2.getPname();
-				CountDownTimer killTimer = new CountDownTimer(12000, 3000) {
+				CountDownTimer killTimer = new CountDownTimer(6000, 3000) {
 					@Override
 					public void onFinish() {
 						try {
@@ -688,6 +688,21 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 					@Override
 					public void onTick(long arg0) {
+						
+						if (am2.isMusicActive()) {
+							// first pause the music so it removes the notify icon
+							Intent i = new Intent("com.android.music.musicservicecommand");
+							i.putExtra("command", "pause");
+							sendBroadcast(i);
+							// for more stubborn players, try this too...
+							long eventtime = SystemClock.uptimeMillis();
+							Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+							KeyEvent downEvent = new KeyEvent(eventtime, eventtime,
+									KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP, 0);
+							downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
+							sendOrderedBroadcast(downIntent, null);
+						}
+						
 						try {
 							stopApp(kpackage);
 						} catch (Exception e) {
@@ -753,8 +768,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	}
 
 	// makes the media volume adjustment
-	public static int setVolume(int inputVol, Context sender) {
-		int outVol;
+	public static void setVolume(int inputVol, Context sender) {
+
 		int curvol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 		if (inputVol < 0)
 			inputVol = 0;
@@ -763,8 +778,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		if (ramp_vol && (inputVol > curvol)) {
 			final int minputVol = inputVol;
-			int vtime = (inputVol - curvol) * 1000;
-			new CountDownTimer(vtime, 1000) {
+
+			new CountDownTimer(((inputVol - curvol) * 1000), 1000) {
 
 				@Override
 				public void onFinish() {
@@ -786,8 +801,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 		else
 		  am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, AudioManager.FLAG_SHOW_UI);
-		outVol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
-		return outVol;
+
 	}
 
 	// captures the media volume so it can be later restored
@@ -872,8 +886,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			try {
 				ActivityManager act1 = (ActivityManager) this
 						.getSystemService(ACTIVITY_SERVICE);
-				// act1.restartPackage(pname);
-				act1.killBackgroundProcesses(pname);
+				act1.restartPackage(pname);
+				// act1.killBackgroundProcesses(pname);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
