@@ -251,8 +251,7 @@ public class EditDevice extends Activity {
 				final Vector<btDevice> vec = myDB.selectAlldb();
 				int j = vec.size();
 				for (int i = 0; i < j; i++) {
-					if ((vec.get(i).mac.length() < 17)
-							|| btd.equalsIgnoreCase(vec.get(i).mac)) {
+					if ((vec.get(i).mac.length() < 17)) {
 						vec.remove(i);
 						j--;
 						i--;
