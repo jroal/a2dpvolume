@@ -41,6 +41,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+
+
 public class service extends Service implements OnAudioFocusChangeListener {
 
 	/*
