@@ -37,6 +37,7 @@ import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
 import android.speech.tts.TextToSpeech;
 import android.telephony.SmsMessage;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
@@ -52,8 +53,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	 */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-
-		// return super.onStartCommand(intent, flags, startId);
 		return START_STICKY;
 	}
 
@@ -66,7 +65,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	public static boolean run = false;
 	private static boolean mvolsLeft = false;
 	private static boolean pvolsLeft = false;
-
 	public static btDevice[] btdConn = new btDevice[5]; // n the devices in the
 														// database that has
 	// connected
@@ -113,6 +111,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private volatile boolean connecting = false;
 	private volatile boolean disconnecting = false;
 	private int connectedIcon;
+	private TelephonyManager tm;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -1096,16 +1095,17 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private final BroadcastReceiver SMScatcher = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(final Context context, final Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {		
+			tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 			if (intent.getAction().equals(
-					"android.provider.Telephony.SMS_RECEIVED")) {
+					"android.provider.Telephony.SMS_RECEIVED") && tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
 				// if(message starts with SMStretcher recognize BYTE)
 
 				/*
 				 * The SMS-Messages are 'hiding' within the extras of the
 				 * Intent.
 				 */
-
+				
 				Bundle bundle = intent.getExtras();
 				if (bundle != null) {
 					/* Get all messages contained in the Intent */
