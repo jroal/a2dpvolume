@@ -51,6 +51,7 @@ public class EditDevice extends Activity {
 	private EditText fbt;
 	private CheckBox fwifi;
 	private CheckBox fapprestart;
+	private CheckBox fappkill;
 	private CheckBox fenableTTS;
 	private CheckBox fsetpv;
 	private SeekBar fphonev;
@@ -66,6 +67,7 @@ public class EditDevice extends Activity {
 	private String appdata;
 	private String apptype;
 	private boolean apprestart;
+	private boolean appkill;
 
 	private static final int DIALOG_PICK_APP_TYPE = 3;
 	private static final int DIALOG_WARN_STOP_APP = 5;
@@ -102,6 +104,7 @@ public class EditDevice extends Activity {
 		this.fvol = (SeekBar) this.findViewById(R.id.seekBarVol);
 		this.fapp = (EditText) this.findViewById(R.id.editApp);
 		this.fapprestart = (CheckBox) this.findViewById(R.id.appRestartCheckbox);
+		this.fappkill = (CheckBox) this.findViewById(R.id.appKillCheckbox);
 		this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
 		this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
 		this.fenableTTS = (CheckBox) this.findViewById(R.id.enableTTSBox);
@@ -131,7 +134,9 @@ public class EditDevice extends Activity {
 		appdata = device.getAppdata();
 		apptype = device.getApptype();
 		apprestart = device.isApprestart();
+		appkill = device.isAppkill();
 		fapprestart.setChecked(apprestart);
+		fappkill.setChecked(appkill);
 		fenableTTS.setChecked(device.isEnableTTS());
 		fsetpv.setChecked(device.isSetpv());
 		fphonev.setMax(am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL));
@@ -156,6 +161,8 @@ public class EditDevice extends Activity {
 				device.setApptype(apptype);
 				apprestart = fapprestart.isChecked();
 				device.setApprestart(apprestart);
+				appkill = fappkill.isChecked();
+				device.setAppkill(appkill);
 				device.setEnableTTS(fenableTTS.isChecked());
 				device.setSetpv(fsetpv.isChecked());
 				device.setPhonev(fphonev.getProgress());
