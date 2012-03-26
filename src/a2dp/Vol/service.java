@@ -666,7 +666,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			}
 			
 			// if we opened a package for this device, try to close it now
-			if (bt2.getPname().length() > 3) {
+			if (bt2.getPname().length() > 3 && bt2.isAppkill()) {
 				// also open the home screen to make music app revert to
 				// background
 				Intent startMain = new Intent(Intent.ACTION_MAIN);

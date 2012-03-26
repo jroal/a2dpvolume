@@ -27,6 +27,7 @@ public class btDevice {
 	public String appdata; // app data string
 	public String apptype; // app type string
 	public boolean apprestart; // app restart flag
+	public boolean appkill;  // kill app on disconnect flag
 	public boolean setpv; // whether to adjust phone volume or not
 	public int phonev; // what to adjust phone volume to
 
@@ -165,6 +166,38 @@ public class btDevice {
 			this.apprestart = false;
 	}
 
+	/**
+	 * @return the appkill
+	 */
+	public boolean isAppkill() {
+		return appkill;
+	}
+	/**
+	 * @param appkill the appkill to set
+	 */
+	public void setAppkill(boolean appkill) {
+		this.appkill = appkill;
+	}
+	/**
+	 * @return the appkill
+	 */
+	public long lAppkill() {
+		if (appkill)
+			return 1;
+		else
+			return 0;
+	}
+	
+	/**
+	 * @param appkill
+	 *            the apprkill to set
+	 */
+	public void setAppkill(int appkill) {
+		if (appkill > 0)
+			this.appkill = true;
+		else
+			this.appkill = false;
+	}
 	/**
 	 * @return the enableTTS
 	 */
@@ -409,6 +442,7 @@ public class btDevice {
 		this.appdata = "";
 		this.apptype = "";
 		this.apprestart = false;
+		this.appkill = true;
 		this.enableTTS = false;
 		this.phonev = 10;
 		this.setpv = false;
@@ -440,6 +474,7 @@ public class btDevice {
 		this.appdata = "";
 		this.apptype = "";
 		this.apprestart = false;
+		this.appkill = true;
 		this.enableTTS = false;
 		this.phonev = 10;
 		this.setpv = false;
