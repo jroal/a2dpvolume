@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
     <string name="deviceName">Entrer le nom de l\'appareil</string>
     <string name="Edit">Modifier</string>
@@ -173,4 +173,5 @@
     <string name="PrefsVolAdjDelayTitle">Délai d\'ajustement progressif du volume</string>
     <string name="PrefsVolAdjDelaySummary">Délai entre branchement et ajustement progressif du volume.</string>
     <string name="PrefsVolRampSummaryON">Le volume montera progressivement lors de l\'ajustement.</string>
+    <string name="app_kill">Arrêter une application sur débranchement</string>
 </resources>
