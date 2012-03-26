@@ -173,4 +173,5 @@
     <string name="PrefsVolRampTitle">Dynamischer Lautstärkeanstieg?</string>
     <string name="PrefsVolRampSummaryOFF">Die Lautstärke wird abrupt angehoben.</string>
     <string name="PrefsVolRampSummaryON">Die Lautstärke wird dynamisch angehoben.</string>
+    <string name="app_kill">App bei Verbindungstrennung beenden</string>
 </resources>
