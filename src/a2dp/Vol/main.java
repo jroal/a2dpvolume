@@ -66,6 +66,7 @@ public class main extends Activity {
 	boolean carMode = false;
 	boolean homeDock = false;
 	boolean headsetPlug = false;
+	boolean power = false;
 	boolean enableTTS = false;
 	boolean toasts = true;
 	private String a2dpDir = "";
@@ -181,6 +182,7 @@ public class main extends Activity {
 			carMode = preferences.getBoolean("car_mode", true);
 			homeDock = preferences.getBoolean("home_dock", false);
 			headsetPlug = preferences.getBoolean("headset", false);
+			power = preferences.getBoolean("power", false);
 			enableTTS = preferences.getBoolean("enableTTS", false);
 			toasts = preferences.getBoolean("toasts", true);
 		} catch (Exception e2) {
@@ -654,6 +656,24 @@ public class main extends Activity {
 
 			refreshList(loadFromDB()); // make sure it is relisted
 		}
+		
+		if (power) {
+			// add the power false device if power check is
+			// enabled
+			btDevice fbt = new btDevice();
+			String str = getString(R.string.powerPlugName);
+			fbt.setBluetoothDevice(str, str , "4",
+					am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+			btDevice fbt2 = myDB.getBTD(fbt.mac);
+			if (fbt2.mac == null) {
+				fbt.setGetLoc(false);
+				a2dp.Vol.main.this.myDB.insert(fbt);
+				vec.add(fbt);
+			} else
+				vec.add(fbt2);
+
+			refreshList(loadFromDB()); // make sure it is relisted
+		}
 
 		if (mode >= 1) {
 			BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
@@ -847,11 +867,13 @@ public class main extends Activity {
 			boolean carModeOld = carMode;
 			boolean homeDockOld = homeDock;
 			boolean headsetPlugOld = headsetPlug;
+			boolean powerOld = power;
 
 			try {
 				carMode = preferences.getBoolean("car_mode", false);
 				homeDock = preferences.getBoolean("home_dock", false);
 				headsetPlug = preferences.getBoolean("headset", false);
+				power = preferences.getBoolean("power", false);
 				enableTTS = preferences.getBoolean("enableTTS", false);
 				boolean local = preferences
 						.getBoolean("useLocalStorage", false);
@@ -872,7 +894,7 @@ public class main extends Activity {
 			}
 			// if we added a special device make sure to insert it in the
 			// database
-			if ((!carModeOld && carMode) || (!homeDockOld && homeDock) || (!headsetPlugOld && headsetPlug))
+			if ((!carModeOld && carMode) || (!homeDockOld && homeDock) || (!headsetPlugOld && headsetPlug) || (!powerOld && power))
 				getBtDevices(0);
 
 			if (enableTTS) {
