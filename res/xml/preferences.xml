@@ -13,7 +13,8 @@
 <CheckBoxPreference android:key="car_mode" android:enabled="true" android:selectable="true" android:defaultValue="true" android:summaryOff="@string/PrefsCarModeOFF" android:summaryOn="@string/PrefsCarModeON" android:title="@string/PrefsCarMode"></CheckBoxPreference>
 <CheckBoxPreference android:title="@string/PrefsHomeDock" android:summaryOn="@string/PrefsHomeDockON" android:key="home_dock" android:summaryOff="@string/PrefsHomeDockOFF"></CheckBoxPreference>
 <CheckBoxPreference android:summaryOn="@string/PrefsHeadsetON" android:summaryOff="@string/PrefsHeadsetOFF" android:title="@string/PrefsHeadset" android:key="headset" android:defaultValue="false"></CheckBoxPreference>
-<CheckBoxPreference android:summaryOn="@string/PrefsTTSON" android:summaryOff="@string/PrefsTTSOFF" android:defaultValue="false" android:title="@string/PrefsTTS" android:key="enableTTS"></CheckBoxPreference>
+<CheckBoxPreference android:summaryOff="@string/PrefsPowerOFF" android:title="@string/PrefsPower" android:summaryOn="@string/PrefsPowerON" android:key="power" android:defaultValue="false"/><CheckBoxPreference android:summaryOn="@string/PrefsTTSON" android:summaryOff="@string/PrefsTTSOFF" android:defaultValue="false" android:title="@string/PrefsTTS" android:key="enableTTS"></CheckBoxPreference>
+
 </PreferenceCategory><PreferenceCategory android:enabled="true" android:title="@string/PrefsCatGPS">
 <ListPreference android:enabled="true" android:key="gpsTime" android:entries="@array/gpsTimeout" android:entryValues="@array/gpsTimeout_items" android:summary="@string/PrefsGPSTimeout" android:title="@string/PrefsGPSTimeoutTitle" android:defaultValue="20000"></ListPreference>
 <ListPreference android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:summary="@string/PrefsGPSInaccuracy" android:title="@string/PrefsGPSInaccuracyTitle" android:defaultValue="2"></ListPreference>

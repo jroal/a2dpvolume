@@ -174,4 +174,8 @@
     <string name="PrefsVolRampSummaryOFF">Volume will not ramp when adjusting.</string>
     <string name="PrefsVolRampSummaryON">Volume will ramp when adjusting up.</string>
     <string name="app_kill">Stop app on disconnect</string>
+    <string name="PrefsPowerOFF">Do not respond to Power Connection</string>
+    <string name="PrefsPower">Respond to Power Connection?</string>
+    <string name="PrefsPowerON">Respond to Power Connection</string>
+    <string name="powerPlugName">Power Connection</string>
 </resources>

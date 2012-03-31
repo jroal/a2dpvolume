@@ -73,6 +73,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private boolean carMode = true;
 	private boolean homeDock = false;
 	private boolean headsetPlug = false;
+	private boolean power = false;
 	private static boolean ramp_vol = false;
 	HashMap<String, String> myHash;
 	private boolean toasts = true;
@@ -133,6 +134,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			carMode = preferences.getBoolean("car_mode", true);
 			homeDock = preferences.getBoolean("home_dock", false);
 			headsetPlug = preferences.getBoolean("headset", false);
+			power = preferences.getBoolean("power", false);
 			toasts = preferences.getBoolean("toasts", true);
 			notify = preferences.getBoolean("notify1", false);
 			ramp_vol = preferences.getBoolean("vol_ramp", false);
@@ -265,6 +267,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 			// Create listener for when car mode connects
 			filter.addAction(android.app.UiModeManager.ACTION_ENTER_DESK_MODE);
+		}
+		
+		if (power) {
+			// Create listener for when power disconnects
+			filter2.addAction(Intent.ACTION_POWER_DISCONNECTED);
+
+			// Create listener for when power connects
+			filter.addAction(Intent.ACTION_POWER_CONNECTED);
 		}
 
 		if (headsetPlug) {
@@ -451,6 +461,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 						} else if (intent.getAction().equalsIgnoreCase(
 								"android.app.action.ENTER_DESK_MODE")) {
 							bt2 = DB.getBTD("2"); // get home dock data
+						} else if (intent.getAction().equalsIgnoreCase(
+								Intent.ACTION_POWER_CONNECTED)) {
+							bt2 = DB.getBTD("4"); // get power data
+						
 						} else
 							bt2 = null;
 
@@ -632,6 +646,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 						else if (intent2.getAction().equalsIgnoreCase(
 								"android.app.action.EXIT_DESK_MODE"))
 							bt2 = DB.getBTD("2");
+						else if (intent2.getAction().equalsIgnoreCase(
+								Intent.ACTION_POWER_DISCONNECTED))
+							bt2 = DB.getBTD("4");
 						else
 							bt2 = null;
 					} catch (Exception e) {
