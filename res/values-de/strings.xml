@@ -178,4 +178,5 @@
     <string name="PrefsPower">Reaktion auf Anschließen des Ladekabels?</string>
     <string name="PrefsPowerON">Reagiere auf Ladekabel.</string>
     <string name="powerPlugName">Ladekabel</string>
+    <string name="enableGPS">GPS während Verbindung einschalten?</string>
 </resources>
