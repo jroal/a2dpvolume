@@ -174,4 +174,9 @@
     <string name="PrefsVolAdjDelaySummary">Délai entre branchement et ajustement progressif du volume.</string>
     <string name="PrefsVolRampSummaryON">Le volume montera progressivement lors de l\'ajustement.</string>
     <string name="app_kill">Arrêter une application sur débranchement</string>
+    <string name="powerPlugName">Alimentation</string>
+    <string name="PrefsPowerOFF">Ne pas réagir au branchement de l\'alimentation</string>
+    <string name="PrefsPowerON">Réagir au branchement de l\'alimentation</string>
+    <string name="enableGPS">Activer le GPS lorsque branché?</string>
+    <string name="PrefsPower">Réagir au branchement de l\'alimentation?</string>
 </resources>
