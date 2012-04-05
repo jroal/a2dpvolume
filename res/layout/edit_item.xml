@@ -5,6 +5,13 @@
             <EditText android:id="@+id/editDesc2" android:layout_width="match_parent" android:text="EditText" android:layout_height="wrap_content"></EditText>
             <CheckBox android:layout_width="wrap_content" android:id="@+id/checkCaptLoc" android:text="@string/getLoc" android:layout_height="wrap_content"></CheckBox>
             <CheckBox android:layout_width="wrap_content" android:id="@+id/checkwifi" android:text="@string/wifiDisconnect" android:layout_height="wrap_content"></CheckBox>
+
+            <CheckBox
+                android:id="@+id/checkgps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enableGPS" />
+
             <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/PrefsTTS" android:id="@+id/enableTTSBox"></CheckBox>
             <CheckBox android:layout_width="wrap_content" android:id="@+id/checkSetVol" android:text="@string/setVol" android:layout_height="wrap_content"></CheckBox>
             <TextView android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/MediaVolume"></TextView>

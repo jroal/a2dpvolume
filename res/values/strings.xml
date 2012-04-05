@@ -178,4 +178,5 @@
     <string name="PrefsPower">Respond to Power Connection?</string>
     <string name="PrefsPowerON">Respond to Power Connection</string>
     <string name="powerPlugName">Power Connection</string>
+    <string name="enableGPS">Enable GPS while connected?</string>
 </resources>
