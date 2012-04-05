@@ -23,6 +23,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.net.Uri;
@@ -35,6 +36,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
+import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
@@ -85,7 +87,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private static final String FIX_STREAM = "fix_stream";
 
 	boolean oldwifistate = true;
+	boolean oldgpsstate = true;
 	WifiManager wifiManager;
+	LocationManager locmanager;
 	String a2dpDir = "";
 	boolean local;
 	private static final String A2DP_Vol = "A2DP_Vol";
@@ -188,6 +192,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		wifiManager = (WifiManager) getBaseContext().getSystemService(
 				Context.WIFI_SERVICE);
+		
+		locmanager = (LocationManager) getBaseContext().getSystemService(Context.LOCATION_SERVICE);
 
 		if (notify) {
 			// set up the notification and start foreground
@@ -511,6 +517,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			getOldvol();
 			getOldPvol();
 			oldwifistate = wifiManager.isWifiEnabled();
+			oldgpsstate = locmanager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		}
 
 		if (bt2.wifi) {
@@ -521,6 +528,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				e.printStackTrace();
 				Log.e(LOG_TAG, "Error " + e.getMessage());
 			}
+		}
+		
+		if(bt2.enablegps){
+			turnGPSOn();
 		}
 
 		if (bt2.bdevice != null) {
@@ -749,6 +760,28 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		if (bt2.wifi) {
 			dowifi(oldwifistate);
 		}
+		if(bt2.isEnablegps()){
+			if(!oldgpsstate)
+				if(!bt2.isGetLoc())turnGPSOff();
+				else{
+					new CountDownTimer(MAX_TIME + 2000, 1000){
+
+						@Override
+						public void onFinish() {
+							turnGPSOff();
+							
+						}
+
+						@Override
+						public void onTick(long millisUntilFinished) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+					}.start();
+				}
+		}
+		
 		for (int k = 0; k < btdConn.length; k++)
 			if (btdConn[k] != null)
 				if (bt2.getMac().equalsIgnoreCase(btdConn[k].getMac()))
@@ -1091,6 +1124,32 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	private void turnGPSOn(){
+	    String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+	    if(!provider.contains("gps")){ //if gps is disabled
+	        final Intent poke = new Intent();
+	        poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider"); 
+	        poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+	        poke.setData(Uri.parse("3")); 
+	        sendBroadcast(poke);
+	    }
+	}
+
+	private void turnGPSOff(){
+	    String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+	    if(provider.contains("gps")){ //if gps is enabled
+	        final Intent poke = new Intent();
+	        poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+	        poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+	        poke.setData(Uri.parse("3")); 
+	        sendBroadcast(poke);
+	    }
+	}
+
 
 	private void getConnects() {
 		if (true) {

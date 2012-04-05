@@ -28,6 +28,7 @@ public class btDevice {
 	public String apptype; // app type string
 	public boolean apprestart; // app restart flag
 	public boolean appkill;  // kill app on disconnect flag
+	public boolean enablegps; // enable GPS while connected
 	public boolean setpv; // whether to adjust phone volume or not
 	public int phonev; // what to adjust phone volume to
 
@@ -190,7 +191,7 @@ public class btDevice {
 	
 	/**
 	 * @param appkill
-	 *            the apprkill to set
+	 *            the appkill to set
 	 */
 	public void setAppkill(int appkill) {
 		if (appkill > 0)
@@ -198,6 +199,36 @@ public class btDevice {
 		else
 			this.appkill = false;
 	}
+	
+	public long lenablegps(){
+		if(enablegps)
+			return 1;
+		else
+			return 0;
+	}
+	/**
+	 * @return the enablegps
+	 */
+	public boolean isEnablegps() {
+		return enablegps;
+	}
+	/**
+	 * @param enablegps the enablegps to set
+	 */
+	public void setEnablegps(boolean enablegps) {
+		this.enablegps = enablegps;
+	}
+	/**
+	 * @param enablegps the enablegps to set
+	 */
+	public void setEnablegps(int enablegps1) {
+		if(enablegps1 > 0)
+			this.enablegps = true;
+		else
+			this.enablegps = false;
+	}
+	
+	
 	/**
 	 * @return the enableTTS
 	 */

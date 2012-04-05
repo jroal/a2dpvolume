@@ -52,6 +52,7 @@ public class EditDevice extends Activity {
 	private CheckBox fwifi;
 	private CheckBox fapprestart;
 	private CheckBox fappkill;
+	private CheckBox fenableGPS;
 	private CheckBox fenableTTS;
 	private CheckBox fsetpv;
 	private SeekBar fphonev;
@@ -68,6 +69,7 @@ public class EditDevice extends Activity {
 	private String apptype;
 	private boolean apprestart;
 	private boolean appkill;
+	private boolean enablegps;
 
 	private static final int DIALOG_PICK_APP_TYPE = 3;
 	private static final int DIALOG_WARN_STOP_APP = 5;
@@ -107,6 +109,7 @@ public class EditDevice extends Activity {
 		this.fappkill = (CheckBox) this.findViewById(R.id.appKillCheckbox);
 		this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
 		this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
+		this.fenableGPS = (CheckBox) this.findViewById(R.id.checkgps);
 		this.fenableTTS = (CheckBox) this.findViewById(R.id.enableTTSBox);
 		this.fsetpv = (CheckBox) this.findViewById(R.id.checkSetpv);
 		this.fphonev = (SeekBar) this.findViewById(R.id.seekPhoneVol);
@@ -127,6 +130,7 @@ public class EditDevice extends Activity {
 		fapp.setText(device.getPname());
 		fbt.setText(device.getBdevice());
 		fwifi.setChecked(device.isWifi());
+		fenableGPS.setChecked(device.isEnablegps());
 		if (device == null)
 			connbt.setEnabled(false);
 		pname = device.getPname();
@@ -156,6 +160,7 @@ public class EditDevice extends Activity {
 				device.setPname(pname);
 				device.setBdevice(fbt.getText().toString());
 				device.setWifi(fwifi.isChecked());
+				device.setEnablegps(fenableGPS.isChecked());
 				device.setAppaction(appaction);
 				device.setAppdata(appdata);
 				device.setApptype(apptype);
@@ -255,6 +260,8 @@ public class EditDevice extends Activity {
 
 		connbt.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				if (!myDB.getDb().isOpen() && !myDB.getDb().isDbLockedByCurrentThread() && !myDB.getDb().isDbLockedByOtherThreads())
+					myDB = new DeviceDB(application);
 				final Vector<btDevice> vec = myDB.selectAlldb();
 				int j = vec.size();
 				for (int i = 0; i < j; i++) {
