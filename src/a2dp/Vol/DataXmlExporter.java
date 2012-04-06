@@ -3,7 +3,7 @@ package a2dp.Vol;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.Log;
+//import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,8 +43,8 @@ public class DataXmlExporter {
 
 	public void export(String dbName, String exportFileNamePrefix)
 			throws IOException {
-		Log.i(MyApplication.APP_NAME, "exporting database - " + dbName
-				+ " exportFileNamePrefix=" + exportFileNamePrefix);
+		//Log.i(MyApplication.APP_NAME, "exporting database - " + dbName
+		//		+ " exportFileNamePrefix=" + exportFileNamePrefix);
 
 		this.xmlBuilder = new XmlBuilder();
 		this.xmlBuilder.start(dbName);
@@ -52,12 +52,12 @@ public class DataXmlExporter {
 		// get the tables
 		String sql = "select * from sqlite_master";
 		Cursor c = this.db.rawQuery(sql, new String[0]);
-		Log.d(MyApplication.APP_NAME, "select * from sqlite_master, cur size "
-				+ c.getCount());
+		//Log.d(MyApplication.APP_NAME, "select * from sqlite_master, cur size "
+		//		+ c.getCount());
 		if (c.moveToFirst()) {
 			do {
 				String tableName = c.getString(c.getColumnIndex("name"));
-				Log.d(MyApplication.APP_NAME, "table name " + tableName);
+				//Log.d(MyApplication.APP_NAME, "table name " + tableName);
 
 				// skip metadata, sequence, any sqlite tables and uidx (unique
 				// indexes)
@@ -76,11 +76,11 @@ public class DataXmlExporter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Log.i(MyApplication.APP_NAME, "exporting database complete");
+		//Log.i(MyApplication.APP_NAME, "exporting database complete");
 	}
 
 	private void exportTable(final String tableName) throws IOException {
-		Log.d(MyApplication.APP_NAME, "exporting table - " + tableName);
+		//Log.d(MyApplication.APP_NAME, "exporting table - " + tableName);
 		this.xmlBuilder.openTable(tableName);
 		String sql = "select * from " + tableName;
 		Cursor c = this.db.rawQuery(sql, new String[0]);

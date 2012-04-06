@@ -84,7 +84,6 @@ public class EditDevice extends Activity {
 	private static final int FETCH_HOME_SCREEN_SHORTCUT = 15;
 	private static final int ACTION_CHOOSE_APP_CUSTOM = 16;
 	private static final int ACTION_ADD_PACKAGE = 17;
-	private CheckBox mChkStopApp, mChkForceRestart;
 
 	/**
 	 * @see android.app.Activity#onCreate(Bundle)
@@ -139,8 +138,10 @@ public class EditDevice extends Activity {
 		apptype = device.getApptype();
 		apprestart = device.isApprestart();
 		appkill = device.isAppkill();
+		enablegps = device.isEnablegps();
 		fapprestart.setChecked(apprestart);
 		fappkill.setChecked(appkill);
+		fenableGPS.setChecked(enablegps);
 		fenableTTS.setChecked(device.isEnableTTS());
 		fsetpv.setChecked(device.isSetpv());
 		fphonev.setMax(am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL));
@@ -168,7 +169,8 @@ public class EditDevice extends Activity {
 				device.setApprestart(apprestart);
 				appkill = fappkill.isChecked();
 				device.setAppkill(appkill);
-				device.setEnableTTS(fenableTTS.isChecked());
+				enablegps = fenableTTS.isChecked();
+				device.setEnableTTS(enablegps);
 				device.setSetpv(fsetpv.isChecked());
 				device.setPhonev(fphonev.getProgress());
 				
