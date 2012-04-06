@@ -49,7 +49,7 @@
     <string name="ImportDB">Import Database from SD card</string>
     <string name="ExportLocation">Export Last Location Data</string>
     <string name="PrefsNotifySummaryON">The service will start as a foreground task with an icon on the notification bar.</string>
-    <string name="PrefsNotifySummaryOFF">The service will start but it will be a background tast with no icon on the notification bar.</string>
+    <string name="PrefsNotifySummaryOFF">The service will start but it will be a background task with no icon on the notification bar.</string>
     <string name="PrefsNotify">Notify in Foreground?</string>
     <string name="PrefsGPSTimeoutTitle">GPS Listener Timeout</string>
     <string name="PrefsGPSTimeout">The maximum time the GPS listener will be allowed to run looking for a better GPS location after bluetooth disconnect.</string>
