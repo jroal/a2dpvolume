@@ -36,12 +36,13 @@ public class DeviceDB {
 		this.context = context;
 		OpenHelper openHelper = new OpenHelper(this.context);
 		try {
-			this.db = openHelper.getWritableDatabase();
+			this.db = openHelper.getWritableDatabase();	
+			this.db.wait(200);
+			this.insertStmt = this.db.compileStatement(INSERT);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.insertStmt = this.db.compileStatement(INSERT);
 	}
 
 	/**

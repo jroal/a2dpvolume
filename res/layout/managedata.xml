@@ -5,7 +5,7 @@
 
 	
 
-	<TableRow android:id="@+id/TableRow03" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_margin="5px"><Button android:id="@+id/exportdbtosdbutton" android:layout_height="wrap_content" android:text="@string/ExportDB" android:layout_width="wrap_content" android:layout_weight="1" android:layout_gravity="bottom|left|fill_vertical"/><Button android:id="@+id/exportdbxmltosdbutton" android:layout_height="wrap_content" android:text="@string/ExportXML" android:layout_width="wrap_content" android:layout_weight="1" android:layout_gravity="bottom|fill_vertical|center"/>
+	<TableRow android:id="@+id/TableRow03" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_margin="5dp"><Button android:id="@+id/exportdbtosdbutton" android:layout_height="wrap_content" android:text="@string/ExportDB" android:layout_width="wrap_content" android:layout_weight="1" android:layout_gravity="bottom|left|fill_vertical"/><Button android:id="@+id/exportdbxmltosdbutton" android:layout_height="wrap_content" android:text="@string/ExportXML" android:layout_width="wrap_content" android:layout_weight="1" android:layout_gravity="bottom|fill_vertical|center"/>
 </TableRow>
 
 
