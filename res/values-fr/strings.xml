@@ -179,4 +179,7 @@
     <string name="PrefsPowerON">Réagir au branchement de l\'alimentation</string>
     <string name="enableGPS">Activer le GPS lorsque branché?</string>
     <string name="PrefsPower">Réagir au branchement de l\'alimentation?</string>
+    <string name="SMSAlarmStream">Flux d\'alarme</string>
+    <string name="SMSVoiceStream">Flux d\'appel vocal</string>
+    <string name="SMSMusicStream">Flux de musique</string>
 </resources>

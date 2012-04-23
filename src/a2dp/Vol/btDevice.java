@@ -27,10 +27,18 @@ public class btDevice {
 	public String appdata; // app data string
 	public String apptype; // app type string
 	public boolean apprestart; // app restart flag
-	public boolean appkill;  // kill app on disconnect flag
+	public boolean appkill; // kill app on disconnect flag
 	public boolean enablegps; // enable GPS while connected
 	public boolean setpv; // whether to adjust phone volume or not
 	public int phonev; // what to adjust phone volume to
+	public int icon; // icon to show when connected
+	public int smsdelay; // delay before reading SMS
+	public int smsstream; // stream to use for TTS
+	public int voldelay; // delay before setting volume
+	public boolean volramp; // ramp volume
+	public boolean autovol; // automatically store last used volume for this
+							// device
+	public boolean silent; // use silent mode while connected
 
 	/**
 	 * @return the setpv
@@ -38,14 +46,17 @@ public class btDevice {
 	public boolean isSetpv() {
 		return setpv;
 	}
+
 	public long islSetpv() {
 		if (isSetpv())
 			return 1;
 		else
 			return 0;
 	}
+
 	/**
-	 * @param setpv the setpv to set
+	 * @param setpv
+	 *            the setpv to set
 	 */
 	public void setSetpv(boolean setpv) {
 		this.setpv = setpv;
@@ -57,6 +68,7 @@ public class btDevice {
 		else
 			this.setpv = false;
 	}
+
 	/**
 	 * @return the phonev
 	 */
@@ -65,7 +77,8 @@ public class btDevice {
 	}
 
 	/**
-	 * @param phonev the phonev to set
+	 * @param phonev
+	 *            the phonev to set
 	 */
 	public void setPhonev(int phonev) {
 		this.phonev = phonev;
@@ -173,12 +186,15 @@ public class btDevice {
 	public boolean isAppkill() {
 		return appkill;
 	}
+
 	/**
-	 * @param appkill the appkill to set
+	 * @param appkill
+	 *            the appkill to set
 	 */
 	public void setAppkill(boolean appkill) {
 		this.appkill = appkill;
 	}
+
 	/**
 	 * @return the appkill
 	 */
@@ -188,7 +204,7 @@ public class btDevice {
 		else
 			return 0;
 	}
-	
+
 	/**
 	 * @param appkill
 	 *            the appkill to set
@@ -199,36 +215,40 @@ public class btDevice {
 		else
 			this.appkill = false;
 	}
-	
-	public long lenablegps(){
-		if(enablegps)
+
+	public long lenablegps() {
+		if (enablegps)
 			return 1;
 		else
 			return 0;
 	}
+
 	/**
 	 * @return the enablegps
 	 */
 	public boolean isEnablegps() {
 		return enablegps;
 	}
+
 	/**
-	 * @param enablegps the enablegps to set
+	 * @param enablegps
+	 *            the enablegps to set
 	 */
 	public void setEnablegps(boolean enablegps) {
 		this.enablegps = enablegps;
 	}
+
 	/**
-	 * @param enablegps the enablegps to set
+	 * @param enablegps
+	 *            the enablegps to set
 	 */
 	public void setEnablegps(int enablegps1) {
-		if(enablegps1 > 0)
+		if (enablegps1 > 0)
 			this.enablegps = true;
 		else
 			this.enablegps = false;
 	}
-	
-	
+
 	/**
 	 * @return the enableTTS
 	 */
@@ -382,7 +402,7 @@ public class btDevice {
 	 *            the desc2 to set
 	 */
 	public void setDesc2(String desc2) {
-		this.desc2 = desc2;
+		this.desc2 = FileNameCleaner.cleanFileName(desc2);
 	}
 
 	/**
@@ -450,6 +470,155 @@ public class btDevice {
 	}
 
 	/**
+	 * @return the icon
+	 */
+	public int getIcon() {
+		return icon;
+	}
+
+	/**
+	 * @param icon
+	 *            the icon to set
+	 */
+	public void setIcon(int icon) {
+		this.icon = icon;
+	}
+
+	/**
+	 * @return the smsdelay
+	 */
+	public int getSmsdelay() {
+		return smsdelay;
+	}
+
+	/**
+	 * @param smsdelay
+	 *            the smsdelay to set
+	 */
+	public void setSmsdelay(int smsdelay) {
+		this.smsdelay = smsdelay;
+	}
+
+	/**
+	 * @return the smsstream
+	 */
+	public int getSmsstream() {
+		return smsstream;
+	}
+
+	/**
+	 * @param smsstream
+	 *            the smsstream to set
+	 */
+	public void setSmsstream(int smsstream) {
+		this.smsstream = smsstream;
+	}
+
+	/**
+	 * @return the voldelay
+	 */
+	public int getVoldelay() {
+		return voldelay;
+	}
+
+	/**
+	 * @param voldelay
+	 *            the voldelay to set
+	 */
+	public void setVoldelay(int voldelay) {
+		this.voldelay = voldelay;
+	}
+
+	/**
+	 * @return the volramp
+	 */
+	public boolean isVolramp() {
+		return volramp;
+	}
+
+	/**
+	 * @param volramp
+	 *            the volramp to set
+	 */
+	public void setVolramp(boolean volramp) {
+		this.volramp = volramp;
+	}
+
+	public long lVolramp() {
+		if (isVolramp())
+			return 1;
+		else
+			return 0;
+	}
+
+	public void setVolramp(int ramp) {
+		if (ramp > 0)
+			volramp = true;
+		else
+			volramp = false;
+
+	}
+
+	/**
+	 * @return the autovol
+	 */
+	public boolean isAutovol() {
+		return autovol;
+	}
+
+	/**
+	 * @param autovol
+	 *            the autovol to set
+	 */
+	public void setAutovol(boolean autovol) {
+		this.autovol = autovol;
+	}
+
+	public void setAutovol(int autovol) {
+		if (autovol > 0)
+			this.autovol = true;
+		else
+			this.autovol = false;
+
+	}
+
+	public long lautovol() {
+		if (autovol)
+			return 1;
+		else
+			return 0;
+	}
+
+	/**
+	 * @return the silent
+	 */
+	public boolean isSilent() {
+		return silent;
+	}
+
+	/**
+	 * @param silent
+	 *            the silent to set
+	 */
+	public void setSilent(boolean silent) {
+		this.silent = silent;
+	}
+	
+	public void setSilent(int silent) {
+		if(silent > 0)
+			this.silent = true;
+		else
+			this.silent = false;
+	}
+	
+	public long lsilent() {
+		if (silent)
+			return 1;
+		else
+			return 0;
+	}
+
+	/**
 	 * @param btd
 	 *            is the bluetooth device
 	 * @param name
@@ -461,7 +630,7 @@ public class btDevice {
 	 */
 	public void setBluetoothDevice(BluetoothDevice btd, String name, int vol) {
 		this.desc1 = btd.getName();
-		this.desc2 = name;
+		this.desc2 = FileNameCleaner.cleanFileName(name);
 		this.mac = btd.getAddress();
 		this.setV = true;
 		this.defVol = vol;
@@ -477,6 +646,12 @@ public class btDevice {
 		this.enableTTS = false;
 		this.phonev = 10;
 		this.setpv = false;
+		this.setIcon(R.drawable.car2);
+		this.autovol = true;
+		this.smsdelay = 6;
+		this.volramp = false;
+		this.voldelay = 6;
+		this.silent = false;
 	}
 
 	/**
@@ -493,7 +668,7 @@ public class btDevice {
 	 */
 	public void setBluetoothDevice(String s1, String s2, String mac, int vol) {
 		this.desc1 = s1;
-		this.desc2 = s2;
+		this.desc2 = FileNameCleaner.cleanFileName(s2);
 		this.mac = mac;
 		this.setV = true;
 		this.defVol = vol;
@@ -509,6 +684,12 @@ public class btDevice {
 		this.enableTTS = false;
 		this.phonev = 10;
 		this.setpv = false;
+		this.setIcon(R.drawable.car2);
+		this.autovol = true;
+		this.smsdelay = 6;
+		this.volramp = false;
+		this.voldelay = 6;
+		this.silent = false;
 	}
 
 	public boolean hasIntent() {
@@ -521,4 +702,5 @@ public class btDevice {
 		return true;
 
 	}
+
 }

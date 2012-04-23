@@ -179,4 +179,7 @@
     <string name="PrefsPowerON">Reagiere auf Ladekabel.</string>
     <string name="powerPlugName">Ladekabel</string>
     <string name="enableGPS">GPS während Verbindung einschalten?</string>
+    <string name="SMSAlarmStream">Alarm-Ausgabestrom</string>
+    <string name="SMSVoiceStream">Gesprächs-Ausgabestrom</string>
+    <string name="SMSMusicStream">Medien-Ausgabestrom</string>
 </resources>

@@ -106,7 +106,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	public static final String PREFS_NAME = "btVol";
 	float MAX_ACC = 20; // worst acceptable location in meters
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
-	private long SMS_DELAY = 3000; // delay before reading SMS
+	private long SMS_delay = 3000; // delay before reading SMS
 	private int SMSstream = 0;
 	private long vol_delay = 5000; // delay time between the device connection and the volume adjustment
 
@@ -141,19 +141,19 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			power = preferences.getBoolean("power", false);
 			toasts = preferences.getBoolean("toasts", true);
 			notify = preferences.getBoolean("notify1", false);
-			ramp_vol = preferences.getBoolean("vol_ramp", false);
+			//ramp_vol = preferences.getBoolean("vol_ramp", false);
 			Long yyy = new Long(preferences.getString("gpsTime", "15000"));
 			MAX_TIME = yyy;
 
 			Float xxx = new Float(preferences.getString("gpsDistance", "10"));
 			MAX_ACC = xxx;
 
-			long zz = new Long(preferences.getString("SMSdelay", "3000"));
+			/*long zz = new Long(preferences.getString("SMSdelay", "3000"));
 			SMS_DELAY = zz;
 			
 			long aa = new Long(preferences.getString("vol_delay", "5000"));
 			vol_delay = aa;
-
+*/
 			local = preferences.getBoolean("useLocalStorage", false);
 			if (local)
 				a2dpDir = getFilesDir().toString();
@@ -162,16 +162,16 @@ public class service extends Service implements OnAudioFocusChangeListener {
 						+ "/A2DPVol";
 
 			String icon = preferences.getString("connectedIcon", "Car");
-			if (icon.equalsIgnoreCase("Headset"))
+/*			if (icon.equalsIgnoreCase("Headset"))
 				connectedIcon = R.drawable.headset;
 			else
-				connectedIcon = R.drawable.car2;
-
+				connectedIcon = R.drawable.car2;*/
+			
 			OldVol2 = preferences.getInt(OLD_VOLUME, 10);
 			OldVol = preferences.getInt(OLD_PH_VOL, 5);
 
-			SMSstream = Integer
-					.valueOf(preferences.getString("SMSstream", "0"));
+			/*SMSstream = Integer
+					.valueOf(preferences.getString("SMSstream", "0"));*/
 
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
@@ -519,7 +519,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			oldwifistate = wifiManager.isWifiEnabled();
 			oldgpsstate = locmanager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		}
-
+		
+		connectedIcon = bt2.getIcon();
+		SMSstream = bt2.getSmsstream();
+		vol_delay = bt2.getVoldelay() * 1000;
+		SMS_delay = bt2.getSmsdelay() * 1000;
+		ramp_vol = bt2.isVolramp();
+		
 		if (bt2.wifi) {
 			try {
 				oldwifistate = wifiManager.isWifiEnabled();
@@ -906,7 +912,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			} else
 				temp = getResources().getString(R.string.ServRunning);
 		}
-
+		if (connect)
+			not.icon = connectedIcon;
+		else
+			not.icon = R.drawable.icon5;
+		
 		Context context = getApplicationContext();
 		CharSequence contentTitle = getResources().getString(R.string.app_name);
 		CharSequence contentText = temp;
@@ -915,12 +925,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				notificationIntent, 0);
 		not.setLatestEventInfo(context, contentTitle, contentText,
 				contentIntent);
-
-		if (connect)
-			not.icon = connectedIcon;
-		else
-			not.icon = R.drawable.icon5;
-
 		mNotificationManager.notify(1, not);
 	}
 
@@ -1247,7 +1251,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 							break;
 						}
 
-						new CountDownTimer(SMS_DELAY, SMS_DELAY / 2) {
+						new CountDownTimer(SMS_delay, SMS_delay / 2) {
 
 							@Override
 							public void onFinish() {
