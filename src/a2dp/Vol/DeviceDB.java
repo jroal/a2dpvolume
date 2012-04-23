@@ -22,27 +22,24 @@ import java.util.Vector;
 public class DeviceDB {
 
 	private static final String DATABASE_NAME = "btdevices.db";
-	private static final int DATABASE_VERSION = 11;
+	private static final int DATABASE_VERSION = 12;
 	private static final String TABLE_NAME = "devices";
-	private Context context;
+	private static Context context;
 	private SQLiteDatabase db;
 	private SQLiteStatement insertStmt;
 	private static final String INSERT = "insert into " + TABLE_NAME
 			+ "(desc1, desc2, mac, maxv, setv, getl, pname, bdevice, wifi, appaction, appdata, apptype, apprestart, tts," +
-					" setpv, phonev, appkill, enablegps) " +
-					"values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?, ?, ?, ?, ?)";
+					" setpv, phonev, appkill, enablegps, icon, smsdelay, smsstream, voldelay, volramp, autovol, silent) " +
+					"values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public DeviceDB(Context context) {
-		this.context = context;
-		OpenHelper openHelper = new OpenHelper(this.context);
-		try {
+		DeviceDB.context = context;
+		OpenHelper openHelper = new OpenHelper(DeviceDB.context);
+		
 			this.db = openHelper.getWritableDatabase();	
-			this.db.wait(200);
+			
 			this.insertStmt = this.db.compileStatement(INSERT);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 	}
 
 	/**
@@ -67,6 +64,13 @@ public class DeviceDB {
 		vals.put("phonev", (long) bt.getPhonev());
 		vals.put("appkill", bt.lAppkill());
 		vals.put("enablegps", bt.lenablegps());
+		vals.put("icon", (long) bt.getIcon());
+		vals.put("smsdelay", (long) bt.getSmsdelay());
+		vals.put("smsstream", (long) bt.getSmsstream());
+		vals.put("voldelay", (long) bt.getVoldelay());
+		vals.put("volramp", bt.lVolramp());
+		vals.put("autovol", bt.lautovol());
+		vals.put("silent", bt.lsilent());
 		this.db.update(TABLE_NAME, vals, "mac='" + bt.mac + "'", null);
 		vals = null;
 	}
@@ -110,6 +114,13 @@ public class DeviceDB {
 		this.insertStmt.bindLong(16, (long) btd.getPhonev());
 		this.insertStmt.bindLong(17, btd.lAppkill());
 		this.insertStmt.bindLong(18, btd.lenablegps());
+		this.insertStmt.bindLong(19, (long) btd.getIcon());
+		this.insertStmt.bindLong(20, (long) btd.getSmsdelay());
+		this.insertStmt.bindLong(21, (long) btd.getSmsstream());
+		this.insertStmt.bindLong(22, (long) btd.getVoldelay());
+		this.insertStmt.bindLong(23, btd.lVolramp());
+		this.insertStmt.bindLong(24, btd.lautovol());
+		this.insertStmt.bindLong(25, btd.lsilent());
 		try {
 			rtn = this.insertStmt.executeInsert();
 		} catch (Exception e) {
@@ -151,6 +162,13 @@ public class DeviceDB {
 				bt.setPhonev((int)cs.getInt(15));
 				bt.setAppkill(cs.getInt(16));
 				bt.setEnablegps(cs.getInt(17));
+				bt.setIcon(cs.getInt(18));
+				bt.setSmsdelay((int) cs.getInt(19));
+				bt.setSmsstream((int) cs.getInt(20));
+				bt.setVoldelay((int) cs.getInt(21));
+				bt.setVolramp(cs.getInt(22));
+				bt.setAutovol(cs.getInt(23));
+				bt.setSilent(cs.getInt(24));
 			}
 		} catch (Exception e) {
 			bt.mac = null;
@@ -216,7 +234,7 @@ public class DeviceDB {
 		Vector<btDevice> list = new Vector<btDevice>();
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1",
 				"desc2", "mac", "maxv", "setv", "getl", "pname" , "bdevice", "wifi", "appaction", "appdata", "apptype", 
-				"apprestart", "tts", "setpv", "phonev" , "appkill" , "enablegps"}, null, null, null,
+				"apprestart", "tts", "setpv", "phonev" , "appkill" , "enablegps", "icon", "smsdelay", "smsstream", "voldelay", "volramp", "autovol", "silent"}, null, null, null,
 				null, "desc2");
 		if (cursor.moveToFirst()) {
 			do {
@@ -239,6 +257,13 @@ public class DeviceDB {
 				bt.setPhonev(cursor.getInt(15));
 				bt.setAppkill(cursor.getInt(16));
 				bt.setEnablegps(cursor.getInt(17));
+				bt.setIcon(cursor.getInt(18));
+				bt.setSmsdelay((int) cursor.getInt(19));
+				bt.setSmsstream((int) cursor.getInt(20));
+				bt.setVoldelay((int) cursor.getInt(21));
+				bt.setVolramp(cursor.getInt(22));
+				bt.setAutovol(cursor.getInt(23));
+				bt.setSilent(cursor.getInt(24));
 				list.add(bt);
 			} while (cursor.moveToNext());
 		}
@@ -259,24 +284,24 @@ public class DeviceDB {
 					+ TABLE_NAME
 					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER DEFAULT 1, getl INTEGER DEFAULT 1, pname TEXT, " +
 							"bdevice TEXT, wifi INTEGER DEFAULT 0, appaction TEXT, appdata TEXT, apptype TEXT, apprestart INTEGER DEFAULT 0, " +
-							"tts INTEGER DEFAULT 0, setpv INTEGER DEFAULT 0, phonev INTEGER DEFAULT 10, appkill INTEGER DEFAULT 1, enablegps INTEGER DEFAULT 0)");
+							"tts INTEGER DEFAULT 0, setpv INTEGER DEFAULT 0, phonev INTEGER DEFAULT 10, appkill INTEGER DEFAULT 1, enablegps INTEGER DEFAULT 0" +
+							", icon INTEGER, smsdelay DEFAULT 3, smsstream DEFAULT 1, voldelay DEFAULT 5, volramp DEFAULT 0, autovol DEFAULT 1, silent DEFAULT 0)");
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		
+			Toast.makeText(context, "Upgrading database....", Toast.LENGTH_LONG);
 			if ((newVersion < 4 && oldVersion < 4) || (oldVersion > DATABASE_VERSION || newVersion > DATABASE_VERSION ) ) {
-				Log.w("Example",
-						"Upgrading database, this will drop tables and recreate.");
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 				onCreate(db);
+				Toast.makeText(context, "Database replaced", Toast.LENGTH_LONG);
 				return;
 			} 
 
 			if(newVersion >= 5)
 			{
-				Log.w("Update", "Update table and default the new column pname");
-				
+								
 				try {
 
 					List<String> columns = GetColumns(db, TABLE_NAME);				
@@ -286,12 +311,14 @@ public class DeviceDB {
 					String cols = join(columns, ",");
 					db.execSQL(String.format( "INSERT INTO %s (%s) SELECT %s from temp_%s", TABLE_NAME, cols, cols, TABLE_NAME));
 					db.execSQL("DROP table 'temp_" + TABLE_NAME + "'");
+					Toast.makeText(context, "Database upgraded succesfully", Toast.LENGTH_LONG);
 					return;
 					
 				} catch (SQLException e) {
 					// if anything goes wrong, just start over
 					e.printStackTrace();
 					db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+					Toast.makeText(context, "Upgrade failed, replaced database", Toast.LENGTH_LONG);
 					onCreate(db);
 				}
 				

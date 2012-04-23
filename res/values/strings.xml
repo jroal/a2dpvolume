@@ -179,4 +179,9 @@
     <string name="PrefsPowerON">Respond to Power Connection</string>
     <string name="powerPlugName">Power Connection</string>
     <string name="enableGPS">Enable GPS while connected?</string>
+    <string name="SMSAlarmStream">Alarm Stream</string>
+    <string name="SMSVoiceStream">Voice Call Stream</string>
+    <string name="SMSMusicStream">Music Stream</string>
+    <string name="rememberMediaVol">Automatically remember last used media volume on disconnect</string>
+    <string name="silentMode">Set silent mode while connected</string>
 </resources>

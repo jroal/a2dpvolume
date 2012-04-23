@@ -26,21 +26,28 @@ import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 public class EditDevice extends Activity {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onBackPressed()
 	 */
 	@Override
 	public void onBackPressed() {
+		Save();
 		closedb();
 		EditDevice.this.finish();
 		super.onBackPressed();
 	}
 
-	private Button sb;
+	private Button sb, cb;
 	private Button startapp;
 	private Button connbt;
 	private EditText fdesc2;
@@ -56,9 +63,19 @@ public class EditDevice extends Activity {
 	private CheckBox fenableTTS;
 	private CheckBox fsetpv;
 	private SeekBar fphonev;
+	private SeekBar fsmsdelaybar;
+	private TextView fsmsdelaybox;
+	private SeekBar fvoldelaybar;
+	private TextView fvoldelaybox;
+	private CheckBox frampVol;
+	private CheckBox fautoVol;
+	private CheckBox fsilent;
+	private RadioButton iconradio0, iconradio1, iconradio2, iconradio3, iconradio4, streamradio0, streamradio1, streamradio2;
+	private RadioGroup streamgroup, icongroup;
+	
 	SharedPreferences preferences;
 	private boolean TTsEnabled;
-	
+
 	public String btd;
 	private btDevice device;
 	private MyApplication application;
@@ -84,6 +101,9 @@ public class EditDevice extends Activity {
 	private static final int FETCH_HOME_SCREEN_SHORTCUT = 15;
 	private static final int ACTION_CHOOSE_APP_CUSTOM = 16;
 	private static final int ACTION_ADD_PACKAGE = 17;
+	private static final int MUSIC_STREAM = 0;
+	private static final int IN_CALL_STREAM = 1;
+	private static final int ALARM_STREAM = 2;
 
 	/**
 	 * @see android.app.Activity#onCreate(Bundle)
@@ -97,6 +117,7 @@ public class EditDevice extends Activity {
 		this.myDB = new DeviceDB(application);
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		this.sb = (Button) this.findViewById(R.id.EditDevSavebutton);
+		this.cb = (Button) this.findViewById(R.id.EditDevCancelbutton);
 		this.startapp = (Button) this.findViewById(R.id.chooseAppButton);
 		this.connbt = (Button) this.findViewById(R.id.chooseBTbutton);
 		this.fdesc2 = (EditText) this.findViewById(R.id.editDesc2);
@@ -104,18 +125,38 @@ public class EditDevice extends Activity {
 		this.fsetvol = (CheckBox) this.findViewById(R.id.checkSetVol);
 		this.fvol = (SeekBar) this.findViewById(R.id.seekBarVol);
 		this.fapp = (EditText) this.findViewById(R.id.editApp);
-		this.fapprestart = (CheckBox) this.findViewById(R.id.appRestartCheckbox);
+		this.fapprestart = (CheckBox) this
+				.findViewById(R.id.appRestartCheckbox);
 		this.fappkill = (CheckBox) this.findViewById(R.id.appKillCheckbox);
 		this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
 		this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
 		this.fenableGPS = (CheckBox) this.findViewById(R.id.checkgps);
 		this.fenableTTS = (CheckBox) this.findViewById(R.id.enableTTSBox);
 		this.fsetpv = (CheckBox) this.findViewById(R.id.checkSetpv);
+		this.fsilent = (CheckBox) this.findViewById(R.id.silentBox);
 		this.fphonev = (SeekBar) this.findViewById(R.id.seekPhoneVol);
+		this.fsmsdelaybar = (SeekBar) this.findViewById(R.id.SMSdelayseekBar);
+		this.fsmsdelaybox = (TextView) this.findViewById(R.id.SMSdelaytextView);
+		this.fvoldelaybar = (SeekBar) this.findViewById(R.id.VolDelaySeekBar);
+		this.fvoldelaybox = (TextView) this.findViewById(R.id.VolDelayTextView);
+		this.frampVol = (CheckBox) this.findViewById(R.id.rampBox);
+		this.fautoVol = (CheckBox) this.findViewById(R.id.autoVolcheckBox);
+		this.icongroup = (RadioGroup) this.findViewById(R.id.radioGroupIcon);
+		this.iconradio0 = (RadioButton) this.findViewById(R.id.iconradio0);
+		this.iconradio1 = (RadioButton) this.findViewById(R.id.iconradio1);
+		this.iconradio2 = (RadioButton) this.findViewById(R.id.iconradio2);
+		this.iconradio3 = (RadioButton) this.findViewById(R.id.iconradio3);
+		this.iconradio4 = (RadioButton) this.findViewById(R.id.iconradio4);
+		this.streamgroup = (RadioGroup) this.findViewById(R.id.radioGroupStream);
+		this.streamradio0 = (RadioButton) this.findViewById(R.id.streamradio0);
+		this.streamradio1 = (RadioButton) this.findViewById(R.id.streamradio1);
+		this.streamradio2 = (RadioButton) this.findViewById(R.id.streamradio2);
 		
-		preferences = PreferenceManager.getDefaultSharedPreferences(application);
+
+		preferences = PreferenceManager
+				.getDefaultSharedPreferences(application);
 		TTsEnabled = preferences.getBoolean("enableTTS", false);
-		
+
 		btd = getIntent().getStringExtra("btd"); // get the mac address of the
 													// device to edit
 
@@ -146,59 +187,52 @@ public class EditDevice extends Activity {
 		fsetpv.setChecked(device.isSetpv());
 		fphonev.setMax(am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL));
 		fphonev.setProgress(device.getPhonev());
+		fsmsdelaybar.setMax(20);
+		fsmsdelaybar.setOnSeekBarChangeListener(smsdelaySeekBarProgress);
+		fsmsdelaybox.setText(device.smsdelay + "s");
+		fsmsdelaybar.setProgress(device.getSmsdelay());
+		fvoldelaybar.setMax(20);
+		fvoldelaybar.setOnSeekBarChangeListener(voldelaySeekBarProgress);
+		fvoldelaybox.setText(device.voldelay + "s");
+		fvoldelaybar.setProgress(device.getVoldelay());
+		frampVol.setChecked(device.isVolramp());
+		fautoVol.setChecked(device.isAutovol());
+		fsilent.setChecked(device.isSilent());
+		
+		switch(device.getIcon()){
+		case R.drawable.car2: iconradio0.setChecked(true); break;
+		case R.drawable.headset: iconradio1.setChecked(true); break;
+		case R.drawable.jack: iconradio2.setChecked(true); break;
+		case R.drawable.usb: iconradio3.setChecked(true); break;
+		case R.drawable.icon5: iconradio4.setChecked(true); break;
+		default: iconradio0.setChecked(true); break;
+		}
+		
+		switch(device.getSmsstream()){
+		case MUSIC_STREAM: streamradio0.setChecked(true); break;
+		case IN_CALL_STREAM: streamradio1.setChecked(true); break;
+		case ALARM_STREAM: streamradio2.setChecked(true); break;
+		default: streamradio0.setChecked(true);
+		}
+		
 		vUpdateApp();
 
 		sb.setOnClickListener(new OnClickListener() {
 			public void onClick(final View v) {
-				if (fdesc2.length() < 1)
-					device.setDesc2(device.desc1);
-				else
-					device.setDesc2(fdesc2.getText().toString());
-
-				device.setSetV(fsetvol.isChecked());
-				device.setDefVol(fvol.getProgress());
-				device.setGetLoc(fgloc.isChecked());
-				device.setPname(pname);
-				device.setBdevice(fbt.getText().toString());
-				device.setWifi(fwifi.isChecked());
-				device.setEnablegps(fenableGPS.isChecked());
-				device.setAppaction(appaction);
-				device.setAppdata(appdata);
-				device.setApptype(apptype);
-				apprestart = fapprestart.isChecked();
-				device.setApprestart(apprestart);
-				appkill = fappkill.isChecked();
-				device.setAppkill(appkill);
-				enablegps = fenableTTS.isChecked();
-				device.setEnableTTS(enablegps);
-				device.setSetpv(fsetpv.isChecked());
-				device.setPhonev(fphonev.getProgress());
-				
-				// if the user want TTS but it was not enabled
-				if(!TTsEnabled && fenableTTS.isChecked()){
-					SharedPreferences.Editor editor = preferences.edit();
-					editor.putBoolean("enableTTS", true);
-					editor.commit();
-				}
-				
-				sb.setText("Saving");
-				try {
-					myDB.update(device);
-					// Reload the device list in the main page
-					final String Ireload = "a2dp.Vol.main.RELOAD_LIST";
-					Intent itent = new Intent();
-					itent.setAction(Ireload);
-					itent.putExtra("device", "");
-					application.sendBroadcast(itent);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Save();
 				closedb();
 				EditDevice.this.finish();
 			}
 		});
 
+		cb.setOnClickListener(new OnClickListener(){
+
+			public void onClick(View arg0) {
+				closedb();
+				EditDevice.this.finish();
+			}
+			
+		});
 		// Show list of packages. This one loads fast but is too cryptic for
 		// normal users
 		startapp.setOnLongClickListener(new OnLongClickListener() {
@@ -262,7 +296,9 @@ public class EditDevice extends Activity {
 
 		connbt.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				if (!myDB.getDb().isOpen() && !myDB.getDb().isDbLockedByCurrentThread() && !myDB.getDb().isDbLockedByOtherThreads())
+				if (!myDB.getDb().isOpen()
+						&& !myDB.getDb().isDbLockedByCurrentThread()
+						&& !myDB.getDb().isDbLockedByOtherThreads())
 					myDB = new DeviceDB(application);
 				final Vector<btDevice> vec = myDB.selectAlldb();
 				int j = vec.size();
@@ -287,7 +323,7 @@ public class EditDevice extends Activity {
 				builder.setItems(lstring,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int item) {
-								if(item < vec.size())
+								if (item < vec.size())
 									fbt.setText(vec.get(item).mac);
 								else
 									fbt.setText("");
@@ -298,13 +334,117 @@ public class EditDevice extends Activity {
 			}
 
 		});
+
+	}
+
+	OnSeekBarChangeListener smsdelaySeekBarProgress = new OnSeekBarChangeListener() {
+
+		public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
+			fsmsdelaybox.setText(progress + "s");
+			fsmsdelaybar.requestFocus();
+
+		}
+
+		public void onStartTrackingTouch(SeekBar arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void onStopTrackingTouch(SeekBar arg0) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
+	OnSeekBarChangeListener voldelaySeekBarProgress = new OnSeekBarChangeListener() {
+
+		public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
+			fvoldelaybox.setText(progress + "s");
+			fvoldelaybar.requestFocus();
+
+		}
+
+		public void onStartTrackingTouch(SeekBar arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void onStopTrackingTouch(SeekBar arg0) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
+	private void Save(){
+		if (fdesc2.length() < 1)
+			device.setDesc2(device.desc1);
+		else
+			device.setDesc2(fdesc2.getText().toString());
+
+		device.setSetV(fsetvol.isChecked());
+		device.setDefVol(fvol.getProgress());
+		device.setGetLoc(fgloc.isChecked());
+		device.setPname(pname);
+		device.setBdevice(fbt.getText().toString());
+		device.setWifi(fwifi.isChecked());
+		device.setEnablegps(fenableGPS.isChecked());
+		device.setAppaction(appaction);
+		device.setAppdata(appdata);
+		device.setApptype(apptype);
+		apprestart = fapprestart.isChecked();
+		device.setApprestart(apprestart);
+		appkill = fappkill.isChecked();
+		device.setAppkill(appkill);
+		enablegps = fenableTTS.isChecked();
+		device.setEnableTTS(enablegps);
+		device.setSetpv(fsetpv.isChecked());
+		device.setPhonev(fphonev.getProgress());
+		device.setSmsdelay(fsmsdelaybar.getProgress());
+		device.setVoldelay(fvoldelaybar.getProgress());
+		device.setVolramp(frampVol.isChecked());
+		device.setAutovol(fautoVol.isChecked());
+		device.setSilent(fsilent.isChecked());
+		
+		switch(icongroup.getCheckedRadioButtonId()){
+		case R.id.iconradio0: device.setIcon(R.drawable.car2); break;
+		case R.id.iconradio1: device.setIcon(R.drawable.headset); break;
+		case R.id.iconradio2: device.setIcon(R.drawable.jack); break;
+		case R.id.iconradio3: device.setIcon(R.drawable.usb); break;
+		case R.id.iconradio4: device.setIcon(R.drawable.icon5); break;
+		}
+		
+		switch(streamgroup.getCheckedRadioButtonId()){
+		case R.id.streamradio0: device.setSmsstream(MUSIC_STREAM); break;
+		case R.id.streamradio1: device.setSmsstream(IN_CALL_STREAM); break;
+		case R.id.streamradio2: device.setSmsstream(ALARM_STREAM); break;
+		}
+
+		// if the user want TTS but it was not enabled
+		if (!TTsEnabled && fenableTTS.isChecked()) {
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putBoolean("enableTTS", true);
+			editor.commit();
+		}
+
+		sb.setText("Saving");
+		try {
+			myDB.update(device);
+			// Reload the device list in the main page
+			final String Ireload = "a2dp.Vol.main.RELOAD_LIST";
+			Intent itent = new Intent();
+			itent.setAction(Ireload);
+			itent.putExtra("device", "");
+			application.sendBroadcast(itent);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-
-	private void closedb(){
+	private void closedb() {
 		myDB.getDb().close();
 	}
-	
+
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
@@ -313,7 +453,7 @@ public class EditDevice extends Activity {
 				appaction = "";
 				apptype = "";
 				appdata = "";
-			
+
 				vUpdateApp();
 				break;
 			case ACTION_ADD_PACKAGE:
@@ -333,7 +473,7 @@ public class EditDevice extends Activity {
 				processShortcut(data);
 				break;
 			case ACTION_CUSTOM_INTENT:
-				
+
 				pname = "";
 				appaction = data.getStringExtra("alarm_custom_action");
 				appdata = data.getStringExtra("alarm_custom_data");
@@ -341,8 +481,8 @@ public class EditDevice extends Activity {
 
 				if (appdata.length() > 3) {
 					try {
-						pname = Intent.getIntent(pname)
-										.getComponent().getPackageName();
+						pname = Intent.getIntent(pname).getComponent()
+								.getPackageName();
 					} catch (URISyntaxException e) {
 						pname = "custom";
 						e.printStackTrace();
@@ -359,12 +499,13 @@ public class EditDevice extends Activity {
 				break;
 			case FETCH_HOME_SCREEN_SHORTCUT:
 				processShortcut(data);
-				if(pname.length() < 3 || pname.equalsIgnoreCase("Custom"))showDialog(DIALOG_WARN_STOP_APP);
+				if (pname.length() < 3 || pname.equalsIgnoreCase("Custom"))
+					showDialog(DIALOG_WARN_STOP_APP);
 				break;
 			}
 
 		} else {
-			
+
 		}
 
 		super.onActivityResult(requestCode, resultCode, data);
@@ -423,7 +564,7 @@ public class EditDevice extends Activity {
 			case 4:
 				// Custom Intent
 				i = new Intent(getBaseContext(), CustomIntentMaker.class);
-				i.putExtra("alarm_custom_action",appaction);
+				i.putExtra("alarm_custom_action", appaction);
 				i.putExtra("alarm_custom_data", appdata);
 				i.putExtra("alarm_custom_type", apptype);
 				i.putExtra("alarm_package_name", pname);
@@ -436,7 +577,7 @@ public class EditDevice extends Activity {
 				appaction = "";
 				appdata = "";
 				apptype = "";
-				
+
 				vUpdateApp();
 				break;
 			}
@@ -449,40 +590,35 @@ public class EditDevice extends Activity {
 		device.setAppdata(appdata);
 		device.setApptype(apptype);
 		device.setPname(pname);
-		
+
 		if (device.hasIntent()) {
 			if (pname != null && pname.length() > 3)
 				fapp.setText(pname);
-			else if(appdata != null){
+			else if (appdata != null) {
 				fapp.setText(appdata);
-			}
-			else if(appaction != null){
+			} else if (appaction != null) {
 				fapp.setText(appaction);
-			}
-			else{
+			} else {
 				fapp.setText("Custom");
 			}
-		}
-		else
+		} else
 			fapp.setText("");
 	}
 
-	/*private void checkCustomAppPackage() {
-		if ((mAppItem.getBool(AppItem.KEY_FORCE_RESTART))
-				&& mAppItem.isCustomIntent()) {
-			showDialog(DIALOG_WARN_STOP_APP);
-		}
-	}*/
+	/*
+	 * private void checkCustomAppPackage() { if
+	 * ((mAppItem.getBool(AppItem.KEY_FORCE_RESTART)) &&
+	 * mAppItem.isCustomIntent()) { showDialog(DIALOG_WARN_STOP_APP); } }
+	 */
 
 	private void processShortcut(Intent data) {
 		Intent i = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT);
-		appdata =  getIntentUri(i);
+		appdata = getIntentUri(i);
 		if (data.hasExtra(ProviderList.EXTRA_PACKAGE_NAME)) {
 			pname = data.getStringExtra(ProviderList.EXTRA_PACKAGE_NAME);
 		} else {
 			try {
-				pname = i.getComponent()
-						.getPackageName();
+				pname = i.getComponent().getPackageName();
 			} catch (Exception e) {
 				pname = "";
 				e.printStackTrace();
@@ -494,7 +630,7 @@ public class EditDevice extends Activity {
 			pname = "custom";
 		}
 		appaction = data.getStringExtra(Intent.EXTRA_SHORTCUT_NAME);
-		apptype =  "";
+		apptype = "";
 		vUpdateApp();
 	}
 
@@ -546,7 +682,7 @@ public class EditDevice extends Activity {
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
-							
+
 						}
 
 					});
