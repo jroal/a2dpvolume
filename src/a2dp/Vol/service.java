@@ -63,6 +63,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	static AudioManager am2 = (AudioManager) null;
 	private static Integer OldVol = 5;
 	private static Integer OldVol2 = 5;
+	private static Integer Oldsilent;
 	public static Integer connects = 0;
 	public static boolean run = false;
 	private static boolean mvolsLeft = false;
@@ -169,6 +170,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			
 			OldVol2 = preferences.getInt(OLD_VOLUME, 10);
 			OldVol = preferences.getInt(OLD_PH_VOL, 5);
+			Oldsilent = preferences.getInt("oldsilent", 10);
+			
 
 			/*SMSstream = Integer
 					.valueOf(preferences.getString("SMSstream", "0"));*/
@@ -601,6 +604,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		if (bt2.isSetpv())
 			setPVolume(bt2.getPhonev());
+		
+		if(bt2.isSilent())
+			am2.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 0, 0);
 
 		if (bt2.isSetV()) {
 			final int vol = bt2.getDefVol();
@@ -751,6 +757,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			}
 		}
 
+		
 		// start the location capture service
 		if (bt2 != null && bt2.isGetLoc()) {
 			Intent dolock = new Intent(a2dp.Vol.service.this, StoreLoc.class);
@@ -813,15 +820,21 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			// am2.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
+			
 		}
+		if(bt2.isSilent())
+			am2.setStreamVolume(AudioManager.STREAM_NOTIFICATION, Oldsilent, 0);
+		
 		final String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
 		itent.setAction(Ireload);
 		itent.putExtra("disconnect", bt2.getMac());
 		application.sendBroadcast(itent);
+		if(bt2.isAutovol()){
+			bt2.setDefVol(am2.getStreamVolume(AudioManager.STREAM_MUSIC));
+			DB.update(bt2);
+		}
 		disconnecting = false;
-
 	}
 
 	// makes the media volume adjustment
@@ -874,10 +887,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	// captures the phone volume so it can be later restored
 	private void getOldPvol() {
 		OldVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+		Oldsilent = am2.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
 		// Store the old volume in preferences so it can be extracted if another
 		// instance starts or the service is killed and restarted
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.putInt(OLD_PH_VOL, OldVol);
+		editor.putInt("oldsilent", Oldsilent);
 		editor.commit();
 	}
 
