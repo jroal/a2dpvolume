@@ -1,7 +1,7 @@
 
     <ScrollView android:id="@+id/scrollView1" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
         <TableLayout android:layout_height="wrap_content" android:id="@+id/tableLayout1" android:layout_width="match_parent">
-            <TextView android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/deviceName"></TextView>
+            <TextView android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/deviceName" android:focusable="true" android:focusableInTouchMode="true"></TextView>
             <EditText android:id="@+id/editDesc2" android:layout_width="match_parent" android:text="EditText" android:layout_height="wrap_content"></EditText>
             <CheckBox android:layout_width="wrap_content" android:id="@+id/checkCaptLoc" android:text="@string/getLoc" android:layout_height="wrap_content"></CheckBox>
             <CheckBox android:layout_width="wrap_content" android:id="@+id/checkwifi" android:text="@string/wifiDisconnect" android:layout_height="wrap_content"></CheckBox>
@@ -29,7 +29,7 @@
             <LinearLayout
                 android:id="@+id/linearLayout1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content" android:focusable="false">
 
                 <SeekBar
                     android:id="@+id/SMSdelayseekBar"
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15pt"
                     android:layout_marginRight="5pt"
-                    android:layout_weight=".8" android:focusable="true"/>
+                    android:layout_weight=".8" android:focusable="true" android:focusableInTouchMode="true"/>
 
                 <TextView
                     android:id="@+id/SMSdelaytextView"
@@ -117,7 +117,7 @@
             <LinearLayout
                 android:id="@+id/LinearLayout01"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:layout_marginTop="5pt" android:layout_marginBottom="15pt">
+                android:layout_height="wrap_content" android:layout_marginTop="5pt" android:layout_marginBottom="15pt" android:focusable="false">
 
                 <SeekBar
                     android:id="@+id/VolDelaySeekBar"
@@ -125,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15pt"
                     android:layout_marginRight="5pt"
-                    android:layout_weight=".8" android:focusable="true"/>
+                    android:layout_weight=".8" android:focusable="true" android:focusableInTouchMode="true"/>
 
                 <TextView
                     android:id="@+id/VolDelayTextView"

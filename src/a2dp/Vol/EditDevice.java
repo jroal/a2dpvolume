@@ -64,7 +64,7 @@ public class EditDevice extends Activity {
 	private CheckBox fsetpv;
 	private SeekBar fphonev;
 	private SeekBar fsmsdelaybar;
-	private TextView fsmsdelaybox;
+	private TextView fsmsdelaybox, tv2;
 	private SeekBar fvoldelaybar;
 	private TextView fvoldelaybox;
 	private CheckBox frampVol;
@@ -139,6 +139,7 @@ public class EditDevice extends Activity {
 		this.fsmsdelaybox = (TextView) this.findViewById(R.id.SMSdelaytextView);
 		this.fvoldelaybar = (SeekBar) this.findViewById(R.id.VolDelaySeekBar);
 		this.fvoldelaybox = (TextView) this.findViewById(R.id.VolDelayTextView);
+		this.tv2 = (TextView) this.findViewById(R.id.textView2);
 		this.frampVol = (CheckBox) this.findViewById(R.id.rampBox);
 		this.fautoVol = (CheckBox) this.findViewById(R.id.autoVolcheckBox);
 		this.icongroup = (RadioGroup) this.findViewById(R.id.radioGroupIcon);
@@ -152,7 +153,6 @@ public class EditDevice extends Activity {
 		this.streamradio1 = (RadioButton) this.findViewById(R.id.streamradio1);
 		this.streamradio2 = (RadioButton) this.findViewById(R.id.streamradio2);
 		
-
 		preferences = PreferenceManager
 				.getDefaultSharedPreferences(application);
 		TTsEnabled = preferences.getBoolean("enableTTS", false);
@@ -214,7 +214,7 @@ public class EditDevice extends Activity {
 		case ALARM_STREAM: streamradio2.setChecked(true); break;
 		default: streamradio0.setChecked(true);
 		}
-		
+		tv2.requestFocus(); // prevent jumping around screen
 		vUpdateApp();
 
 		sb.setOnClickListener(new OnClickListener() {
@@ -341,7 +341,7 @@ public class EditDevice extends Activity {
 
 		public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
 			fsmsdelaybox.setText(progress + "s");
-			fsmsdelaybar.requestFocus();
+			//fsmsdelaybar.requestFocus();
 
 		}
 
@@ -360,7 +360,7 @@ public class EditDevice extends Activity {
 
 		public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
 			fvoldelaybox.setText(progress + "s");
-			fvoldelaybar.requestFocus();
+			//fvoldelaybar.requestFocus();
 
 		}
 
