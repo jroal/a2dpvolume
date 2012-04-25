@@ -615,6 +615,7 @@ public class main extends Activity {
 					am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 			btDevice fbt2 = myDB.getBTD(fbt.mac);
 			if (fbt2.mac == null) {
+				fbt.setIcon(R.drawable.car2);
 				a2dp.Vol.main.this.myDB.insert(fbt);
 				vec.add(fbt);
 			} else
@@ -632,6 +633,7 @@ public class main extends Activity {
 			btDevice fbt2 = myDB.getBTD(fbt.mac);
 			if (fbt2.mac == null) {
 				fbt.setGetLoc(false);
+				fbt.setIcon(R.drawable.usb);
 				a2dp.Vol.main.this.myDB.insert(fbt);
 				vec.add(fbt);
 			} else
@@ -649,6 +651,7 @@ public class main extends Activity {
 			btDevice fbt2 = myDB.getBTD(fbt.mac);
 			if (fbt2.mac == null) {
 				fbt.setGetLoc(false);
+				fbt.setIcon(R.drawable.jack);
 				a2dp.Vol.main.this.myDB.insert(fbt);
 				vec.add(fbt);
 			} else
@@ -667,6 +670,7 @@ public class main extends Activity {
 			btDevice fbt2 = myDB.getBTD(fbt.mac);
 			if (fbt2.mac == null) {
 				fbt.setGetLoc(false);
+				fbt.setIcon(R.drawable.usb);
 				a2dp.Vol.main.this.myDB.insert(fbt);
 				vec.add(fbt);
 			} else

@@ -111,10 +111,6 @@
     <string name="connectedTo">Connected to</string>
     <string name="PrefsCatOther">Other Settings</string>
     <string name="PrefsOtherConnectedIcon">Connected Icon</string>
-    <string-array name="PrefsOtherIcons_items">
-        <item>Car</item>
-        <item>Headset</item>
-    </string-array>
     <string name="app_restart">Force App Restart?</string>
     <string name="PrefsHeadsetON">Respond to Audio Jack</string>
     <string name="PrefsHeadset">Respond to Audio Jack?</string>
@@ -131,37 +127,9 @@
     <string name="homeDockName">Home Dock</string>
     <string name="Editsetpv">Set in-call phone volume on connect?</string>
     <string name="EditPhoneVolume">In-Call Phone Volume</string>
-    <string-array name="PrefsOtherIcons">
-        <item>Car</item>
-        <item>Headset</item>
-    </string-array>
-    <string-array name="SMSdelay">
-        <item>0s</item>
-        <item>3s</item>
-        <item>5s</item>
-        <item>10s</item>
-        <item>15s</item>
-    </string-array>
-    <string-array name="SMSdelay_items">
-        <item>0</item>
-        <item>3000</item>
-        <item>5000</item>
-        <item>10000</item>
-        <item>15000</item>
-    </string-array>
     <string name="SMSdelay_title">SMS Delay</string>
     <string name="SMSDelayText">Delay for reading text message</string>
     <string name="SMSstream_title">SMS Stream</string>
-    <string-array name="SMSstream_list">
-        <item>Music Stream</item>
-        <item>Voice Call Stream</item>
-        <item>Alarm Stream</item>
-    </string-array>
-    <string-array name="SMSstream_items">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
     <string name="Bonded">Bonded</string>
     <string name="Error">Error</string>
     <string name="NotBonded">Not Bonded</string>
