@@ -23,12 +23,5 @@
 
 <CheckBoxPreference android:summaryOff="@string/usePassiveOff" android:key="usePassive" android:summaryOn="@string/usePassiveOn" android:title="@string/usePassiveTitle" android:selectable="true" android:enabled="true" android:defaultValue="false"></CheckBoxPreference><CheckBoxPreference android:summaryOn="@string/useNetworkON" android:title="@string/useNetworkTitle" android:defaultValue="true" android:summaryOff="@string/useNetworkOFF" android:key="useNetwork"></CheckBoxPreference>
 </PreferenceCategory>
-<PreferenceCategory android:title="@string/PrefsCatOther">
-    <ListPreference android:title="@string/PrefsOtherConnectedIcon" android:entries="@array/PrefsOtherIcons" android:entryValues="@array/PrefsOtherIcons_items" android:key="connectedIcon" android:defaultValue="Car"></ListPreference>
-    <ListPreference android:entryValues="@array/SMSdelay_items" android:entries="@array/SMSdelay" android:key="SMSdelay" android:title="@string/SMSdelay_title" android:summary="@string/SMSDelayText" android:defaultValue="3000"></ListPreference>
-    <ListPreference android:entryValues="@array/SMSstream_items" android:key="SMSstream" android:entries="@array/SMSstream_list" android:title="@string/SMSstream_title" android:defaultValue="0" android:summary="@string/SMS_Stream_desc"></ListPreference>
-    <ListPreference android:entryValues="@array/SMSdelay_items" android:entries="@array/SMSdelay" android:title="@string/PrefsVolAdjDelayTitle" android:key="vol_delay" android:summary="@string/PrefsVolAdjDelaySummary" android:defaultValue="5000" android:enabled="true"/>
-    <CheckBoxPreference android:title="@string/PrefsVolRampTitle" android:summaryOff="@string/PrefsVolRampSummaryOFF" android:defaultValue="false" android:key="vol_ramp" android:summaryOn="@string/PrefsVolRampSummaryON"/>
-</PreferenceCategory>
 
 </PreferenceScreen>

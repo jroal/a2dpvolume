@@ -120,24 +120,6 @@
     <string name="PrefsTTS">Activer lecture des SMS?</string>
     <string name="PrefsTTSOFF">Les SMS ne seront pas lus</string>
     <string name="SMSDelayText">Délai pour lire un SMS</string>
-    <string-array name="SMSdelay">
-        <item>0s</item>
-        <item>3s</item>
-        <item>5s</item>
-        <item>10s</item>
-        <item>15s</item>
-    </string-array>
-    <string-array name="PrefsOtherIcons_items">
-        <item>Car</item>
-        <item>Headset</item>
-    </string-array>
-    <string-array name="SMSdelay_items">
-        <item>0</item>
-        <item>3000</item>
-        <item>5000</item>
-        <item>10000</item>
-        <item>15000</item>
-    </string-array>
     <string name="app_restart">Forcer le redémarrage?</string>
     <string name="carDockName">Mode voiture</string>
     <string name="EditPhoneVolume">Volume d\'appel du téléphone</string>
@@ -147,21 +129,7 @@
     <string name="audioJackName">Prise de casque</string>
     <string name="homeDockName">Mode maison</string>
     <string name="msgTemplate">... Message de: {0} .. {1}</string>
-    <string-array name="PrefsOtherIcons">
-        <item>Voiture</item>
-        <item>Casque</item>
-    </string-array>
     <string name="SMSstream_title">Flux de message texte</string>
-    <string-array name="SMSstream_list">
-        <item>Flux de musique</item>
-        <item>Flux d\'appel vocal</item>
-        <item>Flux d\'alarme</item>
-    </string-array>
-    <string-array name="SMSstream_items">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
     <string name="Class">Classe</string>
     <string name="SMS_Stream_desc">Selectionner le chemin de sortie pour le son des SMS</string>
     <string name="NotBonded">Non relié</string>

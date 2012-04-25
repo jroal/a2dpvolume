@@ -111,10 +111,6 @@
     <string name="connectedTo">Verbunden mit</string>
     <string name="PrefsCatOther">Andere Einstellungen</string>
     <string name="PrefsOtherConnectedIcon">Icon bei Verbindung</string>
-    <string-array name="PrefsOtherIcons_items">
-        <item>Car</item>
-        <item>Headset</item>
-    </string-array>
     <string name="app_restart">Erzwinge Neustart der App?</string>
     <string name="PrefsHeadsetON">Reagiere auf Kopfhörerbuchse.</string>
     <string name="PrefsHeadset">Reaktion auf Kopfhörerbuchse?</string>
@@ -131,37 +127,9 @@
     <string name="homeDockName">Home Dock</string>
     <string name="Editsetpv">Setze Gesprächslautstärke bei Verbindung?</string>
     <string name="EditPhoneVolume">Gesprächslautstärke</string>
-    <string-array name="PrefsOtherIcons">
-        <item>Auto</item>
-        <item>Kopfhörer</item>
-    </string-array>
-    <string-array name="SMSdelay">
-        <item>0s</item>
-        <item>3s</item>
-        <item>5s</item>
-        <item>10s</item>
-        <item>15s</item>
-    </string-array>
-    <string-array name="SMSdelay_items">
-        <item>0</item>
-        <item>3000</item>
-        <item>5000</item>
-        <item>10000</item>
-        <item>15000</item>
-    </string-array>
     <string name="SMSdelay_title">SMS Verzögerung</string>
     <string name="SMSDelayText">Verzögerung vor dem Lesen einer SMS</string>
     <string name="SMSstream_title">SMS-Sprach-Ausgabestrom</string>
-    <string-array name="SMSstream_list">
-        <item>Medien-Ausgabestrom</item>
-        <item>Gesprächs-Ausgabestrom</item>
-        <item>Alarm-Ausgabestrom</item>
-    </string-array>
-    <string-array name="SMSstream_items">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
     <string name="Bonded">Gepaart</string>
     <string name="Error">Fehler</string>
     <string name="NotBonded">Nicht gepaart</string>

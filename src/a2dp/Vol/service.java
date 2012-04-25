@@ -142,39 +142,24 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			power = preferences.getBoolean("power", false);
 			toasts = preferences.getBoolean("toasts", true);
 			notify = preferences.getBoolean("notify1", false);
-			//ramp_vol = preferences.getBoolean("vol_ramp", false);
 			Long yyy = new Long(preferences.getString("gpsTime", "15000"));
 			MAX_TIME = yyy;
 
 			Float xxx = new Float(preferences.getString("gpsDistance", "10"));
 			MAX_ACC = xxx;
 
-			/*long zz = new Long(preferences.getString("SMSdelay", "3000"));
-			SMS_DELAY = zz;
-			
-			long aa = new Long(preferences.getString("vol_delay", "5000"));
-			vol_delay = aa;
-*/
+
 			local = preferences.getBoolean("useLocalStorage", false);
 			if (local)
 				a2dpDir = getFilesDir().toString();
 			else
 				a2dpDir = Environment.getExternalStorageDirectory()
 						+ "/A2DPVol";
-
-			String icon = preferences.getString("connectedIcon", "Car");
-/*			if (icon.equalsIgnoreCase("Headset"))
-				connectedIcon = R.drawable.headset;
-			else
-				connectedIcon = R.drawable.car2;*/
 			
 			OldVol2 = preferences.getInt(OLD_VOLUME, 10);
 			OldVol = preferences.getInt(OLD_PH_VOL, 5);
 			Oldsilent = preferences.getInt("oldsilent", 10);
-			
 
-			/*SMSstream = Integer
-					.valueOf(preferences.getString("SMSstream", "0"));*/
 
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
@@ -689,6 +674,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 	protected void DoDisconnected(btDevice bt2) {
 
+		int SavVol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
+		
 		if (bt2.hasIntent()) {
 			// if music is playing, pause it
 			if (am2.isMusicActive()) {
@@ -697,12 +684,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				i.putExtra("command", "pause");
 				sendBroadcast(i);
 				// for more stubborn players, try this too...
-				long eventtime = SystemClock.uptimeMillis();
-				Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
-				KeyEvent downEvent = new KeyEvent(eventtime, eventtime,
-						KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP, 0);
-				downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
-				sendOrderedBroadcast(downIntent, null);
+				Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+				KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP);
+				downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
+				sendOrderedBroadcast(downIntent2, null);
 			}
 			
 			// if we opened a package for this device, try to close it now
@@ -736,12 +721,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 							i.putExtra("command", "pause");
 							sendBroadcast(i);
 							// for more stubborn players, try this too...
-							long eventtime = SystemClock.uptimeMillis();
-							Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
-							KeyEvent downEvent = new KeyEvent(eventtime, eventtime,
-									KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP, 0);
-							downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
-							sendOrderedBroadcast(downIntent, null);
+							Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+							KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP);
+							downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
+							sendOrderedBroadcast(downIntent2, null);
 						}
 						
 						try {
@@ -831,7 +814,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		itent.putExtra("disconnect", bt2.getMac());
 		application.sendBroadcast(itent);
 		if(bt2.isAutovol()){
-			bt2.setDefVol(am2.getStreamVolume(AudioManager.STREAM_MUSIC));
+			bt2.setDefVol(SavVol);
 			DB.update(bt2);
 		}
 		disconnecting = false;
