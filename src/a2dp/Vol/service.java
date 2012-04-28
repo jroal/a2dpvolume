@@ -683,6 +683,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				Intent i = new Intent("com.android.music.musicservicecommand");
 				i.putExtra("command", "pause");
 				sendBroadcast(i);
+				//Try telling the system the headset just disconnected to stop other players
+				Intent j = new Intent("android.intent.action.HEADSET_PLUG");
+				j.putExtra("state", 0);
+				sendBroadcast(j);
 				// for more stubborn players, try this too...
 				Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
 				KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP);
@@ -704,6 +708,21 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				CountDownTimer killTimer = new CountDownTimer(6000, 3000) {
 					@Override
 					public void onFinish() {
+						if (am2.isMusicActive()) {
+							// first pause the music so it removes the notify icon
+							Intent i = new Intent("com.android.music.musicservicecommand");
+							i.putExtra("command", "pause");
+							sendBroadcast(i);
+							//Try telling the system the headset just disconnected to stop other players
+							Intent j = new Intent("android.intent.action.HEADSET_PLUG");
+							j.putExtra("state", 0);
+							sendBroadcast(j);
+							// for more stubborn players, try this too...
+							Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+							KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP);
+							downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
+							sendOrderedBroadcast(downIntent2, null);
+						}
 						try {
 							stopApp(kpackage);
 						} catch (Exception e) {
@@ -720,6 +739,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 							Intent i = new Intent("com.android.music.musicservicecommand");
 							i.putExtra("command", "pause");
 							sendBroadcast(i);
+							
 							// for more stubborn players, try this too...
 							Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
 							KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP);

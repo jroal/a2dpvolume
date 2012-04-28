@@ -150,4 +150,5 @@
     <string name="SMSAlarmStream">Flux d\'alarme</string>
     <string name="SMSVoiceStream">Flux d\'appel vocal</string>
     <string name="SMSMusicStream">Flux de musique</string>
+    <string name="silentMode">Notifications silencieuses lorsque branché</string>
 </resources>
