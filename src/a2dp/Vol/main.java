@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.Vector;
 
@@ -12,6 +13,8 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.IBluetooth;
+import android.bluetooth.IBluetoothA2dp;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,6 +31,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -109,7 +114,7 @@ public class main extends Activity {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.DeleteDataMsg)
 					.setCancelable(false)
-					.setPositiveButton(R.string.Yes,
+					.setPositiveButton(android.R.string.yes,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int id) {
@@ -117,7 +122,7 @@ public class main extends Activity {
 									refreshList(loadFromDB());
 								}
 							})
-					.setNegativeButton(R.string.No,
+					.setNegativeButton(android.R.string.no,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int id) {
@@ -374,7 +379,7 @@ public class main extends Activity {
 				builder.setTitle(bt.toString());
 				builder.setMessage(bt2.desc1 + "\n" + bt2.desc2 + "\n"
 						+ bt2.mac );
-				builder.setPositiveButton(R.string.OK, null);
+				builder.setPositiveButton(android.R.string.ok, null);
 				builder.setNegativeButton(R.string.Delete,
 						new OnClickListener() {
 							public void onClick(DialogInterface dialog,
@@ -701,6 +706,7 @@ public class main extends Activity {
 				// If there are paired devices
 
 				if (pairedDevices.size() > 0) {
+					IBluetooth ibta = getIBluetooth();
 					// Loop through paired devices
 					for (BluetoothDevice device : pairedDevices) {
 						// Add the name and address to an array adapter to show in a
@@ -708,9 +714,19 @@ public class main extends Activity {
 						if (device.getAddress() != null) {
 							btDevice bt = new btDevice();
 							i++;
+							String name;
+							if (android.os.Build.VERSION.SDK_INT >= 11)
+								try {
+									name = ibta.getRemoteAlias(device.getAddress());
+								} catch (RemoteException e) {
+									name = device.getName();
+									e.printStackTrace();
+								}
+							else
+								name = device.getName();
 							bt.setBluetoothDevice(
 									device,
-									device.getName(),
+									name,
 									am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 							btDevice bt2 = myDB.getBTD(bt.mac);
 
@@ -1095,5 +1111,35 @@ public class main extends Activity {
 
 		// return device class
 		return temp;
+	}
+	
+	private IBluetooth getIBluetooth() {
+
+		IBluetooth ibta = null;
+
+		try {
+
+			Class<?> c2 = Class.forName("android.os.ServiceManager");
+
+			Method m2 = c2.getDeclaredMethod("getService", String.class);
+			IBinder b = (IBinder) m2.invoke(null, "bluetooth");
+
+			Log.d(LOG_TAG, "Test2: " + b.getInterfaceDescriptor());
+
+			Class<?> c3 = Class.forName("android.bluetooth.IBluetooth");
+
+			Class[] s2 = c3.getDeclaredClasses();
+
+			Class<?> c = s2[0];
+			// printMethods(c);
+			Method m = c.getDeclaredMethod("asInterface", IBinder.class);
+
+			m.setAccessible(true);
+			ibta = (IBluetooth) m.invoke(null, b);
+
+		} catch (Exception e) {
+			Log.e(LOG_TAG, "Error " + e.getMessage());
+		}
+		return ibta;
 	}
 }

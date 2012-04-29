@@ -141,7 +141,7 @@
     <string name="PrefsVolRampTitle">Ramp volume up?</string>
     <string name="PrefsVolRampSummaryOFF">Volume will not ramp when adjusting.</string>
     <string name="PrefsVolRampSummaryON">Volume will ramp when adjusting up.</string>
-    <string name="app_kill">Stop app on disconnect</string>
+    <string name="app_kill">Stop app on disconnect?</string>
     <string name="PrefsPowerOFF">Do not respond to Power Connection</string>
     <string name="PrefsPower">Respond to Power Connection?</string>
     <string name="PrefsPowerON">Respond to Power Connection</string>
@@ -151,5 +151,5 @@
     <string name="SMSVoiceStream">Voice Call Stream</string>
     <string name="SMSMusicStream">Music Stream</string>
     <string name="rememberMediaVol">Automatically remember last used media volume on disconnect</string>
-    <string name="silentMode">Silence notifications while connected</string>
+    <string name="silentMode">Silence notifications while connected?</string>
 </resources>
