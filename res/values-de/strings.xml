@@ -150,4 +150,6 @@
     <string name="SMSAlarmStream">Alarm-Ausgabestrom</string>
     <string name="SMSVoiceStream">Gesprächs-Ausgabestrom</string>
     <string name="SMSMusicStream">Medien-Ausgabestrom</string>
+    <string name="rememberMediaVol">Zuletzt verwendete Medienlautstärke bei Verbindungstrennung merken</string>
+    <string name="silentMode">Benachrichtigungen während Verbindung abschalten</string>
 </resources>
