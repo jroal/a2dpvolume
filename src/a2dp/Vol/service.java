@@ -44,8 +44,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
-
-
 public class service extends Service implements OnAudioFocusChangeListener {
 
 	/*
@@ -84,6 +82,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private Notification not = null;
 	private NotificationManager mNotificationManager = null;
 	private boolean speakerPhoneWasOn = true;
+	private boolean bluetoothWasOff = false;
 	private boolean clearedTts = true;
 	private static final String FIX_STREAM = "fix_stream";
 
@@ -109,7 +108,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
 	private long SMS_delay = 3000; // delay before reading SMS
 	private int SMSstream = 0;
-	private long vol_delay = 5000; // delay time between the device connection and the volume adjustment
+	private long vol_delay = 5000; // delay time between the device connection
+									// and the volume adjustment
 
 	SharedPreferences preferences;
 	private MyApplication application;
@@ -148,18 +148,16 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			Float xxx = new Float(preferences.getString("gpsDistance", "10"));
 			MAX_ACC = xxx;
 
-
 			local = preferences.getBoolean("useLocalStorage", false);
 			if (local)
 				a2dpDir = getFilesDir().toString();
 			else
 				a2dpDir = Environment.getExternalStorageDirectory()
 						+ "/A2DPVol";
-			
+
 			OldVol2 = preferences.getInt(OLD_VOLUME, 10);
 			OldVol = preferences.getInt(OLD_PH_VOL, 5);
 			Oldsilent = preferences.getInt("oldsilent", 10);
-
 
 		} catch (NumberFormatException e) {
 			MAX_ACC = 10;
@@ -180,8 +178,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		wifiManager = (WifiManager) getBaseContext().getSystemService(
 				Context.WIFI_SERVICE);
-		
-		locmanager = (LocationManager) getBaseContext().getSystemService(Context.LOCATION_SERVICE);
+
+		locmanager = (LocationManager) getBaseContext().getSystemService(
+				Context.LOCATION_SERVICE);
 
 		if (notify) {
 			// set up the notification and start foreground
@@ -262,7 +261,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			// Create listener for when car mode connects
 			filter.addAction(android.app.UiModeManager.ACTION_ENTER_DESK_MODE);
 		}
-		
+
 		if (power) {
 			// Create listener for when power disconnects
 			filter2.addAction(Intent.ACTION_POWER_DISCONNECTED);
@@ -458,7 +457,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 						} else if (intent.getAction().equalsIgnoreCase(
 								Intent.ACTION_POWER_CONNECTED)) {
 							bt2 = DB.getBTD("4"); // get power data
-						
+
 						} else
 							bt2 = null;
 
@@ -505,15 +504,16 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			getOldvol();
 			getOldPvol();
 			oldwifistate = wifiManager.isWifiEnabled();
-			oldgpsstate = locmanager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+			oldgpsstate = locmanager
+					.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		}
-		
+
 		connectedIcon = bt2.getIcon();
 		SMSstream = bt2.getSmsstream();
 		vol_delay = bt2.getVoldelay() * 1000;
 		SMS_delay = bt2.getSmsdelay() * 1000;
 		ramp_vol = bt2.isVolramp();
-		
+
 		if (bt2.wifi) {
 			try {
 				oldwifistate = wifiManager.isWifiEnabled();
@@ -523,8 +523,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				Log.e(LOG_TAG, "Error " + e.getMessage());
 			}
 		}
-		
-		if(bt2.enablegps){
+
+		if (bt2.enablegps) {
 			turnGPSOn();
 		}
 
@@ -535,7 +535,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				public void onFinish() {
 					try {
 						new ConnectBt().execute(tempBT.getBdevice());
-						//Log.d(LOG_TAG, tempBT.getBdevice());
+						// Log.d(LOG_TAG, tempBT.getBdevice());
 					} catch (Exception e) {
 						e.printStackTrace();
 						Log.e(LOG_TAG, "Error " + e.getMessage());
@@ -546,7 +546,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				public void onTick(long arg0) {
 					try {
 						new ConnectBt().execute(tempBT.getBdevice());
-						//Log.d(LOG_TAG, tempBT.getBdevice());
+						// Log.d(LOG_TAG, tempBT.getBdevice());
 					} catch (Exception e) {
 						e.printStackTrace();
 						Log.e(LOG_TAG, "Error " + e.getMessage());
@@ -555,9 +555,18 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			};
 
 			if (bt2.bdevice.length() == 17) {
+				BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
+				if (mBTA != null)  if (!mBTA.isEnabled()) {
+					// If Bluetooth is not yet enabled, enable it
+					bluetoothWasOff = true;
+					mBTA.enable();
+				}
+				else
+					bluetoothWasOff = false;
+				
 				try {
 					new ConnectBt().execute(bt2.getBdevice());
-					//Log.d(LOG_TAG, bt2.getBdevice());
+					// Log.d(LOG_TAG, bt2.getBdevice());
 					connectTimer.start();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -589,8 +598,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		if (bt2.isSetpv())
 			setPVolume(bt2.getPhonev());
-		
-		if(bt2.isSilent())
+
+		if (bt2.isSilent())
 			am2.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 0, 0);
 
 		if (bt2.isSetV()) {
@@ -675,7 +684,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	protected void DoDisconnected(btDevice bt2) {
 
 		int SavVol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
-		
+
 		if (bt2.hasIntent()) {
 			// if music is playing, pause it
 			if (am2.isMusicActive()) {
@@ -683,17 +692,20 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				Intent i = new Intent("com.android.music.musicservicecommand");
 				i.putExtra("command", "pause");
 				sendBroadcast(i);
-				//Try telling the system the headset just disconnected to stop other players
+				// Try telling the system the headset just disconnected to stop
+				// other players
 				Intent j = new Intent("android.intent.action.HEADSET_PLUG");
 				j.putExtra("state", 0);
 				sendBroadcast(j);
 				// for more stubborn players, try this too...
-				Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
-				KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP);
+				Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON,
+						null);
+				KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN,
+						KeyEvent.KEYCODE_MEDIA_STOP);
 				downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
 				sendOrderedBroadcast(downIntent2, null);
 			}
-			
+
 			// if we opened a package for this device, try to close it now
 			if (bt2.getPname().length() > 3 && bt2.isAppkill()) {
 				// also open the home screen to make music app revert to
@@ -703,24 +715,32 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(startMain);
 				// now we can kill the app is asked to
-				
+
 				final String kpackage = bt2.getPname();
 				CountDownTimer killTimer = new CountDownTimer(6000, 3000) {
 					@Override
 					public void onFinish() {
 						if (am2.isMusicActive()) {
-							// first pause the music so it removes the notify icon
-							Intent i = new Intent("com.android.music.musicservicecommand");
+							// first pause the music so it removes the notify
+							// icon
+							Intent i = new Intent(
+									"com.android.music.musicservicecommand");
 							i.putExtra("command", "pause");
 							sendBroadcast(i);
-							//Try telling the system the headset just disconnected to stop other players
-							Intent j = new Intent("android.intent.action.HEADSET_PLUG");
+							// Try telling the system the headset just
+							// disconnected to stop other players
+							Intent j = new Intent(
+									"android.intent.action.HEADSET_PLUG");
 							j.putExtra("state", 0);
 							sendBroadcast(j);
 							// for more stubborn players, try this too...
-							Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
-							KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP);
-							downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
+							Intent downIntent2 = new Intent(
+									Intent.ACTION_MEDIA_BUTTON, null);
+							KeyEvent downEvent2 = new KeyEvent(
+									KeyEvent.ACTION_DOWN,
+									KeyEvent.KEYCODE_MEDIA_STOP);
+							downIntent2.putExtra(Intent.EXTRA_KEY_EVENT,
+									downEvent2);
 							sendOrderedBroadcast(downIntent2, null);
 						}
 						try {
@@ -733,20 +753,26 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 					@Override
 					public void onTick(long arg0) {
-						
+
 						if (am2.isMusicActive()) {
-							// first pause the music so it removes the notify icon
-							Intent i = new Intent("com.android.music.musicservicecommand");
+							// first pause the music so it removes the notify
+							// icon
+							Intent i = new Intent(
+									"com.android.music.musicservicecommand");
 							i.putExtra("command", "pause");
 							sendBroadcast(i);
-							
+
 							// for more stubborn players, try this too...
-							Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
-							KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP);
-							downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
+							Intent downIntent2 = new Intent(
+									Intent.ACTION_MEDIA_BUTTON, null);
+							KeyEvent downEvent2 = new KeyEvent(
+									KeyEvent.ACTION_DOWN,
+									KeyEvent.KEYCODE_MEDIA_STOP);
+							downIntent2.putExtra(Intent.EXTRA_KEY_EVENT,
+									downEvent2);
 							sendOrderedBroadcast(downIntent2, null);
 						}
-						
+
 						try {
 							stopApp(kpackage);
 						} catch (Exception e) {
@@ -760,7 +786,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			}
 		}
 
-		
 		// start the location capture service
 		if (bt2 != null && bt2.isGetLoc()) {
 			Intent dolock = new Intent(a2dp.Vol.service.this, StoreLoc.class);
@@ -776,28 +801,29 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		if (bt2.wifi) {
 			dowifi(oldwifistate);
 		}
-		if(bt2.isEnablegps()){
-			if(!oldgpsstate)
-				if(!bt2.isGetLoc())turnGPSOff();
-				else{
-					new CountDownTimer(MAX_TIME + 2000, 1000){
+		if (bt2.isEnablegps()) {
+			if (!oldgpsstate)
+				if (!bt2.isGetLoc())
+					turnGPSOff();
+				else {
+					new CountDownTimer(MAX_TIME + 2000, 1000) {
 
 						@Override
 						public void onFinish() {
 							turnGPSOff();
-							
+
 						}
 
 						@Override
 						public void onTick(long millisUntilFinished) {
 							// TODO Auto-generated method stub
-							
+
 						}
-						
+
 					}.start();
 				}
 		}
-		
+
 		for (int k = 0; k < btdConn.length; k++)
 			if (btdConn[k] != null)
 				if (bt2.getMac().equalsIgnoreCase(btdConn[k].getMac()))
@@ -823,17 +849,25 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 		}
-		if(bt2.isSilent())
+		if (bt2.isSilent())
 			am2.setStreamVolume(AudioManager.STREAM_NOTIFICATION, Oldsilent, 0);
 		
+		if(bt2.getBdevice() != null && bt2.getBdevice().length() == 17){
+			BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
+			if (mBTA != null)  if (mBTA.isEnabled() && bluetoothWasOff) {
+				// If Bluetooth is not yet enabled, enable it
+				mBTA.disable();
+			}
+		}
+
 		final String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
 		itent.setAction(Ireload);
 		itent.putExtra("disconnect", bt2.getMac());
 		application.sendBroadcast(itent);
-		if(bt2.isAutovol()){
+		if (bt2.isAutovol()) {
 			bt2.setDefVol(SavVol);
 			DB.update(bt2);
 		}
@@ -871,9 +905,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				}
 
 			}.start();
-		}
-		else
-		  am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol, AudioManager.FLAG_SHOW_UI);
+		} else
+			am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol,
+					AudioManager.FLAG_SHOW_UI);
 
 	}
 
@@ -934,7 +968,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			not.icon = connectedIcon;
 		else
 			not.icon = R.drawable.icon5;
-		
+
 		Context context = getApplicationContext();
 		CharSequence contentTitle = getResources().getString(R.string.app_name);
 		CharSequence contentText = temp;
@@ -1080,7 +1114,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				IBluetoothA2dp ibta = getIBluetoothA2dp();
 				try {
 					Log.d(LOG_TAG, "Here: " + ibta.getSinkPriority(device));
-					if (ibta != null &&ibta.getSinkState(device) == 0)
+					if (ibta != null && ibta.getSinkState(device) == 0)
 						ibta.connectSink(device);
 				} catch (Exception e) {
 					Log.e(LOG_TAG, "Error " + e.getMessage());
@@ -1146,32 +1180,34 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	private void turnGPSOn(){
-	    String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 
-	    if(!provider.contains("gps")){ //if gps is disabled
-	        final Intent poke = new Intent();
-	        poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider"); 
-	        poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-	        poke.setData(Uri.parse("3")); 
-	        sendBroadcast(poke);
-	    }
+	private void turnGPSOn() {
+		String provider = Settings.Secure.getString(getContentResolver(),
+				Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+		if (!provider.contains("gps")) { // if gps is disabled
+			final Intent poke = new Intent();
+			poke.setClassName("com.android.settings",
+					"com.android.settings.widget.SettingsAppWidgetProvider");
+			poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+			poke.setData(Uri.parse("3"));
+			sendBroadcast(poke);
+		}
 	}
 
-	private void turnGPSOff(){
-	    String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+	private void turnGPSOff() {
+		String provider = Settings.Secure.getString(getContentResolver(),
+				Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 
-	    if(provider.contains("gps")){ //if gps is enabled
-	        final Intent poke = new Intent();
-	        poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-	        poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-	        poke.setData(Uri.parse("3")); 
-	        sendBroadcast(poke);
-	    }
+		if (provider.contains("gps")) { // if gps is enabled
+			final Intent poke = new Intent();
+			poke.setClassName("com.android.settings",
+					"com.android.settings.widget.SettingsAppWidgetProvider");
+			poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+			poke.setData(Uri.parse("3"));
+			sendBroadcast(poke);
+		}
 	}
-
 
 	private void getConnects() {
 		if (true) {
@@ -1193,17 +1229,18 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private final BroadcastReceiver SMScatcher = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(final Context context, final Intent intent) {		
+		public void onReceive(final Context context, final Intent intent) {
 			tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 			if (intent.getAction().equals(
-					"android.provider.Telephony.SMS_RECEIVED") && tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
+					"android.provider.Telephony.SMS_RECEIVED")
+					&& tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
 				// if(message starts with SMStretcher recognize BYTE)
 
 				/*
 				 * The SMS-Messages are 'hiding' within the extras of the
 				 * Intent.
 				 */
-				
+
 				Bundle bundle = intent.getExtras();
 				if (bundle != null) {
 					/* Get all messages contained in the Intent */
