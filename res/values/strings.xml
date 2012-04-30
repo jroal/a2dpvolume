@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">A2DP Volume</string>
+    <string-array name="gpsDistance">
+        <item>2m (6ft)</item>
+        <item>5m (15ft)</item>
+        <item>10m (30ft) </item>
+        <item>15m (45ft)</item>
+        <item>20m (60ft)</item>
+        <item>30m (90ft)</item>
+    </string-array>
+    <string-array name="gpsTimeout">
+        <item>Disable GPS Listener</item>
+        <item>5 seconds</item>
+        <item>10 seconds</item>
+        <item>15 seconds</item>
+        <item>20 seconds</item>
+        <item>30 seconds</item>
+        <item>45 seconds</item>
+    </string-array>
+    <string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>45000</item>
+    </string-array>
+    <string-array name="gpsDistance_items">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string name="ListName">Bluetooth Devices</string>
+    <string name="GetLocButtonString">Stored Location</string>
+    <string name="CapLocationButton">Capture Location</string>
+    <string name="StartService">Start Service</string>
+    <string name="StopService">Stop Service</string>
+    <string name="FindDevices">Find Devices</string>
+    <string name="MediaVolume">Media Volume</string>
+    <string name="ServiceStarted">A2DP Volume Service Started</string>
+    <string name="ServiceStopped">A2DP Volume Service Stopped</string>
+    <string name="ExportDB">Export Database to SD card</string>
+    <string name="ExportXML">Export Database as XML to SD card</string>
+    <string name="ImportDB">Import Database from SD card</string>
+    <string name="ExportLocation">Export Last Location Data</string>
+    <string name="PrefsNotifySummaryON">The service will start as a foreground task with an icon on the notification bar.</string>
+    <string name="PrefsNotifySummaryOFF">The service will start but it will be a background task with no icon on the notification bar.</string>
+    <string name="PrefsNotify">Notify in Foreground?</string>
+    <string name="PrefsGPSTimeoutTitle">GPS Listener Timeout</string>
+    <string name="PrefsGPSTimeout">The maximum time the GPS listener will be allowed to run looking for a better GPS location after bluetooth disconnect.</string>
+    <string name="PrefsGPSInaccuracyTitle">GPS Max Inaccuracy </string>
+    <string name="PrefsGPSInaccuracy">GPS maximum inaccuracy in meters before listener will stop looking for a better value.</string>
+    <string name="PrefsCarModeON">Respond to Car Mode</string>
+    <string name="PrefsCarModeOFF">Does not respond to Car Mode.</string>
+    <string name="PrefsCarMode">Respond to Car Mode?</string>
+    <string name="PrefsCatGPS">Location Capture Settings</string>
+    <string name="PrefsCatGen">General Settings</string>
+    <string name="PrefsBootstart">Start at Boot?</string>
+    <string name="PrefsBootstartON">The service will start at boot.</string>
+    <string name="PrefsBootstartOFF">The service will not start at boot.</string>
+    <string name="PrefsToasts">Show Pop-ups?</string>
+    <string name="PrefsToastsON">Pop-up messages are shown when the service starts or stops.</string>
+    <string name="PrefsToastsOFF">Pop-up messages are not shown when the service starts or stops.</string>
+    <string name="PrefsToastsSummary">Should the pop-up messages show when the service has started or stopped?</string>
+    <string name="MenuExit">Exit</string>
+    <string name="MenumanageData">Manage Data</string>
+    <string name="MenuDeleteData">Delete All Data</string>
+    <string name="MenuPrefs">Preferences</string>
+    <string name="MenuHelp">Help</string>
+    <string name="DeleteDataMsg">Do you really want to delete all the device data from A2DP Volume?</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
+    <string name="OK">OK</string>
+    <string name="Delete">Delete</string>
+    <string name="Edit">Edit</string>
+    <string name="NoData">No Data</string>
+    <string name="ServRunning">A2DP Volume Service Running</string>
+    <string name="ImportCompletedText">Import Succesful</string>
+    <string name="NobtSupport">Your device does not appear to support bluetooth.</string>
+    <string name="btEnableFail">Failed to enable bluetooth</string>
+    <string name="usePassiveOff">Do not use passive location listener</string>
+    <string name="usePassiveOn">Also use passive location listener</string>
+    <string name="usePassiveTitle">Use Passive Locations?</string>
+    <string name="useNetworkTitle">Use Network Locations</string>
+    <string name="useNetworkON">Also use network location listener</string>
+    <string name="useNetworkOFF">Do not use network location listener</string>
+    <string name="LocationString">Location</string>
+    <string name="btNotOn">Device information is not available</string>
+    <string name="app_not_found">Application Not Found</string>
+    <string name="deviceName">Enter a name for this device</string>
+    <string name="getLoc">Capture location on disconnect?</string>
+    <string name="setVol">Set media volume on connect?</string>
+    <string name="connectBT">Also connect to bluetooth device</string>
+    <string name="startApp">Start app on connect</string>
+    <string name="wifiDisconnect">Disconnect WIFI when bluetooth connects?</string>
+    <string name="save">Save</string>
+    <string name="PrefsUseLocatStorageON">Use device file storage</string>
+    <string name="PrefsUseLocalStorageOFF">Use SD Card file storage</string>
+    <string name="PrefsUseLocalStorage">Use Local File Storage?</string>
+    <string name="PrefsHomeDockOFF">Do not respond to Home Dock</string>
+    <string name="PrefsHomeDock">Respond to Home Dock?</string>
+    <string name="PrefsHomeDockON">Respond to Home Dock</string>
+    <string name="ea_ti_app">App To Launch</string>
+    <string name="ae_stop_app_warning_title">What app is this?</string>
+    <string name="ae_stop_app_warning_message">Intents without a package name can not be stopped by A2DP Volume</string>
+    <string name="connectedTo">Connected to</string>
+    <string name="PrefsCatOther">Other Settings</string>
+    <string name="PrefsOtherConnectedIcon">Connected Icon</string>
+    <string name="app_restart">Force App Restart?</string>
+    <string name="PrefsHeadsetON">Respond to Audio Jack</string>
+    <string name="PrefsHeadset">Respond to Audio Jack?</string>
+    <string name="PrefsHeadsetOFF">Do not respond to Audio Jack</string>
+    <string name="PrefsTTSON">Text messages can be read when device is connected</string>
+    <string name="PrefsTTS">Enable Reading Text Messages?</string>
+    <string name="PrefsTTSOFF">Text messages will not be read</string>
+    <string name="audioJackName">Audio Jack</string>
+    <string name="needTTS">TTS data missing.  Install it now?</string>
+    <string name="msgTemplate">... Message From: {0} .. {1}</string>
+    <string name="TTSready">TTS Ready</string>
+    <string name="TTSNotReady">TTS Not ready</string>
+    <string name="carDockName">Car Dock</string>
+    <string name="homeDockName">Home Dock</string>
+    <string name="Editsetpv">Set in-call phone volume on connect?</string>
+    <string name="EditPhoneVolume">In-Call Phone Volume</string>
+    <string name="SMSdelay_title">SMS Delay</string>
+    <string name="SMSDelayText">Delay for reading text message</string>
+    <string name="SMSstream_title">SMS Stream</string>
+    <string name="Bonded">Bonded</string>
+    <string name="Error">Error</string>
+    <string name="NotBonded">Not Bonded</string>
+    <string name="Bonding">Bonding</string>
+    <string name="Class">Class</string>
+    <string name="SMS_Stream_desc">Select a path for the text message sound to travel</string>
+    <string name="PrefsVolAdjDelayTitle">Volume Adjust Delay</string>
+    <string name="PrefsVolAdjDelaySummary">Delay between the device connection and the volume adjusting up.</string>
+    <string name="PrefsVolRampTitle">Ramp volume up?</string>
+    <string name="PrefsVolRampSummaryOFF">Volume will not ramp when adjusting.</string>
+    <string name="PrefsVolRampSummaryON">Volume will ramp when adjusting up.</string>
+    <string name="app_kill">Stop app on disconnect?</string>
+    <string name="PrefsPowerOFF">Do not respond to Power Connection</string>
+    <string name="PrefsPower">Respond to Power Connection?</string>
+    <string name="PrefsPowerON">Respond to Power Connection</string>
+    <string name="powerPlugName">Power Connection</string>
+    <string name="enableGPS">Enable GPS while connected?</string>
+    <string name="SMSAlarmStream">Alarm Stream</string>
+    <string name="SMSVoiceStream">Voice Call Stream</string>
+    <string name="SMSMusicStream">Music Stream</string>
+    <string name="rememberMediaVol">Automatically remember last used media volume on disconnect</string>
+    <string name="silentMode">Silence notifications while connected?</string>
+</resources>

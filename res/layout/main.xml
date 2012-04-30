@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent" android:layout_height="wrap_content" android:persistentDrawingCache="all">
+
+<TableRow android:id="@+id/TableRow01" android:layout_height="wrap_content" android:gravity="center_horizontal" android:layout_width="fill_parent">
+</TableRow><TableRow android:id="@+id/TableRow02" android:layout_height="wrap_content" android:layout_margin="10dp" android:layout_width="fill_parent" android:layout_gravity="center_horizontal|center" android:gravity="center_horizontal"><Button android:id="@+id/Locationbtn" android:text="@string/GetLocButtonString" android:layout_gravity="left" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1"></Button><Button android:id="@+id/Button01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="true" android:onClick="ButtonClick()" android:saveEnabled="true" android:scrollbarAlwaysDrawHorizontalTrack="true" android:visibility="visible" android:layout_gravity="center" android:text="@string/FindDevices" android:layout_weight="1"></Button><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/ServButton" android:layout_gravity="right" android:freezesText="false" android:text="@string/StartService" android:layout_weight="1"></Button>
+</TableRow>
+
+
+
+
+
+
+<ListView android:id="@+id/ListView01" android:layout_height="wrap_content" android:clickable="true" android:contentDescription="@string/ListName" android:layout_width="fill_parent"></ListView>
+
+
+</LinearLayout>

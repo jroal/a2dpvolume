@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android" android:enabled="true" android:title="@string/app_name">
+
+
+
+<PreferenceCategory android:title="@string/PrefsCatGen"><CheckBoxPreference android:selectable="true" android:enabled="true" android:key="bootstart" android:defaultValue="true" android:summaryOff="@string/PrefsBootstartOFF" android:summaryOn="@string/PrefsBootstartON" android:title="@string/PrefsBootstart"></CheckBoxPreference>
+
+
+<CheckBoxPreference android:enabled="true" android:selectable="true" android:key="toasts" android:defaultValue="true" android:summaryOff="@string/PrefsToastsOFF" android:summaryOn="@string/PrefsToastsON" android:title="@string/PrefsToasts" android:summary="@string/PrefsToastsSummary"></CheckBoxPreference>
+<CheckBoxPreference android:summaryOn="@string/PrefsNotifySummaryON" android:summaryOff="@string/PrefsNotifySummaryOFF" android:enabled="true" android:selectable="true" android:summary="@string/PrefsNotifySummaryON" android:key="notify1" android:title="@string/PrefsNotify" android:defaultValue="true"></CheckBoxPreference>
+<CheckBoxPreference android:key="useLocalStorage" android:summaryOff="@string/PrefsUseLocalStorageOFF" android:summaryOn="@string/PrefsUseLocatStorageON" android:defaultValue="false" android:title="@string/PrefsUseLocalStorage"></CheckBoxPreference>
+<CheckBoxPreference android:key="car_mode" android:enabled="true" android:selectable="true" android:defaultValue="true" android:summaryOff="@string/PrefsCarModeOFF" android:summaryOn="@string/PrefsCarModeON" android:title="@string/PrefsCarMode"></CheckBoxPreference>
+<CheckBoxPreference android:title="@string/PrefsHomeDock" android:summaryOn="@string/PrefsHomeDockON" android:key="home_dock" android:summaryOff="@string/PrefsHomeDockOFF"></CheckBoxPreference>
+<CheckBoxPreference android:summaryOn="@string/PrefsHeadsetON" android:summaryOff="@string/PrefsHeadsetOFF" android:title="@string/PrefsHeadset" android:key="headset" android:defaultValue="false"></CheckBoxPreference>
+<CheckBoxPreference android:summaryOff="@string/PrefsPowerOFF" android:title="@string/PrefsPower" android:summaryOn="@string/PrefsPowerON" android:key="power" android:defaultValue="false"/><CheckBoxPreference android:summaryOn="@string/PrefsTTSON" android:summaryOff="@string/PrefsTTSOFF" android:defaultValue="false" android:title="@string/PrefsTTS" android:key="enableTTS"></CheckBoxPreference>
+
+</PreferenceCategory><PreferenceCategory android:enabled="true" android:title="@string/PrefsCatGPS">
+<ListPreference android:enabled="true" android:key="gpsTime" android:entries="@array/gpsTimeout" android:entryValues="@array/gpsTimeout_items" android:summary="@string/PrefsGPSTimeout" android:title="@string/PrefsGPSTimeoutTitle" android:defaultValue="20000"></ListPreference>
+<ListPreference android:key="gpsDistance" android:entries="@array/gpsDistance" android:entryValues="@array/gpsDistance_items" android:summary="@string/PrefsGPSInaccuracy" android:title="@string/PrefsGPSInaccuracyTitle" android:defaultValue="2"></ListPreference>
+
+
+
+<CheckBoxPreference android:summaryOff="@string/usePassiveOff" android:key="usePassive" android:summaryOn="@string/usePassiveOn" android:title="@string/usePassiveTitle" android:selectable="true" android:enabled="true" android:defaultValue="false"></CheckBoxPreference><CheckBoxPreference android:summaryOn="@string/useNetworkON" android:title="@string/useNetworkTitle" android:defaultValue="true" android:summaryOff="@string/useNetworkOFF" android:key="useNetwork"></CheckBoxPreference>
+</PreferenceCategory>
+
+</PreferenceScreen>
