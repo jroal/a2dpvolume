@@ -151,4 +151,5 @@
     <string name="SMSVoiceStream">Flux d\'appel vocal</string>
     <string name="SMSMusicStream">Flux de musique</string>
     <string name="silentMode">Notifications silencieuses lorsque branché?</string>
+    <string name="rememberMediaVol">Sauvegarder automatiquement le volume média sur débranchement</string>
 </resources>
