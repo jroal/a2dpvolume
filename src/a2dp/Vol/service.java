@@ -717,7 +717,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				// now we can kill the app is asked to
 
 				final String kpackage = bt2.getPname();
-				CountDownTimer killTimer = new CountDownTimer(6000, 3000) {
+				CountDownTimer killTimer = new CountDownTimer(3000, 3000) {
 					@Override
 					public void onFinish() {
 						if (am2.isMusicActive()) {
@@ -1182,6 +1182,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	}
 
 	private void turnGPSOn() {
+		// this only works until ICS.  It is actually considered a very bad thing to do this
 		String provider = Settings.Secure.getString(getContentResolver(),
 				Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 
@@ -1196,6 +1197,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	}
 
 	private void turnGPSOff() {
+		// this only works until ICS.  It is actually considered a very bad thing to do this
 		String provider = Settings.Secure.getString(getContentResolver(),
 				Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 
@@ -1447,5 +1449,4 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 		return number;
 	}
-
 }

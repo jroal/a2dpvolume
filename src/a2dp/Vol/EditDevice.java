@@ -25,7 +25,10 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -64,7 +67,7 @@ public class EditDevice extends Activity {
 	private CheckBox fsetpv;
 	private SeekBar fphonev;
 	private SeekBar fsmsdelaybar;
-	private TextView fsmsdelaybox, tv2;
+	private TextView fsmsdelaybox, tv2, ttsdelay, mediadelay, tvstream, tvmediavol, tvincallVol;
 	private SeekBar fvoldelaybar;
 	private TextView fvoldelaybox;
 	private CheckBox frampVol;
@@ -72,6 +75,7 @@ public class EditDevice extends Activity {
 	private CheckBox fsilent;
 	private RadioButton iconradio0, iconradio1, iconradio2, iconradio3, iconradio4, streamradio0, streamradio1, streamradio2;
 	private RadioGroup streamgroup, icongroup;
+	private LinearLayout l1, l2;
 	
 	SharedPreferences preferences;
 	private boolean TTsEnabled;
@@ -152,6 +156,13 @@ public class EditDevice extends Activity {
 		this.streamradio0 = (RadioButton) this.findViewById(R.id.streamradio0);
 		this.streamradio1 = (RadioButton) this.findViewById(R.id.streamradio1);
 		this.streamradio2 = (RadioButton) this.findViewById(R.id.streamradio2);
+		this.l1 = (LinearLayout) this.findViewById(R.id.LinearLayout1);
+		this.l2 = (LinearLayout) this.findViewById(R.id.LinearLayout2);
+		this.ttsdelay = (TextView) this.findViewById(R.id.textViewTTSDelay);
+		this.mediadelay = (TextView) this.findViewById(R.id.textViewMediaDelay);
+		this.tvstream = (TextView) this.findViewById(R.id.textViewStream);
+		this.tvmediavol = (TextView) this.findViewById(R.id.textViewMediaVolume);
+		this.tvincallVol = (TextView) this.findViewById(R.id.textViewInCallVol);
 		
 		preferences = PreferenceManager
 				.getDefaultSharedPreferences(application);
@@ -214,6 +225,45 @@ public class EditDevice extends Activity {
 		case ALARM_STREAM: streamradio2.setChecked(true); break;
 		default: streamradio0.setChecked(true);
 		}
+		
+		// if Android is ICS or higher, disable this feature
+		if (android.os.Build.VERSION.SDK_INT >= 11){
+			fenableGPS.setChecked(false);
+			fenableGPS.setVisibility(CheckBox.GONE);
+			
+		}
+		
+		setTTSVisibility();
+		fenableTTS.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+				setTTSVisibility();
+			}
+			
+		});
+		
+		setMediaVisibility();
+		fsetvol.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				setMediaVisibility();
+				
+			}
+			
+		});
+		
+		setInCallVisibility();
+		fsetpv.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+				setInCallVisibility();
+			}
+			
+		});
+		
+		setAppVisibility();
+		
 		tv2.requestFocus(); // prevent jumping around screen
 		vUpdateApp();
 
@@ -337,6 +387,63 @@ public class EditDevice extends Activity {
 
 	}
 
+
+	private void setMediaVisibility(){
+		if(fsetvol.isChecked()){
+			tvmediavol.setVisibility(TextView.VISIBLE);
+			fvol.setVisibility(SeekBar.VISIBLE);
+			fautoVol.setVisibility(CheckBox.VISIBLE);
+			frampVol.setVisibility(CheckBox.VISIBLE);
+			l2.setVisibility(LinearLayout.VISIBLE);
+			mediadelay.setVisibility(TextView.VISIBLE);
+		}else{
+			tvmediavol.setVisibility(TextView.GONE);
+			fvol.setVisibility(SeekBar.GONE);
+			fautoVol.setVisibility(CheckBox.GONE);
+			frampVol.setVisibility(CheckBox.GONE);
+			l2.setVisibility(LinearLayout.GONE);
+			mediadelay.setVisibility(TextView.GONE);
+		}
+	}
+	
+	private void setTTSVisibility(){
+		if(fenableTTS.isChecked()){
+			l1.setVisibility(LinearLayout.VISIBLE);
+			ttsdelay.setVisibility(TextView.VISIBLE);
+			tvstream.setVisibility(TextView.VISIBLE);
+			streamgroup.setVisibility(RadioGroup.VISIBLE);
+		}
+		else{
+			l1.setVisibility(LinearLayout.GONE);
+			ttsdelay.setVisibility(TextView.GONE);
+			tvstream.setVisibility(TextView.GONE);
+			streamgroup.setVisibility(RadioGroup.GONE);
+		}
+	}
+	
+	private void setInCallVisibility(){
+		if(fsetpv.isChecked()){
+			tvincallVol.setVisibility(TextView.VISIBLE);
+			fphonev.setVisibility(SeekBar.VISIBLE);
+		}else{
+			tvincallVol.setVisibility(TextView.GONE);
+			fphonev.setVisibility(SeekBar.GONE);
+		}
+	}
+	
+	private void setAppVisibility(){
+		if(fapp.getText().length() > 0){
+			fapp.setVisibility(EditText.VISIBLE);
+			fapprestart.setVisibility(CheckBox.VISIBLE);
+			fappkill.setVisibility(CheckBox.VISIBLE);
+		}else{
+			fapp.setVisibility(EditText.GONE);
+			fapprestart.setVisibility(CheckBox.GONE);
+			fappkill.setVisibility(CheckBox.GONE);
+		}
+	}
+	
+	
 	OnSeekBarChangeListener smsdelaySeekBarProgress = new OnSeekBarChangeListener() {
 
 		public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
@@ -603,6 +710,7 @@ public class EditDevice extends Activity {
 			}
 		} else
 			fapp.setText("");
+		setAppVisibility();
 	}
 
 	/*

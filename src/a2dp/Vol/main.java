@@ -715,7 +715,7 @@ public class main extends Activity {
 							btDevice bt = new btDevice();
 							i++;
 							String name;
-							if (android.os.Build.VERSION.SDK_INT >= 11)
+							if (android.os.Build.VERSION.SDK_INT >= 14)
 								try {
 									name = ibta.getRemoteAlias(device.getAddress());
 								} catch (RemoteException e) {
