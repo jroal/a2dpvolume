@@ -1108,6 +1108,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			}
 			if (device == null)
 				return false;
+/*			mBTA.cancelDiscovery();
+			mBTA.startDiscovery();*/
 
 			if (android.os.Build.VERSION.SDK_INT < 11) {
 

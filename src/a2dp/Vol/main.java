@@ -695,7 +695,11 @@ public class main extends Activity {
 			if (!mBTA.isEnabled()) {
 				Intent enableBluetooth = new Intent(
 						BluetoothAdapter.ACTION_REQUEST_ENABLE);
-				startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH);
+				try {
+					startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				// Now implement the onActivityResult() and wait for it to
 				// be invoked with ENABLE_BLUETOOTH
 				// onActivityResult(ENABLE_BLUETOOTH, result, enableBluetooth);
@@ -856,10 +860,20 @@ public class main extends Activity {
 	// this just loads the bluetooth device array from the database
 	private int loadFromDB() {
 		myDB.getDb().close();
-		if (!myDB.getDb().isOpen() && !myDB.getDb().isDbLockedByCurrentThread() && !myDB.getDb().isDbLockedByOtherThreads())
-			myDB = new DeviceDB(application);
+		if (!myDB.getDb().isOpen() )
+			try {
+				myDB = new DeviceDB(application);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return 0;
+			}
 
-		vec = myDB.selectAlldb();
+		try {
+			vec = myDB.selectAlldb();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
 		if (vec.isEmpty() || vec == null)
 			return 0;
 

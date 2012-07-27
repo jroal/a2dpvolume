@@ -9,6 +9,7 @@ static {
 }
 public static String cleanFileName(String badFileName) {
     StringBuilder cleanName = new StringBuilder();
+    if(badFileName == null)return "bad_name";
     for (int i = 0; i < badFileName.length(); i++) {
         int c = (int)badFileName.charAt(i);
         if (Arrays.binarySearch(illegalChars, c) < 0) {
