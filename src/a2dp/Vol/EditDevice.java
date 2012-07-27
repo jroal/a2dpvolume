@@ -347,8 +347,7 @@ public class EditDevice extends Activity {
 		connbt.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (!myDB.getDb().isOpen()
-						&& !myDB.getDb().isDbLockedByCurrentThread()
-						&& !myDB.getDb().isDbLockedByOtherThreads())
+						&& !myDB.getDb().isDbLockedByCurrentThread())
 					myDB = new DeviceDB(application);
 				final Vector<btDevice> vec = myDB.selectAlldb();
 				int j = vec.size();
