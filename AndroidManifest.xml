@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<manifest android:installLocation="internalOnly" package="a2dp.Vol" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="2.8.8" android:versionCode="90">
+<manifest android:installLocation="internalOnly" package="a2dp.Vol" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="2.8.9" android:versionCode="91">
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /><uses-permission android:name="android.permission.CHANGE_WIFI_STATE" android:required="false"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" android:required="false"/>
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>

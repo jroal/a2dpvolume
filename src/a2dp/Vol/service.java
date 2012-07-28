@@ -696,7 +696,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				// other players
 				Intent j = new Intent("android.intent.action.HEADSET_PLUG");
 				j.putExtra("state", 0);
-				sendBroadcast(j);
+				try {
+					sendBroadcast(j);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				// for more stubborn players, try this too...
 				Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON,
 						null);
@@ -732,7 +737,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
 							Intent j = new Intent(
 									"android.intent.action.HEADSET_PLUG");
 							j.putExtra("state", 0);
-							sendBroadcast(j);
+							try {
+								sendBroadcast(j);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							// for more stubborn players, try this too...
 							Intent downIntent2 = new Intent(
 									Intent.ACTION_MEDIA_BUTTON, null);
