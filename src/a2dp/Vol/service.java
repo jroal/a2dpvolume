@@ -872,15 +872,17 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			}
 		}
 
+		if (bt2.isAutovol()) {
+			bt2.setDefVol(SavVol);
+			DB.update(bt2);
+		}
+		
 		final String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
 		itent.setAction(Ireload);
 		itent.putExtra("disconnect", bt2.getMac());
 		application.sendBroadcast(itent);
-		if (bt2.isAutovol()) {
-			bt2.setDefVol(SavVol);
-			DB.update(bt2);
-		}
+		
 		disconnecting = false;
 	}
 
