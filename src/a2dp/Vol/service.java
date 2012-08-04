@@ -33,7 +33,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
 import android.provider.Settings;
@@ -78,7 +77,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private static boolean ramp_vol = false;
 	HashMap<String, String> myHash;
 	private boolean toasts = true;
-	private boolean notify = false;
+	private boolean notify = true;
 	private Notification not = null;
 	private NotificationManager mNotificationManager = null;
 	private boolean speakerPhoneWasOn = true;
@@ -104,8 +103,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 	private PackageManager mPackageManager;
 	public static final String PREFS_NAME = "btVol";
-	float MAX_ACC = 20; // worst acceptable location in meters
-	long MAX_TIME = 10000; // gps listener timout time in milliseconds and
+	float MAX_ACC = 10; // worst acceptable location in meters
+	long MAX_TIME = 20000; // gps listener timout time in milliseconds and
 	private long SMS_delay = 3000; // delay before reading SMS
 	private int SMSstream = 0;
 	private long vol_delay = 5000; // delay time between the device connection
@@ -141,12 +140,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			headsetPlug = preferences.getBoolean("headset", false);
 			power = preferences.getBoolean("power", false);
 			toasts = preferences.getBoolean("toasts", true);
-			notify = preferences.getBoolean("notify1", false);
-			Long yyy = new Long(preferences.getString("gpsTime", "15000"));
-			MAX_TIME = yyy;
+			notify = preferences.getBoolean("notify1", true);
+			//Long yyy = new Long(preferences.getString("gpsTime", "15000"));
+			MAX_TIME = Long.valueOf(preferences.getString("gpsTime", "15000"));
 
-			Float xxx = new Float(preferences.getString("gpsDistance", "10"));
-			MAX_ACC = xxx;
+			//Float xxx = new Float(preferences.getString("gpsDistance", "10"));
+			MAX_ACC = Float.valueOf(preferences.getString("gpsDistance", "10"));
 
 			local = preferences.getBoolean("useLocalStorage", false);
 			if (local)
