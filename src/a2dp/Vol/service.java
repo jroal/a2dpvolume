@@ -608,7 +608,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				@Override
 				public void onFinish() {
 					setVolume(vol, application);
-
 				}
 
 				@Override
