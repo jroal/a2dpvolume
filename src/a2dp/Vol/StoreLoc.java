@@ -169,7 +169,12 @@ public class StoreLoc extends Service {
 	public void onDestroy() {
 		this.DB.getDb().close();
 		if(locationListener != null)
-		locationManager.removeUpdates(locationListener);
+			try {
+				locationManager.removeUpdates(locationListener);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		super.onDestroy();
 	}
 	
