@@ -719,7 +719,7 @@ public class main extends Activity {
 							btDevice bt = new btDevice();
 							i++;
 							String name;
-							if (android.os.Build.VERSION.SDK_INT >= 14){
+							if (android.os.Build.VERSION.SDK_INT >= 14 && android.os.Build.VERSION.SDK_INT <= 16){
 								try {
 									name = ibta.getRemoteAlias(device.getAddress());
 									//Toast.makeText(application, "try made it" + name, Toast.LENGTH_LONG).show();
