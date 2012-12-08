@@ -218,7 +218,7 @@ public class DeviceDB {
 				} while (cursor.moveToNext());
 			}
 		} catch (Exception e) {
-			Toast.makeText(context, "Database corrupt, delete and recreate database", Toast.LENGTH_LONG);
+			Toast.makeText(context, "Database corrupt, delete and recreate database", Toast.LENGTH_LONG).show();
 			e.printStackTrace();
 		}
 		if (cursor != null && !cursor.isClosed()) {
@@ -291,11 +291,11 @@ public class DeviceDB {
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		
-			Toast.makeText(context, "Upgrading database....", Toast.LENGTH_LONG);
+			Toast.makeText(context, "Upgrading database....", Toast.LENGTH_LONG).show();
 			if ((newVersion < 4 && oldVersion < 4) || (oldVersion > DATABASE_VERSION || newVersion > DATABASE_VERSION ) ) {
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 				onCreate(db);
-				Toast.makeText(context, "Database replaced", Toast.LENGTH_LONG);
+				Toast.makeText(context, "Database replaced", Toast.LENGTH_LONG).show();
 				return;
 			} 
 
@@ -311,14 +311,14 @@ public class DeviceDB {
 					String cols = join(columns, ",");
 					db.execSQL(String.format( "INSERT INTO %s (%s) SELECT %s from temp_%s", TABLE_NAME, cols, cols, TABLE_NAME));
 					db.execSQL("DROP table 'temp_" + TABLE_NAME + "'");
-					Toast.makeText(context, "Database upgraded succesfully", Toast.LENGTH_LONG);
+					Toast.makeText(context, "Database upgraded succesfully", Toast.LENGTH_LONG).show();
 					return;
 					
 				} catch (SQLException e) {
 					// if anything goes wrong, just start over
 					e.printStackTrace();
 					db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-					Toast.makeText(context, "Upgrade failed, replaced database", Toast.LENGTH_LONG);
+					Toast.makeText(context, "Upgrade failed, replaced database", Toast.LENGTH_LONG).show();
 					onCreate(db);
 				}
 				

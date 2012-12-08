@@ -37,7 +37,6 @@
     </string-array>
     <string name="ListName">Bluetooth Enheder</string>
     <string name="GetLocButtonString">Gemte Locationer</string>
-    <string name="CapLocationButton">Fangede Locationer</string>
     <string name="StartService">Start Service</string>
     <string name="StopService">Stop Service</string>
     <string name="FindDevices">Find Enheder</string>
@@ -109,7 +108,6 @@
     <string name="ae_stop_app_warning_title">Hvilket program er dette?</string>
     <string name="ae_stop_app_warning_message">Intents uden pakke navn kan ikke blive stoppet af A2DP Volume</string>
     <string name="connectedTo">Forbundet til</string>
-    <string name="PrefsCatOther">Andre Indstillinger</string>
     <string name="PrefsOtherConnectedIcon">Forbundet til Ikon</string>
     <string name="app_restart">Tving program genstart?</string>
     <string name="PrefsHeadsetON">Reagér på lydkabel</string>
@@ -127,20 +125,15 @@
     <string name="homeDockName">Home Dock</string>
     <string name="Editsetpv">Sæt opkalds volume ved tilkobling?</string>
     <string name="EditPhoneVolume">Opkalds Volume</string>
-    <string name="SMSdelay_title">SMS forsinkelse</string>
     <string name="SMSDelayText">Forsinkelse for læsning af tekst besked</string>
-    <string name="SMSstream_title">SMS Strøm</string>
     <string name="Bonded">Forbundet</string>
     <string name="Error">Fejl</string>
     <string name="NotBonded">Ikke forbundet</string>
     <string name="Bonding">Forbinder</string>
     <string name="Class">Klassw</string>
     <string name="SMS_Stream_desc">Vælg en sti for tekst beskeden</string>
-    <string name="PrefsVolAdjDelayTitle">Volume justerings forsinkelse</string>
     <string name="PrefsVolAdjDelaySummary">Forsinkelse imellem enheds forbindelse og lyd niveau justering.</string>
     <string name="PrefsVolRampTitle">Skru op for volume?</string>
-    <string name="PrefsVolRampSummaryOFF">Volume vil ikke blive skruet op ved justering.</string>
-    <string name="PrefsVolRampSummaryON">Volume vil blive skruet op ved justering.</string>
     <string name="app_kill">Stop program ved frakobling?</string>
     <string name="PrefsPowerOFF">Reagér ikke på strøm tilslutning</string>
     <string name="PrefsPower">Reagér på strøm tilslutning?</string>

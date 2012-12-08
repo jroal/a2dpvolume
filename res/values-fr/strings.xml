@@ -38,7 +38,6 @@
         <item>30000</item>
         <item>45000</item>
     </string-array>
-    <string name="CapLocationButton">Stocker position</string>
     <string name="MediaVolume">Volume média</string>
     <string name="DeleteDataMsg">Voulez-vous vraiment effacer toutes les données d\'appareils stockées dans A2DP?</string>
     <string name="app_not_found">Application non trouvée</string>
@@ -109,10 +108,8 @@
     <string name="PrefsHeadsetON">Réagir à prise casque</string>
     <string name="needTTS">Synthèse vocale non trouvée. Installer maintenant?</string>
     <string name="PrefsHeadset">Réaction à prise de casque?</string>
-    <string name="PrefsCatOther">Autres paramègres</string>
     <string name="PrefsTTSON">Les SMS seront lus lorsque branché</string>
     <string name="TTSready">Synthèse vocale prête</string>
-    <string name="SMSdelay_title">Délai SMS</string>
     <string name="TTSNotReady">Synthèse pas prête</string>
     <string name="ae_stop_app_warning_title">Quelle est cette application?</string>
     <string name="PrefsHeadsetOFF">Ne pas réagir à prise casque</string>
@@ -129,7 +126,6 @@
     <string name="audioJackName">Prise de casque</string>
     <string name="homeDockName">Mode maison</string>
     <string name="msgTemplate">... Message de: {0} .. {1}</string>
-    <string name="SMSstream_title">Flux de message texte</string>
     <string name="Class">Classe</string>
     <string name="SMS_Stream_desc">Selectionner le chemin de sortie pour le son des SMS</string>
     <string name="NotBonded">Non relié</string>
@@ -137,10 +133,7 @@
     <string name="Error">Erreur</string>
     <string name="Bonded">Relié</string>
     <string name="PrefsVolRampTitle">Monter le volume progressivement?</string>
-    <string name="PrefsVolRampSummaryOFF">Le volume ne montera pas progressivement lors de l\'ajustement.</string>
-    <string name="PrefsVolAdjDelayTitle">Délai d\'ajustement progressif du volume</string>
     <string name="PrefsVolAdjDelaySummary">Délai entre branchement et ajustement progressif du volume.</string>
-    <string name="PrefsVolRampSummaryON">Le volume montera progressivement lors de l\'ajustement.</string>
     <string name="app_kill">Arrêter une application sur débranchement?</string>
     <string name="powerPlugName">Alimentation</string>
     <string name="PrefsPowerOFF">Ne pas réagir au branchement de l\'alimentation</string>
