@@ -2,7 +2,13 @@
     <ScrollView android:id="@+id/scrollView1" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
         <TableLayout android:layout_height="wrap_content" android:id="@+id/tableLayout1" android:layout_width="match_parent">
             <TextView android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/deviceName" android:focusable="true" android:focusableInTouchMode="true"></TextView>
-            <EditText android:id="@+id/editDesc2" android:layout_width="match_parent" android:text="EditText" android:layout_height="wrap_content"></EditText>
+
+            <EditText
+                android:id="@+id/editDesc2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/deviceName" >
+</EditText>
             <CheckBox android:layout_width="wrap_content" android:id="@+id/checkCaptLoc" android:text="@string/getLoc" android:layout_height="wrap_content"></CheckBox>
             <CheckBox android:layout_width="wrap_content" android:id="@+id/checkwifi" android:text="@string/wifiDisconnect" android:layout_height="wrap_content"></CheckBox>
 
@@ -64,10 +70,10 @@
                     android:id="@+id/streamradio0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10px"
-                    android:layout_marginLeft="20px"
-                    android:layout_marginRight="20px"
-                    android:layout_marginTop="10px"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
                     android:checked="true"
                     android:text="@string/SMSMusicStream" />
 
@@ -75,20 +81,20 @@
                     android:id="@+id/streamradio1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10px"
-                    android:layout_marginLeft="20px"
-                    android:layout_marginRight="20px"
-                    android:layout_marginTop="10px"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/SMSVoiceStream" />
 
                 <RadioButton
                     android:id="@+id/streamradio2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10px"
-                    android:layout_marginLeft="20px"
-                    android:layout_marginRight="20px"
-                    android:layout_marginTop="10px"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/SMSAlarmStream" />
             </RadioGroup>
 
@@ -163,8 +169,8 @@
                 android:id="@+id/radioGroupIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20px"
-                android:layout_marginTop="20px"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
                 android:orientation="vertical" >
 
                 <RadioButton
@@ -172,8 +178,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
-                    android:layout_marginLeft="40px"
-                    android:layout_marginRight="40px"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
                     android:checked="true"
                     android:drawableRight="@drawable/car2" />
 
@@ -182,8 +188,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|center_horizontal"
-                    android:layout_marginLeft="40px"
-                    android:layout_marginRight="40px"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
                     android:drawableRight="@drawable/headset" />
 
                 <RadioButton
@@ -191,8 +197,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
-                    android:layout_marginLeft="40px"
-                    android:layout_marginRight="40px"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
                     android:drawableRight="@drawable/jack" />
 
                 <RadioButton
@@ -200,8 +206,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|center_horizontal"
-                    android:layout_marginLeft="40px"
-                    android:layout_marginRight="40px"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
                     android:drawableRight="@drawable/usb" />
 
                 <RadioButton
@@ -209,8 +215,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
-                    android:layout_marginLeft="40px"
-                    android:layout_marginRight="40px"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
                     android:drawableRight="@drawable/icon5" />
             </RadioGroup>
 
@@ -220,21 +226,21 @@
                 android:layout_height="wrap_content" >
 
                 <Button
+                    android:id="@+id/EditDevCancelbutton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15pt"
+                    android:layout_weight="1"
+                    android:height="30pt"
+                    android:text="@android:string/cancel" />
+
+                <Button
                     android:id="@+id/EditDevSavebutton"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:height="30pt"
                     android:text="@string/save" />
-
-                <Button
-                    android:id="@+id/EditDevCancelbutton"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="15pt"
-                    android:layout_weight="1"
-                    android:text="@android:string/cancel" android:height="30pt"/>
-
             </LinearLayout>
 
         </TableLayout>

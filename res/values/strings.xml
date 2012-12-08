@@ -37,7 +37,6 @@
     </string-array>
     <string name="ListName">Bluetooth Devices</string>
     <string name="GetLocButtonString">Stored Location</string>
-    <string name="CapLocationButton">Capture Location</string>
     <string name="StartService">Start Service</string>
     <string name="StopService">Stop Service</string>
     <string name="FindDevices">Find Devices</string>
@@ -80,7 +79,7 @@
     <string name="Edit">Edit</string>
     <string name="NoData">No Data</string>
     <string name="ServRunning">A2DP Volume Service Running</string>
-    <string name="ImportCompletedText">Import Succesful</string>
+    <string name="ImportCompletedText">Import Successful</string>
     <string name="NobtSupport">Your device does not appear to support bluetooth.</string>
     <string name="btEnableFail">Failed to enable bluetooth</string>
     <string name="usePassiveOff">Do not use passive location listener</string>
@@ -109,7 +108,6 @@
     <string name="ae_stop_app_warning_title">What app is this?</string>
     <string name="ae_stop_app_warning_message">Intents without a package name can not be stopped by A2DP Volume</string>
     <string name="connectedTo">Connected to</string>
-    <string name="PrefsCatOther">Other Settings</string>
     <string name="PrefsOtherConnectedIcon">Connected Icon</string>
     <string name="app_restart">Force App Restart?</string>
     <string name="PrefsHeadsetON">Respond to Audio Jack</string>
@@ -127,20 +125,15 @@
     <string name="homeDockName">Home Dock</string>
     <string name="Editsetpv">Set in-call phone volume on connect?</string>
     <string name="EditPhoneVolume">In-Call Phone Volume</string>
-    <string name="SMSdelay_title">SMS Delay</string>
     <string name="SMSDelayText">Delay for reading text message</string>
-    <string name="SMSstream_title">SMS Stream</string>
     <string name="Bonded">Bonded</string>
     <string name="Error">Error</string>
     <string name="NotBonded">Not Bonded</string>
     <string name="Bonding">Bonding</string>
     <string name="Class">Class</string>
     <string name="SMS_Stream_desc">Select a path for the text message sound to travel</string>
-    <string name="PrefsVolAdjDelayTitle">Volume Adjust Delay</string>
     <string name="PrefsVolAdjDelaySummary">Delay between the device connection and the volume adjusting up.</string>
     <string name="PrefsVolRampTitle">Ramp volume up?</string>
-    <string name="PrefsVolRampSummaryOFF">Volume will not ramp when adjusting.</string>
-    <string name="PrefsVolRampSummaryON">Volume will ramp when adjusting up.</string>
     <string name="app_kill">Stop app on disconnect?</string>
     <string name="PrefsPowerOFF">Do not respond to Power Connection</string>
     <string name="PrefsPower">Respond to Power Connection?</string>
