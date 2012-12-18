@@ -52,6 +52,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	 */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		return START_STICKY;
 	}
 
@@ -580,8 +581,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			Toast.makeText(application, bt2.toString(), Toast.LENGTH_LONG)
 					.show();
 
-		// If we defined an app to auto-start then run it on connect
-		if (bt2.hasIntent())
+		// If we defined an app to auto-start then run it on connect if not in call
+		//tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		if (bt2.hasIntent()  && (tm.getCallState() == TelephonyManager.CALL_STATE_IDLE))
 			runApp(bt2);
 
 		if (bt2.isEnableTTS()) {
@@ -1244,7 +1246,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
-			tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+			//tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 			if (intent.getAction().equals(
 					"android.provider.Telephony.SMS_RECEIVED")
 					&& tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
