@@ -43,6 +43,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
@@ -1545,7 +1546,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     return;
                 }
 
-                final String[] contactProjection = new String[] { "username" };
+                final String[] contactProjection = new String[] { "nickname" };
                 contact = getContentResolver().query(Uri.withAppendedPath(Uri.parse("content://com.google.android.providers.talk/"), "contacts"), contactProjection, "last_message_date = " + conversation.getLong(conversation.getColumnIndex("last_message_date")), null, null);
                 if (!contact.moveToFirst()) {
                     return;
@@ -1560,7 +1561,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				
 					sb.append(
 							MessageFormat.format(getString(R.string.msgTemplate),
-									",,Google Talk User", msg)).append(' ');
+									username, msg)).append(' ');
 				final String str = sb.toString().trim();
                 
                 Toast.makeText(application, str, Toast.LENGTH_LONG).show();
