@@ -1,5 +1,6 @@
 package a2dp.Vol;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -172,7 +173,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		// create audio manager instance
 		am2 = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
+				
+		
+		
 		// open database instance
 		this.DB = new DeviceDB(application);
 
@@ -230,6 +233,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		 * if (enableTTS) { mTts = new TextToSpeech(application,
 		 * listenerStarted); }
 		 */
+
 	}
 
 	private void registerRecievers() {
@@ -277,6 +281,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 		this.registerReceiver(mReceiver, filter);
 		this.registerReceiver(mReceiver2, filter2);
+
+
 	}
 
 	@Override
@@ -301,6 +307,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					mTts.shutdown();
 					mTtsReady = false;
 					unregisterReceiver(SMScatcher);
+					unregisterReceiver(tmessage);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -309,6 +316,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+
 		// Tell the world we are not running
 		final String IStop = "a2dp.vol.service.STOPPED_RUNNING";
 		Intent i = new Intent();
@@ -332,6 +341,16 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 	}
 
+	private final BroadcastReceiver tmessage = new BroadcastReceiver(){
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			TextReader(intent.getStringExtra("message"));
+			
+		}
+		
+	};
+	
 	// used to clear all the Bluetooth connections if the Bluetooth adapter has
 	// been turned OFF.
 	private final BroadcastReceiver btOFFReciever = new BroadcastReceiver() {
@@ -588,8 +607,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		if (bt2.isEnableTTS()) {
 			mTts = new TextToSpeech(application, listenerStarted);
-
+			IntentFilter messageFilter = new IntentFilter("a2dp.vol.service.MESSAGE");
+			this.registerReceiver(tmessage, messageFilter);
 		}
+		
 		String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
 		itent.setAction(Ireload);
@@ -856,6 +877,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				mTts.shutdown();
 				mTtsReady = false;
 				this.unregisterReceiver(SMScatcher);
+				this.unregisterReceiver(tmessage);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1279,79 +1301,84 @@ public class service extends Service implements OnAudioFocusChangeListener {
 								.append(' ');
 					}
 					final String str = sb.toString().trim();
-					// Toast.makeText(application, str,
-					// Toast.LENGTH_LONG).show();
-					if (mTtsReady) {
-						myHash = new HashMap<String, String>();
-
-						myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,
-								A2DP_Vol);
-
-						switch (SMSstream) {
-						case IN_CALL_STREAM:
-							if (am2.isBluetoothScoAvailableOffCall()) {
-								am2.startBluetoothSco();
-							}
-							if (!am2.isSpeakerphoneOn()) {
-								speakerPhoneWasOn = false;
-								am2.setSpeakerphoneOn(true);
-							}
-							am2.requestAudioFocus(a2dp.Vol.service.this,
-									AudioManager.STREAM_VOICE_CALL,
-									AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-							myHash.put(
-									TextToSpeech.Engine.KEY_PARAM_STREAM,
-									String.valueOf(AudioManager.STREAM_VOICE_CALL));
-							clearedTts = false;
-							break;
-
-						case MUSIC_STREAM:
-							am2.requestAudioFocus(a2dp.Vol.service.this,
-									AudioManager.STREAM_MUSIC,
-									AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-							myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-									String.valueOf(AudioManager.STREAM_MUSIC));
-							break;
-						case ALARM_STREAM:
-							am2.requestAudioFocus(a2dp.Vol.service.this,
-									AudioManager.STREAM_ALARM,
-									AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-							myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-									String.valueOf(AudioManager.STREAM_ALARM));
-							clearedTts = false;
-							break;
-						}
-
-						new CountDownTimer(SMS_delay, SMS_delay / 2) {
-
-							@Override
-							public void onFinish() {
-								try {
-									mTts.speak(str, TextToSpeech.QUEUE_ADD,
-											myHash);
-								} catch (Exception e) {
-									Toast.makeText(application,
-											R.string.TTSNotReady,
-											Toast.LENGTH_LONG).show();
-									e.printStackTrace();
-								}
-
-							}
-
-							@Override
-							public void onTick(long arg0) {
-
-							}
-
-						}.start();
-
-					}
+					
+					// send to text reader
+					TextReader(str);
 				}
 
 			}
 		}
 
 	};
+	
+	public void TextReader(String input){
+		if (mTtsReady) {
+			myHash = new HashMap<String, String>();
+
+			myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,
+					A2DP_Vol);
+
+			switch (SMSstream) {
+			case IN_CALL_STREAM:
+				if (am2.isBluetoothScoAvailableOffCall()) {
+					am2.startBluetoothSco();
+				}
+				if (!am2.isSpeakerphoneOn()) {
+					speakerPhoneWasOn = false;
+					am2.setSpeakerphoneOn(true);
+				}
+				am2.requestAudioFocus(a2dp.Vol.service.this,
+						AudioManager.STREAM_VOICE_CALL,
+						AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+				myHash.put(
+						TextToSpeech.Engine.KEY_PARAM_STREAM,
+						String.valueOf(AudioManager.STREAM_VOICE_CALL));
+				clearedTts = false;
+				break;
+
+			case MUSIC_STREAM:
+				am2.requestAudioFocus(a2dp.Vol.service.this,
+						AudioManager.STREAM_MUSIC,
+						AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+				myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+						String.valueOf(AudioManager.STREAM_MUSIC));
+				break;
+			case ALARM_STREAM:
+				am2.requestAudioFocus(a2dp.Vol.service.this,
+						AudioManager.STREAM_ALARM,
+						AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+				myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+						String.valueOf(AudioManager.STREAM_ALARM));
+				clearedTts = false;
+				break;
+			}
+
+			final String str = input;
+			new CountDownTimer(SMS_delay, SMS_delay / 2) {
+
+				@Override
+				public void onFinish() {
+					try {
+						mTts.speak(str, TextToSpeech.QUEUE_ADD,
+								myHash);
+					} catch (Exception e) {
+						Toast.makeText(application,
+								R.string.TTSNotReady,
+								Toast.LENGTH_LONG).show();
+						e.printStackTrace();
+					}
+
+				}
+
+				@Override
+				public void onTick(long arg0) {
+
+				}
+
+			}.start();
+
+		}
+	}
 
 	public TextToSpeech.OnInitListener listenerStarted = new TextToSpeech.OnInitListener() {
 
