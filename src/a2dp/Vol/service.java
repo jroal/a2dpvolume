@@ -1,12 +1,17 @@
 package a2dp.Vol;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.text.MessageFormat;
+
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -23,6 +28,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.location.LocationManager;
 import android.media.AudioManager;
@@ -33,6 +39,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
@@ -119,6 +127,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private volatile boolean disconnecting = false;
 	private int connectedIcon;
 	private TelephonyManager tm;
+	
+    private HandlerThread thread;
+    private LinkedList<String> addresses;
+    private TalkObserver observer;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -308,6 +320,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					mTtsReady = false;
 					unregisterReceiver(SMScatcher);
 					unregisterReceiver(tmessage);
+					thread.getLooper().quit();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -609,6 +622,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			mTts = new TextToSpeech(application, listenerStarted);
 			IntentFilter messageFilter = new IntentFilter("a2dp.vol.service.MESSAGE");
 			this.registerReceiver(tmessage, messageFilter);
+			setTalk();
 		}
 		
 		String Ireload = "a2dp.Vol.main.RELOAD_LIST";
@@ -878,6 +892,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				mTtsReady = false;
 				this.unregisterReceiver(SMScatcher);
 				this.unregisterReceiver(tmessage);
+				thread.getLooper().quit();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1327,6 +1342,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					speakerPhoneWasOn = false;
 					am2.setSpeakerphoneOn(true);
 				}
+				mTts.setPitch(2);
 				am2.requestAudioFocus(a2dp.Vol.service.this,
 						AudioManager.STREAM_VOICE_CALL,
 						AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
@@ -1490,4 +1506,118 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 		return number;
 	}
+	
+    private class TalkObserver extends ContentObserver {
+
+        private boolean paused;
+
+        private final Handler handler;
+
+        public TalkObserver(final Handler handler) {
+            super(handler);
+
+            this.handler = handler;
+        }
+
+        @Override
+        public void onChange(final boolean selfChange) {
+            if (paused) {
+                return;
+            }
+
+            Cursor message = null;
+            Cursor conversation = null;
+            Cursor contact = null;
+            try {
+                final String[] messageProjection = new String[] { "body", "date", "type" };
+                message = getContentResolver().query(Uri.withAppendedPath(Uri.parse("content://com.google.android.providers.talk/"), "messages"), messageProjection, "err_code = 0", null, "date DESC");
+                if (!message.moveToFirst()) {
+                    return;
+                }
+
+                if (message.getInt(message.getColumnIndex(messageProjection[2])) != 1) {
+                    return;
+                }
+
+                final String[] conversationProjection = new String[] { "last_unread_message", "last_message_date" };
+                conversation = getContentResolver().query(Uri.withAppendedPath(Uri.parse("content://com.google.android.providers.talk/"), "chats"), conversationProjection, null, null, "last_message_date DESC");
+                if (!conversation.moveToFirst()) {
+                    return;
+                }
+
+                final String[] contactProjection = new String[] { "username" };
+                contact = getContentResolver().query(Uri.withAppendedPath(Uri.parse("content://com.google.android.providers.talk/"), "contacts"), contactProjection, "last_message_date = " + conversation.getLong(conversation.getColumnIndex("last_message_date")), null, null);
+                if (!contact.moveToFirst()) {
+                    return;
+                }
+
+                final String username = contact.getString(contact.getColumnIndex(contactProjection[0]));
+
+                String msg = message.getString(message.getColumnIndex(messageProjection[0]));
+                //final String full_string = "Talk message from.." + username + "..."+ msg;
+                
+                StringBuilder sb = new StringBuilder();
+				
+					sb.append(
+							MessageFormat.format(getString(R.string.msgTemplate),
+									",,Google Talk User", msg)).append(' ');
+				final String str = sb.toString().trim();
+                
+                Toast.makeText(application, str, Toast.LENGTH_LONG).show();
+                paused = true;
+                handler.postDelayed(new Runnable() {
+
+                    public void run() {
+                        paused = false;
+                        TextReader(str);
+                    }
+                }, 200);
+            } finally {
+                if (contact != null) {
+                    contact.close();
+                }
+                if (conversation != null) {
+                    conversation.close();
+                }
+                if (message != null) {
+                    message.close();
+                }
+            }
+        }
+    }
+    
+
+    
+    private void setTalk(){
+    	//Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(getBaseContext()));
+
+        thread = new HandlerThread("TalkThread");
+        thread.start();
+        
+        final Handler handler = new Handler(thread.getLooper());
+        handler.post(new Runnable() {
+
+            public void run() {
+                //Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(getBaseContext()));
+            }
+        });
+
+        addresses = new LinkedList<String>();
+
+        final AccountManager manager = (AccountManager) getSystemService(Context.ACCOUNT_SERVICE);
+        final Account[] accounts = manager.getAccountsByType("com.google");
+
+        if (accounts.length == 0) {
+            //stopSelf();
+        }
+
+        for (final Account account : accounts) {
+            addresses.add(account.name);
+        }
+
+        observer = new TalkObserver(handler);
+
+        getContentResolver().registerContentObserver(Uri.withAppendedPath(Uri.parse("content://com.google.android.providers.talk/"), "messages"), true, observer);
+    
+    }
 }
