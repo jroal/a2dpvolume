@@ -800,11 +800,13 @@ public class main extends Activity {
 		}
 		if (requestCode == CHECK_TTS) {
 			
-			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-				
+			switch(resultCode){
+			case TextToSpeech.Engine.CHECK_VOICE_DATA_PASS:
 				if(toasts)Toast.makeText(application, R.string.TTSready, Toast.LENGTH_SHORT)
-						.show();
-			} else {
+				.show();
+				break;
+				
+			case TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA:
 				// missing data, install it
 				android.app.AlertDialog.Builder builder = new AlertDialog.Builder(
 						a2dp.Vol.main.this);
@@ -823,7 +825,24 @@ public class main extends Activity {
 				builder.setMessage(R.string.needTTS);
 				builder.show();
 				
+				break;
+				
+			case TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_VOLUME:
+				if(toasts)Toast.makeText(application, "TTS Missing Volume", Toast.LENGTH_SHORT)
+				.show();
+				break;
+				
+			case TextToSpeech.Engine.CHECK_VOICE_DATA_BAD_DATA:
+				if(toasts)Toast.makeText(application, "TTS Bad Data", Toast.LENGTH_SHORT)
+				.show();
+				break;
+				
+			case TextToSpeech.Engine.CHECK_VOICE_DATA_FAIL:
+				if(toasts)Toast.makeText(application, "TTS Voice data fail", Toast.LENGTH_SHORT)
+				.show();
+				break;
 			}
+			
 		}
 	}
 
@@ -1158,4 +1177,5 @@ public class main extends Activity {
 		}
 		return ibta;
 	}
+
 }
