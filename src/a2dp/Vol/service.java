@@ -1,7 +1,5 @@
 package a2dp.Vol;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -28,6 +26,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.location.LocationManager;
@@ -43,7 +42,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
@@ -143,7 +141,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	public void onCreate() {
 
 		this.application = (MyApplication) this.getApplication();
-		
+
 		// get and load preferences
 
 		try {
@@ -614,16 +612,20 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		// If we defined an app to auto-start then run it on connect if not in
 		// call
 		// tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		if (bt2.hasIntent()
-				&& (tm.getCallState() == TelephonyManager.CALL_STATE_IDLE))
-			runApp(bt2);
+
+		if (bt2.hasIntent()) {
+			if (tm != null) {
+				if (tm.getCallState() == TelephonyManager.CALL_STATE_IDLE)
+					runApp(bt2);
+			} else
+				runApp(bt2);
+		}
 
 		if (bt2.isEnableTTS()) {
 			mTts = new TextToSpeech(application, listenerStarted);
-			application.registerReceiver(SMScatcher,
-					new IntentFilter(
-							"android.provider.Telephony.SMS_RECEIVED"));
-			
+			application.registerReceiver(SMScatcher, new IntentFilter(
+					"android.provider.Telephony.SMS_RECEIVED"));
+
 			IntentFilter messageFilter = new IntentFilter(
 					"a2dp.vol.service.MESSAGE");
 			application.registerReceiver(tmessage, messageFilter);
@@ -898,10 +900,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				stopTalk();
 				application.unregisterReceiver(SMScatcher);
 				application.unregisterReceiver(tmessage);
-				//Toast.makeText(application, "do disconnected", Toast.LENGTH_LONG).show();
-				
+				// Toast.makeText(application, "do disconnected",
+				// Toast.LENGTH_LONG).show();
+
 			} catch (Exception e) {
-				Toast.makeText(application, e.getMessage(), Toast.LENGTH_LONG).show();
+				Toast.makeText(application, e.getMessage(), Toast.LENGTH_LONG)
+						.show();
 				e.printStackTrace();
 			}
 
@@ -1415,8 +1419,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			if (status == TextToSpeech.SUCCESS) {
 				mTtsReady = true;
 				mTts.setOnUtteranceCompletedListener(utteranceDone);
-				/*				if (android.os.Build.VERSION.SDK_INT >= 15)
-									mTts.setOnUtteranceProgressListener(utteranceDone);*/			
+				/*
+				 * if (android.os.Build.VERSION.SDK_INT >= 15)
+				 * mTts.setOnUtteranceProgressListener(utteranceDone);
+				 */
 			}
 		}
 	};
@@ -1585,11 +1591,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 				final String username = contact.getString(contact
 						.getColumnIndex(contactProjection[0]));
+				String msg;
 
-				String msg = message.getString(message
-						.getColumnIndex(messageProjection[0]));
-				// final String full_string = "Talk message from.." + username +
-				// "..."+ msg;
+				msg = message.getString(message.getColumnIndex(messageProjection[0]));
+						
+				// make sure to post only the last string of the latest message
+				if(msg.lastIndexOf("\n") >= 0)
+				msg = msg.substring(msg.lastIndexOf("\n"));
 
 				StringBuilder sb = new StringBuilder();
 
@@ -1598,7 +1606,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 								username, msg)).append(' ');
 				final String str = sb.toString().trim();
 
-				Toast.makeText(application, str, Toast.LENGTH_LONG).show();
+				if(toasts)Toast.makeText(application, str, Toast.LENGTH_LONG).show();
 				paused = true;
 				handler.postDelayed(new Runnable() {
 
@@ -1622,8 +1630,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	}
 
 	private void setTalk() {
-		// Thread.setDefaultUncaughtExceptionHandler(new
-		// UncaughtExceptionHandler(getBaseContext()));
 
 		thread = new HandlerThread("TalkThread");
 		thread.start();
@@ -1643,8 +1649,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		final Account[] accounts = manager.getAccountsByType("com.google");
 
 		if (accounts.length == 0) {
-			thread.stop();
-			return;
+			// thread.stop();
+			// return;
 		}
 
 		for (final Account account : accounts) {
@@ -1657,13 +1663,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				Uri.withAppendedPath(Uri
 						.parse("content://com.google.android.providers.talk/"),
 						"messages"), true, observer);
-
+		
 	}
-	
-	private void stopTalk(){
+
+	private void stopTalk() {
 		thread.getLooper().quit();
 		application.getContentResolver().unregisterContentObserver(observer);
-		//thread.stop();
-		//Toast.makeText(application, "stopTalk()", Toast.LENGTH_LONG).show();
+		// thread.stop();
+		// Toast.makeText(application, "stopTalk()", Toast.LENGTH_LONG).show();
 	}
 }
