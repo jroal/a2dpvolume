@@ -112,6 +112,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 	private PackageManager mPackageManager;
 	public static final String PREFS_NAME = "btVol";
+	private int MAX_MESSAGE_LENGTH = 350;
 	float MAX_ACC = 10; // worst acceptable location in meters
 	long MAX_TIME = 20000; // gps listener timout time in milliseconds and
 	private long SMS_delay = 3000; // delay before reading SMS
@@ -1348,7 +1349,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			myHash = new HashMap<String, String>();
 
 			myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, A2DP_Vol);
-
+			// trim off very long strings
+			if(input.length() > MAX_MESSAGE_LENGTH) input = input.substring(0, MAX_MESSAGE_LENGTH);
+			
 			switch (SMSstream) {
 			case IN_CALL_STREAM:
 				if (am2.isBluetoothScoAvailableOffCall()) {
@@ -1385,7 +1388,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			}
 
 			final String str = input;
-
+			if(toasts)Toast.makeText(application, str, Toast.LENGTH_LONG).show();
+			
 			if (tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
 				new CountDownTimer(SMS_delay, SMS_delay / 2) {
 
@@ -1606,7 +1610,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 								username, msg)).append(' ');
 				final String str = sb.toString().trim();
 
-				if(toasts)Toast.makeText(application, str, Toast.LENGTH_LONG).show();
 				paused = true;
 				handler.postDelayed(new Runnable() {
 
