@@ -20,10 +20,12 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.IBluetoothA2dp;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -41,6 +43,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
 import android.provider.Settings;
@@ -78,7 +81,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 														// database that has
 	// connected
 	private DeviceDB DB; // database of device data stored in SQlite
-
+	static boolean mIsBound = false;
+	static IBluetoothA2dp ibta2;
+	static String DeviceToConnect = null;
 	private boolean carMode = true;
 	private boolean homeDock = false;
 	private boolean headsetPlug = false;
@@ -121,7 +126,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 									// and the volume adjustment
 
 	SharedPreferences preferences;
-	private MyApplication application;
+	private static MyApplication application;
 
 	private volatile boolean connecting = false;
 	private volatile boolean disconnecting = false;
@@ -324,6 +329,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				}
 			}
 			DB.getDb().close();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -338,6 +344,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		if (toasts)
 			Toast.makeText(this, R.string.ServiceStopped, Toast.LENGTH_LONG)
 					.show();
+		if (mIsBound) {
+			try {
+				this.unbindService(mConnection);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		this.stopForeground(true);
 	}
 
@@ -559,48 +573,55 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		if (bt2.bdevice != null) {
 			final btDevice tempBT = bt2;
-			CountDownTimer connectTimer = new CountDownTimer(21000, 7000) {
-				@Override
-				public void onFinish() {
+
+			if (android.os.Build.VERSION.SDK_INT < 17) {
+				CountDownTimer connectTimer = new CountDownTimer(21000, 7000) {
+					@Override
+					public void onFinish() {
+						try {
+							new ConnectBt().execute(tempBT.getBdevice());
+							// Log.d(LOG_TAG, tempBT.getBdevice());
+						} catch (Exception e) {
+							e.printStackTrace();
+							Log.e(LOG_TAG, "Error " + e.getMessage());
+						}
+					}
+
+					@Override
+					public void onTick(long arg0) {
+						try {
+							new ConnectBt().execute(tempBT.getBdevice());
+							// Log.d(LOG_TAG, tempBT.getBdevice());
+						} catch (Exception e) {
+							e.printStackTrace();
+							Log.e(LOG_TAG, "Error " + e.getMessage());
+						}
+					}
+				};
+
+				if (bt2.bdevice.length() == 17) {
+					BluetoothAdapter mBTA = BluetoothAdapter
+							.getDefaultAdapter();
+					if (mBTA != null)
+						if (!mBTA.isEnabled()) {
+							// If Bluetooth is not yet enabled, enable it
+							bluetoothWasOff = true;
+							mBTA.enable();
+						} else
+							bluetoothWasOff = false;
+
 					try {
-						new ConnectBt().execute(tempBT.getBdevice());
-						// Log.d(LOG_TAG, tempBT.getBdevice());
+						new ConnectBt().execute(bt2.getBdevice());
+						// Log.d(LOG_TAG, bt2.getBdevice());
+						connectTimer.start();
 					} catch (Exception e) {
 						e.printStackTrace();
 						Log.e(LOG_TAG, "Error " + e.getMessage());
 					}
 				}
-
-				@Override
-				public void onTick(long arg0) {
-					try {
-						new ConnectBt().execute(tempBT.getBdevice());
-						// Log.d(LOG_TAG, tempBT.getBdevice());
-					} catch (Exception e) {
-						e.printStackTrace();
-						Log.e(LOG_TAG, "Error " + e.getMessage());
-					}
-				}
-			};
-
-			if (bt2.bdevice.length() == 17) {
-				BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
-				if (mBTA != null)
-					if (!mBTA.isEnabled()) {
-						// If Bluetooth is not yet enabled, enable it
-						bluetoothWasOff = true;
-						mBTA.enable();
-					} else
-						bluetoothWasOff = false;
-
-				try {
-					new ConnectBt().execute(bt2.getBdevice());
-					// Log.d(LOG_TAG, bt2.getBdevice());
-					connectTimer.start();
-				} catch (Exception e) {
-					e.printStackTrace();
-					Log.e(LOG_TAG, "Error " + e.getMessage());
-				}
+			} else {
+				DeviceToConnect = bt2.bdevice;
+				getIBluetoothA2dp(application);
 			}
 		}
 
@@ -1230,10 +1251,57 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 	}
 
-	/*
-	 * private void connectBluetoothA2dp(String device) { new
-	 * ConnectBt().execute(device); }
-	 */
+	public static void getIBluetoothA2dp(Context context) {
+
+		Intent i = new Intent(IBluetoothA2dp.class.getName());
+
+		if (context.bindService(i, mConnection, Context.BIND_AUTO_CREATE)) {
+
+		} else {
+			// Log.e(TAG, "Could not bind to Bluetooth A2DP Service");
+		}
+
+	}
+
+	public static ServiceConnection mConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+
+			mIsBound = true;
+			ibta2 = IBluetoothA2dp.Stub.asInterface(service);
+			BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
+			// if (mBTA == null || !mBTA.isEnabled())
+			// return false;
+
+			Set<BluetoothDevice> pairedDevices = mBTA.getBondedDevices();
+			BluetoothDevice device = null;
+			for (BluetoothDevice dev : pairedDevices) {
+				if (dev.getAddress().equalsIgnoreCase(DeviceToConnect))
+					device = dev;
+			}
+			 if (device != null)
+			try {
+				ibta2.connect(device);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			doUnbind();
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mIsBound = false;
+
+		}
+	};
+
+	static void doUnbind() {
+		if (mIsBound) {
+		application.unbindService(mConnection);	
+		}
+	}
 
 	// disable wifi is requested
 	private void dowifi(boolean s) {
@@ -1350,8 +1418,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 			myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, A2DP_Vol);
 			// trim off very long strings
-			if(input.length() > MAX_MESSAGE_LENGTH) input = input.substring(0, MAX_MESSAGE_LENGTH);
-			
+			if (input.length() > MAX_MESSAGE_LENGTH)
+				input = input.substring(0, MAX_MESSAGE_LENGTH);
+
 			switch (SMSstream) {
 			case IN_CALL_STREAM:
 				if (am2.isBluetoothScoAvailableOffCall()) {
@@ -1388,8 +1457,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			}
 
 			final String str = input;
-			if(toasts)Toast.makeText(application, str, Toast.LENGTH_LONG).show();
-			
+			if (toasts)
+				Toast.makeText(application, str, Toast.LENGTH_LONG).show();
+
 			if (tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
 				new CountDownTimer(SMS_delay, SMS_delay / 2) {
 
@@ -1597,11 +1667,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
 						.getColumnIndex(contactProjection[0]));
 				String msg;
 
-				msg = message.getString(message.getColumnIndex(messageProjection[0]));
-						
+				msg = message.getString(message
+						.getColumnIndex(messageProjection[0]));
+
 				// make sure to post only the last string of the latest message
-				if(msg.lastIndexOf("\n") >= 0)
-				msg = msg.substring(msg.lastIndexOf("\n"));
+				if (msg.lastIndexOf("\n") >= 0)
+					msg = msg.substring(msg.lastIndexOf("\n"));
 
 				StringBuilder sb = new StringBuilder();
 
@@ -1666,7 +1737,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				Uri.withAppendedPath(Uri
 						.parse("content://com.google.android.providers.talk/"),
 						"messages"), true, observer);
-		
+
 	}
 
 	private void stopTalk() {
