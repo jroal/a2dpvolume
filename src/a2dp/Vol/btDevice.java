@@ -436,7 +436,7 @@ public class btDevice {
 
 	/**
 	 * @param setV
-	 *            the setV to set
+	 *            true if we want the stream volume set on connect
 	 */
 	public void setSetV(boolean setV) {
 		this.setV = setV;

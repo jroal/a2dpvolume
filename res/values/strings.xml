@@ -145,4 +145,8 @@
     <string name="SMSMusicStream">Music Stream</string>
     <string name="rememberMediaVol">Automatically remember last used media volume on disconnect</string>
     <string name="silentMode">Silence notifications while connected?</string>
+    <string name="ignoreTTSMissing">Ignore this</string>
+    <string name="PrefsGTalkOFF">Google Talk messages will not be read.</string>
+    <string name="PrefsGTalk">Enable reading GTalk messages</string>
+    <string name="PrefsGTalkON">Google Talk messages can be read when device is connected</string>
 </resources>

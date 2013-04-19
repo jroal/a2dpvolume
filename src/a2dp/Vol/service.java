@@ -48,6 +48,7 @@ import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -88,6 +89,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private boolean homeDock = false;
 	private boolean headsetPlug = false;
 	private boolean power = false;
+	private boolean enableGTalk = false;
 	private static boolean ramp_vol = false;
 	HashMap<String, String> myHash;
 	private boolean toasts = true;
@@ -146,7 +148,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	@Override
 	public void onCreate() {
 
-		this.application = (MyApplication) this.getApplication();
+		service.application = (MyApplication) this.getApplication();
 
 		// get and load preferences
 
@@ -160,6 +162,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			power = preferences.getBoolean("power", false);
 			toasts = preferences.getBoolean("toasts", true);
 			notify = preferences.getBoolean("notify1", true);
+			enableGTalk = preferences.getBoolean("enableGTalk", true);
 			// Long yyy = new Long(preferences.getString("gpsTime", "15000"));
 			MAX_TIME = Long.valueOf(preferences.getString("gpsTime", "15000"));
 
@@ -217,6 +220,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					notificationIntent, 0);
 			not.setLatestEventInfo(context, contentTitle, contentText,
 					contentIntent);
+			
 
 			mNotificationManager.notify(1, not);
 			this.startForeground(1, not);
@@ -323,7 +327,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					mTtsReady = false;
 					unregisterReceiver(SMScatcher);
 					unregisterReceiver(tmessage);
-					stopTalk();
+					if(enableGTalk)stopTalk();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -651,7 +655,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			IntentFilter messageFilter = new IntentFilter(
 					"a2dp.vol.service.MESSAGE");
 			application.registerReceiver(tmessage, messageFilter);
-			setTalk();
+			if(enableGTalk)setTalk();
 		}
 
 		String Ireload = "a2dp.Vol.main.RELOAD_LIST";
@@ -919,7 +923,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				}
 				mTts.shutdown();
 				mTtsReady = false;
-				stopTalk();
+				if(enableGTalk)stopTalk();
 				application.unregisterReceiver(SMScatcher);
 				application.unregisterReceiver(tmessage);
 				// Toast.makeText(application, "do disconnected",
@@ -1280,14 +1284,15 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				if (dev.getAddress().equalsIgnoreCase(DeviceToConnect))
 					device = dev;
 			}
-			 if (device != null)
-			try {
-				ibta2.connect(device);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			doUnbind();
+			if (device != null)
+				try {
+					ibta2.connect(device);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+			doUnbind(application);
 		}
 
 		@Override
@@ -1297,9 +1302,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 	};
 
-	static void doUnbind() {
+	static void doUnbind(Context context) {
 		if (mIsBound) {
-		application.unbindService(mConnection);	
+			context.unbindService(mConnection);
 		}
 	}
 
@@ -1492,13 +1497,69 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		public void onInit(int status) {
 			if (status == TextToSpeech.SUCCESS) {
 				mTtsReady = true;
-				mTts.setOnUtteranceCompletedListener(utteranceDone);
-				/*
-				 * if (android.os.Build.VERSION.SDK_INT >= 15)
-				 * mTts.setOnUtteranceProgressListener(utteranceDone);
-				 */
+				if (android.os.Build.VERSION.SDK_INT < 15) {
+					mTts.setOnUtteranceCompletedListener(utteranceDone);
+				} else {
+					mTts.setOnUtteranceProgressListener(ul);
+				}
 			}
 		}
+	};
+	
+	public android.speech.tts.UtteranceProgressListener ul = new UtteranceProgressListener(){
+
+		@Override
+		public void onDone(String uttId) {
+			int result = AudioManager.AUDIOFOCUS_REQUEST_FAILED;
+			if (A2DP_Vol.equalsIgnoreCase(uttId)) {
+				// unmute the stream
+				switch (SMSstream) {
+				case IN_CALL_STREAM:
+					if (am2.isBluetoothScoAvailableOffCall()) {
+						am2.stopBluetoothSco();
+					}
+					if (!speakerPhoneWasOn) {
+						am2.setSpeakerphoneOn(false);
+					}
+
+					result = am2.abandonAudioFocus(a2dp.Vol.service.this);
+
+					break;
+				case MUSIC_STREAM:
+					result = am2.abandonAudioFocus(a2dp.Vol.service.this);
+					break;
+				case ALARM_STREAM:
+					if (!clearedTts) {
+						clearTts();
+					}
+					result = am2.abandonAudioFocus(a2dp.Vol.service.this);
+					break;
+				}
+
+				if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
+					result = am2.abandonAudioFocus(a2dp.Vol.service.this);
+				}
+				am2.setMode(AudioManager.MODE_NORMAL);
+			}
+			if (FIX_STREAM.equalsIgnoreCase(uttId)) {
+				result = am2.abandonAudioFocus(a2dp.Vol.service.this);
+			}
+
+		}
+
+		@Override
+		public void onError(String utteranceId) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onStart(String utteranceId) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		
 	};
 
 	public TextToSpeech.OnUtteranceCompletedListener utteranceDone = new TextToSpeech.OnUtteranceCompletedListener() {
@@ -1516,6 +1577,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					}
 
 					result = am2.abandonAudioFocus(a2dp.Vol.service.this);
+
 					break;
 				case MUSIC_STREAM:
 					result = am2.abandonAudioFocus(a2dp.Vol.service.this);
