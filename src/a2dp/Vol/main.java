@@ -74,6 +74,7 @@ public class main extends Activity {
 	boolean power = false;
 	boolean enableTTS = false;
 	boolean toasts = true;
+	boolean TTSignore = false;
 	private String a2dpDir = "";
 	private static final String LOG_TAG = "A2DP_Volume";
 	private static int resourceID = android.R.layout.simple_list_item_1;
@@ -190,6 +191,7 @@ public class main extends Activity {
 			power = preferences.getBoolean("power", false);
 			enableTTS = preferences.getBoolean("enableTTS", false);
 			toasts = preferences.getBoolean("toasts", true);
+			TTSignore = preferences.getBoolean("TTSignore", false);
 		} catch (Exception e2) {
 			Log.e(LOG_TAG, "error" + e2.getMessage());
 		}
@@ -736,6 +738,9 @@ public class main extends Activity {
 									device,
 									name,
 									am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+							if (android.os.Build.VERSION.SDK_INT < 15){
+								bt.setSetV(false);
+							}
 							btDevice bt2 = myDB.getBTD(bt.mac);
 
 							if (bt2.mac == null) {
@@ -807,24 +812,31 @@ public class main extends Activity {
 				break;
 				
 			case TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA:
-				// missing data, install it
-				android.app.AlertDialog.Builder builder = new AlertDialog.Builder(
-						a2dp.Vol.main.this);
-				builder.setTitle(getString(R.string.app_name));
-				builder.setPositiveButton(R.string.Yes,
-						new OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Intent installIntent = new Intent();
-								installIntent
-										.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-								startActivityForResult(installIntent, CHECK_TTS);
-							}
-						});
-				builder.setNegativeButton(R.string.No, null);
-				builder.setMessage(R.string.needTTS);
-				builder.show();
-				
+				if (TTSignore) {
+					// do something maybe?
+				}else{
+					// missing data, install it
+					android.app.AlertDialog.Builder builder = new AlertDialog.Builder(
+							a2dp.Vol.main.this);
+					builder.setTitle(getString(R.string.app_name));
+					builder.setPositiveButton(R.string.Yes,
+							new OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent installIntent = new Intent();
+									installIntent
+											.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+									startActivityForResult(installIntent,
+											CHECK_TTS);
+								}
+							});
+					builder.setNegativeButton(R.string.No, null);
+					OnClickListener ignoreListener = setIgnore();
+					builder.setNeutralButton(R.string.ignoreTTSMissing,
+							ignoreListener);
+					builder.setMessage(R.string.needTTS);
+					builder.show();
+				}
 				break;
 				
 			case TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_VOLUME:
@@ -844,6 +856,14 @@ public class main extends Activity {
 			}
 			
 		}
+	}
+
+	private OnClickListener setIgnore() {
+		 SharedPreferences.Editor editor = preferences.edit();
+		 TTSignore = true;
+         editor.putBoolean("TTSignore", TTSignore);
+         editor.commit();
+		return null;
 	}
 
 	// this is called to update the list from the database
