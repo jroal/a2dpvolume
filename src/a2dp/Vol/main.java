@@ -738,7 +738,8 @@ public class main extends Activity {
 									device,
 									name,
 									am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-							if (android.os.Build.VERSION.SDK_INT < 15){
+							// API 16 implemented automatic volume control so this should not be needed
+							if (android.os.Build.VERSION.SDK_INT > 15){
 								bt.setSetV(false);
 							}
 							btDevice bt2 = myDB.getBTD(bt.mac);
