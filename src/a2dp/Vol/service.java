@@ -97,6 +97,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private Notification not = null;
 	private NotificationManager mNotificationManager = null;
 	private boolean speakerPhoneWasOn = true;
+	private boolean musicWasPlaying = false;
 	private boolean bluetoothWasOff = false;
 	private boolean clearedTts = true;
 	private static final String FIX_STREAM = "fix_stream";
@@ -1054,9 +1055,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 		if (connect)
 			not.icon = connectedIcon;
-		else
+		else{
 			not.icon = R.drawable.icon5;
-
+			mNotificationManager.cancel(1);
+		}
+		
 		Context context = getApplicationContext();
 		CharSequence contentTitle = getResources().getString(R.string.app_name);
 		CharSequence contentText = temp;
@@ -1426,6 +1429,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			if (input.length() > MAX_MESSAGE_LENGTH)
 				input = input.substring(0, MAX_MESSAGE_LENGTH);
 
+			musicWasPlaying = am2.isMusicActive();
+			
 			switch (SMSstream) {
 			case IN_CALL_STREAM:
 				if (am2.isBluetoothScoAvailableOffCall()) {
@@ -1497,16 +1502,16 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		public void onInit(int status) {
 			if (status == TextToSpeech.SUCCESS) {
 				mTtsReady = true;
-				if (android.os.Build.VERSION.SDK_INT < 15) {
+				//if (android.os.Build.VERSION.SDK_INT < 15) {
 					mTts.setOnUtteranceCompletedListener(utteranceDone);
-				} else {
+				/*} else {
 					mTts.setOnUtteranceProgressListener(ul);
-				}
+				}*/
 			}
 		}
 	};
 	
-	public android.speech.tts.UtteranceProgressListener ul = new UtteranceProgressListener(){
+/*	public android.speech.tts.UtteranceProgressListener ul = new UtteranceProgressListener(){
 
 		@Override
 		public void onDone(String uttId) {
@@ -1544,7 +1549,18 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			if (FIX_STREAM.equalsIgnoreCase(uttId)) {
 				result = am2.abandonAudioFocus(a2dp.Vol.service.this);
 			}
+			if(musicWasPlaying){
+				
+				Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON,
+						null);
+				KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN,
+						KeyEvent.KEYCODE_MEDIA_PLAY);
+				downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
+				sendOrderedBroadcast(downIntent2, null);
+				
+			}
 
+			am2.setMode(am2.MODE_NORMAL);
 		}
 
 		@Override
@@ -1561,7 +1577,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		
 		
 	};
-
+*/
 	public TextToSpeech.OnUtteranceCompletedListener utteranceDone = new TextToSpeech.OnUtteranceCompletedListener() {
 		public void onUtteranceCompleted(String uttId) {
 			int result = AudioManager.AUDIOFOCUS_REQUEST_FAILED;
@@ -1631,15 +1647,15 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			break;
 
 		case AudioManager.AUDIOFOCUS_LOSS:
-
+			am2.setMode(0);
 			break;
 
 		case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-
+			am2.setMode(0);
 			break;
 
 		case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-
+			am2.setMode(0);
 			break;
 		}
 
