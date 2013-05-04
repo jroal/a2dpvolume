@@ -145,4 +145,8 @@
     <string name="SMSMusicStream">Medien-Ausgabestrom</string>
     <string name="rememberMediaVol">Zuletzt verwendete Medienlautstärke bei Verbindungstrennung merken</string>
     <string name="silentMode">Benachrichtigungen während Verbindung abschalten</string>
+    <string name="ignoreTTSMissing">Ignoriere das</string>
+    <string name="PrefsGTalkOFF">Google Talk Nachrichten werden nicht vorgelesen.</string>
+    <string name="PrefsGTalk">Google Talk Nachrichten</string>
+    <string name="PrefsGTalkON">Google Talk Nachrichten werden vorgelesen.</string>
 </resources>
