@@ -22,7 +22,5 @@ public class Starter extends BroadcastReceiver {
 		if (preferences.getBoolean("bootstart", false)) {
 			context.startService(new Intent(context, service.class));
 		}
-
 	}
-
 }

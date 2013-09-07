@@ -145,4 +145,8 @@
     <string name="SMSMusicStream">Flux de musique</string>
     <string name="silentMode">Notifications silencieuses lorsque branché?</string>
     <string name="rememberMediaVol">Sauvegarder automatiquement le volume média sur débranchement</string>
+    <string name="PrefsGTalkOFF">Les Messages Google Talk ne seront pas lus</string>
+    <string name="PrefsGTalk">Activer la lecture des messages Google Talk</string>
+    <string name="PrefsGTalkON">Les messages Google Talk seront lus lorsque connexion établie</string>
+    <string name="ignoreTTSMissing">Ignorer ceci</string>
 </resources>
