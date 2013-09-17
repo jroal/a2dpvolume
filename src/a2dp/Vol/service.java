@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.text.MessageFormat;
 
+import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActivityManager;
@@ -54,9 +56,10 @@ import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toast;
 
-public class service extends Service implements OnAudioFocusChangeListener {
+public class service extends Service implements OnAudioFocusChangeListener{
 
 	/*
 	 * (non-Javadoc)
@@ -659,11 +662,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			application.registerReceiver(tmessage, messageFilter);
 			if (enableGTalk) {
 				setTalk();
-				/*
-				 * IntentFilter HangoutFilter = new IntentFilter(
-				 * "com.google.android.c2dm.intent.RECEIVE");
-				 * application.registerReceiver(Hangout, HangoutFilter);
-				 */
+				// figure out how to enable accebility
 			}
 		}
 
@@ -899,6 +898,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			}
 		}
 
+
 		if (bt2.wifi) {
 			dowifi(oldwifistate);
 		}
@@ -946,8 +946,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				}
 				mTts.shutdown();
 				mTtsReady = false;
-				if (enableGTalk)
+				if (enableGTalk){
 					stopTalk();
+					// also stop accessibility
+				}
 				application.unregisterReceiver(SMScatcher);
 				application.unregisterReceiver(tmessage);
 				// Toast.makeText(application, "do disconnected",
@@ -1876,17 +1878,5 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		// thread.stop();
 		// Toast.makeText(application, "stopTalk()", Toast.LENGTH_LONG).show();
 	}
-
-	/*
-	 * private final BroadcastReceiver Hangout = new BroadcastReceiver(){
-	 * 
-	 * @Override public void onReceive(Context arg0, Intent arg1) {
-	 * Toast.makeText(application, "getting Hangout messages",
-	 * Toast.LENGTH_LONG).show();
-	 * 
-	 * }
-	 * 
-	 * };
-	 */
 
 }

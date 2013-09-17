@@ -149,4 +149,5 @@
     <string name="PrefsGTalkOFF">Google Talk messages will not be read.</string>
     <string name="PrefsGTalk">Enable reading GTalk messages</string>
     <string name="PrefsGTalkON">Google Talk messages can be read when device is connected</string>
+    <string name="accessDescription">Used to read notifications while connected to a device using A2DP Volume</string>
 </resources>
