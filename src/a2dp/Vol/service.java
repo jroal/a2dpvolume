@@ -59,7 +59,7 @@ import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toast;
 
-public class service extends Service implements OnAudioFocusChangeListener{
+public class service extends Service implements OnAudioFocusChangeListener {
 
 	/*
 	 * (non-Javadoc)
@@ -652,18 +652,17 @@ public class service extends Service implements OnAudioFocusChangeListener{
 				runApp(bt2);
 		}
 
+		mTts = new TextToSpeech(application, listenerStarted);
+		IntentFilter messageFilter = new IntentFilter(
+				"a2dp.vol.service.MESSAGE");
+		application.registerReceiver(tmessage, messageFilter);
+		if (enableGTalk) {
+			setTalk();
+			// figure out how to enable accebility
+		}
 		if (bt2.isEnableTTS()) {
-			mTts = new TextToSpeech(application, listenerStarted);
 			application.registerReceiver(SMScatcher, new IntentFilter(
 					"android.provider.Telephony.SMS_RECEIVED"));
-
-			IntentFilter messageFilter = new IntentFilter(
-					"a2dp.vol.service.MESSAGE");
-			application.registerReceiver(tmessage, messageFilter);
-			if (enableGTalk) {
-				setTalk();
-				// figure out how to enable accebility
-			}
 		}
 
 		String Ireload = "a2dp.Vol.main.RELOAD_LIST";
@@ -898,7 +897,6 @@ public class service extends Service implements OnAudioFocusChangeListener{
 			}
 		}
 
-
 		if (bt2.wifi) {
 			dowifi(oldwifistate);
 		}
@@ -939,19 +937,19 @@ public class service extends Service implements OnAudioFocusChangeListener{
 				setPVolume(OldVol);
 		if (notify && (bt2.mac != null))
 			updateNot(false, null);
-		if (mTtsReady && (bt2.isEnableTTS() || connects < 1)) {
+		if (mTtsReady && ((bt2.isEnableTTS() || enableGTalk) || connects < 1)) {
 			try {
 				if (!clearedTts) {
 					clearTts();
 				}
 				mTts.shutdown();
 				mTtsReady = false;
-				if (enableGTalk){
+				if (enableGTalk) {
 					stopTalk();
 					// also stop accessibility
 				}
 				application.unregisterReceiver(SMScatcher);
-				application.unregisterReceiver(tmessage);
+				
 				// Toast.makeText(application, "do disconnected",
 				// Toast.LENGTH_LONG).show();
 
@@ -962,6 +960,14 @@ public class service extends Service implements OnAudioFocusChangeListener{
 			}
 
 		}
+		
+		try {
+			application.unregisterReceiver(tmessage);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		if (bt2.isSilent())
 			am2.setStreamVolume(AudioManager.STREAM_NOTIFICATION, Oldsilent, 0);
 
