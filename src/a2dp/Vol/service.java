@@ -17,6 +17,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.UiModeManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.IBluetoothA2dp;
@@ -46,7 +47,9 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
 import android.provider.Settings;
@@ -708,6 +711,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				}
 			}.start();
 		}
+		
+		if(bt2.isCarmode()){
+			set_car_mode(true);
+		}
 
 	}
 
@@ -848,6 +855,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 							e.printStackTrace();
 							Log.e(LOG_TAG, "Error " + e.getMessage());
 						}
+						
 					}
 
 					@Override
@@ -954,8 +962,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				// Toast.LENGTH_LONG).show();
 
 			} catch (Exception e) {
-				Toast.makeText(application, e.getMessage(), Toast.LENGTH_LONG)
-						.show();
+				//Toast.makeText(application, e.getMessage(), Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
 
@@ -984,7 +991,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			bt2.setDefVol(SavVol);
 			DB.update(bt2);
 		}
-
+		if(bt2.isCarmode()){
+			set_car_mode(false);
+		}
+		
 		final String Ireload = "a2dp.Vol.main.RELOAD_LIST";
 		Intent itent = new Intent();
 		itent.setAction(Ireload);
@@ -1155,6 +1165,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 		try {
 			startActivity(i);
+			
 			return true;
 		} catch (Exception e) {
 			Toast t = Toast.makeText(getApplicationContext(),
@@ -1885,4 +1896,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		// Toast.makeText(application, "stopTalk()", Toast.LENGTH_LONG).show();
 	}
 
+	private void set_car_mode(boolean mode){
+		try {
+			UiModeManager mm = (UiModeManager)getSystemService(Context.UI_MODE_SERVICE);
+			if(mode) mm.enableCarMode(0);
+			else mm.disableCarMode(0);
+		} catch (Exception e) {
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		}
+	}
 }
