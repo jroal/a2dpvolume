@@ -22,15 +22,15 @@ import java.util.Vector;
 public class DeviceDB {
 
 	private static final String DATABASE_NAME = "btdevices.db";
-	private static final int DATABASE_VERSION = 12;
+	private static final int DATABASE_VERSION = 13;
 	private static final String TABLE_NAME = "devices";
 	private static Context context;
 	private SQLiteDatabase db;
 	private SQLiteStatement insertStmt;
 	private static final String INSERT = "insert into " + TABLE_NAME
 			+ "(desc1, desc2, mac, maxv, setv, getl, pname, bdevice, wifi, appaction, appdata, apptype, apprestart, tts," +
-					" setpv, phonev, appkill, enablegps, icon, smsdelay, smsstream, voldelay, volramp, autovol, silent) " +
-					"values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					" setpv, phonev, appkill, enablegps, icon, smsdelay, smsstream, voldelay, volramp, autovol, silent, sleep, carmode) " +
+					"values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public DeviceDB(Context context) {
 		DeviceDB.context = context;
@@ -71,6 +71,8 @@ public class DeviceDB {
 		vals.put("volramp", bt.lVolramp());
 		vals.put("autovol", bt.lautovol());
 		vals.put("silent", bt.lsilent());
+		vals.put("sleep", bt.isSleep());
+		vals.put("carmode", bt.isCarmode());
 		this.db.update(TABLE_NAME, vals, "mac='" + bt.mac + "'", null);
 		vals = null;
 	}
@@ -121,6 +123,8 @@ public class DeviceDB {
 		this.insertStmt.bindLong(23, btd.lVolramp());
 		this.insertStmt.bindLong(24, btd.lautovol());
 		this.insertStmt.bindLong(25, btd.lsilent());
+		this.insertStmt.bindLong(26, btd.lsleep());
+		this.insertStmt.bindLong(27, btd.lcarmode());
 		try {
 			rtn = this.insertStmt.executeInsert();
 		} catch (Exception e) {
@@ -169,6 +173,8 @@ public class DeviceDB {
 				bt.setVolramp(cs.getInt(22));
 				bt.setAutovol(cs.getInt(23));
 				bt.setSilent(cs.getInt(24));
+				bt.setSleep(cs.getInt(25));
+				bt.setCarmode(cs.getInt(26));
 			}
 		} catch (Exception e) {
 			bt.mac = null;
@@ -234,7 +240,8 @@ public class DeviceDB {
 		Vector<btDevice> list = new Vector<btDevice>();
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1",
 				"desc2", "mac", "maxv", "setv", "getl", "pname" , "bdevice", "wifi", "appaction", "appdata", "apptype", 
-				"apprestart", "tts", "setpv", "phonev" , "appkill" , "enablegps", "icon", "smsdelay", "smsstream", "voldelay", "volramp", "autovol", "silent"}, null, null, null,
+				"apprestart", "tts", "setpv", "phonev" , "appkill" , "enablegps", "icon", "smsdelay", "smsstream", "voldelay", 
+				"volramp", "autovol", "silent" , "sleep", "carmode"}, null, null, null,
 				null, "desc2");
 		if (cursor.moveToFirst()) {
 			do {
@@ -264,6 +271,8 @@ public class DeviceDB {
 				bt.setVolramp(cursor.getInt(22));
 				bt.setAutovol(cursor.getInt(23));
 				bt.setSilent(cursor.getInt(24));
+				bt.setSleep(cursor.getInt(25));
+				bt.setCarmode(cursor.getInt(26));
 				list.add(bt);
 			} while (cursor.moveToNext());
 		}
@@ -285,7 +294,8 @@ public class DeviceDB {
 					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER DEFAULT 1, getl INTEGER DEFAULT 1, pname TEXT, " +
 							"bdevice TEXT, wifi INTEGER DEFAULT 0, appaction TEXT, appdata TEXT, apptype TEXT, apprestart INTEGER DEFAULT 0, " +
 							"tts INTEGER DEFAULT 0, setpv INTEGER DEFAULT 0, phonev INTEGER DEFAULT 10, appkill INTEGER DEFAULT 1, enablegps INTEGER DEFAULT 0" +
-							", icon INTEGER, smsdelay DEFAULT 3, smsstream DEFAULT 1, voldelay DEFAULT 5, volramp DEFAULT 0, autovol DEFAULT 1, silent DEFAULT 0)");
+							", icon INTEGER, smsdelay DEFAULT 3, smsstream DEFAULT 1, voldelay DEFAULT 5, volramp DEFAULT 0, autovol DEFAULT 1, silent DEFAULT 0," +
+							" sleep DEFAULT 0, carmode DEFAULT 0)");
 		}
 
 		@Override

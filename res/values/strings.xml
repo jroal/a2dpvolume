@@ -150,4 +150,6 @@
     <string name="PrefsGTalk">Enable reading GTalk messages</string>
     <string name="PrefsGTalkON">Google Talk messages can be read when device is connected</string>
     <string name="accessDescription">Used to read notifications while connected to a device using A2DP Volume</string>
+    <string name="sleepAfterLaunch">Sleep after app launch</string>
+    <string name="launchCarMode">Launch Car Mode</string>
 </resources>

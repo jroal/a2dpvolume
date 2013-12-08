@@ -156,6 +156,18 @@
                 android:layout_height="wrap_content"
                 android:text="@string/app_kill" />
 
+            <CheckBox
+                android:id="@+id/checkBoxSleep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sleepAfterLaunch" />
+
+            <CheckBox
+                android:id="@+id/checkBoxLaunchCar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/launchCarMode" />
+
             <Button android:layout_width="wrap_content" android:id="@+id/chooseBTbutton" android:layout_height="wrap_content" android:text="@string/connectBT" android:layout_marginTop="5pt"></Button>
             <EditText android:id="@+id/editBtConnect" android:text="EditText" android:layout_width="match_parent" android:layout_marginBottom="5pt" android:inputType="none" android:layout_height="wrap_content"></EditText>
 

@@ -39,6 +39,8 @@ public class btDevice {
 	public boolean autovol; // automatically store last used volume for this
 							// device
 	public boolean silent; // use silent mode while connected
+	public boolean sleep; // use to enter sleep mode after app launch
+	public boolean carmode; // use to enter car mode on connect
 
 	/**
 	 * @return the setpv
@@ -652,6 +654,8 @@ public class btDevice {
 		this.volramp = false;
 		this.voldelay = 6;
 		this.silent = false;
+		this.carmode = false;
+		this.sleep = false;
 	}
 
 	/**
@@ -690,6 +694,8 @@ public class btDevice {
 		this.volramp = false;
 		this.voldelay = 6;
 		this.silent = false;
+		this.carmode = false;
+		this.sleep = false;
 	}
 
 	public boolean hasIntent() {
@@ -703,4 +709,56 @@ public class btDevice {
 
 	}
 
+	/**
+	 * @return the sleep
+	 */
+	public boolean isSleep() {
+		return sleep;
+	}
+
+	public long lsleep() {
+		if (sleep)
+			return 1;
+		else
+			return 0;
+	}
+	/**
+	 * @param sleep the sleep to set
+	 */
+	public void setSleep(boolean sleep) {
+		this.sleep = sleep;
+	}
+
+	public void setSleep(int sleep1) {
+		if(sleep1 > 0)
+			this.sleep = true;
+		else
+			this.sleep = false;
+	}
+	/**
+	 * @return the carmode
+	 */
+	public boolean isCarmode() {
+		return carmode;
+	}
+
+	public long lcarmode() {
+		if (carmode)
+			return 1;
+		else
+			return 0;
+	}
+	/**
+	 * @param carmode the carmode to set
+	 */
+	public void setCarmode(boolean carmode) {
+		this.carmode = carmode;
+	}
+
+	public void setCarmode(int cm) {
+		if(cm > 0)
+			this.carmode = true;
+		else
+			this.carmode = false;
+	}
 }

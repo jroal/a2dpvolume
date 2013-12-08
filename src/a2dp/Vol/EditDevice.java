@@ -73,6 +73,8 @@ public class EditDevice extends Activity {
 	private CheckBox frampVol;
 	private CheckBox fautoVol;
 	private CheckBox fsilent;
+	private CheckBox fsleepBox;
+	private CheckBox fcarmodeBox;
 	private RadioButton iconradio0, iconradio1, iconradio2, iconradio3, iconradio4, streamradio0, streamradio1, streamradio2;
 	private RadioGroup streamgroup, icongroup;
 	private LinearLayout l1, l2;
@@ -91,6 +93,8 @@ public class EditDevice extends Activity {
 	private boolean apprestart;
 	private boolean appkill;
 	private boolean enablegps;
+	private boolean sleep;
+	private boolean carmode;
 
 	private static final int DIALOG_PICK_APP_TYPE = 3;
 	private static final int DIALOG_WARN_STOP_APP = 5;
@@ -163,6 +167,8 @@ public class EditDevice extends Activity {
 		this.tvstream = (TextView) this.findViewById(R.id.textViewStream);
 		this.tvmediavol = (TextView) this.findViewById(R.id.textViewMediaVolume);
 		this.tvincallVol = (TextView) this.findViewById(R.id.textViewInCallVol);
+		this.fsleepBox = (CheckBox) this.findViewById(R.id.checkBoxSleep);
+		this.fcarmodeBox = (CheckBox) this.findViewById(R.id.checkBoxLaunchCar);
 		
 		preferences = PreferenceManager
 				.getDefaultSharedPreferences(application);
@@ -209,6 +215,8 @@ public class EditDevice extends Activity {
 		frampVol.setChecked(device.isVolramp());
 		fautoVol.setChecked(device.isAutovol());
 		fsilent.setChecked(device.isSilent());
+		fsleepBox.setChecked(device.isSleep());
+		fcarmodeBox.setChecked(device.isCarmode());
 		
 		switch(device.getIcon()){
 		case R.drawable.car2: iconradio0.setChecked(true); break;
@@ -435,10 +443,12 @@ public class EditDevice extends Activity {
 			fapp.setVisibility(EditText.VISIBLE);
 			fapprestart.setVisibility(CheckBox.VISIBLE);
 			fappkill.setVisibility(CheckBox.VISIBLE);
+			fsleepBox.setVisibility(CheckBox.VISIBLE);
 		}else{
 			fapp.setVisibility(EditText.GONE);
 			fapprestart.setVisibility(CheckBox.GONE);
 			fappkill.setVisibility(CheckBox.GONE);
+			fsleepBox.setVisibility(CheckBox.GONE);
 		}
 	}
 	
@@ -510,6 +520,8 @@ public class EditDevice extends Activity {
 		device.setVolramp(frampVol.isChecked());
 		device.setAutovol(fautoVol.isChecked());
 		device.setSilent(fsilent.isChecked());
+		device.setSleep(fsleepBox.isChecked());
+		device.setCarmode(fcarmodeBox.isChecked());
 		
 		switch(icongroup.getCheckedRadioButtonId()){
 		case R.id.iconradio0: device.setIcon(R.drawable.car2); break;
