@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+
     <string name="app_name">A2DP Volume</string>
+
     <string-array name="gpsDistance">
         <item>2m (6ft)</item>
         <item>5m (15ft)</item>
@@ -35,6 +37,7 @@
         <item>20</item>
         <item>30</item>
     </string-array>
+
     <string name="ListName">Bluetooth Devices</string>
     <string name="GetLocButtonString">Stored Location</string>
     <string name="StartService">Start Service</string>
@@ -152,4 +155,8 @@
     <string name="accessDescription">Used to read notifications while connected to a device using A2DP Volume</string>
     <string name="sleepAfterLaunch">Sleep after app launch</string>
     <string name="launchCarMode">Launch Car Mode</string>
+    <string name="title_activity_sleep">Sleep</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>
