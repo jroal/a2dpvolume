@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.media.AudioManager;
@@ -348,6 +349,16 @@ public class main extends Activity {
 								//intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 								intent.setAction(Intent.ACTION_VIEW);
 								intent.setDataAndType(uri, "text/html");
+								try {
+									PackageInfo pi = getPackageManager().getPackageInfo("com.android.chrome", 0);
+									intent.setClassName("com.android.chrome",
+	                                        "com.google.android.apps.chrome.Main");
+								} catch (NameNotFoundException e1) {
+									intent.setClassName("com.android.browser",
+	                                        "com.android.browser.BrowserActivity");
+									e1.printStackTrace();
+								}
+								
 								
 								try {
 									startActivity(intent);
