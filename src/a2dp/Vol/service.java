@@ -1159,6 +1159,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 		try {
 			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -1901,6 +1902,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			UiModeManager mm = (UiModeManager)getSystemService(Context.UI_MODE_SERVICE);
 			if(mode) mm.enableCarMode(0);
 			else mm.disableCarMode(0);
+		
 		} catch (Exception e) {
 			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
 			e.printStackTrace();

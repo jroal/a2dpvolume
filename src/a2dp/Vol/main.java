@@ -40,6 +40,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -344,14 +345,15 @@ public class main extends Activity {
 
 								Uri uri = Uri.parse(st);
 								Intent intent = new Intent();
-								intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-								intent.setAction(android.content.Intent.ACTION_VIEW);
-								intent.setDataAndType(uri, "text");
-								intent.setClassName("com.android.browser",
-										"com.android.browser.BrowserActivity");
+								//intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+								intent.setAction(Intent.ACTION_VIEW);
+								intent.setDataAndType(uri, "text/html");
+								
 								try {
 									startActivity(intent);
-								} catch (Exception e) {
+									/*WebView myWebView = (WebView) findViewById(R.id.webview);
+									myWebView.loadUrl(uri.toString());*/
+									} catch (Exception e) {
 									// TODO Auto-generated catch block
 									Toast.makeText(application, e.toString(),
 											Toast.LENGTH_LONG).show();
@@ -570,8 +572,11 @@ public class main extends Activity {
 			fs.read(buff);
 			fs.close();
 			String st = new String(buff).trim();
-			Toast.makeText(a2dp.Vol.main.this, st, Toast.LENGTH_LONG).show();
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(st)));
+			//Toast.makeText(a2dp.Vol.main.this, st, Toast.LENGTH_LONG).show();
+			//startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(st)));
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setData(Uri.parse(st));
+			startActivity(i);
 		} catch (FileNotFoundException e) {
 			Toast.makeText(a2dp.Vol.main.this, R.string.NoData,
 					Toast.LENGTH_LONG).show();
