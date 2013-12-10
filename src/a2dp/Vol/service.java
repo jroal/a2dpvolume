@@ -83,6 +83,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private static Integer Oldsilent;
 	public static Integer connects = 0;
 	public static boolean run = false;
+	public static boolean talk = false;
 	private static boolean mvolsLeft = false;
 	private static boolean pvolsLeft = false;
 	public static btDevice[] btdConn = new btDevice[5]; // n the devices in the
@@ -334,8 +335,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					mTtsReady = false;
 					unregisterReceiver(SMScatcher);
 					unregisterReceiver(tmessage);
-					if (enableGTalk)
-						stopTalk();
+					//if (enableGTalk)
+						//stopTalk();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -660,8 +661,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				"a2dp.vol.service.MESSAGE");
 		application.registerReceiver(tmessage, messageFilter);
 		if (enableGTalk) {
-			setTalk();
-			// figure out how to enable accebility
+			//setTalk();
+			talk = true;
 		}
 		if (bt2.isEnableTTS()) {
 			application.registerReceiver(SMScatcher, new IntentFilter(
@@ -953,8 +954,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				mTts.shutdown();
 				mTtsReady = false;
 				if (enableGTalk) {
-					stopTalk();
-					// also stop accessibility
+					//stopTalk();
+					talk = false;
 				}
 				application.unregisterReceiver(SMScatcher);
 				
@@ -1846,7 +1847,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 	}
 
-	private void setTalk() {
+/*	private void setTalk() {
 
 		thread = new HandlerThread("TalkThread");
 		thread.start();
@@ -1896,7 +1897,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		// thread.stop();
 		// Toast.makeText(application, "stopTalk()", Toast.LENGTH_LONG).show();
 	}
-
+*/
 	private void set_car_mode(boolean mode){
 		try {
 			UiModeManager mm = (UiModeManager)getSystemService(Context.UI_MODE_SERVICE);
