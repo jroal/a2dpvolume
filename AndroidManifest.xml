@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="a2dp.Vol"
     android:installLocation="internalOnly"
-    android:versionCode="114"
-    android:versionName="2.11.1" >
+    android:versionCode="115"
+    android:versionName="2.11.2" >
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
@@ -33,14 +33,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
+        android:minSdkVersion="15"
+        android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
-    <uses-permission android:name="com.google.android.providers.talk.permission.READ_ONLY" />
-    <uses-permission android:name="com.google.android.gtalkservice.permission.GTALK_SERVICE" />
-    <uses-permission android:name="com.google.android.googleapps.permission.GOOGLE_AUTH.talk" />
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
@@ -49,13 +46,13 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:persistent="true" >
+        android:persistent="true" android:description="@string/accessDescription">
         <activity
             android:name="a2dp.Vol.main"
             android:icon="@drawable/icon5"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:multiprocess="false" >
+            android:multiprocess="false" android:description="@string/accessDescription">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -126,12 +123,8 @@
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
+            <meta-data android:resource="@xml/accessconfig" android:name="android.accessibilityservice"/>
         </service>
-
-        <activity
-            android:name="a2dp.Vol.Sleep"
-            android:label="@string/title_activity_sleep" >
-        </activity>
     </application>
 
 </manifest>

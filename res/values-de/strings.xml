@@ -149,4 +149,14 @@
     <string name="PrefsGTalkOFF">Google Talk Nachrichten werden nicht vorgelesen.</string>
     <string name="PrefsGTalk">Google Talk Nachrichten</string>
     <string name="PrefsGTalkON">Google Talk Nachrichten werden vorgelesen.</string>
+    <string-array name="PrefsNotifyItems">
+        <item>always</item>
+        <item>connected_only</item>
+        <item>never</item>
+    </string-array>
+    <string-array name="PrefsNotifyOptions">
+        <item>Der Dienst wird als Vordergrundjob mit Symbol in der Benachrichtigungsleiste gestartet.</item>
+        <item/>
+        <item>Der Dienst wird als Hintergrundjob ohne Symbol in der Benachrichtigungsleiste gestartet.</item>
+    </string-array>
 </resources>

@@ -149,4 +149,14 @@
     <string name="PrefsGTalk">Activer la lecture des messages Google Talk</string>
     <string name="PrefsGTalkON">Les messages Google Talk seront lus lorsque connexion établie</string>
     <string name="ignoreTTSMissing">Ignorer ceci</string>
+    <string-array name="PrefsNotifyItems">
+        <item>always</item>
+        <item>connected_only</item>
+        <item>never</item>
+    </string-array>
+    <string-array name="PrefsNotifyOptions">
+        <item>Le service démarrera avec une icône dans la zone de notification</item>
+        <item/>
+        <item>Le service démarrera en arrière plan, sans icône dans la zone de notification</item>
+    </string-array>
 </resources>

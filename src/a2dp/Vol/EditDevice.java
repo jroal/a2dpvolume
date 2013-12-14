@@ -93,9 +93,6 @@ public class EditDevice extends Activity {
 	private boolean apprestart;
 	private boolean appkill;
 	private boolean enablegps;
-	private boolean sleep;
-	private boolean carmode;
-
 	private static final int DIALOG_PICK_APP_TYPE = 3;
 	private static final int DIALOG_WARN_STOP_APP = 5;
 	private static final int DIALOG_BITLY = 6;
@@ -138,7 +135,7 @@ public class EditDevice extends Activity {
 		this.fappkill = (CheckBox) this.findViewById(R.id.appKillCheckbox);
 		this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
 		this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
-		this.fenableGPS = (CheckBox) this.findViewById(R.id.checkgps);
+		
 		this.fenableTTS = (CheckBox) this.findViewById(R.id.enableTTSBox);
 		this.fsetpv = (CheckBox) this.findViewById(R.id.checkSetpv);
 		this.fsilent = (CheckBox) this.findViewById(R.id.silentBox);
@@ -187,7 +184,7 @@ public class EditDevice extends Activity {
 		fapp.setText(device.getPname());
 		fbt.setText(device.getBdevice());
 		fwifi.setChecked(device.isWifi());
-		fenableGPS.setChecked(device.isEnablegps());
+		
 		if (device == null)
 			connbt.setEnabled(false);
 		pname = device.getPname();
@@ -196,10 +193,10 @@ public class EditDevice extends Activity {
 		apptype = device.getApptype();
 		apprestart = device.isApprestart();
 		appkill = device.isAppkill();
-		enablegps = device.isEnablegps();
+		
 		fapprestart.setChecked(apprestart);
 		fappkill.setChecked(appkill);
-		fenableGPS.setChecked(enablegps);
+		
 		fenableTTS.setChecked(device.isEnableTTS());
 		fsetpv.setChecked(device.isSetpv());
 		fphonev.setMax(am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL));
@@ -234,12 +231,7 @@ public class EditDevice extends Activity {
 		default: streamradio0.setChecked(true);
 		}
 		
-		// if Android is ICS or higher, disable this feature
-		if (android.os.Build.VERSION.SDK_INT >= 11){
-			fenableGPS.setChecked(false);
-			fenableGPS.setVisibility(CheckBox.GONE);
-			
-		}
+		
 		
 		setTTSVisibility();
 		fenableTTS.setOnCheckedChangeListener(new OnCheckedChangeListener(){
@@ -443,7 +435,7 @@ public class EditDevice extends Activity {
 			fapp.setVisibility(EditText.VISIBLE);
 			fapprestart.setVisibility(CheckBox.VISIBLE);
 			fappkill.setVisibility(CheckBox.VISIBLE);
-			fsleepBox.setVisibility(CheckBox.VISIBLE);
+			fsleepBox.setVisibility(CheckBox.GONE);
 		}else{
 			fapp.setVisibility(EditText.GONE);
 			fapprestart.setVisibility(CheckBox.GONE);
@@ -503,7 +495,7 @@ public class EditDevice extends Activity {
 		device.setPname(pname);
 		device.setBdevice(fbt.getText().toString());
 		device.setWifi(fwifi.isChecked());
-		device.setEnablegps(fenableGPS.isChecked());
+		//device.setEnablegps(fenableGPS.isChecked());
 		device.setAppaction(appaction);
 		device.setAppdata(appdata);
 		device.setApptype(apptype);

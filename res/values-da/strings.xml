@@ -145,4 +145,14 @@
     <string name="SMSMusicStream">Musik Strøm</string>
     <string name="rememberMediaVol">Automatiskhuske media volume on frakobling</string>
     <string name="silentMode">Sæt notifikationer på lydløs imens enheden er tilsluttet?</string>
+    <string-array name="PrefsNotifyItems">
+        <item>always</item>
+        <item>connected_only</item>
+        <item>never</item>
+    </string-array>
+    <string-array name="PrefsNotifyOptions">
+        <item>Denne service vil starte som en foregrunds program med et ikon i notifikations baren.</item>
+        <item/>
+        <item>Denne service vil starte som en baggrunds program uden ikon i notifikations baren.</item>
+    </string-array>
 </resources>

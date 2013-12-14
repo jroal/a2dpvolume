@@ -13,12 +13,6 @@
             <CheckBox android:layout_width="wrap_content" android:id="@+id/checkwifi" android:text="@string/wifiDisconnect" android:layout_height="wrap_content"></CheckBox>
 
             <CheckBox
-                android:id="@+id/checkgps"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/enableGPS" />
-
-            <CheckBox
                 android:id="@+id/silentBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
