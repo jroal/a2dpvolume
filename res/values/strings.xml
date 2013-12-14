@@ -152,5 +152,16 @@
     <string name="accessDescription">Used to read notifications while connected to a device using A2DP Volume</string>
     <string name="sleepAfterLaunch">Sleep after app launch</string>
     <string name="launchCarMode">Launch Car Mode</string>
-    <string name="title_activity_sleep">Sleep</string>
+    <string-array name="PrefsNotifyOptions">
+        <item>The service will start as a foreground task with an icon on the notification bar.</item>
+        <item>The icon will only be shown when devices are connected</item>
+        <item>The service will start but it will be a background task with no icon on the notification bar.</item>
+    </string-array>
+    <string-array name="PrefsNotifyItems">
+        <item>always</item>
+        <item>connected_only</item>
+        <item>never</item>
+    </string-array>
+    <string name="PrefsNotifyTitle">Use Notification Icon?</string>
+    <string name="PrefsNotificationSummary">Notification Visibility</string>
 </resources>
