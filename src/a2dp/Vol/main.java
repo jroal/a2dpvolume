@@ -107,6 +107,11 @@ public class main extends Activity {
 			a2dp.Vol.main.this.finish();
 			return true;
 
+		case R.id.packages:
+			Intent p = new Intent(a2dp.Vol.main.this, PackagesChooser.class);
+			startActivity(p);
+			return true;
+			
 		case R.id.prefs: // set preferences
 			Intent j = new Intent(a2dp.Vol.main.this, Preferences.class);
 			startActivity(j);

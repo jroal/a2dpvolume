@@ -164,4 +164,7 @@
     </string-array>
     <string name="PrefsNotifyTitle">Use Notification Icon?</string>
     <string name="PrefsNotificationSummary">Notification Visibility</string>
+    <string name="title_activity_packages_chooser">Respond to these apps</string>
+    <string name="action_settings">Settings</string>
+    <string name="PackagesTitle">Apps for Accessibility</string>
 </resources>
