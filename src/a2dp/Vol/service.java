@@ -100,6 +100,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private boolean headsetPlug = false;
 	private boolean power = false;
 	private boolean enableGTalk = false;
+	private boolean enableSMS = false;
 	private static boolean ramp_vol = false;
 	HashMap<String, String> myHash;
 	private boolean toasts = true;
@@ -172,6 +173,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			power = preferences.getBoolean("power", false);
 			toasts = preferences.getBoolean("toasts", true);
 			// notify = preferences.getBoolean("notify1", true);
+			enableSMS = preferences.getBoolean("enableTTS", false);
 			enableGTalk = preferences.getBoolean("enableGTalk", true);
 			notify_pref = preferences.getString("notify_pref", "always");
 			// Long yyy = new Long(preferences.getString("gpsTime", "15000"));
@@ -687,7 +689,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			this.registerReceiver(sco_change, sco_filter);
 			talk = true;
 		}
-		if (bt2.isEnableTTS()) {
+		if (bt2.isEnableTTS() && enableSMS) {
 			application.registerReceiver(SMScatcher, new IntentFilter(
 					"android.provider.Telephony.SMS_RECEIVED"));
 		}
@@ -959,7 +961,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					unregisterReceiver(sco_change);
 					talk = false;
 				}
-				application.unregisterReceiver(SMScatcher);
+				if(enableSMS)application.unregisterReceiver(SMScatcher);
 
 				// Toast.makeText(application, "do disconnected",
 				// Toast.LENGTH_LONG).show();

@@ -9,4 +9,5 @@
 
 
 <item android:enabled="true" android:visible="true" android:menuCategory="container" android:id="@+id/help" android:orderInCategory="5" android:title="@string/MenuHelp"></item>
+<item android:id="@+id/packages" android:menuCategory="container" android:title="@string/PackagesTitle"></item>
 </menu>
