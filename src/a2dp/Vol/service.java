@@ -232,14 +232,31 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 					notificationIntent, 0);
 
-			Notification not = new Notification.Builder(application)
-					.setContentTitle(
-							getResources().getString(R.string.app_name))
-					.setContentIntent(contentIntent)
-					.setSmallIcon(R.drawable.icon5)
-					.setContentText(
-							getResources().getString(R.string.ServRunning))
-					.build();
+			Notification not;
+			if (android.os.Build.VERSION.SDK_INT >= 16) {
+				not = new Notification.Builder(application)
+						.setContentTitle(
+								getResources().getString(R.string.app_name))
+						.setContentIntent(contentIntent)
+						.setSmallIcon(R.drawable.icon5)
+						.setContentText(
+								getResources().getString(R.string.ServRunning))
+						.setPriority(Notification.PRIORITY_MIN).build();
+			}else{
+				not = new Notification(R.drawable.icon5, "A2DP",
+						System.currentTimeMillis());
+				mNotificationManager = (NotificationManager) getSystemService(ns);
+                not = new Notification(R.drawable.icon5, "A2DP",
+                                System.currentTimeMillis());
+                Context context = getApplicationContext();
+                CharSequence contentTitle = getResources().getString(
+                                R.string.app_name);
+                CharSequence contentText = getResources().getString(
+                                R.string.ServRunning);
+                not.setLatestEventInfo(context, contentTitle, contentText,
+                                contentIntent);
+
+			}
 
 			if (notify_pref.equalsIgnoreCase("always")) {
 				mNotificationManager.notify(1, not);
@@ -1102,36 +1119,60 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 		if (connect) {
 			
-			Intent notificationIntent = new Intent(this, main.class);
-			PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-					notificationIntent, 0);
+			Notification not = null;
+			if (android.os.Build.VERSION.SDK_INT >= 16) {
+				Intent notificationIntent = new Intent(this, main.class);
+				PendingIntent contentIntent = PendingIntent.getActivity(this,
+						0, notificationIntent, 0);
+				not = new Notification.Builder(application)
+						.setContentTitle(
+								getResources().getString(R.string.app_name))
+						.setContentIntent(contentIntent)
+						.setSmallIcon(connectedIcon).setContentText(temp)
+						.setPriority(Notification.PRIORITY_MIN).build();
+			}else{
+				not = new Notification(connectedIcon, "A2DP",
+						System.currentTimeMillis());
+				Context context = getApplicationContext();
+				CharSequence contentTitle = getResources().getString(R.string.app_name);
+                CharSequence contentText = temp;
+                Intent notificationIntent = new Intent(this, main.class);
+                PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                                notificationIntent, 0);
+                not.setLatestEventInfo(context, contentTitle, contentText,
+                                contentIntent);
 
-			Notification not = new Notification.Builder(application)
-					.setContentTitle(
-							getResources().getString(R.string.app_name))
-					.setContentIntent(contentIntent)
-					.setSmallIcon(connectedIcon)
-					.setContentText(
-							temp)
-					.build();
+			}
 
 			mNotificationManager.notify(1, not);
 		} else {
 			mNotificationManager.cancel(1);
 
 			if (notify_pref.equalsIgnoreCase("always")) {
-				Intent notificationIntent = new Intent(this, main.class);
-				PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-						notificationIntent, 0);
-
-				Notification not = new Notification.Builder(application)
-						.setContentTitle(
-								getResources().getString(R.string.app_name))
-						.setContentIntent(contentIntent)
-						.setSmallIcon(R.drawable.icon5)
-						.setContentText(
-								temp)
-						.build();
+				Notification not = null;
+				if (android.os.Build.VERSION.SDK_INT >= 16) {
+					Intent notificationIntent = new Intent(this, main.class);
+					PendingIntent contentIntent = PendingIntent.getActivity(
+							this, 0, notificationIntent, 0);
+					not = new Notification.Builder(application)
+							.setContentTitle(
+									getResources().getString(R.string.app_name))
+							.setContentIntent(contentIntent)
+							.setSmallIcon(R.drawable.icon5)
+							.setContentText(temp)
+							.setPriority(Notification.PRIORITY_MIN).build();
+				}else{
+					not = new Notification(R.drawable.icon5, "A2DP",
+							System.currentTimeMillis());
+					Context context = getApplicationContext();
+					CharSequence contentTitle = getResources().getString(R.string.app_name);
+	                CharSequence contentText = temp;
+	                Intent notificationIntent = new Intent(this, main.class);
+	                PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+	                                notificationIntent, 0);
+	                not.setLatestEventInfo(context, contentTitle, contentText,
+	                                contentIntent);
+				}
 				mNotificationManager.notify(1, not);
 			}
 		}
@@ -1474,10 +1515,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				if (am2.isBluetoothScoAvailableOffCall()) {
 					am2.startBluetoothSco();
 				}
-				if (!am2.isSpeakerphoneOn()) {
+				/*if (!am2.isSpeakerphoneOn()) {
 					speakerPhoneWasOn = false;
 					am2.setSpeakerphoneOn(true);
-				}
+				}*/
 				// mTts.setPitch(2);
 				if (musicWasPlaying) {
 					// first pause the music
@@ -1661,9 +1702,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	 */
 	private void clearTts() {
 		//Toast.makeText(application, "clearing tts", Toast.LENGTH_LONG).show();
-		if (!speakerPhoneWasOn) {
+		/*if (!speakerPhoneWasOn) {
 			am2.setSpeakerphoneOn(false);
-		}
+		}*/
 		if (am2.isBluetoothScoAvailableOffCall()) {
 			am2.stopBluetoothSco();
 		}
