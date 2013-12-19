@@ -146,17 +146,25 @@
     <string name="rememberMediaVol">Zuletzt verwendete Medienlautstärke bei Verbindungstrennung merken</string>
     <string name="silentMode">Benachrichtigungen während Verbindung abschalten</string>
     <string name="ignoreTTSMissing">Ignoriere das</string>
-    <string name="PrefsGTalkOFF">Google Talk Nachrichten werden nicht vorgelesen.</string>
-    <string name="PrefsGTalk">Google Talk Nachrichten</string>
-    <string name="PrefsGTalkON">Google Talk Nachrichten werden vorgelesen.</string>
+    <string name="PrefsGTalkOFF">Benachrichtigungen werden nicht vorgelesen.</string>
+    <string name="PrefsGTalk">Benachrichtigungen</string>
+    <string name="PrefsGTalkON">Benachrichtigungen werden vorgelesen.</string>
+    <string name="accessDescription">Wird verwendet, um Benachrichtigungen vorzulesen, wenn ein Gerät mit A2DP Volume verbunden ist</string>
+    <string name="sleepAfterLaunch">Nach Start der App schlafen legen</string>
+    <string name="launchCarMode">Starte Automodus</string>
+    <string-array name="PrefsNotifyOptions">
+        <item>Der Dienst startet im Vordergrund und zeigt ein Icon in der Benachrichtigungsleiste.</item>
+        <item>Das Icon wird nur angezeigt, wenn Geräte verbunden sind.</item>
+        <item>Der Dienst startet im Hintergrund und zeigt kein Icon in der Benachrichtigungsleiste.</item>
+    </string-array>
     <string-array name="PrefsNotifyItems">
         <item>always</item>
         <item>connected_only</item>
         <item>never</item>
     </string-array>
-    <string-array name="PrefsNotifyOptions">
-        <item>Der Dienst wird als Vordergrundjob mit Symbol in der Benachrichtigungsleiste gestartet.</item>
-        <item/>
-        <item>Der Dienst wird als Hintergrundjob ohne Symbol in der Benachrichtigungsleiste gestartet.</item>
-    </string-array>
+    <string name="PrefsNotifyTitle">Verwende Benachrichtigungs-Icon?</string>
+    <string name="PrefsNotificationSummary">Sichtbarkeit der Benachrichtigungen</string>
+    <string name="title_activity_packages_chooser">Reagiere auf diese Apps</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="PackagesTitle">Apps für Barrierefreiheit</string>
 </resources>
