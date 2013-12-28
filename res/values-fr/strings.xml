@@ -156,7 +156,14 @@
     </string-array>
     <string-array name="PrefsNotifyOptions">
         <item>Le service démarrera avec une icône dans la zone de notification</item>
-        <item/>
+        <item>Une icône ne sera montrée que lorsque une connexion est établie</item>
         <item>Le service démarrera en arrière plan, sans icône dans la zone de notification</item>
     </string-array>
+    <string name="accessDescription">Utilisé pour lire les notification lorsque connecté à un appareil utilisant A2DP Volume</string>
+    <string name="title_activity_packages_chooser">Repondre à ces applications</string>
+    <string name="PrefsNotifyTitle">Utiliser une icône de notification?</string>
+    <string name="PackagesTitle">Apps pour accessibilité</string>
+    <string name="PrefsNotificationSummary">Visibilité de la notification</string>
+    <string name="launchCarMode">Lancer mode conduite</string>
+    <string name="action_settings">Paramètres</string>
 </resources>

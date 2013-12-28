@@ -152,7 +152,19 @@
     </string-array>
     <string-array name="PrefsNotifyOptions">
         <item>Denne service vil starte som en foregrunds program med et ikon i notifikations baren.</item>
-        <item/>
+        <item>-</item>
         <item>Denne service vil starte som en baggrunds program uden ikon i notifikations baren.</item>
     </string-array>
+    <string name="sleepAfterLaunch">-</string>
+    <string name="PrefsGTalkOFF">-</string>
+    <string name="PrefsGTalk">-</string>
+    <string name="title_activity_packages_chooser">-</string>
+    <string name="PrefsGTalkON">-</string>
+    <string name="PrefsNotifyTitle">-</string>
+    <string name="ignoreTTSMissing">-</string>
+    <string name="PackagesTitle">-</string>
+    <string name="PrefsNotificationSummary">-</string>
+    <string name="launchCarMode">-</string>
+    <string name="action_settings">-</string>
+    <string name="accessDescription">-</string>
 </resources>

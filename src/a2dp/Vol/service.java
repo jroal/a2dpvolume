@@ -238,15 +238,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
 						.setContentTitle(
 								getResources().getString(R.string.app_name))
 						.setContentIntent(contentIntent)
-						.setSmallIcon(R.drawable.icon5)
+						.setSmallIcon(R.drawable.ic_launcher)
 						.setContentText(
 								getResources().getString(R.string.ServRunning))
 						.setPriority(Notification.PRIORITY_MIN).build();
 			}else{
-				not = new Notification(R.drawable.icon5, "A2DP",
-						System.currentTimeMillis());
 				mNotificationManager = (NotificationManager) getSystemService(ns);
-                not = new Notification(R.drawable.icon5, "A2DP",
+                not = new Notification(R.drawable.ic_launcher, "A2DP",
                                 System.currentTimeMillis());
                 Context context = getApplicationContext();
                 CharSequence contentTitle = getResources().getString(
@@ -1158,11 +1156,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
 							.setContentTitle(
 									getResources().getString(R.string.app_name))
 							.setContentIntent(contentIntent)
-							.setSmallIcon(R.drawable.icon5)
+							.setSmallIcon(R.drawable.ic_launcher)
 							.setContentText(temp)
 							.setPriority(Notification.PRIORITY_MIN).build();
 				}else{
-					not = new Notification(R.drawable.icon5, "A2DP",
+					not = new Notification(R.drawable.ic_launcher, "A2DP",
 							System.currentTimeMillis());
 					Context context = getApplicationContext();
 					CharSequence contentTitle = getResources().getString(R.string.app_name);
@@ -1503,6 +1501,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		if (mTtsReady) {
 			myHash = new HashMap<String, String>();
 
+			if(input == null){
+				Toast.makeText(application, "No input", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
 			myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, A2DP_Vol);
 			// trim off very long strings
 			if (input.length() > MAX_MESSAGE_LENGTH)
