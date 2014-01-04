@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.text.MessageFormat;
 
 import android.accessibilityservice.AccessibilityService;
@@ -1497,20 +1499,27 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 	};
 
-	public void TextReader(String input) {
+
+	
+	public void TextReader(String rawinput) {
 		if (mTtsReady) {
 			myHash = new HashMap<String, String>();
 
-			if(input == null){
+			if(rawinput == null){
 				Toast.makeText(application, "No input", Toast.LENGTH_LONG).show();
 				return;
 			}
 			
+			String input = rawinput.replaceAll("http.*? ", ", URL, ");;
+			
 			myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, A2DP_Vol);
+			
 			// trim off very long strings
-			if (input.length() > MAX_MESSAGE_LENGTH)
+			if (input.length() > MAX_MESSAGE_LENGTH){
 				input = input.substring(0, MAX_MESSAGE_LENGTH);
-
+				input += " , , , message truncated";
+			}
+			
 			musicWasPlaying = am2.isMusicActive();
 
 			switch (SMSstream) {

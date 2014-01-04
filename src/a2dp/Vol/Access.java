@@ -114,6 +114,7 @@ public class Access extends AccessibilityService {
 				// We have to extract the information from the view
 				Notification notification = (Notification) event
 						.getParcelableData();
+				if(notification == null)return;
 				RemoteViews views = notification.bigContentView;
 				if (views == null)
 					views = notification.contentView;
