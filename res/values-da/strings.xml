@@ -82,7 +82,7 @@
     <string name="ImportCompletedText">Import Successful</string>
     <string name="NobtSupport">Din enhed har åbenbart ikke support for bluetooth.</string>
     <string name="btEnableFail">Fejlede i at aktivere bluetooth</string>
-    <string name="usePassiveOff">Brug ike passiv lokations Lytter</string>
+    <string name="usePassiveOff">Brug ikke passiv lokations Lytter</string>
     <string name="usePassiveOn">Brug også passiv Placering</string>
     <string name="usePassiveTitle">Brug Passive placering?</string>
     <string name="useNetworkTitle">Brug Netværks placering</string>
@@ -155,16 +155,17 @@
         <item>-</item>
         <item>Denne service vil starte som en baggrunds program uden ikon i notifikations baren.</item>
     </string-array>
-    <string name="sleepAfterLaunch">-</string>
-    <string name="PrefsGTalkOFF">-</string>
-    <string name="PrefsGTalk">-</string>
-    <string name="title_activity_packages_chooser">-</string>
-    <string name="PrefsGTalkON">-</string>
-    <string name="PrefsNotifyTitle">-</string>
-    <string name="ignoreTTSMissing">-</string>
-    <string name="PackagesTitle">-</string>
-    <string name="PrefsNotificationSummary">-</string>
-    <string name="launchCarMode">-</string>
-    <string name="action_settings">-</string>
-    <string name="accessDescription">-</string>
+    <string name="sleepAfterLaunch">Gå i dvale efter program start</string>
+    <string name="PrefsGTalkOFF">Notifikations beskeder vil ikke blive læst</string>
+    <string name="PrefsGTalk">Aktivér læsning afnotifikations Beskeder</string>
+    <string name="title_activity_packages_chooser">Reagér til de her programmer</string>
+    <string name="PrefsGTalkON">Notifikations Beskeder vil blive læst når enheden er forbundet</string>
+    <string name="PrefsNotifyTitle">Brug Notifikations Ikon?</string>
+    <string name="ignoreTTSMissing">Ignorér dette</string>
+    <string name="PackagesTitle">Programmer for Tilgænlighed</string>
+    <string name="PrefsNotificationSummary">Notifikations Synlighed</string>
+    <string name="launchCarMode">Start Bil Modus</string>
+    <string name="action_settings">Instillinger</string>
+    <string name="accessDescription">Bruges til at læse notifikationer der er forbundet til en enhed der bruger A2DP Volume</string>
 </resources>
+
