@@ -13,6 +13,7 @@
 <CheckBoxPreference android:summaryOn="@string/PrefsHeadsetON" android:summaryOff="@string/PrefsHeadsetOFF" android:title="@string/PrefsHeadset" android:key="headset" android:defaultValue="false"></CheckBoxPreference>
 <CheckBoxPreference android:summaryOff="@string/PrefsPowerOFF" android:title="@string/PrefsPower" android:summaryOn="@string/PrefsPowerON" android:key="power" android:defaultValue="false"/><CheckBoxPreference android:summaryOn="@string/PrefsTTSON" android:summaryOff="@string/PrefsTTSOFF" android:defaultValue="false" android:title="@string/PrefsTTS" android:key="enableTTS"></CheckBoxPreference>
 <CheckBoxPreference android:defaultValue="true" android:summaryOff="@string/PrefsGTalkOFF" android:summaryOn="@string/PrefsGTalkON" android:enabled="true" android:title="@string/PrefsGTalk" android:key="enableGTalk"/>
+<CheckBoxPreference android:key="hideVolUi" android:summaryOff="@string/PrefsHideVolUiOFF" android:defaultValue="false" android:title="@string/PrefsHideVolUI" android:summaryOn="@string/PrefsHideVolUiON"/>
 
 
 
