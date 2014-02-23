@@ -3,17 +3,10 @@ package a2dp.Vol;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.text.MessageFormat;
 
-import android.accessibilityservice.AccessibilityService;
-import android.accessibilityservice.AccessibilityServiceInfo;
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -33,8 +26,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.location.LocationManager;
 import android.media.AudioManager;
@@ -45,24 +36,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.PowerManager;
 import android.os.RemoteException;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
-import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toast;
 
 public class service extends Service implements OnAudioFocusChangeListener {
@@ -107,6 +90,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	HashMap<String, String> myHash;
 	private boolean toasts = true;
 	private boolean notify = true;
+	private static boolean hideVolUi = false;
 	private NotificationManager mNotificationManager = null;
 	private boolean speakerPhoneWasOn = true;
 	private boolean musicWasPlaying = false;
@@ -178,6 +162,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			enableSMS = preferences.getBoolean("enableTTS", false);
 			enableGTalk = preferences.getBoolean("enableGTalk", true);
 			notify_pref = preferences.getString("notify_pref", "always");
+			hideVolUi = preferences.getBoolean("hideVolUi", false);
 			// Long yyy = new Long(preferences.getString("gpsTime", "15000"));
 			MAX_TIME = Long.valueOf(preferences.getString("gpsTime", "15000"));
 
@@ -1030,6 +1015,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	// makes the media volume adjustment
 	public static void setVolume(int inputVol, Context sender) {
 
+		
 		int curvol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 		if (inputVol < 0)
 			inputVol = 0;
@@ -1043,25 +1029,31 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 				@Override
 				public void onFinish() {
+					int ui = 0;
+					if(hideVolUi)ui = 0; else ui = AudioManager.FLAG_SHOW_UI;
 					am2.setStreamVolume(AudioManager.STREAM_MUSIC, minputVol,
-							AudioManager.FLAG_SHOW_UI);
+							ui);
 				}
 
 				@Override
 				public void onTick(long millisUntilFinished) {
+					int ui = 0;
+					if(hideVolUi)ui = 0; else ui = AudioManager.FLAG_SHOW_UI;
 					int cvol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
 					int newvol = cvol;
 					if ((cvol + 1) < minputVol)
 						++newvol;
 					am2.setStreamVolume(AudioManager.STREAM_MUSIC, newvol,
-							AudioManager.FLAG_SHOW_UI);
+							ui);
 				}
 
 			}.start();
-		} else
+		} else{
+			int ui = 0;
+			if(hideVolUi)ui = 0; else ui = AudioManager.FLAG_SHOW_UI;
 			am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol,
-					AudioManager.FLAG_SHOW_UI);
-
+					ui);
+		}
 	}
 
 	// captures the media volume so it can be later restored
@@ -1093,8 +1085,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			inputVol = 0;
 		if (inputVol > am2.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL))
 			inputVol = am2.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
+		if(hideVolUi){
 		am2.setStreamVolume(AudioManager.STREAM_VOICE_CALL, inputVol,
 				AudioManager.FLAG_SHOW_UI);
+		}
+		else{
+			am2.setStreamVolume(AudioManager.STREAM_VOICE_CALL, inputVol,0);
+		}
 		outVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
 		return outVol;
 	}

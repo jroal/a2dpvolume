@@ -166,4 +166,5 @@
     <string name="PrefsNotificationSummary">Visibilité de la notification</string>
     <string name="launchCarMode">Lancer mode conduite</string>
     <string name="action_settings">Paramètres</string>
+    <string name="sleepAfterLaunch">-</string>
 </resources>

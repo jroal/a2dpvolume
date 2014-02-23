@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="a2dp.Vol"
     android:installLocation="internalOnly"
-    android:versionCode="120"
-    android:versionName="2.11.7" >
+    android:versionCode="121"
+    android:versionName="2.11.8" >
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
@@ -134,6 +134,10 @@
         <activity
             android:name="a2dp.Vol.PackagesChooser"
             android:label="@string/title_activity_packages_chooser" android:parentActivityName="a2dp.Vol.main">
+            <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="a2dp.Vol.main" />
+            
         </activity>
     </application>
 

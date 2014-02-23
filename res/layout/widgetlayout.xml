@@ -18,7 +18,7 @@
     android:shadowColor="#000000"
     android:text="@string/GetLocButtonString"
     android:textColor="#FF0000"
-    android:textSize="10sp"
+    android:textSize="12sp"
     android:textStyle="bold"
     android:width="40dp" >
 
