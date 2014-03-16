@@ -167,4 +167,7 @@
     <string name="title_activity_packages_chooser">Reagiere auf diese Apps</string>
     <string name="action_settings">Einstellungen</string>
     <string name="PackagesTitle">Apps mit Accessibility-Funktionen</string>
+    <string name="PrefsHideVolUI">Verstecke Lautstärke-Popup</string>
+    <string name="PrefsHideVolUiON">Lautstärke-Popup wird nicht angezeigt</string>
+    <string name="PrefsHideVolUiOFF">Lautstärke-Popup wird angezeigt</string>
 </resources>
