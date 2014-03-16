@@ -252,7 +252,8 @@ public class Access extends AccessibilityService {
 		 * Toast.makeText(this.getApplicationContext(), " connected",
 		 * Toast.LENGTH_LONG).show();
 		 */
-		setServiceInfo(android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_SPOKEN);
+		//setServiceInfo(android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_SPOKEN);
+		setServiceInfo(android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_GENERIC);
 		//lastWhen = System.currentTimeMillis();
 		super.onServiceConnected();
 	}
