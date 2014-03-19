@@ -167,4 +167,7 @@
     <string name="launchCarMode">Lancer mode conduite</string>
     <string name="action_settings">Paramètres</string>
     <string name="sleepAfterLaunch">-</string>
+    <string name="PrefsHideVolUI">Cacher notifications de volume</string>
+    <string name="PrefsHideVolUiON">Notifications de volume cachées</string>
+    <string name="PrefsHideVolUiOFF">Notifications de volume montrées</string>
 </resources>

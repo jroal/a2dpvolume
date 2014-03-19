@@ -167,5 +167,7 @@
     <string name="launchCarMode">Start Bil Modus</string>
     <string name="action_settings">Instillinger</string>
     <string name="accessDescription">Bruges til at læse notifikationer der er forbundet til en enhed der bruger A2DP Volume</string>
+    <string name="PrefsHideVolUI">Gem volume pop-up</string>
+    <string name="PrefsHideVolUiON">Volume pop-up vises ikke</string>
+    <string name="PrefsHideVolUiOFF">Volume pop-up vises</string>
 </resources>
-

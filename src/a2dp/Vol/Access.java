@@ -63,7 +63,8 @@ public class Access extends AccessibilityService {
 				.getString("packages",
 						"com.google.android.talk,com.android.email,com.android.calendar");
 		packages = packagelist.split(",");
-		setServiceInfo(android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_SPOKEN);
+		//setServiceInfo(android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_SPOKEN);
+		setServiceInfo(android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_GENERIC);
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -186,12 +187,15 @@ public class Access extends AccessibilityService {
 					//Log.e("NotificationClassifier", e.toString());
 				}
 
-				// if the message has returns we only want the last string (Hangouts fix)
-				String temp = text.get(text.size() - 1);
-				if (temp.indexOf("\n") > -1)
-					str += name + ", " + temp.substring(temp.lastIndexOf("\n"));
-				else
-					str += name + ", " + temp;
+				if (text.size() > 0) {
+					// if the message has returns we only want the last string (Hangouts fix)
+					String temp = text.get(text.size() - 1);
+					if (temp.indexOf("\n") > -1)
+						str += name + ", "
+								+ temp.substring(temp.lastIndexOf("\n"));
+					else
+						str += name + ", " + temp;
+				}
 			} else {
 
 				List<CharSequence> notificationList = event.getText();
