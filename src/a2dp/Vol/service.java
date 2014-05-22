@@ -682,11 +682,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				runApp(bt2);
 		}
 
-		mTts = new TextToSpeech(application, listenerStarted);
-		IntentFilter messageFilter = new IntentFilter(
-				"a2dp.vol.service.MESSAGE");
-		application.registerReceiver(tmessage, messageFilter);
-		if (enableGTalk) {
+		
+		if (enableGTalk && bt2.isEnableTTS()) {
+			mTts = new TextToSpeech(application, listenerStarted);
+			IntentFilter messageFilter = new IntentFilter(
+					"a2dp.vol.service.MESSAGE");
+			application.registerReceiver(tmessage, messageFilter);
 			IntentFilter sco_filter = new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED);
 			this.registerReceiver(sco_change, sco_filter);
 			talk = true;

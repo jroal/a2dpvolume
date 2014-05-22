@@ -254,15 +254,18 @@ public class PackagesChooser extends Activity {
 	    	
 	    	packagelist = "";
 	    	int i=0;
-	    	for(AppInfoCache info: mFullAppList){
-	    		if(info.isChecked()){
-	    			if(i>0)packagelist += ",";
-	    			
-	    			packagelist += info.getPackageName();	
-	    		}
-	    		++i;
-	    	}
-	    	SharedPreferences.Editor editor = preferences.edit();
+	    	if (!mFullAppList.isEmpty()) {
+				for (AppInfoCache info : mFullAppList) {
+					if (info.isChecked()) {
+						if (i > 0)
+							packagelist += ",";
+
+						packagelist += info.getPackageName();
+					}
+					++i;
+				}
+			}
+			SharedPreferences.Editor editor = preferences.edit();
 	    	editor.putString("packages", packagelist);
 	    	editor.commit();
 	    	Intent intent = new Intent();
