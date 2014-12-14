@@ -1828,7 +1828,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		try {
 			UiModeManager mm = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
 			if (mode)
-				mm.enableCarMode(0);
+				mm.enableCarMode(UiModeManager.ENABLE_CAR_MODE_GO_CAR_HOME);
 			else
 				mm.disableCarMode(0);
 
