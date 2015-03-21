@@ -18,7 +18,11 @@ If you can't get the text message reader working, read http://code.google.com/p/
 
 Known issue with older Samsung Galaxy S phones not capturing location.  See details http://code.google.com/p/a2dpvolume/issues/detail?id=28[here].
 
-Note: Google stopped supporting downloads on this site.  Old versions are available here but all new version must come from the Play Store.  If you want to be part of the testers group to get access to alpha and beta versions, go here: [https://plus.google.com/communities/110152746998730594422 https://plus.google.com/communities/110152746998730594422].  After you join that community, become a tester using this https://play.google.com/apps/testing/a2dp.Vol[link].
+Note: Google stopped supporting downloads on this site.  
+Old versions are available here but all new version must come from the Play Store.  
+If you want to be part of the testers group to get access to alpha and beta versions, go 
+https://plus.google.com/communities/110152746998730594422[here].  
+After you join that community, become a tester using this https://play.google.com/apps/testing/a2dp.Vol[link].
 
 == Basic Install
 
@@ -73,9 +77,7 @@ If you would like to become a alpha/beta tester please join this https://plus.go
 
 Use a bar code scanner in your Android device to scan the image below.  This will find the application on the Android Market for you.
 
-image:http://jimroal.com/exe/QR.png[QR]
-
-  market://search?q=pname:a2dp.Vol 
+image:http://jimroal.com/exe/QR.png["market://search?q=pname:a2dp.Vol",link="market://search?q=pname:a2dp.Vol"]
 
 Here are a few screen shots:
 
