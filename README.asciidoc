@@ -3,18 +3,22 @@ Automatically adjusts the media volume on connect and resets on disconnect.  Thi
 
 This app has experienced scope creep now and it does much more than originally intended.  In addition to the media volume and location features, it now can automatically launch apps and shortcuts, connect to another Bluetooth device when the first device connects, and turn OFF WIFI and turn ON GPS when a device is active.  Since version 2.2.0 it can also read your text messages for you when connected to a device.  Since 2.11.0 it can also read certain notification messages. That feature can help reduce driver distraction.  A2DP Volume also works with car docks, home docks, and the headset plug.  Rather than just global features, each feature can be configured by device so you can completely customize your control.
 
-The main version of this application requires Android 4.03 or higher (2.2 or higher until version 2.11.2).  There is another version for Android 2.1 that only adjusts the media volume and capture location.  The A2.1 version is no longer updated or supported.  As soon as you get Android 2.2 or later, uninstall the A2.1 version and upgrade to the latest main app.  See the wiki entry called upgrading.
+The main version of this application requires Android 4.03 or higher (2.2 or higher until version 2.11.2).  
+There is another version for Android 2.1 that only adjusts the media volume and capture location.  
+The A2.1 version is no longer updated or supported.  As soon as you get Android 2.2 or later, 
+uninstall the A2.1 version and upgrade to the latest main app.  
+See the wiki entry called link:../../wiki/Upgrading[upgrading].
 
 One of the goals of this app is to eliminate unnecessary driver distractions.  By automatically handling certain settings and events the driver can leave the phone in a pocket or purse and keep their eyes on the road where they belong.  We have purposely not implemented several feature requests that would have required interaction while driving.
 
 The downloads are no longer updated.  Google stopped supporting new downloads to developer pages.  Now you must download the app from the Play Store (preferred) or Amazon App Store.  Test versions can be downloaded by joining the https://plus.google.com/u/0/communities/110152746998730594422[testers community] on g+
 
 == User Information
-The wiki is located link:wiki[here].
+The wiki is located link:../../wiki[here].
 
 Looking for translators.  So far this app is in US English and translated to German, Danish, and French.  If you want another language supported, post an issue to the issues list with a way to contact you or mailto:jroal@comcast.net[email me] direct.
 
-If you can't get the text message reader working, read link:wiki/Reading-Messages[this].
+If you can't get the text message reader working, read link:../../wiki/Reading-Messages[this].
 
 Known issue with older Samsung Galaxy S phones not capturing location.  See details http://code.google.com/p/a2dpvolume/issues/detail?id=28[here].
 
@@ -61,7 +65,7 @@ This project was written in Java using the Android SDK.  Parts of the project we
 == Other Details
 A2DP = Advanced Audio Distribution Profile.  It is a Bluetooth communication profile for streaming stereo audio.  
 
-This application currently only supports US English, French, and German.  I can add support for other languages if people request it.  Add an issue to the issues list for the languages you want supported.  Be prepared to help us with the translations.  If one of the non-English translations is incorrect, please enter an issue for that as well.  Here is more info on what it takes to help with http://code.google.com/p/a2dpvolume/wiki/Translations[translations].
+This application currently only supports US English, French, and German.  I can add support for other languages if people request it.  Add an issue to the issues list for the languages you want supported.  Be prepared to help us with the translations.  If one of the non-English translations is incorrect, please enter an issue for that as well.  Here is more info on what it takes to help with link:../../wiki/Translations[translations].
 
 Want an older version?  Nearly all previous versions are available for download http://code.google.com/p/a2dpvolume/downloads/list?can=1&q=&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount[here].
 
@@ -84,7 +88,7 @@ Here are a few screen shots:
 image:http://jimroal.com/A2DPScreens/Main.png["Main",height=500] 
 image:http://jimroal.com/A2DPScreens/EditDevice.png["Edit Device",height=500,float="left"]
 
-Click http://code.google.com/p/a2dpvolume/wiki/ScreenShots[here]
+Click link:../../wiki/ScreenShots[here]
 for more screen shots.
 
 Click http://www.youtube.com/watch?v=3sy_pCbJHA0&list=PL8B87E2415E38D95E&feature=plpp_play_all[here] for the video.
