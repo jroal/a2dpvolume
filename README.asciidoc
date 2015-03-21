@@ -9,12 +9,12 @@ One of the goals of this app is to eliminate unnecessary driver distractions.  B
 
 The downloads are no longer updated.  Google stopped supporting new downloads to developer pages.  Now you must download the app from the Play Store (preferred) or Amazon App Store.  Test versions can be downloaded by joining the https://plus.google.com/u/0/communities/110152746998730594422[testers community] on g+
 
-== See the Users Manual in the Wiki Tab
-*http://code.google.com/p/a2dpvolume/wiki/Manual *
+== User Information
+The wiki is located link:wiki[here].
 
 Looking for translators.  So far this app is in US English and translated to German, Danish, and French.  If you want another language supported, post an issue to the issues list with a way to contact you or mailto:jroal@comcast.net[email me] direct.
 
-If you can't get the text message reader working, read http://code.google.com/p/a2dpvolume/wiki/Reading_SMS[this].
+If you can't get the text message reader working, read link:wiki/Reading-Messages[this].
 
 Known issue with older Samsung Galaxy S phones not capturing location.  See details http://code.google.com/p/a2dpvolume/issues/detail?id=28[here].
 
