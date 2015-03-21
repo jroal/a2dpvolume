@@ -21,13 +21,14 @@ Known issue with older Samsung Galaxy S phones not capturing location.  See deta
 Note: Google stopped supporting downloads on this site.  Old versions are available here but all new version must come from the Play Store.  If you want to be part of the testers group to get access to alpha and beta versions, go here: [https://plus.google.com/communities/110152746998730594422 https://plus.google.com/communities/110152746998730594422].  After you join that community, become a tester using this https://play.google.com/apps/testing/a2dp.Vol[link].
 
 == Basic Install
- # Pair device using the Android settings screen.  {{{[menu key] -> [Settings] -> [Wireless & networks] -> [Bluetooth settings] -> [Scan for devices]}}}.  Your device will need to show connected on this screen.  Here is a video explaining it: http://www.youtube.com/watch?v=8-wuRA9I0RM .  
- # Install my app from the Android Market or this website. 
- # In my app, click {{{[Find Devices]}}}.  This should return a list of paired Bluetooth devices.  Your Bluetooth will need to be ON for this to work.  That means the Bluetooth symbol should be in the status bar area.  If it is not ON this app will attempt to turn it ON when finding devices.  If you plan to use this app with home dock, car dock, or the audio jack, you need to first select that in the preferences.  See manual for details.
- # Select each Bluetooth device from the list in my app.  Short click on the device in the list will open a dialog box so you can configure it.  
- # Click the {{{[Edit]}}} (center button) and you can now edit the specific settings for the Bluetooth device.  Here is where you set options you want for this specific device.  See the manual for more details. 
- # Click the {{{[Save]}}} button when complete. 
- # Back at the main menu in my app, you should see the right button now says "Stop Service".  That means the app is ready to adjust volume and capture location data.  If you were already connected to the Bluetooth device when you installed and configured my app then you will need to disconnect and reconnect for it to trigger the volume and location capture.  
+
+. Pair device using the Android settings screen.  +[menu key] -> [Settings] -> [Wireless & networks] -> [Bluetooth settings] -> [Scan for devices]+.  Your device will need to show connected on this screen.  http://www.youtube.com/watch?v=8-wuRA9I0RM[Here] is a video explaining it.  
+. Install my app from the Android Market or this website. 
+. In my app, click +[Find Devices]+.  This should return a list of paired Bluetooth devices.  Your Bluetooth will need to be ON for this to work.  That means the Bluetooth symbol should be in the status bar area.  If it is not ON this app will attempt to turn it ON when finding devices.  If you plan to use this app with home dock, car dock, or the audio jack, you need to first select that in the preferences.  See manual for details.
+. Select each Bluetooth device from the list in my app.  Short click on the device in the list will open a dialog box so you can configure it.  
+. Click the +[Edit]+ (center button) and you can now edit the specific settings for the Bluetooth device.  Here is where you set options you want for this specific device.  See the manual for more details. 
+. Click the +[Save]+ button when complete. 
+. Back at the main menu in my app, you should see the right button now says "Stop Service".  That means the app is ready to adjust volume and capture location data.  If you were already connected to the Bluetooth device when you installed and configured my app then you will need to disconnect and reconnect for it to trigger the volume and location capture.  
 
 
 If you can read software code, look in the "source" tab above.  You can use the 
@@ -40,6 +41,7 @@ Please submit any bug reports or ideas for future enhancements in the issues lis
 You can name each Bluetooth device with a more meaningful name.  Android native gets the device name from the remote device and does not let you rename it (until Android 4.0 and up).  If you have more than one of those devices, they all look the same in Android.
 
 Allows you to configure each device separately to:  
+
   * Capture location on disconnect. Triggers a GPS listener to capture the most accurate location.  If a GPS location of a configurable accuracy is not found in a configurable amount of time, it turns the listener back OFF to save your battery.
   * Adjust media volume on connect, restore on disconnect
   * Adjust phone in-call volume on connect, restore on disconnect
