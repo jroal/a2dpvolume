@@ -17,11 +17,13 @@ The downloads are no longer updated.  Google stopped supporting new downloads to
 == User Information
 The wiki is located link:../../wiki[here].
 
+Please read the link:../../wiki/Manual[manual] to get started.
+
 Looking for translators.  So far this app is in US English and translated to German, Danish, and French.  If you want another language supported, post an issue to the issues list with a way to contact you or mailto:jroal@comcast.net[email me] direct.
 
 If you can't get the text message reader working, read link:../../wiki/Reading-Messages[this].
 
-Known issue with older Samsung Galaxy S phones not capturing location.  See details http://code.google.com/p/a2dpvolume/issues/detail?id=28[here].
+For known issues, see link:../../issues[the issue list]
 
 Note: Google stopped supporting downloads on this site.  
 Old versions are available here but all new version must come from the Play Store.  
