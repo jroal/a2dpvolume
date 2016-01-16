@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="deviceName">Entrer le nom de l\'appareil</string>
+    <string name="Edit">Modifier</string>
+    <string name="Delete">Effacer</string>
+    <string name="app_name">Volume A2DP</string>
+    <string-array name="gpsDistance_items">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string-array name="gpsTimeout">
+        <item>Desactiver le GPS</item>
+        <item>5 secondes</item>
+        <item>10 secondes</item>
+        <item>15 secondes</item>
+        <item>20 secondes</item>
+        <item>30 secondes</item>
+        <item>45 secondes</item>
+    </string-array>
+    <string-array name="gpsDistance">
+        <item>2m</item>
+        <item>5m</item>
+        <item>10m</item>
+        <item>15m</item>
+        <item>20m</item>
+        <item>30m</item>
+    </string-array>
+    <string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>45000</item>
+    </string-array>
+    <string name="MediaVolume">Volume média</string>
+    <string name="DeleteDataMsg">Voulez-vous vraiment effacer toutes les données d\'appareils stockées dans A2DP?</string>
+    <string name="app_not_found">Application non trouvée</string>
+    <string name="ExportDB">Exporter les données sur carte SD</string>
+    <string name="MenuExit">Quitter</string>
+    <string name="MenumanageData">Gérer les données</string>
+    <string name="MenuDeleteData">Effacer toutes les données</string>
+    <string name="ExportXML">Exporter les données XML sur carte SD</string>
+    <string name="btNotOn">Détails de l\'appareil non disponible</string>
+    <string name="FindDevices">Découvrir les appareils</string>
+    <string name="OK">OK</string>
+    <string name="connectBT">Connecter aussi l\'appareil Bluetooth</string>
+    <string name="ImportDB">Importation des données de carte SD</string>
+    <string name="PrefsCarMode">Réaction au mode Voiture</string>
+    <string name="PrefsBootstart">Activer au démarrage?</string>
+    <string name="PrefsBootstartOFF">Le service ne sera pas activé au démarrage</string>
+    <string name="PrefsBootstartON">Le service sera activé au démarrage</string>
+    <string name="btEnableFail">Echec de l\'activation Bluetooth</string>
+    <string name="PrefsCatGen">Paramètres généraux</string>
+    <string name="LocationString">Position</string>
+    <string name="getLoc">Stocker position sur débranchement?</string>
+    <string name="PrefsCatGPS">Paramètres de stockage de position</string>
+    <string name="NoData">Pas de données</string>
+    <string name="No">Non</string>
+    <string name="MenuPrefs">Paramètres</string>
+    <string name="PrefsCarModeON">Réagir au mode Voiture</string>
+    <string name="ExportLocation">Exporter dernière position</string>
+    <string name="PrefsCarModeOFF">Ne pas réagir au mode Voiture.</string>
+    <string name="ImportCompletedText">Succès de l\'importation</string>
+    <string name="GetLocButtonString">Position stockée</string>
+    <string name="NobtSupport">Votre appareil ne semble pas posséder de support Bluetooth.</string>
+    <string name="MenuHelp">Aide</string>
+    <string name="ListName">Appareils Bluetooth</string>
+    <string name="useNetworkTitle">Positionnement de reseau</string>
+    <string name="save">Sauvegarder</string>
+    <string name="ServRunning">Service A2DP en cours d\'exécution</string>
+    <string name="PrefsToastsOFF">Les messages ne sont pas affichés lors du démarrage ou de l\'arrêt.</string>
+    <string name="usePassiveOff">Ne pas utiliser positionnement passif</string>
+    <string name="PrefsUseLocatStorageON">Utiliser fichier sur appareil</string>
+    <string name="PrefsHomeDockOFF">Ne pas réagir à la station</string>
+    <string name="usePassiveTitle">Positionnement passif</string>
+    <string name="PrefsNotifySummaryOFF">Le service démarrera en arrière plan, sans icône dans la zone de notification</string>
+    <string name="PrefsHomeDock">Reaction a la station d\'accueil de maison</string>
+    <string name="PrefsNotify">Informer en avant-plan?</string>
+    <string name="PrefsToastsSummary">Est-ce que les messages devraient êtres affichés lors du démarrage ou de l\'arrêt du service?</string>
+    <string name="PrefsGPSInaccuracy">Imprecision GPS maximale permise avant l\'abandon de recherche de position</string>
+    <string name="StartService">Démarrer le service</string>
+    <string name="ServiceStopped">Service A2DP arrêté</string>
+    <string name="PrefsToasts">Afficher les messages?</string>
+    <string name="PrefsGPSTimeoutTitle">Délai GPS maximum</string>
+    <string name="PrefsUseLocalStorageOFF">Utiliser fichier sur carte SD</string>
+    <string name="startApp">Démarrer une application sur connexion</string>
+    <string name="PrefsNotifySummaryON">Le service démarrera avec une icône dans la zone de notification</string>
+    <string name="useNetworkON">Utiliser aussi position du reseau</string>
+    <string name="useNetworkOFF">Ne pas utiliser position du reseau</string>
+    <string name="PrefsHomeDockON">Réagir à la station</string>
+    <string name="wifiDisconnect">Deconnecter WIFI sur connexion Bluetooth</string>
+    <string name="Yes">Oui</string>
+    <string name="ServiceStarted">Service A2DP démarré</string>
+    <string name="setVol">Modifier le volume à la connexion?</string>
+    <string name="PrefsToastsON">Les messages sont affichés lors du démarrage ou de l\'arrêt.</string>
+    <string name="PrefsUseLocalStorage">Utiliser stokage local des fichiers?</string>
+    <string name="StopService">Arrêter le service</string>
+    <string name="PrefsGPSInaccuracyTitle">Imprécision GPS maximale </string>
+    <string name="PrefsGPSTimeout">Temps maximum accordé pour trouver la position GPS la plus précise</string>
+    <string name="usePassiveOn">Utiliser aussi positionnement passif</string>
+    <string name="Editsetpv">Régler volume d\'appel sur branchement?</string>
+    <string name="PrefsHeadsetON">Réagir à prise casque</string>
+    <string name="needTTS">Synthèse vocale non trouvée. Installer maintenant?</string>
+    <string name="PrefsHeadset">Réaction à prise de casque?</string>
+    <string name="PrefsTTSON">Les SMS seront lus lorsque branché</string>
+    <string name="TTSready">Synthèse vocale prête</string>
+    <string name="TTSNotReady">Synthèse pas prête</string>
+    <string name="ae_stop_app_warning_title">Quelle est cette application?</string>
+    <string name="PrefsHeadsetOFF">Ne pas réagir à prise casque</string>
+    <string name="PrefsOtherConnectedIcon">Icône de branchement</string>
+    <string name="PrefsTTS">Activer lecture des SMS?</string>
+    <string name="PrefsTTSOFF">Les SMS ne seront pas lus</string>
+    <string name="SMSDelayText">Délai pour lire un SMS</string>
+    <string name="app_restart">Forcer le redémarrage?</string>
+    <string name="carDockName">Mode voiture</string>
+    <string name="EditPhoneVolume">Volume d\'appel du téléphone</string>
+    <string name="connectedTo">Branché à</string>
+    <string name="ea_ti_app">Application à démarrer</string>
+    <string name="ae_stop_app_warning_message">A2DP ne peut arrêter les activités sans nom</string>
+    <string name="audioJackName">Prise de casque</string>
+    <string name="homeDockName">Mode maison</string>
+    <string name="msgTemplate">… Message de: {0} .. {1}</string>
+    <string name="Class">Classe</string>
+    <string name="SMS_Stream_desc">Selectionner le chemin de sortie pour le son des SMS</string>
+    <string name="NotBonded">Non relié</string>
+    <string name="Bonding">Liaison</string>
+    <string name="Error">Erreur</string>
+    <string name="Bonded">Relié</string>
+    <string name="PrefsVolRampTitle">Monter le volume progressivement?</string>
+    <string name="PrefsVolAdjDelaySummary">Délai entre branchement et ajustement progressif du volume.</string>
+    <string name="app_kill">Arrêter une application sur débranchement?</string>
+    <string name="powerPlugName">Alimentation</string>
+    <string name="PrefsPowerOFF">Ne pas réagir au branchement de l\'alimentation</string>
+    <string name="PrefsPowerON">Réagir au branchement de l\'alimentation</string>
+    <string name="enableGPS">Activer le GPS lorsque branché?</string>
+    <string name="PrefsPower">Réagir au branchement de l\'alimentation?</string>
+    <string name="SMSAlarmStream">Flux d\'alarme</string>
+    <string name="SMSVoiceStream">Flux d\'appel vocal</string>
+    <string name="SMSMusicStream">Flux de musique</string>
+    <string name="silentMode">Notifications silencieuses lorsque branché?</string>
+    <string name="rememberMediaVol">Sauvegarder automatiquement le volume média sur débranchement</string>
+    <string name="PrefsGTalkOFF">Les Messages Google Talk ne seront pas lus</string>
+    <string name="PrefsGTalk">Activer la lecture des messages Google Talk</string>
+    <string name="PrefsGTalkON">Les messages Google Talk seront lus lorsque connexion établie</string>
+    <string name="ignoreTTSMissing">Ignorer ceci</string>
+    <string-array name="PrefsNotifyItems">
+        <item>always</item>
+        <item>connected_only</item>
+        <item>never</item>
+    </string-array>
+    <string-array name="PrefsNotifyOptions">
+        <item>Le service démarrera avec une icône dans la zone de notification</item>
+        <item>Une icône ne sera montrée que lorsque une connexion est établie</item>
+        <item>Le service démarrera en arrière plan, sans icône dans la zone de notification</item>
+    </string-array>
+    <string name="accessDescription">Utilisé pour lire les notification lorsque connecté à un appareil utilisant A2DP Volume</string>
+    <string name="title_activity_packages_chooser">Repondre à ces applications</string>
+    <string name="PrefsNotifyTitle">Utiliser une icône de notification?</string>
+    <string name="PackagesTitle">Apps pour accessibilité</string>
+    <string name="PrefsNotificationSummary">Visibilité de la notification</string>
+    <string name="launchCarMode">Lancer mode conduite</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="sleepAfterLaunch">-</string>
+    <string name="PrefsHideVolUI">Cacher notifications de volume</string>
+    <string name="PrefsHideVolUiON">Notifications de volume cachées</string>
+    <string name="PrefsHideVolUiOFF">Notifications de volume montrées</string>
+</resources>

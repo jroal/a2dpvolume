@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">A2DP Volume</string>
+    <string-array name="gpsDistance">
+        <item>2μ. (6πόδια)</item>
+        <item>5μ. (15πόδια)</item>
+        <item>10μ. (30πόδια) </item>
+        <item>15μ. (45πόδια)</item>
+        <item>20μ. (60πόδια)</item>
+        <item>30μ. (90πόδια)</item>
+    </string-array>
+    <string-array name="gpsTimeout">
+        <item>Απενεργοποίηση δέκτη GPS</item>
+        <item>5 δευτερόλεπτα</item>
+        <item>10 δευτερόλεπτα</item>
+        <item>15 δευτερόλεπτα</item>
+        <item>20 δευτερόλεπτα</item>
+        <item>30 δευτερόλεπτα</item>
+        <item>45 δευτερόλεπτα</item>
+    </string-array>
+    <string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>45000</item>
+    </string-array>
+    <string-array name="gpsDistance_items">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string name="ListName">Συσκευές Bluetooth</string>
+    <string name="GetLocButtonString">Αποθηκευμένες Θέσεις</string>
+    <string name="StartService">Εναρξη Υπηρεσίας</string>
+    <string name="StopService">Τερματισμός Υπηρεσίας</string>
+    <string name="FindDevices">Αναζήτηση Συσκευών</string>
+    <string name="MediaVolume">Ενταση Αναπαραγωγής</string>
+    <string name="ServiceStarted">Η Υπηρεσία A2DP Volume ξεκίνησε</string>
+    <string name="ServiceStopped">Η Υπηρεσία A2DP Volume σταμάτησε</string>
+    <string name="ExportDB">Εξαγωγή Βάσης στην κάρτα SD</string>
+    <string name="ExportXML">Εξαγωγή Βάσης ως XML στην κάρτα SD</string>
+    <string name="ImportDB">Εισαγωγή Βάσης απο κάρτα SD</string>
+    <string name="ExportLocation">Εξαγωγή Τελευταίας Θέσης</string>
+    <string name="PrefsNotifySummaryON">Η Υπηρεσία θα ξεκινήσει κανονικά με εμφάνιση εικονιδίου στην μπάρα ειδοποιήσεων.</string>
+    <string name="PrefsNotifySummaryOFF">Η Υπηρεσία θα ξεκινήσει στο παρασκήνιο χωρίς εμφάνιση εικονιδίου στην μπάρα ειδοποιήσεων.</string>
+    <string name="PrefsNotify">Ειδοποίηση ενεργή;</string>
+    <string name="PrefsGPSTimeoutTitle">Λήξη χρόνου δέκτη GPS</string>
+    <string name="PrefsGPSTimeout">Μέγιστος χρόνος αναζήτησης καλύτερης θέσης στίγματος του δέκτη GPS μετά απο αποσύνδεση του bluetooth.</string>
+    <string name="PrefsGPSInaccuracyTitle">Μέγιστη Ανακρίβεια στίγματος GPS</string>
+    <string name="PrefsGPSInaccuracy">Μέγιστη ανακρίβεια στίγματος GPS, σε μέτρα προτού ο δέκτης σταματήσει να ψάχνει για καλύτερη θέση.</string>
+    <string name="PrefsCarModeON">Ανταπόκριση σε Λειτουργία Οχήματος</string>
+    <string name="PrefsCarModeOFF">Χωρίς ανταπόκριση σε Λειτουργία Οχήματος.</string>
+    <string name="PrefsCarMode">Ανταπόκριση σε Λειτουργία Οχήματος;</string>
+    <string name="PrefsCatGPS">Ρυθμίσεις Τοποθεσίας</string>
+    <string name="PrefsCatGen">Γενικές Ρυθμίσεις</string>
+    <string name="PrefsBootstart">Εναρξη κατά την εκκίνηση τηλεφώνου;</string>
+    <string name="PrefsBootstartON">Η Υπηρεσία θα ξεκινά αυτόματα.</string>
+    <string name="PrefsBootstartOFF">Η Υπηρεσία δεν θα ξεκινά αυτόματα.</string>
+    <string name="PrefsToasts">Εμφάνιση αναδυόμενων παραθύρων;</string>
+    <string name="PrefsToastsON">Τα αναδυόμενα παράθυρα εμφανίζονται όταν η υπηρεσία ξεκινά ή σταματά.</string>
+    <string name="PrefsToastsOFF">Τα αναδυόμενα παράθυρα δεν εμφανίζονται όταν η υπηρεσία ξεκινά ή σταματά.</string>
+    <string name="PrefsToastsSummary">Να εμφανίζονται τα αναδυόμενα παράθυρα όταν η υπηρεσία ξεκινά ή σταματά;</string>
+    <string name="MenuExit">Εξοδος</string>
+    <string name="MenumanageData">Διαχείρηση</string>
+    <string name="MenuDeleteData">Διαφραφή όλων</string>
+    <string name="MenuPrefs">Προτιμήσεις</string>
+    <string name="MenuHelp">Βοήθεια</string>
+    <string name="DeleteDataMsg">Επιθυμείτε διαγραφή όλων των δεδομένων του A2DP Volume;</string>
+    <string name="Yes">Ναί</string>
+    <string name="No">Οχι</string>
+    <string name="OK">Εντάξει</string>
+    <string name="Delete">Διαγραφή</string>
+    <string name="Edit">Αλλαγή</string>
+    <string name="NoData">Χωρίς Δεδομένα</string>
+    <string name="ServRunning">Υπηρεσία A2DP Volume ενεργή</string>
+    <string name="ImportCompletedText">Εισαγωγή επιτυχής</string>
+    <string name="NobtSupport">Η συσκευή σας δεν υποστηρίζει συσκευές bluetooth.</string>
+    <string name="btEnableFail">Αποτυχία ενεργοποίησης bluetooth</string>
+    <string name="usePassiveOff">Χωρίς χρήση παθητικής λειτουργίας λήψης τοποθεσίας</string>
+    <string name="usePassiveOn">χρήση παθητικής λειτουργίας λήψης τοποθεσίας ενεργή</string>
+    <string name="usePassiveTitle">Χρήση παθητικής λειτουργίας λήψης τοποθεσίας;</string>
+    <string name="useNetworkTitle">Χρήση τοποθεσίας μέσω δικτύου</string>
+    <string name="useNetworkON">χρήση τοποθεσίας μέσω δικτύου ενεργή</string>
+    <string name="useNetworkOFF">Χωρίς χρήση τοποθεσίας μέσω δικτύου</string>
+    <string name="LocationString">Τοποθεσία</string>
+    <string name="btNotOn">Πληροφορίες Συσκευής μη διαθέσιμες</string>
+    <string name="app_not_found">Η Εφαρμογή δεν βρέθηκε</string>
+    <string name="deviceName">Ονομασία Συσκευής</string>
+    <string name="getLoc">Λήψη τοποθεσίας κατά την αποσύνδεση;</string>
+    <string name="setVol">Ρύθμιση σε ήχο έντασης απο κανάλι μουσικής κατά τη σύνδεση;</string>
+    <string name="connectBT">Επίσης σύνδεση σε συσκευή bluetooth</string>
+    <string name="startApp">Εναρξη εφαρμογής κατά την εκκίνηση</string>
+    <string name="wifiDisconnect">Κλείσιμο WIFI όταν υπάρχει ενεργή σύνδεση bluetooth;</string>
+    <string name="save">Αποθήκευση</string>
+    <string name="PrefsUseLocatStorageON">Χρήση μνήμης συσκευής</string>
+    <string name="PrefsUseLocalStorageOFF">Χρήση μνήμης κάρτας SD</string>
+    <string name="PrefsUseLocalStorage">Χρήση εσωτερική μνήμης;</string>
+    <string name="PrefsHomeDockOFF">Χωρίς ανταπόκριση στη Βάση σπιτιού</string>
+    <string name="PrefsHomeDock">Ανταπόκριση στη Βάση σπιτιού;</string>
+    <string name="PrefsHomeDockON">Ανταπόκριση στη Βάση σπιτιού ενεργή</string>
+    <string name="ea_ti_app">Εφαρμογή για εκκίνηση</string>
+    <string name="ae_stop_app_warning_title">Ποιά είναι αυτή η εφαρμογή;</string>
+    <string name="ae_stop_app_warning_message">Προθέσεις χωρίς όνομα πακέτου δεν μπορεί να σταματήσει απο A2DP Volume</string>
+    <string name="connectedTo">Συνδέθηκε με</string>
+    <string name="PrefsOtherConnectedIcon">Εικονίδιο σύνδεσης</string>
+    <string name="app_restart">Εξαναγκασμός επανεκκίνησης εφαρμογής;</string>
+    <string name="PrefsHeadsetON">Ανταπόκριση σε σύνδεση ακουστικών ενεργή</string>
+    <string name="PrefsHeadset">Ανταπόκριση σε σύνδεση ακουστικών;</string>
+    <string name="PrefsHeadsetOFF">Χωρίς ανταπόκριση σε σύνδεση ακουστικών</string>
+    <string name="PrefsTTSON">Μηνύματα SMS θα διαβάζονται όταν υπάρχει συνδεδεμένη συσκευή</string>
+    <string name="PrefsTTS">Ενεργοποίηση ανάγνωσης μηνυμάτων SMS;</string>
+    <string name="PrefsTTSOFF">Μηνύματα SMS δεν θα διαβάζονται όταν υπάρχει συνδεδεμένη συσκευή.</string>
+    <string name="audioJackName">Ηχος ακουστικών</string>
+    <string name="needTTS">Λείπει αρχείο TTS. Εγκατάσταση;</string>
+    <string name="msgTemplate">... Μήνυμα απο: {0} .. {1}</string>
+    <string name="TTSready">Το TTS είναι έτοιμο</string>
+    <string name="TTSNotReady">Δεν είναι έτοιμο το TTS</string>
+    <string name="carDockName">Βάση οχήματος</string>
+    <string name="homeDockName">Βάση σπιτιού</string>
+    <string name="Editsetpv">Ρύθμιση σε ήχο έντασης απο κανάλι τηλεφώνου κατά τη σύνδεση;</string>
+    <string name="EditPhoneVolume">Ηχος έντασης τηλεφώνου</string>
+    <string name="SMSDelayText">Χρονοκαθυστέρηση ανάγνωσης μηνυμάτων SMS</string>
+    <string name="Bonded">Ζευγοποιήθηκε</string>
+    <string name="Error">Σφάλμα</string>
+    <string name="NotBonded">Δεν ζευγοποιήθηκε</string>
+    <string name="Bonding">Ζευγοποιήθηκε</string>
+    <string name="Class">Κλάση</string>
+    <string name="SMS_Stream_desc">Επιλέξτε πηγή ήχου μετάδοσης για τις ειδοποιήσεις μηνυμάτων</string>
+    <string name="PrefsVolAdjDelaySummary">Χρονοκαθυστέρηση μεταξύ σύνδεση σε συσκευή και ρύθμιση ανωδικής έντασης ήχου.</string>
+    <string name="PrefsVolRampTitle">Μπάρα αύξησης έντασης ήχου;</string>
+    <string name="app_kill">Τερματισμός εφαρμογής κατά την αποσύνδεση;</string>
+    <string name="PrefsPowerOFF">Χωρίς ανταπόκριση σε σύνδεση εξωτερικής τροφοδοσίας</string>
+    <string name="PrefsPower">Ανταπόκριση σε σύνδεση εξωτερικής τροφοδοσίας;</string>
+    <string name="PrefsPowerON">Ανταπόκριση σε σύνδεση εξωτερικής τροφοδοσίας ενεργή</string>
+    <string name="powerPlugName">Σύνδεση εξωτερικής τροφοδοσίας</string>
+    <string name="enableGPS">Ενεργοποίηση GPS ενώ υπάρχει σύνδεση με συσκευή;</string>
+    <string name="SMSAlarmStream">Ηχος απο κανάλι ξυπνητηρίου</string>
+    <string name="SMSVoiceStream">Ηχος απο κανάλι φωνής</string>
+    <string name="SMSMusicStream">Ηχος απο κανάλι μουσικής</string>
+    <string name="rememberMediaVol">Αυτόματη απομνημόνευση της τελευταίς πηγής ήχου κατά την αποσύνδεση</string>
+    <string name="silentMode">Σίγαση ειδοποιήσεων ενώ υπάρχει σύνδεση με συσκευή;</string>
+    <string name="ignoreTTSMissing">Αγνόηση</string>
+    <string name="PrefsGTalkOFF">Ειδοποιήσεις μηνυμάτων δεν θα διαβάζονται.</string>
+    <string name="PrefsGTalk">Ενεργοποίηση ανάγνωσης ειδοποιήσεων</string>
+    <string name="PrefsGTalkON">Μηνύματα ειδοποιήσεων θα διαβάζονται όταν υπάρχει συνδεδεμένη συσκευή.</string>
+    <string name="accessDescription">Για χρήση ανάγνωσης ειδοποιήσεων ενώ είστε συνδεδεμένος σε συσκευή κάνοντας χρήση ήχου A2DP</string>
+    <string name="sleepAfterLaunch">Σε παρασκήνιο μετά απο έναρξη εφαρμογής</string>
+    <string name="launchCarMode">Εναρξη Λειτουργείας Εντός Οχήματος</string>
+    <string-array name="PrefsNotifyOptions">
+        <item>Η Υπηρεσία θα ξεκινήσει κανονικά με εμφάνιση εικονιδίου στην μπάρα ειδοποιήσεων.</item>
+        <item>Το εικονίδιο θα εμφανίζεται μόνο όταν υπάρχουν συνδεδεμένες συσκευές.</item>
+        <item>Η Υπηρεσία θα ξεκινήσει στο παρασκήνιο χωρίς εμφάνιση εικονιδίου στην μπάρα ειδοποιήσεων.</item>
+    </string-array>
+    <string-array name="PrefsNotifyItems">
+        <item>πάντα</item>
+        <item>όταν συνδέεται μόνο</item>
+        <item>ποτέ</item>
+    </string-array>
+    <string name="PrefsNotifyTitle">Χρήση εικονιδίου στις ειδοποιήσεις ;</string>
+    <string name="PrefsNotificationSummary">Εμφάνιση ειδοποιήσεων</string>
+    <string name="title_activity_packages_chooser">Ειδοποίηση απο εφαρμογές</string>
+    <string name="action_settings">Ρυθμίσεις</string>
+    <string name="PackagesTitle">Πρόσβαση σε εφαρμογές</string>
+    <string name="PrefsHideVolUI">Απόκρυψη ρύθμισης έντασης</string>
+    <string name="PrefsHideVolUiON">Ρύθμιση έντασης δεν εμφανίζεται</string>
+    <string name="PrefsHideVolUiOFF">Ρύθμιση έντασης εμφανίζεται</string>
+</resources>

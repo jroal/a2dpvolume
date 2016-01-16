@@ -1,0 +1,256 @@
+
+    <ScrollView android:id="@+id/scrollView1" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
+        <TableLayout android:layout_height="wrap_content" android:id="@+id/tableLayout1" android:layout_width="match_parent">
+            <TextView android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/deviceName" android:focusable="true" android:focusableInTouchMode="true"></TextView>
+
+            <EditText
+                android:id="@+id/editDesc2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/deviceName" >
+</EditText>
+            <CheckBox android:layout_width="wrap_content" android:id="@+id/checkCaptLoc" android:text="@string/getLoc" android:layout_height="wrap_content"></CheckBox>
+            <CheckBox android:layout_width="wrap_content" android:id="@+id/checkwifi" android:text="@string/wifiDisconnect" android:layout_height="wrap_content"></CheckBox>
+
+            <CheckBox
+                android:id="@+id/silentBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/silentMode" />
+
+            <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/PrefsTTS" android:id="@+id/enableTTSBox"></CheckBox>
+
+            <TextView
+                android:id="@+id/textViewTTSDelay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/SMSDelayText" />
+
+            <LinearLayout
+                android:id="@+id/LinearLayout1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:focusable="false">
+
+                <TextView
+                    android:id="@+id/SMSdelaytextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5pt"
+                    android:layout_weight=".1"
+                    android:text="10s"
+                    android:textStyle="bold" android:layout_gravity="center_vertical" android:gravity="center_horizontal"/>
+
+                <SeekBar
+                    android:id="@+id/SMSdelayseekBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5pt"
+                    android:layout_marginRight="15pt"
+                    android:layout_weight=".9" android:focusable="true" android:focusableInTouchMode="true"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textViewStream"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/SMS_Stream_desc" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupStream"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <RadioButton
+                    android:id="@+id/streamradio0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
+                    android:checked="true"
+                    android:text="@string/SMSMusicStream" />
+
+                <RadioButton
+                    android:id="@+id/streamradio1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/SMSVoiceStream" />
+
+                <RadioButton
+                    android:id="@+id/streamradio2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/SMSAlarmStream" />
+            </RadioGroup>
+
+            <CheckBox android:layout_width="wrap_content" android:id="@+id/checkSetVol" android:text="@string/setVol" android:layout_height="wrap_content"></CheckBox>
+            <TextView android:id="@+id/textViewMediaVolume" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/MediaVolume"></TextView>
+            <SeekBar android:layout_gravity="center" android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_weight="1" android:id="@+id/seekBarVol" android:layout_marginLeft="15pt" android:layout_marginRight="15pt" android:layout_marginBottom="5pt"></SeekBar>
+
+            <CheckBox
+                android:id="@+id/autoVolcheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/rememberMediaVol"
+                android:checked="false" />
+
+            <CheckBox
+                android:id="@+id/rampBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/PrefsVolRampTitle" />
+
+            <TextView
+                android:id="@+id/textViewMediaDelay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/PrefsVolAdjDelaySummary" />
+
+            <LinearLayout
+                android:id="@+id/LinearLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_marginTop="5pt" android:layout_marginBottom="15pt" android:focusable="false">
+
+                <TextView
+                    android:id="@+id/VolDelayTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5pt"
+                    android:layout_weight=".1"
+                    android:text="10s"
+                    android:textStyle="bold" android:gravity="center_horizontal" android:layout_gravity="center_vertical"/>
+
+                <SeekBar
+                    android:id="@+id/VolDelaySeekBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5pt"
+                    android:layout_marginRight="15pt"
+                    android:layout_weight=".9" android:focusable="true" android:focusableInTouchMode="true"/>
+            </LinearLayout>
+
+            <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/checkSetpv" android:text="@string/Editsetpv"></CheckBox>
+            <TextView android:id="@+id/textViewInCallVol" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/EditPhoneVolume"></TextView>
+            <SeekBar android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_marginLeft="15pt" android:layout_marginRight="15pt" android:id="@+id/seekPhoneVol"></SeekBar>
+            <Button android:layout_width="wrap_content" android:id="@+id/chooseAppButton" android:layout_height="wrap_content" android:text="@string/startApp" android:layout_marginTop="8pt"></Button>
+            <EditText android:id="@+id/editApp" android:text="EditText" android:layout_width="match_parent" android:layout_marginBottom="5pt" android:layout_height="wrap_content" android:inputType="none"></EditText>
+            <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/appRestartCheckbox" android:text="@string/app_restart"></CheckBox>
+
+            <CheckBox
+                android:id="@+id/appKillCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_kill" />
+
+            <CheckBox
+                android:id="@+id/checkBoxSleep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sleepAfterLaunch" />
+
+            <CheckBox
+                android:id="@+id/checkBoxLaunchCar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/launchCarMode" />
+
+            <Button android:layout_width="wrap_content" android:id="@+id/chooseBTbutton" android:layout_height="wrap_content" android:text="@string/connectBT" android:layout_marginTop="5pt"></Button>
+            <EditText android:id="@+id/editBtConnect" android:text="EditText" android:layout_width="match_parent" android:layout_marginBottom="5pt" android:inputType="none" android:layout_height="wrap_content"></EditText>
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/PrefsOtherConnectedIcon" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical" >
+
+                <RadioButton
+                    android:id="@+id/iconradio0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
+                    android:checked="true"
+                    android:drawableRight="@drawable/car2" />
+
+                <RadioButton
+                    android:id="@+id/iconradio1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_horizontal"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
+                    android:drawableRight="@drawable/headset" />
+
+                <RadioButton
+                    android:id="@+id/iconradio2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
+                    android:drawableRight="@drawable/jack" />
+
+                <RadioButton
+                    android:id="@+id/iconradio3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_horizontal"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
+                    android:drawableRight="@drawable/usb" />
+
+                <RadioButton
+                    android:id="@+id/iconradio4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
+                    android:drawableRight="@drawable/icon5" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <Button
+                    android:id="@+id/EditDevCancelbutton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15pt"
+                    android:layout_weight="1"
+                    android:height="30pt"
+                    android:text="@android:string/cancel" />
+
+                <Button
+                    android:id="@+id/EditDevSavebutton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:height="30pt"
+                    android:text="@string/save" />
+            </LinearLayout>
+
+        </TableLayout>
+        
+           
+    </ScrollView>

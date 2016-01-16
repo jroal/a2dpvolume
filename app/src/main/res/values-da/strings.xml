@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">A2DP Volume</string>
+    <string-array name="gpsDistance">
+        <item>2m (6ft)</item>
+        <item>5m (15ft)</item>
+        <item>10m (30ft) </item>
+        <item>15m (45ft)</item>
+        <item>20m (60ft)</item>
+        <item>30m (90ft)</item>
+    </string-array>
+    <string-array name="gpsTimeout">
+        <item>Deaktivér GPS aflytter</item>
+        <item>5 sekunder</item>
+        <item>10 sekunder</item>
+        <item>15 sekunder</item>
+        <item>20 sekunder</item>
+        <item>30 sekunder</item>
+        <item>45 sekunder</item>
+    </string-array>
+    <string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>45000</item>
+    </string-array>
+    <string-array name="gpsDistance_items">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string name="ListName">Bluetooth Enheder</string>
+    <string name="GetLocButtonString">Gemte Locationer</string>
+    <string name="StartService">Start Service</string>
+    <string name="StopService">Stop Service</string>
+    <string name="FindDevices">Find Enheder</string>
+    <string name="MediaVolume">Media Volume</string>
+    <string name="ServiceStarted">A2DP Volume Service Startet</string>
+    <string name="ServiceStopped">A2DP Volume Service Stoppet</string>
+    <string name="ExportDB">Exportér Database til SD kortet</string>
+    <string name="ExportXML">Exportér Database som XML til SD kortet</string>
+    <string name="ImportDB">Importér Database fra SD kortet</string>
+    <string name="ExportLocation">Exportér sidste Locations Data</string>
+    <string name="PrefsNotifySummaryON">Denne service vil starte som en foregrunds program med et ikon i notifikations baren.</string>
+    <string name="PrefsNotifySummaryOFF">Denne service vil starte som en baggrunds program uden ikon i notifikations baren.</string>
+    <string name="PrefsNotify">Notificér in Foregrunden?</string>
+    <string name="PrefsGPSTimeoutTitle">GPS lytter udløbstid</string>
+    <string name="PrefsGPSTimeout">Den maximume tid GPS lytteren wil blive tilladt at køre for at finde en bedre lokation efter bluethooth er blevet deaktiveret.</string>
+    <string name="PrefsGPSInaccuracyTitle">GPS Max unøjagtighed </string>
+    <string name="PrefsGPSInaccuracy">GPS maximum unøjagtighed i meter før placerings søgning opgives.</string>
+    <string name="PrefsCarModeON">Reagér på bil Modus</string>
+    <string name="PrefsCarModeOFF">Reagér ikke på bil modus.</string>
+    <string name="PrefsCarMode">Reagér på bil Modus?</string>
+    <string name="PrefsCatGPS">Placerings indstillinger</string>
+    <string name="PrefsCatGen">Generale instillinger</string>
+    <string name="PrefsBootstart">Start ved Boot?</string>
+    <string name="PrefsBootstartON">Denne service vil starte ved boot.</string>
+    <string name="PrefsBootstartOFF">Denne service vil ikke starte ved boot.</string>
+    <string name="PrefsToasts">Vis Pop-ups?</string>
+    <string name="PrefsToastsON">Pop-up meddedelser vil blive vist når servicen starter og stopper.</string>
+    <string name="PrefsToastsOFF">Pop-up meddedelser vil ikke blive vist når servicen starter og stopper.</string>
+    <string name="PrefsToastsSummary">Skal pop-up meddedelser vises når servicen starter og stopper?</string>
+    <string name="MenuExit">Afslut</string>
+    <string name="MenumanageData">Håntér Data</string>
+    <string name="MenuDeleteData">Slet Alle Data</string>
+    <string name="MenuPrefs">Preferancer</string>
+    <string name="MenuHelp">Hjælp</string>
+    <string name="DeleteDataMsg">Vil du virkeliglig slette alle enheds data fra A2DP Volume?</string>
+    <string name="Yes">Ja</string>
+    <string name="No">Nej</string>
+    <string name="OK">OK</string>
+    <string name="Delete">Slet</string>
+    <string name="Edit">Editér</string>
+    <string name="NoData">Ingen Data</string>
+    <string name="ServRunning">A2DP Volume Service Kører</string>
+    <string name="ImportCompletedText">Import Successful</string>
+    <string name="NobtSupport">Din enhed har åbenbart ikke support for bluetooth.</string>
+    <string name="btEnableFail">Fejlede i at aktivere bluetooth</string>
+    <string name="usePassiveOff">Brug ikke passiv lokations Lytter</string>
+    <string name="usePassiveOn">Brug også passiv Placering</string>
+    <string name="usePassiveTitle">Brug Passive placering?</string>
+    <string name="useNetworkTitle">Brug Netværks placering</string>
+    <string name="useNetworkON">Brug også netværks placering</string>
+    <string name="useNetworkOFF">Brug ikke netværks Placering</string>
+    <string name="LocationString">placering</string>
+    <string name="btNotOn">Enheds information ikke tilgængelig</string>
+    <string name="app_not_found">Program ikke fundet</string>
+    <string name="deviceName">Giv enheden et navn</string>
+    <string name="getLoc">Gem placering ved frakobling?</string>
+    <string name="setVol">Sæt media volume ved tilkobling?</string>
+    <string name="connectBT">Også forbind til bluetooth enhed</string>
+    <string name="startApp">Start program ved tilkobling</string>
+    <string name="wifiDisconnect">Frakobel WIFI når bluetooth forbindes?</string>
+    <string name="save">Gem</string>
+    <string name="PrefsUseLocatStorageON">Brug enhedens fil lager</string>
+    <string name="PrefsUseLocalStorageOFF">Brug SD kort fil lager</string>
+    <string name="PrefsUseLocalStorage">Brug Lokal Fil lager?</string>
+    <string name="PrefsHomeDockOFF">Reagér ikke på Home Dock</string>
+    <string name="PrefsHomeDock">Reagér på Home Dock?</string>
+    <string name="PrefsHomeDockON">Reagér på Home Dock</string>
+    <string name="ea_ti_app">Program der skal startes</string>
+    <string name="ae_stop_app_warning_title">Hvilket program er dette?</string>
+    <string name="ae_stop_app_warning_message">Intents uden pakke navn kan ikke blive stoppet af A2DP Volume</string>
+    <string name="connectedTo">Forbundet til</string>
+    <string name="PrefsOtherConnectedIcon">Forbundet til Ikon</string>
+    <string name="app_restart">Tving program genstart?</string>
+    <string name="PrefsHeadsetON">Reagér på lydkabel</string>
+    <string name="PrefsHeadset">Reagér på lyd kabel?</string>
+    <string name="PrefsHeadsetOFF">Reagér ikke på lyd kabel</string>
+    <string name="PrefsTTSON">Tekst beskeder kan blive oplæst når en enhed er forbundet</string>
+    <string name="PrefsTTS">Aktivér oplæsning af beskeder?</string>
+    <string name="PrefsTTSOFF">Tekst beskeder vil ikke blive oplæst</string>
+    <string name="audioJackName">Lyd kabel</string>
+    <string name="needTTS">TTS data Mangler.  Installér det nu?</string>
+    <string name="msgTemplate">… Besked fra: {0} .. {1}</string>
+    <string name="TTSready">TTS klar</string>
+    <string name="TTSNotReady">TTS ikke klar</string>
+    <string name="carDockName">Car Dock</string>
+    <string name="homeDockName">Home Dock</string>
+    <string name="Editsetpv">Sæt opkalds volume ved tilkobling?</string>
+    <string name="EditPhoneVolume">Opkalds Volume</string>
+    <string name="SMSDelayText">Forsinkelse for læsning af tekst besked</string>
+    <string name="Bonded">Forbundet</string>
+    <string name="Error">Fejl</string>
+    <string name="NotBonded">Ikke forbundet</string>
+    <string name="Bonding">Forbinder</string>
+    <string name="Class">Klassw</string>
+    <string name="SMS_Stream_desc">Vælg en sti for tekst beskeden</string>
+    <string name="PrefsVolAdjDelaySummary">Forsinkelse imellem enheds forbindelse og lyd niveau justering.</string>
+    <string name="PrefsVolRampTitle">Skru op for volume?</string>
+    <string name="app_kill">Stop program ved frakobling?</string>
+    <string name="PrefsPowerOFF">Reagér ikke på strøm tilslutning</string>
+    <string name="PrefsPower">Reagér på strøm tilslutning?</string>
+    <string name="PrefsPowerON">Reagér på strøm tilslutning</string>
+    <string name="powerPlugName">Strøm tilslutning</string>
+    <string name="enableGPS">Aktivér GPS når tilsluttet?</string>
+    <string name="SMSAlarmStream">Alarm Strøm</string>
+    <string name="SMSVoiceStream">Lyd opkalds strøm</string>
+    <string name="SMSMusicStream">Musik Strøm</string>
+    <string name="rememberMediaVol">Automatiskhuske media volume on frakobling</string>
+    <string name="silentMode">Sæt notifikationer på lydløs imens enheden er tilsluttet?</string>
+    <string-array name="PrefsNotifyItems">
+        <item>always</item>
+        <item>connected_only</item>
+        <item>never</item>
+    </string-array>
+    <string-array name="PrefsNotifyOptions">
+        <item>Denne service vil starte som en foregrunds program med et ikon i notifikations baren.</item>
+        <item>-</item>
+        <item>Denne service vil starte som en baggrunds program uden ikon i notifikations baren.</item>
+    </string-array>
+    <string name="sleepAfterLaunch">Gå i dvale efter program start</string>
+    <string name="PrefsGTalkOFF">Notifikations beskeder vil ikke blive læst</string>
+    <string name="PrefsGTalk">Aktivér læsning afnotifikations Beskeder</string>
+    <string name="title_activity_packages_chooser">Reagér til de her programmer</string>
+    <string name="PrefsGTalkON">Notifikations Beskeder vil blive læst når enheden er forbundet</string>
+    <string name="PrefsNotifyTitle">Brug Notifikations Ikon?</string>
+    <string name="ignoreTTSMissing">Ignorér dette</string>
+    <string name="PackagesTitle">Programmer for Tilgænlighed</string>
+    <string name="PrefsNotificationSummary">Notifikations Synlighed</string>
+    <string name="launchCarMode">Start Bil Modus</string>
+    <string name="action_settings">Instillinger</string>
+    <string name="accessDescription">Bruges til at læse notifikationer der er forbundet til en enhed der bruger A2DP Volume</string>
+    <string name="PrefsHideVolUI">Gem volume pop-up</string>
+    <string name="PrefsHideVolUiON">Volume pop-up vises ikke</string>
+    <string name="PrefsHideVolUiOFF">Volume pop-up vises</string>
+</resources>
