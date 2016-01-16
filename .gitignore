@@ -2,6 +2,7 @@
 ## Eclipse
 #################
 
+*.gradle
 *.pydevproject
 .project
 .metadata
@@ -16,6 +17,7 @@ local.properties
 .settings/
 .loadpath
 .idea
+
 
 # External tool builders
 .externalToolBuilders/

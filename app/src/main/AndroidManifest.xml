@@ -3,7 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="a2dp.Vol"
     android:installLocation="internalOnly"
-    android:versionCode="125"
+    android:versionCode="126"
     android:versionName="2.11.13" >
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -35,7 +35,7 @@
 
     <uses-sdk
         android:minSdkVersion="15"
-        android:targetSdkVersion="18" />
+        android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
