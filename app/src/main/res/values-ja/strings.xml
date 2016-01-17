@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">A2DP Volume</string>
+    <string-array name="gpsDistance">
+        <item>2m</item>
+        <item>5m</item>
+        <item>10m</item>
+        <item>15m</item>
+        <item>20m</item>
+        <item>30m</item>
+    </string-array>
+    <string-array name="gpsTimeout">
+        <item>GPSリスナー無効</item>
+        <item>5 秒</item>
+        <item>10 秒</item>
+        <item>15 秒</item>
+        <item>20 秒</item>
+        <item>30 秒</item>
+        <item>45 秒</item>
+    </string-array>
+    <string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>45000</item>
+    </string-array>
+    <string-array name="gpsDistance_items">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string name="ListName">Bluetoothデバイス</string>
+    <string name="GetLocButtonString">保存した場所</string>
+    <string name="StartService">サービス開始</string>
+    <string name="StopService">サービス停止</string>
+    <string name="FindDevices">デバイス検索</string>
+    <string name="MediaVolume">メディアボリューム</string>
+    <string name="ServiceStarted">A2DP Volumeサービスを開始しました</string>
+    <string name="ServiceStopped">A2DP Volumeサービスを停止しました</string>
+    <string name="ExportDB">データベースをSDカードにエクスポート</string>
+    <string name="ExportXML">データベースをXMLでSDカードにエクスポート</string>
+    <string name="ImportDB">SDカードからデータベースをインポート</string>
+    <string name="ExportLocation">最終位置情報をエクスポート</string>
+    <string name="PrefsNotifySummaryON">フォアグラウンドタスクとしてサービス開始、通知領域のアイコン表示</string>
+    <string name="PrefsNotifySummaryOFF">バックグラウンドタスクとしてサービス開始、通知領域のアイコン非表示</string>
+    <string name="PrefsNotify">フォアグラウンドでの通知</string>
+    <string name="PrefsGPSTimeoutTitle">GPSリスナータイムアウト</string>
+    <string name="PrefsGPSTimeout">Bluetooth切断時に、GPSリスナーが位置を探す最大時間です。</string>
+    <string name="PrefsGPSInaccuracyTitle">GPS最大誤差 </string>
+    <string name="PrefsGPSInaccuracy">リスナーが正しい値を探すのを停止するGPS最大誤差(m)</string>
+    <string name="PrefsCarModeON">Car Modeに反応します</string>
+    <string name="PrefsCarModeOFF">Car Modeに反応しません</string>
+    <string name="PrefsCarMode">Car Modeへの反応</string>
+    <string name="PrefsCatGPS">位置記録設定</string>
+    <string name="PrefsCatGen">全般設定</string>
+    <string name="PrefsBootstart">起動時サービス開始</string>
+    <string name="PrefsBootstartON">起動時にサービスを開始します。</string>
+    <string name="PrefsBootstartOFF">起動時にサービスを開始しません。</string>
+    <string name="PrefsToasts">ポップアップ表示</string>
+    <string name="PrefsToastsON">サービス開始・停止時にポップアップメッセージを表示します。</string>
+    <string name="PrefsToastsOFF">サービス開始・停止時にポップアップメッセージを表示しません。</string>
+    <string name="PrefsToastsSummary">サービス開始・終了時にポップアップメッセージを表示しますか?</string>
+    <string name="MenuExit">終了</string>
+    <string name="MenumanageData">データ管理</string>
+    <string name="MenuDeleteData">全データ削除</string>
+    <string name="MenuPrefs">設定</string>
+    <string name="MenuHelp">ヘルプ</string>
+    <string name="DeleteDataMsg">本当にA2DP Volumeの全デバイスデータを削除してもよろしいですか?</string>
+    <string name="Yes">はい</string>
+    <string name="No">いいえ</string>
+    <string name="OK">OK</string>
+    <string name="Delete">削除</string>
+    <string name="Edit">編集</string>
+    <string name="NoData">データなし</string>
+    <string name="ServRunning">A2DP Volume サービス実行中</string>
+    <string name="ImportCompletedText">インポート成功</string>
+    <string name="NobtSupport">あなたの端末はBluetoothをサポートしていないようです。</string>
+    <string name="btEnableFail">Bluetoothを有効にできませんでした。</string>
+    <string name="usePassiveOff">パッシブ位置情報リスナーを利用しません</string>
+    <string name="usePassiveOn">パッシブ位置情報リスナーも利用します</string>
+    <string name="usePassiveTitle">パッシブ位置情報の利用</string>
+    <string name="useNetworkTitle">ネットワーク位置情報の利用</string>
+    <string name="useNetworkON">ネットワーク位置情報リスナーも利用します</string>
+    <string name="useNetworkOFF">ネットワーク位置情報リスナーを利用しません</string>
+    <string name="LocationString">位置</string>
+    <string name="btNotOn">デバイス情報が利用できません</string>
+    <string name="app_not_found">アプリケーションが見つかりません</string>
+    <string name="deviceName">デバイスの名前</string>
+    <string name="getLoc">切断時の場所を保存しますか?</string>
+    <string name="setVol">接続時にメディアボリュームを設定</string>
+    <string name="connectBT">同時に接続するBluetoothデバイス</string>
+    <string name="startApp">接続時に起動するアプリ</string>
+    <string name="wifiDisconnect">Bluetooth接続時にWiFiを切断</string>
+    <string name="save">保存</string>
+    <string name="PrefsUseLocatStorageON">端末にファイルを保存します</string>
+    <string name="PrefsUseLocalStorageOFF">SDカードにファイルを保存します</string>
+    <string name="PrefsUseLocalStorage">ファイル保存場所</string>
+    <string name="PrefsHomeDockOFF">Home Dockに反応しません</string>
+    <string name="PrefsHomeDock">Home Dockへの反応</string>
+    <string name="PrefsHomeDockON">Home Dockに反応します</string>
+    <string name="ea_ti_app">起動するアプリ</string>
+    <string name="ae_stop_app_warning_title">アプリが不明</string>
+    <string name="ae_stop_app_warning_message">パッケージ名のないインテントは A2DP Volume で停止できません</string>
+    <string name="connectedTo">接続しました</string>
+    <string name="PrefsOtherConnectedIcon">接続アイコン</string>
+    <string name="app_restart">アプリを強制的に再起動</string>
+    <string name="PrefsHeadsetON">オーディオジャックに反応します</string>
+    <string name="PrefsHeadset">オーディオジャックへの反応</string>
+    <string name="PrefsHeadsetOFF">オーディオジャックに反応しません</string>
+    <string name="PrefsTTSON">デバイス接続時にテキストメッセージを読み上げます</string>
+    <string name="PrefsTTS">テキストメッセージの読み上げ</string>
+    <string name="PrefsTTSOFF">テキストメッセージを読み上げません</string>
+    <string name="audioJackName">オーディオジャック</string>
+    <string name="needTTS">読み上げデータがありません。すぐにインストールしますか?</string>
+    <string name="msgTemplate">… Message From: {0} .. {1}</string>
+    <string name="TTSready">テキスト読み上げ準備完了</string>
+    <string name="TTSNotReady">テキスト読み上げ不可能</string>
+    <string name="carDockName">Car Dock</string>
+    <string name="homeDockName">Home Dock</string>
+    <string name="Editsetpv">接続時に通話ボリュームを設定</string>
+    <string name="EditPhoneVolume">通話ボリューム</string>
+    <string name="SMSDelayText">テキストメッセージ読み上げの遅延</string>
+    <string name="Bonded">ペアリング済</string>
+    <string name="Error">エラー</string>
+    <string name="NotBonded">未ペアリング</string>
+    <string name="Bonding">ペアリング中</string>
+    <string name="Class">クラス</string>
+    <string name="SMS_Stream_desc">テキストメッセージを読み上げる経路</string>
+    <string name="PrefsVolAdjDelaySummary">デバイス接続してからボリューム変更までの遅延</string>
+    <string name="PrefsVolRampTitle">徐々にボリュームアップ</string>
+    <string name="app_kill">切断時にアプリ停止</string>
+    <string name="PrefsPowerOFF">電源接続に反応しません</string>
+    <string name="PrefsPower">電源接続への反応</string>
+    <string name="PrefsPowerON">電源接続に反応します</string>
+    <string name="powerPlugName">電源接続</string>
+    <string name="enableGPS">接続時GPS有効化</string>
+    <string name="SMSAlarmStream">アラームストリーム</string>
+    <string name="SMSVoiceStream">音声通話ストリーム</string>
+    <string name="SMSMusicStream">音楽ストリーム</string>
+    <string name="rememberMediaVol">切断時にメディアボリュームを記憶</string>
+    <string name="silentMode">接続時の通知を抑制</string>
+    <string name="ignoreTTSMissing">無視</string>
+    <string name="PrefsGTalkOFF">通知メッセージを読み上げません</string>
+    <string name="PrefsGTalk">通知メッセージの読み上げ</string>
+    <string name="PrefsGTalkON">デバイス接続時に通知メッセージを読み上げます</string>
+    <string name="accessDescription">A2DP Volumeを使用しているデバイス接続中</string>
+    <string name="sleepAfterLaunch">アプリ起動後にスリープ</string>
+    <string name="launchCarMode">Car Modeを起動</string>
+    <string-array name="PrefsNotifyOptions">
+        <item>フォアグラウンドタスクとしてサービス開始、通知領域のアイコン表示</item>
+        <item>デバイス接続時にのみアイコン表示</item>
+        <item>バックグラウンドタスクとしてサービス開始、通知領域のアイコン非表示</item>
+    </string-array>
+    <string-array name="PrefsNotifyItems">
+        <item>always</item>
+        <item>connected_only</item>
+        <item>never</item>
+    </string-array>
+    <string name="PrefsNotifyTitle">通知アイコンの使用</string>
+    <string name="PrefsNotificationSummary">通知の表示・非表示</string>
+    <string name="title_activity_packages_chooser">アプリに反応します</string>
+    <string name="action_settings">設定</string>
+    <string name="PackagesTitle">アクセシビリティアプリ</string>
+    <string name="PrefsHideVolUI">ボリュームポップアップの非表示化</string>
+    <string name="PrefsHideVolUiON">ボリュームポップアップを表示しません。</string>
+    <string name="PrefsHideVolUiOFF">ボリュームポップアップを表示します。</string>
+</resources>
