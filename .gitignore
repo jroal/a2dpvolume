@@ -17,6 +17,7 @@ local.properties
 .settings/
 .loadpath
 .idea
+.gradle
 
 
 # External tool builders
