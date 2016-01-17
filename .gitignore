@@ -8,6 +8,7 @@
 .metadata
 bin/
 tmp/
+.gradle/
 *.tmp
 *.bak
 *.swp
