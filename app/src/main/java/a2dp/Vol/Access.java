@@ -85,28 +85,7 @@ public class Access extends AccessibilityService {
 			}
 			String appName = (String) (appInfo != null ? pm
 					.getApplicationLabel(appInfo) : pack);
-/*			
-			if (pack.equalsIgnoreCase("com.google.android.calendar")
-					|| pack.equalsIgnoreCase("com.android.calendar")
-					|| pack.equalsIgnoreCase("com.motorola.calendar")) {
-				str = "Calendar Entry: ";
-			}
-			if (pack.equalsIgnoreCase("com.google.android.gm")) {
-				str = "Gmail: ";
-			}
-			if (pack.equalsIgnoreCase("com.skype.raider")) {
-				str = "Skype: ";
-			}
-			if (pack.equalsIgnoreCase("com.google.android.keep")) {
-				str = "Keep reminder: ";
-			}
-			if (pack.equalsIgnoreCase("com.google.android.talk")) {
-				str = "Hangouts: ";
 
-			}
-			if (pack.equalsIgnoreCase("com.android.mms")) {
-				str = "Text message: ";
-			}*/
 
 			if (android.os.Build.VERSION.SDK_INT >= 16) {
 				String name = "";
@@ -199,9 +178,6 @@ public class Access extends AccessibilityService {
 
 				List<CharSequence> notificationList = event.getText();
 				for (int i = 0; i < notificationList.size(); i++) {
-					// Toast.makeText(this.getApplicationContext(),
-					// notificationList.get(i), Toast.LENGTH_LONG).show();
-
 					String s = notificationList.get(i).toString();
 					if (s.length() > 1) {
 						str += s.trim();

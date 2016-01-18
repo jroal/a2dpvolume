@@ -220,28 +220,15 @@ public class service extends Service implements OnAudioFocusChangeListener {
 					notificationIntent, 0);
 
 			Notification not;
-			if (android.os.Build.VERSION.SDK_INT >= 16) {
-				not = new Notification.Builder(application)
-						.setContentTitle(
-								getResources().getString(R.string.app_name))
-						.setContentIntent(contentIntent)
-						.setSmallIcon(R.drawable.ic_launcher)
-						.setContentText(
-								getResources().getString(R.string.ServRunning))
-						.setPriority(Notification.PRIORITY_MIN).build();
-			}else{
-				mNotificationManager = (NotificationManager) getSystemService(ns);
-                not = new Notification(R.drawable.ic_launcher, "A2DP",
-                                System.currentTimeMillis());
-                Context context = getApplicationContext();
-                CharSequence contentTitle = getResources().getString(
-                                R.string.app_name);
-                CharSequence contentText = getResources().getString(
-                                R.string.ServRunning);
-                not.setLatestEventInfo(context, contentTitle, contentText,
-                                contentIntent);
+			not = new Notification.Builder(application)
+					.setContentTitle(
+							getResources().getString(R.string.app_name))
+					.setContentIntent(contentIntent)
+					.setSmallIcon(R.drawable.ic_launcher)
+					.setContentText(
+							getResources().getString(R.string.ServRunning))
+					.setPriority(Notification.PRIORITY_MIN).build();
 
-			}
 
 			if (notify_pref.equalsIgnoreCase("always")) {
 				mNotificationManager.notify(1, not);
@@ -660,7 +647,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 				}
 			} else {
 				DeviceToConnect = bt2.bdevice;
-				getIBluetoothA2dp(application);
+				//getIBluetoothA2dp(application);
 			}
 		}
 
@@ -1118,59 +1105,31 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		if (connect) {
 			
 			Notification not = null;
-			if (android.os.Build.VERSION.SDK_INT >= 16) {
-				Intent notificationIntent = new Intent(this, main.class);
-				PendingIntent contentIntent = PendingIntent.getActivity(this,
-						0, notificationIntent, 0);
-				not = new Notification.Builder(application)
-						.setContentTitle(
-								getResources().getString(R.string.app_name))
-						.setContentIntent(contentIntent)
-						.setSmallIcon(connectedIcon).setContentText(temp)
-						.setPriority(Notification.PRIORITY_MIN).build();
-			}else{
-				not = new Notification(connectedIcon, "A2DP",
-						System.currentTimeMillis());
-				Context context = getApplicationContext();
-				CharSequence contentTitle = getResources().getString(R.string.app_name);
-                CharSequence contentText = temp;
-                Intent notificationIntent = new Intent(this, main.class);
-                PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                                notificationIntent, 0);
-                not.setLatestEventInfo(context, contentTitle, contentText,
-                                contentIntent);
-
-			}
-
+			Intent notificationIntent = new Intent(this, main.class);
+			PendingIntent contentIntent = PendingIntent.getActivity(this,
+					0, notificationIntent, 0);
+			not = new Notification.Builder(application)
+					.setContentTitle(
+							getResources().getString(R.string.app_name))
+					.setContentIntent(contentIntent)
+					.setSmallIcon(connectedIcon).setContentText(temp)
+					.setPriority(Notification.PRIORITY_MIN).build();
 			mNotificationManager.notify(1, not);
 		} else {
 			mNotificationManager.cancel(1);
 
 			if (notify_pref.equalsIgnoreCase("always")) {
 				Notification not = null;
-				if (android.os.Build.VERSION.SDK_INT >= 16) {
-					Intent notificationIntent = new Intent(this, main.class);
-					PendingIntent contentIntent = PendingIntent.getActivity(
-							this, 0, notificationIntent, 0);
-					not = new Notification.Builder(application)
-							.setContentTitle(
-									getResources().getString(R.string.app_name))
-							.setContentIntent(contentIntent)
-							.setSmallIcon(R.drawable.ic_launcher)
-							.setContentText(temp)
-							.setPriority(Notification.PRIORITY_MIN).build();
-				}else{
-					not = new Notification(R.drawable.ic_launcher, "A2DP",
-							System.currentTimeMillis());
-					Context context = getApplicationContext();
-					CharSequence contentTitle = getResources().getString(R.string.app_name);
-	                CharSequence contentText = temp;
-	                Intent notificationIntent = new Intent(this, main.class);
-	                PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-	                                notificationIntent, 0);
-	                not.setLatestEventInfo(context, contentTitle, contentText,
-	                                contentIntent);
-				}
+				Intent notificationIntent = new Intent(this, main.class);
+				PendingIntent contentIntent = PendingIntent.getActivity(
+						this, 0, notificationIntent, 0);
+				not = new Notification.Builder(application)
+						.setContentTitle(
+								getResources().getString(R.string.app_name))
+						.setContentIntent(contentIntent)
+						.setSmallIcon(R.drawable.ic_launcher)
+						.setContentText(temp)
+						.setPriority(Notification.PRIORITY_MIN).build();
 				mNotificationManager.notify(1, not);
 			}
 		}
@@ -1189,8 +1148,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 			try {
 				ActivityManager act1 = (ActivityManager) this
 						.getSystemService(ACTIVITY_SERVICE);
-				act1.restartPackage(pname);
-				// act1.killBackgroundProcesses(pname);
+				act1.killBackgroundProcesses(pname);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1251,7 +1209,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 				ActivityManager act1 = (ActivityManager) this
 						.getSystemService(ACTIVITY_SERVICE);
-				// act1.restartPackage(packageName);
 				act1.killBackgroundProcesses(packageName);
 				List<ActivityManager.RunningAppProcessInfo> processes;
 				processes = act1.getRunningAppProcesses();
