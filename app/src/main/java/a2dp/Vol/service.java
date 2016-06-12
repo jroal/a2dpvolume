@@ -132,6 +132,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 	private int connectedIcon;
 	private TelephonyManager tm;
 
+
 	/*
 	 * private HandlerThread thread; private LinkedList<String> addresses;
 	 * private TalkObserver observer;
@@ -314,7 +315,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		}
 		this.registerReceiver(mReceiver, filter);
 		this.registerReceiver(mReceiver2, filter2);
-	
+
 	}
 
 	@Override
@@ -359,6 +360,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		Intent i = new Intent();
 		i.setAction(IStop);
 		application.sendBroadcast(i);
+
 
 		// let the user know the service stopped
 		if (toasts)

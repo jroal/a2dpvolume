@@ -23,6 +23,7 @@ public class Preferences extends PreferenceActivity {
 		// stop the service while changes are made
 		stopService(new Intent(a2dp.Vol.Preferences.this, service.class));
 		super.onContentChanged();
+
 	}
 
 	/*
@@ -39,6 +40,8 @@ public class Preferences extends PreferenceActivity {
 
 		// Commit the edits!
 		editor.commit();
+
+
 		// restart the service
 		startService(new Intent(a2dp.Vol.Preferences.this, service.class));
 		// Tell the world we updated preferences
@@ -47,7 +50,8 @@ public class Preferences extends PreferenceActivity {
 		Intent i = new Intent();
 		i.setAction(IRun);
 		this.application.sendBroadcast(i);
-		super.onDestroy();
+
+        super.onDestroy();
 	}
 
 	/** Called when the activity is first created. */

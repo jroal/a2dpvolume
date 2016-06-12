@@ -265,6 +265,10 @@ public class main extends Activity {
 						.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 				startActivityForResult(checkIntent, CHECK_TTS);
 			}
+
+			startService(new Intent(a2dp.Vol.main.this, NotificationCatcher.class));
+//			Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+//			startActivity(intent);
 		}
 
 		this.ladapt = new ArrayAdapter<String>(application, resourceID, lstring);
