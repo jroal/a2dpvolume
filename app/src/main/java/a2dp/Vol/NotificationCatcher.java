@@ -95,14 +95,14 @@ public class NotificationCatcher extends NotificationListenerService {
             if (notification == null) return;
 
             if(sbn.getNotification().tickerText != null)str += sbn.getNotification().tickerText;
-            if(sbn.getNotification().extras.get(Notification.EXTRA_BIG_TEXT) != null)
-                str += ", big: " + sbn.getNotification().extras.get(Notification.EXTRA_BIG_TEXT);
-            if(sbn.getNotification().extras.get(Notification.EXTRA_TEXT) != null)
-                str += ", reg: " + sbn.getNotification().extras.get(Notification.EXTRA_TEXT);
-            if(sbn.getNotification().extras.get(Notification.EXTRA_SUMMARY_TEXT) != null)
+            else if(sbn.getNotification().extras.get(Notification.EXTRA_SUMMARY_TEXT) != null)
                 str += ", sum: " + sbn.getNotification().extras.get(Notification.EXTRA_SUMMARY_TEXT);
-            if(sbn.getNotification().extras.get(Notification.EXTRA_TEXT_LINES) != null)
-                str += ", lines: " + sbn.getNotification().extras.get(Notification.EXTRA_TEXT_LINES);
+//            if(sbn.getNotification().extras.get(Notification.EXTRA_BIG_TEXT) != null)
+//                str += ", big: " + sbn.getNotification().extras.get(Notification.EXTRA_BIG_TEXT);
+//            if(sbn.getNotification().extras.get(Notification.EXTRA_TEXT) != null)
+//                str += ", reg: " + sbn.getNotification().extras.get(Notification.EXTRA_TEXT);
+//            if(sbn.getNotification().extras.get(Notification.EXTRA_TEXT_LINES) != null)
+//                str += ", lines: " + sbn.getNotification().extras.get(Notification.EXTRA_TEXT_LINES).toString();
 
 
             // make sure something is connected so the text reader is active
