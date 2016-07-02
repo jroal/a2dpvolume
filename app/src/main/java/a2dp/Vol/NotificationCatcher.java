@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -68,60 +69,112 @@ public class NotificationCatcher extends NotificationListenerService {
     public void onNotificationPosted(StatusBarNotification sbn) {
         super.onNotificationPosted(sbn);
 
-        // Toast.makeText(application, "reading notification", Toast.LENGTH_LONG).show();
-        boolean test = false;
-        for (String p : packages) {
-            if (p.equalsIgnoreCase(sbn.getPackageName())) test = true;
+        new Readit().execute(sbn);
+
+    }
+
+    private class Readit extends AsyncTask<StatusBarNotification, Integer, Long> {
+
+        @Override
+        protected Long doInBackground(StatusBarNotification... params) {
+
+            StatusBarNotification sbn = params[0];
+            // Toast.makeText(application, "reading notification", Toast.LENGTH_LONG).show();
+            boolean test = false;
+            for (
+                    String p
+                    : packages)
+
+            {
+                if (p.equalsIgnoreCase(sbn.getPackageName())) test = true;
+            }
+
+            if (test)
+
+            {
+                String str = "";
+                ApplicationInfo appInfo;
+                PackageManager pm = getPackageManager();
+                String pack = sbn.getPackageName();
+                try {
+                    appInfo = pm.getApplicationInfo(pack, 0);
+                } catch (NameNotFoundException e1) {
+                    Toast.makeText(application, "problem getting app info", Toast.LENGTH_LONG).show();
+                    appInfo = null;
+                }
+                String appName = (String) (appInfo != null ? pm
+                        .getApplicationLabel(appInfo) : pack);
+
+                // add the app name to the string to be read
+                str += appName + ", ";
+
+                // abort if we can get the notification
+                Notification notification = sbn.getNotification();
+                if (notification == null) return null;
+
+
+                // get the ticker text of this notification and add that to the message string
+                String ticker = "";
+                if (notification.tickerText != null)
+                    ticker = (String) sbn.getNotification().tickerText;
+
+                // get the lines of the notification
+                String temp = "";
+                Bundle bun = notification.extras;
+                if (!bun.isEmpty()) {
+                    CharSequence[] lines = bun.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);
+                    if (lines != null)
+                        if (lines.length > 0) {
+                            for (CharSequence line : lines) {
+                                if (line != null)
+                                    if (line.length() > 1) temp = line.toString();
+                            }
+
+                        }
+                }
+
+                // get the text string to see if there is something in it
+                String text = "";
+                if (bun.getString(Notification.EXTRA_TEXT) != null) {
+                    if (!bun.getString(Notification.EXTRA_TEXT).isEmpty())
+                        text = bun.getString(Notification.EXTRA_TEXT);
+                }
+
+                // figure out which have valid strings and which we want to communicate
+                if (ticker.length() > 1) {
+                    if (ticker.equalsIgnoreCase(temp) || temp.length() < 1)
+                        str += ticker;
+                    else
+                        str += ticker + ", " + temp;
+                } else if (!text.isEmpty())
+                    if (text.equalsIgnoreCase(temp) || temp.isEmpty())
+                        str += text;
+                    else
+                        str += text + ", " + temp;
+
+                //if there is no ticker or strings then ignore it.
+                if (temp.isEmpty() && ticker.isEmpty() && text.isEmpty()) return null;
+
+                // make sure something is connected so the text reader is active
+                int connected = 0;
+                try {
+                    connected = a2dp.Vol.service.connects;
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                // read out the message by sending it to the service
+                if (connected > 0 && str.length() > 0) {
+                    final String IRun = "a2dp.vol.service.MESSAGE";
+                    Intent intent = new Intent();
+                    intent.setAction(IRun);
+                    intent.putExtra("message", str);
+                    application.sendBroadcast(intent);
+                }
+            }
+            return null;
         }
 
-        if (test) {
-            String str = "";
-            ApplicationInfo appInfo;
-            PackageManager pm = getPackageManager();
-            String pack = sbn.getPackageName();
-            try {
-                appInfo = pm.getApplicationInfo(pack, 0);
-            } catch (NameNotFoundException e1) {
-                Toast.makeText(application, "problem getting app info", Toast.LENGTH_LONG).show();
-                appInfo = null;
-            }
-            String appName = (String) (appInfo != null ? pm
-                    .getApplicationLabel(appInfo) : pack);
-
-            str += appName + ", ";
-
-            // We have to extract the information from the view
-            Notification notification = sbn.getNotification();
-            if (notification == null) return;
-
-            if(sbn.getNotification().tickerText != null)str += sbn.getNotification().tickerText;
-            else if(sbn.getNotification().extras.get(Notification.EXTRA_SUMMARY_TEXT) != null)
-                str += ", sum: " + sbn.getNotification().extras.get(Notification.EXTRA_SUMMARY_TEXT);
-//            if(sbn.getNotification().extras.get(Notification.EXTRA_BIG_TEXT) != null)
-//                str += ", big: " + sbn.getNotification().extras.get(Notification.EXTRA_BIG_TEXT);
-//            if(sbn.getNotification().extras.get(Notification.EXTRA_TEXT) != null)
-//                str += ", reg: " + sbn.getNotification().extras.get(Notification.EXTRA_TEXT);
-//            if(sbn.getNotification().extras.get(Notification.EXTRA_TEXT_LINES) != null)
-//                str += ", lines: " + sbn.getNotification().extras.get(Notification.EXTRA_TEXT_LINES).toString();
-
-
-            // make sure something is connected so the text reader is active
-            int connected = 0;
-            try {
-                connected = a2dp.Vol.service.connects;
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            // read out the message by sending it to the service
-            if (connected > 0 && str.length() > 0) {
-                final String IRun = "a2dp.vol.service.MESSAGE";
-                Intent intent = new Intent();
-                intent.setAction(IRun);
-                intent.putExtra("message", str);
-                this.sendBroadcast(intent);
-            }
-        }
 
     }
 
@@ -137,100 +190,6 @@ public class NotificationCatcher extends NotificationListenerService {
                         "com.google.android.talk,com.android.email,com.android.calendar");
         packages = packagelist.split(",");
 
-    }
-
-    private String get_message(Notification notification) {
-        Boolean got_name = false;
-        String str = "";
-        String name = "";
-
-        // We have to extract the information from the view
-
-        if (notification == null) return "I got nothing";
-        RemoteViews views = notification.bigContentView;
-        if (views == null)
-            views = notification.contentView;
-        //if (views == null) return null;
-
-        // Use reflection to examine the m_actions member of the given RemoteViews object.
-        // It's not pretty, but it works.
-        List<String> text = new ArrayList<String>();
-        try {
-            java.lang.reflect.Field field = views.getClass()
-                    .getDeclaredField("mActions");
-            field.setAccessible(true);
-
-            @SuppressWarnings("unchecked")
-            ArrayList<Parcelable> actions = (ArrayList<Parcelable>) field
-                    .get(views);
-
-            // Find the setText() and setTime() reflection actions
-            for (Parcelable p : actions) {
-                Parcel parcel = Parcel.obtain();
-                p.writeToParcel(parcel, 0);
-                parcel.setDataPosition(0);
-
-                // The tag tells which type of action it is (2 is ReflectionAction, from the source)
-                int tag = parcel.readInt();
-                if (tag != 2)
-                    continue;
-
-                // View ID
-                parcel.readInt();
-
-                String methodName = parcel.readString();
-                if (methodName == null)
-                    continue;
-
-                    // Save strings
-                else if (methodName.equals("setText")) {
-                    // Parameter type (10 = Character Sequence)
-                    parcel.readInt();
-
-                    // Store the actual string
-                    String t = TextUtils.CHAR_SEQUENCE_CREATOR
-                            .createFromParcel(parcel).toString().trim();
-                    text.add(t);
-
-                }
-
-                // Save times. Comment this section out if the notification time isn't important
-                else if (methodName.equals("setTime")) {
-                    // Parameter type (5 = Long)
-/*			                parcel.readInt();
-
-			                String t = new SimpleDateFormat("h:mm a").format(new Date(parcel.readLong()));
-			                text.add(t);*/
-                }
-
-                parcel.recycle();
-            }
-        }
-
-        // It's not usually good style to do this, but then again, neither is the use of reflection...
-        catch (Exception e) {
-            //Log.e("NotificationClassifier", e.toString());
-        }
-
-        if (text.size() > 0) {
-            // if the message has returns we only want the last string (Hangouts fix)
-            String temp = text.get(text.size() - 1);
-            if (temp.indexOf("\n") > -1)
-                str += name + ", "
-                        + temp.substring(temp.lastIndexOf("\n"));
-            else
-                str += name + ", " + temp;
-        } else {
-
-            Bundle extras = notification.extras;
-            String title = extras.getString("android.title");
-            String message = extras.getCharSequence("android.text").toString();
-            //String ticker = extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString();
-            str += ", " + title + ", " + message;
-        }
-
-
-        return str;
     }
 
     private final BroadcastReceiver reloadprefs = new BroadcastReceiver() {

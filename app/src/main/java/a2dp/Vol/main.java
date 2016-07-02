@@ -260,10 +260,14 @@ public class main extends Activity {
 			startService(new Intent(a2dp.Vol.main.this, service.class));
 			if (enableTTS) {
 				// Fire off an intent to check if a TTS engine is installed
-				Intent checkIntent = new Intent();
-				checkIntent
-						.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-				startActivityForResult(checkIntent, CHECK_TTS);
+				try {
+					Intent checkIntent = new Intent();
+					checkIntent
+                            .setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+					startActivityForResult(checkIntent, CHECK_TTS);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 
 			startService(new Intent(a2dp.Vol.main.this, NotificationCatcher.class));
@@ -1001,10 +1005,14 @@ public class main extends Activity {
 
 			if (enableTTS) {
 				// Fire off an intent to check if a TTS engine is installed
-				Intent checkIntent = new Intent();
-				checkIntent
-						.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-				startActivityForResult(checkIntent, CHECK_TTS);
+				try {
+					Intent checkIntent = new Intent();
+					checkIntent
+                            .setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+					startActivityForResult(checkIntent, CHECK_TTS);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	};
