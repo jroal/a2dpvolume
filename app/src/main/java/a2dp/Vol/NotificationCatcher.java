@@ -47,7 +47,7 @@ public class NotificationCatcher extends NotificationListenerService {
         this.application = (MyApplication) this.getApplication();
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(this.application);
-        IntentFilter reloadmessage = new IntentFilter("a2dp.vol.Access.Reload");
+        IntentFilter reloadmessage = new IntentFilter("a2dp.vol.Reload");
         this.registerReceiver(reloadprefs, reloadmessage);
         LoadPrefs();
         super.onCreate();

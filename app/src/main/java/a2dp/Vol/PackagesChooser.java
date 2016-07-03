@@ -276,7 +276,7 @@ public class PackagesChooser extends Activity {
 	    	editor.putString("packages", packagelist);
 	    	editor.commit();
 	    	Intent intent = new Intent();
-	    	intent.setAction("a2dp.vol.Access.Reload");
+	    	intent.setAction("a2dp.vol.Reload");
 	    	application.sendBroadcast(intent);
 	    }
 

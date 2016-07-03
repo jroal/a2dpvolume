@@ -42,6 +42,7 @@ public class Preferences extends PreferenceActivity {
 		editor.commit();
 
 
+
 		// restart the service
 		startService(new Intent(a2dp.Vol.Preferences.this, service.class));
 		// Tell the world we updated preferences
@@ -51,13 +52,14 @@ public class Preferences extends PreferenceActivity {
 		i.setAction(IRun);
 		this.application.sendBroadcast(i);
 
-        super.onDestroy();
+
+		super.onDestroy();
 	}
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
+        addPreferencesFromResource(R.xml.preferences);
 	}
 }
