@@ -166,7 +166,7 @@
     <string name="PrefsNotificationSummary">Notification Visibility</string>
     <string name="title_activity_packages_chooser">Respond to these apps</string>
     <string name="action_settings">Settings</string>
-    <string name="PackagesTitle">Apps for Accessibility</string>
+    <string name="PackagesTitle">Apps for Notifications</string>
     <string name="PrefsHideVolUI">Hide volume pop-up</string>
     <string name="PrefsHideVolUiON">Volume pop-up not shown</string>
     <string name="PrefsHideVolUiOFF">Volume pop-up is shown</string>
