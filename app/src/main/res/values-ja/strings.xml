@@ -11,12 +11,12 @@
     </string-array>
     <string-array name="gpsTimeout">
         <item>GPSリスナー無効</item>
-        <item>5 秒</item>
-        <item>10 秒</item>
-        <item>15 秒</item>
-        <item>20 秒</item>
-        <item>30 秒</item>
-        <item>45 秒</item>
+        <item>5秒</item>
+        <item>10秒</item>
+        <item>15秒</item>
+        <item>20秒</item>
+        <item>30秒</item>
+        <item>45秒</item>
     </string-array>
     <string-array name="gpsTimeout_items">
         <item>0</item>
@@ -166,7 +166,7 @@
     <string name="PrefsNotificationSummary">通知の表示・非表示</string>
     <string name="title_activity_packages_chooser">アプリに反応します</string>
     <string name="action_settings">設定</string>
-    <string name="PackagesTitle">アクセシビリティアプリ</string>
+    <string name="PackagesTitle">通知するアプリ</string>
     <string name="PrefsHideVolUI">ボリュームポップアップの非表示化</string>
     <string name="PrefsHideVolUiON">ボリュームポップアップを表示しません。</string>
     <string name="PrefsHideVolUiOFF">ボリュームポップアップを表示します。</string>
