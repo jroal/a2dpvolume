@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.text.MessageFormat;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -43,6 +44,7 @@ import android.provider.ContactsContract.PhoneLookup;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -132,6 +134,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private volatile boolean disconnecting = false;
     private int connectedIcon;
     private TelephonyManager tm; // Context.getSystemService(Context.TELEPHONY_SERVICE);
+
+    // permissions status flags
+    Boolean permReadContacts = true;
+    Boolean permLocation = true;
+    Boolean permPhone = true;
+    Boolean permSMS = true;
+    Boolean permStorage = true;
 
 
     /*
@@ -253,7 +262,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         mPackageManager = getPackageManager();
         // test location file maker
         /*
-		 * FileOutputStream fos; try { fos = openFileOutput("My_Last_Location",
+         * FileOutputStream fos; try { fos = openFileOutput("My_Last_Location",
 		 * Context.MODE_WORLD_READABLE); String temp =
 		 * "http://maps.google.com/maps?q=40.7423612,-89.63056078333334+(Lambo 11/26/10, 05:59:46 pm acc=8)"
 		 * ; fos.write(temp.getBytes()); fos.close(); } catch
@@ -557,6 +566,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     protected void DoConnected(btDevice bt2) {
         boolean done = false;
         int l = 0;
+
         for (int k = 0; k < btdConn.length; k++) {
             if (btdConn[k] != null)
                 if (bt2.getMac().equalsIgnoreCase(btdConn[k].getMac())) {
@@ -694,6 +704,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
         itent.putExtra("connect", bt2.getMac());
         application.sendBroadcast(itent);
         connecting = false;
+
+        application.sendBroadcast(new Intent("a2dp.Vol.Clear"));
 
         if (bt2.isSetpv()) {
             final int vol1 = bt2.getPhonev();
@@ -1691,17 +1703,28 @@ public class service extends Service implements OnAudioFocusChangeListener {
     }
 
     private String GetName(String number) {
-        ContentResolver cr = getContentResolver();
 
-        Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI,
-                Uri.encode(number));
-        Cursor c = cr.query(uri, new String[]{PhoneLookup.DISPLAY_NAME},
-                null, null, null);
+        // check permission
+        int permissionCheck = ContextCompat.checkSelfPermission(application,
+                Manifest.permission.READ_CONTACTS);
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED)
+            permReadContacts = true;
+        else
+            permReadContacts = false;
 
-        if (c.moveToFirst()) {
-            String name = c.getString(c
-                    .getColumnIndex(PhoneLookup.DISPLAY_NAME));
-            return name;
+        if (permReadContacts) {
+            ContentResolver cr = getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI,
+                    Uri.encode(number));
+            Cursor c = cr.query(uri, new String[]{PhoneLookup.DISPLAY_NAME},
+                    null, null, null);
+
+            if (c.moveToFirst()) {
+                String name = c.getString(c
+                        .getColumnIndex(PhoneLookup.DISPLAY_NAME));
+                return name;
+            }
         }
         return number;
     }
