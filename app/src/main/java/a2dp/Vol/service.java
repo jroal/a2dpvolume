@@ -611,58 +611,23 @@ public class service extends Service implements OnAudioFocusChangeListener {
             }
         }
 
-        if (bt2.bdevice != null) {
+        if (bt2.bdevice != null && bt2.bdevice.length() > 3) {
             final btDevice tempBT = bt2;
+            DeviceToConnect = bt2.bdevice;
+            new CountDownTimer(3000, 3000) {
 
-            if (android.os.Build.VERSION.SDK_INT < 17) {
-                CountDownTimer connectTimer = new CountDownTimer(21000, 7000) {
-                    @Override
-                    public void onFinish() {
-                        try {
-                            new ConnectBt().execute(tempBT.getBdevice());
-                            // Log.d(LOG_TAG, tempBT.getBdevice());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e(LOG_TAG, "Error " + e.getMessage());
-                        }
-                    }
-
-                    @Override
-                    public void onTick(long arg0) {
-                        try {
-                            new ConnectBt().execute(tempBT.getBdevice());
-                            // Log.d(LOG_TAG, tempBT.getBdevice());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e(LOG_TAG, "Error " + e.getMessage());
-                        }
-                    }
-                };
-
-                if (bt2.bdevice.length() == 17) {
-                    BluetoothAdapter mBTA = BluetoothAdapter
-                            .getDefaultAdapter();
-                    if (mBTA != null)
-                        if (!mBTA.isEnabled()) {
-                            // If Bluetooth is not yet enabled, enable it
-                            bluetoothWasOff = true;
-                            mBTA.enable();
-                        } else
-                            bluetoothWasOff = false;
-
-                    try {
-                        new ConnectBt().execute(bt2.getBdevice());
-                        // Log.d(LOG_TAG, bt2.getBdevice());
-                        connectTimer.start();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(LOG_TAG, "Error " + e.getMessage());
-                    }
+                @Override
+                public void onFinish() {
+                    getIBluetoothA2dp(application);
                 }
-            } else {
-                DeviceToConnect = bt2.bdevice;
-                //getIBluetoothA2dp(application);
-            }
+
+                @Override
+                public void onTick(long arg0) {
+                    // TODO Auto-generated method stub
+
+                }
+            }.start();
+
         }
 
         if (notify)

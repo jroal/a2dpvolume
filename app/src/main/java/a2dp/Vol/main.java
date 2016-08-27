@@ -897,7 +897,7 @@ public class main extends Activity {
     private OnClickListener setIgnore() {
         SharedPreferences.Editor editor = preferences.edit();
         TTSignore = true;
-        editor.putBoolean("TTSignore", TTSignore);
+        editor.putBoolean("TTSignore", true);
         editor.commit();
         return null;
     }
