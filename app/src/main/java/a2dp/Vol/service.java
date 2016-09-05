@@ -103,6 +103,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     boolean oldwifistate = true;
     boolean oldgpsstate = true;
+    boolean tmessageRegistered = false;
     WifiManager wifiManager;
     LocationManager locmanager;
     String a2dpDir = "";
@@ -642,6 +643,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             IntentFilter messageFilter = new IntentFilter(
                     "a2dp.vol.service.MESSAGE");
             application.registerReceiver(tmessage, messageFilter);
+            tmessageRegistered = true;
             IntentFilter sco_filter = new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED);
             this.registerReceiver(sco_change, sco_filter);
             talk = true;
@@ -933,11 +935,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         }
 
-        try {
-            application.unregisterReceiver(tmessage);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if(tmessageRegistered) {
+            try {
+                application.unregisterReceiver(tmessage);
+                tmessageRegistered = false;
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
 
         if (bt2.isSilent())
@@ -1211,11 +1216,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
         //Intent i = new Intent(context, android.bluetooth.IBluetoothA2dp.class);
         Intent i = new Intent(IBluetoothA2dp.class.getName());
 
-        // TODO: this will only work up to API 19  Need real fix later
         // Need explicit intent on API 20 and up
-/*        String filter;
-        filter = getPackageManager().resolveService(i, PackageManager.GET_RESOLVED_FILTER).resolvePackageName;
-        i.setPackage(filter);*/
+        String filter;
+        filter = getPackageManager().resolveService(i, PackageManager.GET_RESOLVED_FILTER).serviceInfo.packageName;
+        i.setPackage(filter);
 
         if (context.bindService(i, mConnection, Context.BIND_AUTO_CREATE)) {
             //Toast.makeText(context, "started service connection", Toast.LENGTH_SHORT).show();
