@@ -271,7 +271,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 		 * catch block e.printStackTrace(); }
 		 */
         // end test file maker
-		/*
+        /*
 		 * if (enableTTS) { mTts = new TextToSpeech(application,
 		 * listenerStarted); }
 		 */
@@ -379,7 +379,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     .show();
         if (mIsBound) {
             try {
-                this.unbindService(mConnection);
+                //this.unbindService(mConnection);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -611,23 +611,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
             }
         }
 
-        if (bt2.bdevice != null && bt2.bdevice.length() > 3) {
+        // connect the selected BT device
+        if (bt2.getBdevice() != null && bt2.getBdevice().length() == 17) {
             final btDevice tempBT = bt2;
-            DeviceToConnect = bt2.bdevice;
-            new CountDownTimer(3000, 3000) {
-
-                @Override
-                public void onFinish() {
-                    getIBluetoothA2dp(application);
-                }
-
-                @Override
-                public void onTick(long arg0) {
-                    // TODO Auto-generated method stub
-
-                }
-            }.start();
-
+            DeviceToConnect = bt2.getBdevice();
+            getIBluetoothA2dp(application);
         }
 
         if (notify)
@@ -957,11 +945,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         if (bt2.getBdevice() != null && bt2.getBdevice().length() == 17) {
             BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
-            if (mBTA != null)
+            if (mBTA != null) {
                 if (mBTA.isEnabled() && bluetoothWasOff) {
-                    // If Bluetooth is not yet enabled, enable it
+                    // If Bluetooth was off turn it back off
                     mBTA.disable();
                 }
+                // unbind the service used to connect the device
+                doUnbind(application);
+            }
         }
 
         if (bt2.isAutovol()) {
@@ -977,6 +968,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         itent.setAction(Ireload);
         itent.putExtra("disconnect", bt2.getMac());
         application.sendBroadcast(itent);
+
 
         disconnecting = false;
     }
@@ -1213,95 +1205,22 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
     }
 
-    private class ConnectBt extends AsyncTask<String, Void, Boolean> {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-         */
-        @Override
-        protected void onPostExecute(Boolean result) {
+    public void getIBluetoothA2dp(Context context) {
 
-            super.onPostExecute(result);
-        }
-
-        BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
-
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected Boolean doInBackground(String... arg0) {
-
-            BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
-            if (mBTA == null || !mBTA.isEnabled())
-                return false;
-
-            Set<BluetoothDevice> pairedDevices = bta.getBondedDevices();
-            BluetoothDevice device = null;
-            for (BluetoothDevice dev : pairedDevices) {
-                if (dev.getAddress().equalsIgnoreCase(arg0[0]))
-                    device = dev;
-            }
-            if (device == null)
-                return false;
-			/*
-			 * mBTA.cancelDiscovery(); mBTA.startDiscovery();
-			 */
-
-
-            IBluetoothA2dp ibta = getIBluetoothA2dp();
-            try {
-                Log.d(LOG_TAG, "Here: " + ibta.getPriority(device));
-                if (ibta != null && ibta.getConnectionState(device) == 0)
-                    ibta.connect(device);
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "Error " + e.getMessage());
-            }
-
-            return true;
-        }
-
-        private IBluetoothA2dp getIBluetoothA2dp() {
-
-            IBluetoothA2dp ibta = null;
-
-            try {
-
-                Class<?> c2 = Class.forName("android.os.ServiceManager");
-
-                Method m2 = c2.getDeclaredMethod("getService", String.class);
-                IBinder b = (IBinder) m2.invoke(null, "bluetooth_a2dp");
-
-                Log.d(LOG_TAG, "Test2: " + b.getInterfaceDescriptor());
-
-                Class<?> c3 = Class.forName("android.bluetooth.IBluetoothA2dp");
-
-                Class[] s2 = c3.getDeclaredClasses();
-
-                Class<?> c = s2[0];
-                // printMethods(c);
-                Method m = c.getDeclaredMethod("asInterface", IBinder.class);
-
-                m.setAccessible(true);
-                ibta = (IBluetoothA2dp) m.invoke(null, b);
-
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "Error " + e.getMessage());
-            }
-            return ibta;
-        }
-
-    }
-
-    public static void getIBluetoothA2dp(Context context) {
-
+        //Intent i = new Intent(context, android.bluetooth.IBluetoothA2dp.class);
         Intent i = new Intent(IBluetoothA2dp.class.getName());
 
-        if (context.bindService(i, mConnection, Context.BIND_AUTO_CREATE)) {
+        // TODO: this will only work up to API 19  Need real fix later
+        // Need explicit intent on API 20 and up
+/*        String filter;
+        filter = getPackageManager().resolveService(i, PackageManager.GET_RESOLVED_FILTER).resolvePackageName;
+        i.setPackage(filter);*/
 
+        if (context.bindService(i, mConnection, Context.BIND_AUTO_CREATE)) {
+            //Toast.makeText(context, "started service connection", Toast.LENGTH_SHORT).show();
         } else {
+            Toast.makeText(context, "start service connection failed", Toast.LENGTH_SHORT).show();
             // Log.e(TAG, "Could not bind to Bluetooth A2DP Service");
         }
 
@@ -1332,13 +1251,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     e.printStackTrace();
                 }
 
-            doUnbind(application);
+
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mIsBound = false;
-
+            doUnbind(application);
         }
     };
 
@@ -1347,6 +1266,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             context.unbindService(mConnection);
         }
     }
+
 
     // disable wifi is requested
     private void dowifi(boolean s) {
