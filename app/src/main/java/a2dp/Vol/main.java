@@ -124,7 +124,8 @@ public class main extends Activity {
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog,
                                                         int id) {
-                                        myDB.deleteAll();
+                                        if (myDB.getDb().isOpen())
+                                            myDB.deleteAll();
                                         refreshList(loadFromDB());
                                     }
                                 })
@@ -376,7 +377,7 @@ public class main extends Activity {
                                 try {
                                     startActivity(intent);
                                     /*WebView myWebView = (WebView) findViewById(R.id.webview);
-									myWebView.loadUrl(uri.toString());*/
+                                    myWebView.loadUrl(uri.toString());*/
                                 } catch (Exception e) {
                                     // TODO Auto-generated catch block
                                     Toast.makeText(application, e.toString(),

@@ -14,8 +14,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.UiModeManager;
+import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothProfile;
 import android.bluetooth.IBluetoothA2dp;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -103,7 +105,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     boolean oldwifistate = true;
     boolean oldgpsstate = true;
-    boolean tmessageRegistered = false;
+    boolean tmessageRegistered = false; // tracks state of the message reader receiver
     WifiManager wifiManager;
     LocationManager locmanager;
     String a2dpDir = "";
@@ -396,6 +398,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         disconnecting = false;
         if (notify)
             updateNot(false, null);
+
 
     }
 
@@ -938,11 +941,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if(tmessageRegistered) {
             try {
                 application.unregisterReceiver(tmessage);
-                tmessageRegistered = false;
+
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            tmessageRegistered = false;
         }
 
         if (bt2.isSilent())
@@ -1267,7 +1271,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     static void doUnbind(Context context) {
         if (mIsBound) {
-            context.unbindService(mConnection);
+            try {
+                context.unbindService(mConnection);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
