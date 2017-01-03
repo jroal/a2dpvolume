@@ -69,6 +69,9 @@ public class DataXmlExporter {
 				}
 			} while (c.moveToNext());
 		}
+		if (c != null) {
+			c.close();
+		}
 		String xmlString = this.xmlBuilder.end();
 		try {
 			this.writeToFile(xmlString, exportFileNamePrefix + ".xml");
