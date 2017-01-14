@@ -294,7 +294,7 @@ public class DeviceDB {
 					+ "(desc1 TEXT, desc2 TEXT, mac TEXT PRIMARY KEY, maxv INTEGER, setv INTEGER DEFAULT 1, getl INTEGER DEFAULT 1, pname TEXT, " +
 							"bdevice TEXT, wifi INTEGER DEFAULT 0, appaction TEXT, appdata TEXT, apptype TEXT, apprestart INTEGER DEFAULT 0, " +
 							"tts INTEGER DEFAULT 0, setpv INTEGER DEFAULT 0, phonev INTEGER DEFAULT 10, appkill INTEGER DEFAULT 1, enablegps INTEGER DEFAULT 0" +
-							", icon INTEGER, smsdelay DEFAULT 3, smsstream DEFAULT 1, voldelay DEFAULT 5, volramp DEFAULT 0, autovol DEFAULT 1, silent DEFAULT 0," +
+							", icon INTEGER, smsdelay DEFAULT 3, smsstream DEFAULT 1, voldelay DEFAULT 5, volramp DEFAULT 0, autovol DEFAULT 0, silent DEFAULT 0," +
 							" sleep DEFAULT 0, carmode DEFAULT 0)");
 		}
 
