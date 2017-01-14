@@ -144,17 +144,33 @@ public class PackagesChooser extends Activity {
 				this.c = context;
 			}
 
+			private static class ViewHolderItem {
+				private ImageView iv_icon;
+				private TextView tv_name;
+				private CheckBox box;
+			}
+
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
+				ViewHolderItem viewHolderItem;
 				final LayoutInflater inflater = LayoutInflater.from(c);
-				View v = inflater.inflate(R.layout.package_list_item , parent, false);
-				
-				ImageView iv_icon = (ImageView) v.findViewById(R.id.pi_iv_icon);
-				TextView tv_name = (TextView) v.findViewById(R.id.pi_tv_name);
+				if (convertView == null) {
+					convertView = inflater.inflate(R.layout.package_list_item , parent, false);
+					viewHolderItem = new ViewHolderItem();
+					viewHolderItem.iv_icon = (ImageView) convertView.findViewById(R.id.pi_iv_icon);
+					viewHolderItem.tv_name = (TextView) convertView.findViewById(R.id.pi_tv_name);
+					viewHolderItem.box = (CheckBox) convertView.findViewById(R.id.checkBox1);
+					convertView.setTag(viewHolderItem);
+				} else {
+					viewHolderItem = (ViewHolderItem) convertView.getTag();
+				}
+				View v = convertView;
+				ImageView iv_icon = viewHolderItem.iv_icon;
+				TextView tv_name = viewHolderItem.tv_name;
 				final AppInfoCache ai = getItem(position);
 				iv_icon.setImageDrawable(ai.getIcon());
 				tv_name.setText(ai.getAppName());
-				final CheckBox box = (CheckBox) v.findViewById(R.id.checkBox1);
+				final CheckBox box = viewHolderItem.box;
 				box.setChecked(ai.isChecked());
 				box.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 
