@@ -1622,6 +1622,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         .getColumnIndex(PhoneLookup.DISPLAY_NAME));
                 return name;
             }
+			if (c != null) {
+				c.close();
+			}
         }
         return number;
     }
