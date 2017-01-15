@@ -194,7 +194,7 @@ public class ManageData extends Activity {
 				} else {
 					// permission denied, boo! Disable the
 					// functionality that depends on this permission.
-					Toast.makeText(application, R.string.needPermission, Toast.LENGTH_LONG).show();
+					Toast.makeText(application, R.string.needStorage, Toast.LENGTH_LONG).show();
 					this.finish();
 				}
 				return;
