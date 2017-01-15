@@ -170,4 +170,6 @@
     <string name="PrefsHideVolUI">Hide volume pop-up</string>
     <string name="PrefsHideVolUiON">Volume pop-up not shown</string>
     <string name="PrefsHideVolUiOFF">Volume pop-up is shown</string>
+    <string name="needPermission">Permission must be granted</string>
+    <string name="needStorage">External storage not available</string>
 </resources>
