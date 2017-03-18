@@ -177,4 +177,5 @@
     <string name="askSms">The app needs to read SMS (text messages) to use the test message reading feature.</string>
     <string name="askContacts">The app needs access to your contects to tell who messages are from when reading messages.</string>
     <string name="askSetPerm">Set Permission</string>
+    <string name="pushBtNamesButtonText">Push BT Names to Android</string>
 </resources>

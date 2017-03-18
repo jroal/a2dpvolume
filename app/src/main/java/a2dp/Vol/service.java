@@ -212,7 +212,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         // open database instance
         this.DB = new DeviceDB(application);
 
-        wifiManager = (WifiManager) getBaseContext().getSystemService(
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(
                 Context.WIFI_SERVICE);
 
         locmanager = (LocationManager) getBaseContext().getSystemService(
