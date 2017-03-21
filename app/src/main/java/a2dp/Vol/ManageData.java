@@ -29,6 +29,7 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Vector;
 
+import static a2dp.Vol.R.string.ListName;
 import static android.R.attr.name;
 
 /**
@@ -136,18 +137,20 @@ public class ManageData extends Activity {
                     vec = myDB.selectAlldb();
                 } catch (Exception e) {
                     e.printStackTrace();
-
                 }
+                int count = 0;
                 for (btDevice bt : vec) {
                     if (bt.getMac().length() > 16)
                         try {
                             BluetoothDevice bdevice = adapter.getRemoteDevice(bt.getMac());
                             Method m = bdevice.getClass().getMethod("setAlias", String.class);
                             m.invoke(bdevice, bt.getDesc2());
+                            ++count;
                         } catch (Exception e) {
                             //Log.d(TAG, "error renaming device:" + e.getMessage());
                         }
                 }
+                Toast.makeText(ManageData.this, getString(R.string.ListName) + " - " + count,Toast.LENGTH_LONG).show();
             }
         });
 
