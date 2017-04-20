@@ -6,7 +6,7 @@ Automatically adjusts the media volume on connect and resets on disconnect.  Thi
 
 This app has experienced scope creep now and it does much more than originally intended.  In addition to the media volume and location features, it now can automatically launch apps and shortcuts, connect to another Bluetooth device when the first device connects, and turn OFF WIFI and turn ON GPS when a device is active.  Since version 2.2.0 it can also read your text messages for you when connected to a device.  Since 2.11.0 it can also read certain notification messages. That feature can help reduce driver distraction.  A2DP Volume also works with car docks, home docks, and the headset plug.  Rather than just global features, each feature can be configured by device so you can completely customize your control.
 
-The main version of this application requires Android 4.03 or higher (2.2 or higher until version 2.11.2).  
+The main version of this application requires Android 4.4 or higher.  
 
 One of the goals of this app is to eliminate unnecessary driver distractions.  By automatically handling certain settings and events the driver can leave the phone in a pocket or purse and keep their eyes on the road where they belong.  We have purposely not implemented several feature requests that would have required interaction while driving.
 
@@ -42,8 +42,7 @@ After you join that community, become a tester using this https://play.google.co
 . Back at the main menu in my app, you should see the right button now says "Stop Service".  That means the app is ready to adjust volume and capture location data.  If you were already connected to the Bluetooth device when you installed and configured my app then you will need to disconnect and reconnect for it to trigger the volume and location capture.  
 
 
-If you can read software code, look in the "source" tab above.  You can use the 
-http://code.google.com/p/a2dpvolume/source/browse/[browse function] to view the source code in your browser.  The project was written in Java using Eclipse and the Android SDK.
+If you can read software code, look in the "code" tab above.  
 
 = Issues
 
@@ -101,4 +100,4 @@ Click http://www.youtube.com/watch?v=3sy_pCbJHA0&list=PL8B87E2415E38D95E&feature
 You can find the app on the Google Play Store 
 https://market.android.com/details?id=a2dp.Vol&feature=search_result[here].
 
-I created a simple tester app that can be used to invoke Car Mode and for sending text strings to A2DP Volume simulating a message from an app.  You can get it http://jimroal.com/exe/CarMode1_2.apk[here].
+I created a simple tester app that can be used to invoke Car Mode and for sending text strings to A2DP Volume simulating a message from an app.  You can get it link:../../wiki/Notification-tester-app[here].
