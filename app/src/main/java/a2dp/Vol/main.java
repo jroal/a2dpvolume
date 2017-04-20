@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.Vector;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -23,6 +25,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.media.AudioManager;
@@ -34,7 +37,9 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,6 +52,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 public class main extends Activity {
 
@@ -78,7 +88,22 @@ public class main extends Activity {
     private String a2dpDir = "";
     private static final String LOG_TAG = "A2DP_Volume";
     private static int resourceID = android.R.layout.simple_list_item_1;
+    private final int PERMISSION_READ_CONTACTS = 1;
+    private final int PERMISSION_LOCATION = 2;
+    private final int PERMISSION_PHONE = 3;
+    private final int PERMISSION_SMS = 4;
+    private final int PERMISSION_STORAGE = 5;
     Resources res;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private com.google.android.gms.common.api.GoogleApiClient client2;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,7 +149,8 @@ public class main extends Activity {
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog,
                                                         int id) {
-                                        myDB.deleteAll();
+                                        if (myDB.getDb().isOpen())
+                                            myDB.deleteAll();
                                         refreshList(loadFromDB());
                                     }
                                 })
@@ -376,7 +402,7 @@ public class main extends Activity {
                                 try {
                                     startActivity(intent);
                                     /*WebView myWebView = (WebView) findViewById(R.id.webview);
-									myWebView.loadUrl(uri.toString());*/
+                                    myWebView.loadUrl(uri.toString());*/
                                 } catch (Exception e) {
                                     // TODO Auto-generated catch block
                                     Toast.makeText(application, e.toString(),
@@ -516,8 +542,303 @@ public class main extends Activity {
         // load the list from the database
         getConnects();
         refreshList(loadFromDB());
+
+        int ps = permission_scan();
+        if(ps > 0)check_permissions(ps);
+
         super.onCreate(savedInstanceState);
     }
+
+
+    private int permission_scan(){
+
+        int ret = 0;
+        if(!preferences.getBoolean("ReadContactsPermission",false))ret = 1;
+
+        if(!preferences.getBoolean("LocationPermission",false))ret = 2;
+
+        if(!preferences.getBoolean("PhonePermission",false))ret = 3;
+
+        if(!preferences.getBoolean("SMSPermission",false))ret = 4;
+
+        if(!preferences.getBoolean("StoragePermission",false))ret = 5;
+
+        return ret;
+    }
+
+    private void check_permissions(int perm) {
+
+        // Check permissions
+
+        switch (perm) {
+            case PERMISSION_READ_CONTACTS:
+                if (ContextCompat.checkSelfPermission(application,
+                        Manifest.permission.READ_CONTACTS)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.READ_CONTACTS)) {
+                        askPermission(R.string.askContacts, PERMISSION_READ_CONTACTS, Manifest.permission.READ_CONTACTS);
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    } else {
+
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.READ_CONTACTS},
+                                PERMISSION_READ_CONTACTS);
+
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                }
+                break;
+
+            case PERMISSION_LOCATION:
+                if (ContextCompat.checkSelfPermission(application,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        askPermission(R.string.askLocation, PERMISSION_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION);
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    } else {
+
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                PERMISSION_LOCATION);
+
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                }
+                break;
+
+            case PERMISSION_SMS:
+                if (ContextCompat.checkSelfPermission(application,
+                        Manifest.permission.RECEIVE_SMS)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.RECEIVE_SMS)) {
+                        askPermission(R.string.askSms, PERMISSION_SMS, Manifest.permission.RECEIVE_SMS);
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    } else {
+
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.RECEIVE_SMS},
+                                PERMISSION_SMS);
+
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                }
+                break;
+
+            case PERMISSION_PHONE:
+                if (ContextCompat.checkSelfPermission(application,
+                        Manifest.permission.READ_PHONE_STATE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.READ_PHONE_STATE)) {
+
+                        askPermission(R.string.askPhone, PERMISSION_PHONE, Manifest.permission.READ_PHONE_STATE);
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    } else {
+
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.READ_PHONE_STATE},
+                                PERMISSION_PHONE);
+
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                }
+                break;
+
+            case PERMISSION_STORAGE:
+                if (ContextCompat.checkSelfPermission(application,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        askPermission(R.string.askStorage, PERMISSION_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    } else {
+
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                PERMISSION_STORAGE);
+
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                }
+                break;
+        }
+
+    }
+
+    private void askPermission(int message, final int mperm, final String permission) {
+        //This fucnction is used to ask the user for permissions, explaining why they are needed
+        AlertDialog.Builder dial = new AlertDialog.Builder(this);
+        dial.setMessage(message)
+                .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                })
+                .setPositiveButton(R.string.askSetPerm, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                        ActivityCompat.requestPermissions(a2dp.Vol.main.this, new String[]{permission}, mperm);
+                    }
+                }).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("ReadContactsPermission", true);
+                editor.commit();
+
+                break;
+            }
+            case PERMISSION_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("LocationPermission", true);
+                editor.commit();
+
+                break;
+            }
+            case PERMISSION_PHONE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("PhonePermission", true);
+                editor.commit();
+
+                break;
+            }
+            case PERMISSION_SMS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("SMSPermission", true);
+                editor.commit();
+
+                break;
+            }
+            case PERMISSION_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("StoragePermission", true);
+                editor.commit();
+
+                break;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+
+        }
+        int ps = permission_scan();
+        if(ps > 0)check_permissions(ps);
+
+        return;
+    }
+
 
     private void getConnects() {
         if (servrun) {
@@ -624,8 +945,8 @@ public class main extends Activity {
 
         // the section below is for testing only. Comment out before building
         // the application for use.
-		/*
-		 * btDevice bt3 = new btDevice(); bt3.setBluetoothDevice("Device 1",
+        /*
+         * btDevice bt3 = new btDevice(); bt3.setBluetoothDevice("Device 1",
 		 * "Porsche", "00:22:33:44:55:66:77", 15); i = 1; btDevice btx =
 		 * myDB.getBTD(bt3.mac); if(btx.mac == null) {
 		 * a2dp.Vol.main.this.myDB.insert(bt3); vec.add(bt3); } else
@@ -742,7 +1063,7 @@ public class main extends Activity {
                 // If there are paired devices
 
                 if (pairedDevices.size() > 0) {
-                    IBluetooth ibta = getIBluetooth();
+                    //IBluetooth ibta = getIBluetooth();
                     // Loop through paired devices
                     for (BluetoothDevice device : pairedDevices) {
                         // Add the name and address to an array adapter to show in a
@@ -750,27 +1071,31 @@ public class main extends Activity {
                         if (device.getAddress() != null) {
                             btDevice bt = new btDevice();
                             i++;
-                            String name;
-                            if (android.os.Build.VERSION.SDK_INT >= 14 && android.os.Build.VERSION.SDK_INT <= 16) {
-                                try {
-                                    name = ibta.getRemoteAlias(device.getAddress());
-                                    //Toast.makeText(application, "try made it" + name, Toast.LENGTH_LONG).show();
-                                } catch (RemoteException e) {
-                                    name = device.getName();
-                                    //Toast.makeText(application, "try failed" + name, Toast.LENGTH_LONG).show();
-                                    e.printStackTrace();
-                                }
-                                if (name == null) name = device.getName();
-                            } else
+                            String name = null;
+
+                            try {
+                                Method m = device.getClass().getMethod("getAlias");
+                                Object res = m.invoke(device);
+                                if (res != null)
+                                    name = res.toString();
+                            } catch (NoSuchMethodException e) {
+                                e.printStackTrace();
+                            } catch (InvocationTargetException e) {
+                                e.printStackTrace();
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (name == null)
                                 name = device.getName();
+
                             bt.setBluetoothDevice(
                                     device,
                                     name,
                                     am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-                            // API 16 implemented automatic volume control so this should not be needed
-                            if (android.os.Build.VERSION.SDK_INT > 15) {
-                                bt.setSetV(false);
-                            }
+
+                            bt.setSetV(true);
+
                             btDevice bt2 = myDB.getBTD(bt.mac);
 
                             if (bt2.mac == null) {
@@ -897,7 +1222,7 @@ public class main extends Activity {
     private OnClickListener setIgnore() {
         SharedPreferences.Editor editor = preferences.edit();
         TTSignore = true;
-        editor.putBoolean("TTSignore", TTSignore);
+        editor.putBoolean("TTSignore", true);
         editor.commit();
         return null;
     }

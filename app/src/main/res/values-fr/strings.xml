@@ -170,4 +170,11 @@
     <string name="PrefsHideVolUI">Cacher notifications de volume</string>
     <string name="PrefsHideVolUiON">Notifications de volume cachées</string>
     <string name="PrefsHideVolUiOFF">Notifications de volume montrées</string>
+    <string name="needStorage">Stockage externe non disponible</string>
+    <string name="askPhone">L\\\'accès au téléphone permet de mettre en pause la lecture automatique des messages.</string>
+    <string name="askStorage">L\\\'application s\'en sert pour stocker les positions et les sauvegardes.</string>
+    <string name="askLocation">L\\\'application s\'en sert pour stocker l\'emplacement actuel lors du débranchement de l\'appareil.</string>
+    <string name="askSms">L\\\'application accède aux SMS (messages textes) pour la fonctionalité lecture vocale automatique.</string>
+    <string name="askContacts">L\\\'application accède aux contacts afin de nommer l\'envoyeur lors de la lecture d\'un message.</string>
+    <string name="askSetPerm">Définir les authorisations</string>
 </resources>

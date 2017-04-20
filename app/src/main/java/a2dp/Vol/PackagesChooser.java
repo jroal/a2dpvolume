@@ -144,11 +144,13 @@ public class PackagesChooser extends Activity {
 				this.c = context;
 			}
 
+
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
+
 				final LayoutInflater inflater = LayoutInflater.from(c);
 				View v = inflater.inflate(R.layout.package_list_item , parent, false);
-				
+
 				ImageView iv_icon = (ImageView) v.findViewById(R.id.pi_iv_icon);
 				TextView tv_name = (TextView) v.findViewById(R.id.pi_tv_name);
 				final AppInfoCache ai = getItem(position);

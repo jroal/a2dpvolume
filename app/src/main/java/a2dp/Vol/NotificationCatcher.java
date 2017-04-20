@@ -118,7 +118,6 @@ public class NotificationCatcher extends NotificationListenerService {
                         .getApplicationLabel(appInfo) : pack);
 
 
-
                 // abort if we can get the notification
                 Notification notification = sbn.getNotification();
                 if (notification == null) return null;
@@ -188,7 +187,8 @@ public class NotificationCatcher extends NotificationListenerService {
                             str += ticker;
                         else
                             str += ticker + ", " + temp;
-                    } else if (!text.isEmpty())
+                    }
+                    if (!text.isEmpty())
                         if (text.equalsIgnoreCase(temp) || temp.isEmpty())
                             str += text;
                         else
@@ -196,6 +196,11 @@ public class NotificationCatcher extends NotificationListenerService {
 
                     //if there is no ticker or strings then ignore it.
                     if (temp.isEmpty() && ticker.isEmpty() && text.isEmpty()) return null;
+
+                    if (pack == "com.google.android.apps.fireball") { // Google Allo handling
+                        if (ticker != null) str = appName + ", " + ticker + ", " + text;
+                        else return null;
+                    }
                 }
 
 

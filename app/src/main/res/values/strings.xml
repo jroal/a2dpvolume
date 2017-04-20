@@ -170,4 +170,12 @@
     <string name="PrefsHideVolUI">Hide volume pop-up</string>
     <string name="PrefsHideVolUiON">Volume pop-up not shown</string>
     <string name="PrefsHideVolUiOFF">Volume pop-up is shown</string>
+    <string name="needStorage">External storage not available</string>
+    <string name="askPhone">Phone access is used to block the message reader while you are on a call.</string>
+    <string name="askStorage">The app needs to be able to write data for stored location and to backup data.</string>
+    <string name="askLocation">The app needs to access location data to stoere location when device disconnects.</string>
+    <string name="askSms">The app needs to read SMS (text messages) to use the test message reading feature.</string>
+    <string name="askContacts">The app needs access to your contects to tell who messages are from when reading messages.</string>
+    <string name="askSetPerm">Set Permission</string>
+    <string name="pushBtNamesButtonText">Push BT Names to Android</string>
 </resources>

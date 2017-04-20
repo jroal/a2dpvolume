@@ -170,4 +170,11 @@
     <string name="PrefsHideVolUI">Verstecke Lautstärke-Popup</string>
     <string name="PrefsHideVolUiON">Lautstärke-Popup wird nicht angezeigt</string>
     <string name="PrefsHideVolUiOFF">Lautstärke-Popup wird angezeigt</string>
+    <string name="needStorage">Mobiler Speicher ist nicht verfügbar</string>
+    <string name="askPhone">Die Telefon-Berechtigung wird benötigt um den Nachrichten-Leser während eines Telefongesprächs automatisch abschalten zu können.</string>
+    <string name="askStorage">Die App muss in der Lage sein, Daten zur Position und zu Backupzwecken auf dem mobilen Speicher abzulegen.</string>
+    <string name="askLocation">Die App benötigt Zugriff auf die GPS-Positionsdaten um die aktuelle Position bei Verbindungstrennung zu bestimmen.</string>
+    <string name="askSms">Die App muss auf die SMS-Nachrichten zugreifen können um diese vorzulesen.</string>
+    <string name="askContacts">Die App benötigt Zugriff auf die Telefonkontakte um beim Vorlesen von SMS-Nachrichten auch den Namen ausgeben zu können.</string>
+    <string name="askSetPerm">Erlaube Zugriff</string>
 </resources>

@@ -749,7 +749,7 @@ public class EditDevice extends Activity {
 		String rtr = "";
 		try {
 			Method m = Intent.class.getMethod("toUri",
-					new Class[] { int.class });
+					int.class);
 			rtr = (String) m.invoke(i,
 					Intent.class.getField("URI_INTENT_SCHEME").getInt(null));
 		} catch (Exception e) {
