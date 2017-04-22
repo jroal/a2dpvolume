@@ -53,10 +53,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
+//import com.google.android.gms.appindexing.Action;
+//import com.google.android.gms.appindexing.AppIndex;
+//import com.google.android.gms.appindexing.Thing;
+//import com.google.android.gms.common.api.GoogleApiClient;
 
 public class main extends Activity {
 
@@ -98,12 +98,12 @@ public class main extends Activity {
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
+    //private GoogleApiClient client;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private com.google.android.gms.common.api.GoogleApiClient client2;
+    //private com.google.android.gms.common.api.GoogleApiClient client2;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">A2DP Volume</string>
+    <string-array name="gpsDistance">
+        <item>2м (6фут)</item>
+        <item>5м (15фут)</item>
+        <item>10с (30фут)</item>
+        <item>15м (45фут)</item>
+        <item>20м (60фут)</item>
+        <item>30м (90фут)</item>
+    </string-array>
+    <string-array name="gpsTimeout">
+        <item>Отключить GPS Listener</item>
+        <item>5 секунд</item>
+        <item>10 секунд</item>
+        <item>15 секунд</item>
+        <item>20 секунд</item>
+        <item>30 секунд</item>
+        <item>45 секунд</item>
+    </string-array>
+    <string-array name="gpsTimeout_items">
+        <item>0</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>45000</item>
+    </string-array>
+    <string-array name="gpsDistance_items">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>1</item>
+        <item>30</item>
+    </string-array>
+    <string name="ListName">Bluetooth устройства</string>
+    <string name="GetLocButtonString">Сохранённое расположение</string>
+    <string name="StartService">Старт сервиса</string>
+    <string name="StopService">Стоп сервиса</string>
+    <string name="FindDevices">Найти устройства</string>
+    <string name="MediaVolume">Громкость медиа</string>
+    <string name="ServiceStarted">A2DP Volume сервис запущен</string>
+    <string name="ServiceStopped">A2DP Volume сервис остановлен</string>
+    <string name="ExportDB">Экспорт базы данных на SD карту</string>
+    <string name="ExportXML">Экспорт базы данных как XML на SD</string>
+    <string name="ImportDB">Импорт базы данных с SD карты</string>
+    <string name="ExportLocation">Экспорт данных в последнее расположение</string>
+    <string name="PrefsNotifySummaryON">Сервис запустится как задача со значком в панели уведомлений.</string>
+    <string name="PrefsNotifySummaryOFF">Сервис запустится как фоновая задача без значка в панели уведомлений.</string>
+    <string name="PrefsNotify">Уведомление поверх?</string>
+    <string name="PrefsGPSTimeoutTitle">Таймаут GPS</string>
+    <string name="PrefsGPSTimeout">Макс. время разрешения GPS поиска лучшего расположения после отсоединения bluetooth.</string>
+    <string name="PrefsGPSInaccuracyTitle">GPS макс. неточность</string>
+    <string name="PrefsGPSInaccuracy">Максимум неточности GPS в метрах перед остановкой поиска лучшего значения.</string>
+    <string name="PrefsCarModeON">Отвечать в Car Mode.</string>
+    <string name="PrefsCarModeOFF">Не отвечать в Car Mode.</string>
+    <string name="PrefsCarMode">Отвечать в Car Mode?</string>
+    <string name="PrefsCatGPS">Настройки захвата расположения</string>
+    <string name="PrefsCatGen">Общие настройки</string>
+    <string name="PrefsBootstart">Старт при загрузке?</string>
+    <string name="PrefsBootstartON">Сервис стартует при загрузке.</string>
+    <string name="PrefsBootstartOFF">Сервис не стартует при загрузке.</string>
+    <string name="PrefsToasts">Показывать всплыв. сообщения?</string>
+    <string name="PrefsToastsON">Всплыв. сообщения показывать при старте/стопе сервиса.</string>
+    <string name="PrefsToastsOFF">Всплыв. сообщения не показывать при старте/стопе сервиса.</string>
+    <string name="PrefsToastsSummary">Всплыв. сообщения показывать при старте/стопе сервиса?</string>
+    <string name="MenuExit">Выход</string>
+    <string name="MenumanageData">Управление данными</string>
+    <string name="MenuDeleteData">Удалить все данные</string>
+    <string name="MenuPrefs">Настройки</string>
+    <string name="MenuHelp">Помощь</string>
+    <string name="DeleteDataMsg">Хотите удалить все данные устройств из A2DP Volume?</string>
+    <string name="Yes">Да</string>
+    <string name="No">Нет</string>
+    <string name="OK">OK</string>
+    <string name="Delete">Удалить</string>
+    <string name="Edit">Правка</string>
+    <string name="NoData">Нет данных</string>
+    <string name="ServRunning">A2DP Volume сервис работает</string>
+    <string name="ImportCompletedText">Импорт успешен</string>
+    <string name="NobtSupport">Ваше устройство не поддерживает bluetooth.</string>
+    <string name="btEnableFail">Сбой включения bluetooth</string>
+    <string name="usePassiveOff">Не исп-ть пассивное определение местоположения</string>
+    <string name="usePassiveOn">Также исп-ть пассив. опред. местополож-я</string>
+    <string name="usePassiveTitle">Исп-ть пассив. опред. местополож?</string>
+    <string name="useNetworkTitle">Исп-ть сетевые местоположения</string>
+    <string name="useNetworkON">Также исп-ть сетевое местоположение</string>
+    <string name="useNetworkOFF">Не исп-ть сетевое местоположение</string>
+    <string name="LocationString">Расположение</string>
+    <string name="btNotOn">Информация устройства недоступна</string>
+    <string name="app_not_found">Приложение не найдено</string>
+    <string name="deviceName">Введите имя устройства</string>
+    <string name="getLoc">Захват местоположения при рассоединении?</string>
+    <string name="setVol">Установить уровень звука при соединении?</string>
+    <string name="connectBT">Также присоединить к bluetooth устройству</string>
+    <string name="startApp">Запуск приложения после соединения</string>
+    <string name="wifiDisconnect">Отсоединять WIFI при отсоединении  bluetooth?</string>
+    <string name="save">Сохранить</string>
+    <string name="PrefsUseLocatStorageON">Исп-ть device File Storage</string>
+    <string name="PrefsUseLocalStorageOFF">Исп-ть SD Card File Storage?</string>
+    <string name="PrefsUseLocalStorage">Исп-ть Local File Storage?</string>
+    <string name="PrefsHomeDockOFF">Не отвечать в Home Dock</string>
+    <string name="PrefsHomeDock">Отвечать на Home Dock?</string>
+    <string name="PrefsHomeDockON">Отвечать в Home Dock</string>
+    <string name="ea_ti_app">Приложение для запуска</string>
+    <string name="ae_stop_app_warning_title">Что это за приложение?</string>
+    <string name="ae_stop_app_warning_message">Интенты без имени пакета не могут быть остановлены A2DP Volume</string>
+    <string name="connectedTo">Соединено с</string>
+    <string name="PrefsOtherConnectedIcon">Значок соединения</string>
+    <string name="app_restart">Форсировать рестарт приложения?</string>
+    <string name="PrefsHeadsetON">Отвечать в Audio Jack</string>
+    <string name="PrefsHeadset">Отвечать в Audio Jack?</string>
+    <string name="PrefsHeadsetOFF">Не отвечать в Audio Jack</string>
+    <string name="PrefsTTSON">Читать текстовые сообщения при соединении с устройством</string>
+    <string name="PrefsTTS">Читать текстовые сообщения?</string>
+    <string name="PrefsTTSOFF">Текстовые сообщения не будут читаться</string>
+    <string name="audioJackName">Audio Jack</string>
+    <string name="needTTS">TTS данных нет. Установить?</string>
+    <string name="msgTemplate">… Message From: {0} .. {1}</string>
+    <string name="TTSready">TTS готов</string>
+    <string name="TTSNotReady">TTS не готов</string>
+    <string name="carDockName">Car Dock</string>
+    <string name="homeDockName">Home Dock</string>
+    <string name="Editsetpv">Уст-ть громк. вход. при коннекте?</string>
+    <string name="EditPhoneVolume">Громкость входящего звонка</string>
+    <string name="SMSDelayText">Задержка зачитывания SMS</string>
+    <string name="Bonded">Связано</string>
+    <string name="Error">Ошибка</string>
+    <string name="NotBonded">Не связано</string>
+    <string name="Bonding">Связывание</string>
+    <string name="Class">Класс</string>
+    <string name="SMS_Stream_desc">Выберите путь для звука SMS</string>
+    <string name="PrefsVolAdjDelaySummary">Задержка между присоединением устройства и регулировкой звука</string>
+    <string name="PrefsVolRampTitle">Нарастание звука?</string>
+    <string name="app_kill">Останавливать при отсоединении?</string>
+    <string name="PrefsPowerOFF">Не отвечать на присоединение питания</string>
+    <string name="PrefsPower">Отвечать на присоединение питания</string>
+    <string name="PrefsPowerON">Отвечать на присоединение питания</string>
+    <string name="powerPlugName">Присоединение питания</string>
+    <string name="enableGPS">Включить GPS при соединении?</string>
+    <string name="SMSAlarmStream">Alarm поток</string>
+    <string name="SMSVoiceStream">Voice Call поток</string>
+    <string name="SMSMusicStream">Music поток</string>
+    <string name="rememberMediaVol">Автозапоминать уровень звука при рассоединении</string>
+    <string name="silentMode">Молчание уведомлений при соединении?</string>
+    <string name="ignoreTTSMissing">Игнорировать это</string>
+    <string name="PrefsGTalkOFF">Уведомления не будут читаться</string>
+    <string name="PrefsGTalk">Включить чтение уведомлений</string>
+    <string name="PrefsGTalkON">Читать уведомления при присоединении устройства</string>
+    <string name="accessDescription">Исп-ся для чтения уведомлений при соединении с уст-вом через A2DP Volume</string>
+    <string name="sleepAfterLaunch">Засыпать после запуска приложения</string>
+    <string name="launchCarMode">Запуск Car Mode</string>
+    <string-array name="PrefsNotifyOptions">
+        <item>Сервис стартует как задача со значком в панели уведомлений</item>
+        <item>Значок показывается только при присоединении устройств</item>
+        <item>Сервис стартует как фоновая задача без значка в панели уведомлений.</item>
+    </string-array>
+    <string-array name="PrefsNotifyItems">
+        <item>всегда</item>
+        <item></item>
+        <item>никогда</item>
+    </string-array>
+    <string name="PrefsNotifyTitle">Исп-ть значок уведомления</string>
+    <string name="PrefsNotificationSummary">Видимость уведомлений</string>
+    <string name="title_activity_packages_chooser">Отвечать этим приложениям</string>
+    <string name="action_settings">Настройки</string>
+    <string name="PackagesTitle">Приложения для уведомлений</string>
+    <string name="PrefsHideVolUI">Скрыть уведомление громкости</string>
+    <string name="PrefsHideVolUiON">Не показывать уведомление громкости</string>
+    <string name="PrefsHideVolUiOFF">Показать уведомление громкости</string>
+    <string name="needStorage">Внешнее хранилище недоступно</string>
+    <string name="askPhone">Доступ к телефону для блокировки чтения сообщений при звонке.</string>
+    <string name="askStorage">Запись данных для сохранения местоположений и бэкапа данных.</string>
+    <string name="askLocation">Приложению нужен доступ к местоположению для сохранения места дисконнекта.</string>
+    <string name="askSms">Приложению нужен доступ к СМС для проверки чтения сообщений.</string>
+    <string name="askContacts">Приложению нужен доступ к контактам для определения отправителя сообщений.</string>
+    <string name="askSetPerm">Установить разрешение</string>
+    <string name="pushBtNamesButtonText">Пуш BT имён на Android</string>
+</resources>
