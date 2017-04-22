@@ -170,4 +170,12 @@
     <string name="PrefsHideVolUI">ボリュームポップアップの非表示化</string>
     <string name="PrefsHideVolUiON">ボリュームポップアップを表示しません。</string>
     <string name="PrefsHideVolUiOFF">ボリュームポップアップを表示します。</string>
+    <string name="needStorage">外部ストレージが利用できません</string>
+    <string name="askPhone">通話中にメッセージリーダーが動作しないようにするために電話へのアクセスを使用します。</string>
+    <string name="askStorage">このアプリは、保存した場所やバックアップデータを書き出す権限が必要です。</string>
+    <string name="askLocation">このアプリは、デバイスを切断した場所を保存するために、位置情報へのアクセスが必要です。</string>
+    <string name="askSms">このアプリは、テストメッセージ読込機能のために、SMS (テキストメッセージ) を読む必要があります。</string>
+    <string name="askContacts">このアプリは、メッセージを読む際に、メッセージの送信元を取得するのに連絡先へのアクセスが必要です。</string>
+    <string name="askSetPerm">権限設定</string>
+    <string name="pushBtNamesButtonText">Bluetooth名をAndroidに送信</string>
 </resources>
