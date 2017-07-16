@@ -177,5 +177,5 @@
     <string name="askSms">このアプリは、テストメッセージ読込機能のために、SMS (テキストメッセージ) を読む必要があります。</string>
     <string name="askContacts">このアプリは、メッセージを読む際に、メッセージの送信元を取得するのに連絡先へのアクセスが必要です。</string>
     <string name="askSetPerm">権限設定</string>
-    <string name="pushBtNamesButtonText">Bluetooth名をAndroidに送信</string>
+    <string name="pushBtNamesButtonText">設定したBluetooth名をAndroidに反映</string>
 </resources>
