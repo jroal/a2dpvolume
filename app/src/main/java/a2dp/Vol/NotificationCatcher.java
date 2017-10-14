@@ -75,7 +75,7 @@ public class NotificationCatcher extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        super.onNotificationPosted(sbn);
+        //super.onNotificationPosted(sbn);
 
         new Readit().execute(sbn);
 
