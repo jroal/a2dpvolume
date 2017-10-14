@@ -985,6 +985,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
     // makes the media volume adjustment
     public static void setVolume(int inputVol, Context sender) {
 
+        if(android.os.Build.VERSION.SDK_INT > 20)
+        if(am2.isVolumeFixed())Toast.makeText(application,"Volume fixed",Toast.LENGTH_LONG).show();
 
         int curvol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
         if (inputVol < 0)
@@ -1002,8 +1004,19 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     int ui = 0;
                     if (hideVolUi) ui = 0;
                     else ui = AudioManager.FLAG_SHOW_UI;
-                    am2.setStreamVolume(AudioManager.STREAM_MUSIC, minputVol,
-                            ui);
+                    try {
+                        am2.setStreamVolume(AudioManager.STREAM_MUSIC, minputVol,
+                                ui);
+                    } catch (Exception e) {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                            NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
+                            if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
+                                Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                                application.startActivity(intent);
+                            }
+                        }
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
@@ -1015,8 +1028,19 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     int newvol = cvol;
                     if ((cvol + 1) < minputVol)
                         ++newvol;
-                    am2.setStreamVolume(AudioManager.STREAM_MUSIC, newvol,
-                            ui);
+                    try {
+                        am2.setStreamVolume(AudioManager.STREAM_MUSIC, newvol,
+                                ui);
+                    } catch (Exception e) {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                            NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
+                            if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
+                                Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                                application.startActivity(intent);
+                            }
+                        }
+                        e.printStackTrace();
+                    }
                 }
 
             }.start();
@@ -1024,8 +1048,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
             int ui = 0;
             if (hideVolUi) ui = 0;
             else ui = AudioManager.FLAG_SHOW_UI;
-            am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol,
-                    ui);
+            try {
+                am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol,
+                        ui);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1059,10 +1087,18 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if (inputVol > am2.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL))
             inputVol = am2.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
         if (hideVolUi) {
-            am2.setStreamVolume(AudioManager.STREAM_VOICE_CALL, inputVol,
-                    AudioManager.FLAG_SHOW_UI);
+            try {
+                am2.setStreamVolume(AudioManager.STREAM_VOICE_CALL, inputVol,
+                        AudioManager.FLAG_SHOW_UI);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
-            am2.setStreamVolume(AudioManager.STREAM_VOICE_CALL, inputVol, 0);
+            try {
+                am2.setStreamVolume(AudioManager.STREAM_VOICE_CALL, inputVol, 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         outVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
         return outVol;
