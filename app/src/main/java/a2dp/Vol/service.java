@@ -1032,13 +1032,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         am2.setStreamVolume(AudioManager.STREAM_MUSIC, newvol,
                                 ui);
                     } catch (Exception e) {
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                            NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
-                            if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
-                                Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-                                application.startActivity(intent);
-                            }
-                        }
+
                         e.printStackTrace();
                     }
                 }
@@ -1052,6 +1046,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol,
                         ui);
             } catch (Exception e) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
+                        Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                        application.startActivity(intent);
+                    }
+                }
                 e.printStackTrace();
             }
         }

@@ -3,8 +3,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="a2dp.Vol"
     android:installLocation="internalOnly"
-    android:versionCode="137"
-    android:versionName="2.12.9.2" >
+    android:versionCode="138"
+    android:versionName="2.12.9.3" >
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
