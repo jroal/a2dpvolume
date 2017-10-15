@@ -110,6 +110,8 @@ public class EditDevice extends Activity {
 	private static final int IN_CALL_STREAM = 1;
 	private static final int ALARM_STREAM = 2;
 
+	private static final String EXTRA_BTD = "btd";
+
 	/**
 	 * @see android.app.Activity#onCreate(Bundle)
 	 */
@@ -171,8 +173,21 @@ public class EditDevice extends Activity {
 				.getDefaultSharedPreferences(application);
 		TTsEnabled = preferences.getBoolean("enableTTS", false);
 
-		btd = getIntent().getStringExtra("btd"); // get the mac address of the
+		btd = getIntent().getStringExtra(EXTRA_BTD); // get the mac address of the
 													// device to edit
+
+		if (btd == null) {
+			if (savedInstanceState != null) {
+				btd = savedInstanceState.getString(EXTRA_BTD);
+			}
+		}
+
+		// this should only even be possible if the task was in the background
+		// and got killed because of low memory - so just finish the activity (without showing it)
+		if (btd == null) {
+			finish();
+			return;
+		}
 
 		device = myDB.getBTD(btd);
 
@@ -804,4 +819,10 @@ public class EditDevice extends Activity {
 		return super.onCreateDialog(id);
 	}
 
+	// save the current btd value (mac) in case this activity gets killed while in background
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putString(EXTRA_BTD,btd);
+	}
 }
