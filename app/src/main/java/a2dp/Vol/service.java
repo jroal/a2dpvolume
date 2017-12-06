@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.text.MessageFormat;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import android.Manifest;
 import android.app.ActivityManager;
@@ -1395,6 +1396,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     };
 
+    private AtomicInteger numToRead = new AtomicInteger(0);
 
     public void TextReader(String rawinput) {
         if (mTtsReady) {
@@ -1429,7 +1431,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
                                 "com.android.music.musicservicecommand");
                         i.putExtra("command", "pause");
                         sendBroadcast(i);
-
                     }
                     am2.requestAudioFocus(a2dp.Vol.service.this,
                             AudioManager.STREAM_VOICE_CALL,
@@ -1468,13 +1469,16 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     @Override
                     public void onFinish() {
                         try {
+                            numToRead.incrementAndGet();
+                            Log.d("service","numToRead = " + numToRead);
+
                             mTts.speak(str, TextToSpeech.QUEUE_ADD, myHash);
                         } catch (Exception e) {
                             Toast.makeText(application, R.string.TTSNotReady,
                                     Toast.LENGTH_LONG).show();
                             e.printStackTrace();
+                            numToRead.set(0);
                         }
-
                     }
 
                     @Override
@@ -1507,6 +1511,16 @@ public class service extends Service implements OnAudioFocusChangeListener {
             int result = AudioManager.AUDIOFOCUS_REQUEST_FAILED;
             if (A2DP_Vol.equalsIgnoreCase(uttId)) {
                 // unmute the stream
+
+                Log.d("service","utternace onDone numToRead = " + numToRead.get());
+                int countRemaining = numToRead.decrementAndGet();
+                if (countRemaining > 0) {
+                    Log.d("service","still more messages to read?");
+                    return;
+                } else {
+                    Log.d("service","all done - abandon audio focus");
+                }
+
                 switch (SMSstream) {
                     case IN_CALL_STREAM:
 /*
@@ -1565,7 +1579,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         @Override
         public void onError(String utteranceId) { // TODO
-
+            Log.d("service","onError numToRead = " + numToRead.get());
+            numToRead.decrementAndGet();
+            Log.d("service","numToRead = " + numToRead.get());
         }
 
         @Override
