@@ -47,7 +47,12 @@ public class NotificationCatcher extends NotificationListenerService {
     @Override
     public void onCreate() {
 
-        this.application = (MyApplication) this.getApplication();
+        try {
+            this.application = (MyApplication) this.getApplication();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(this.application);
         IntentFilter reloadmessage = new IntentFilter("a2dp.vol.Reload");
