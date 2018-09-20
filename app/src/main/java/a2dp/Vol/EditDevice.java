@@ -193,11 +193,19 @@ public class EditDevice extends Activity {
         fdesc2.setText(device.desc2);
         fgloc.setChecked(device.isGetLoc());
         fsetvol.setChecked(device.isSetV());
+
+        if(android.os.Build.VERSION.SDK_INT > 27){
+            fsetvol.setChecked(false);
+            setVolVisibility();
+        }
+
         fvol.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         fvol.setProgress(device.defVol);
         fapp.setText(device.getPname());
         fbt.setText(device.getBdevice());
         fwifi.setChecked(device.isWifi());
+
+
 
         if (device == null)
             connbt.setEnabled(false);
@@ -418,6 +426,15 @@ public class EditDevice extends Activity {
 
     }
 
+    private void setVolVisibility(){
+        if(android.os.Build.VERSION.SDK_INT > 27){
+            fsetvol.setChecked(false);
+            fsetvol.setVisibility(CheckBox.GONE);
+        } else{
+            fsetvol.setVisibility(CheckBox.VISIBLE);
+        }
+        setMediaVisibility();
+    }
 
     private void setMediaVisibility() {
         if (fsetvol.isChecked()) {
@@ -580,7 +597,7 @@ public class EditDevice extends Activity {
         if (!TTsEnabled && fenableTTS.isChecked()) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("enableTTS", true);
-            editor.commit();
+            editor.apply();
         }
 
         sb.setText("Saving");
@@ -672,8 +689,6 @@ public class EditDevice extends Activity {
 		 * fapp.setText(data.getStringExtra("package_name")); }
 		 */
     }
-
-    ;
 
     private DialogInterface.OnClickListener mAppTypeDialogOnClick = new DialogInterface.OnClickListener() {
 

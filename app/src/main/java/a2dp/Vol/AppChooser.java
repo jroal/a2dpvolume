@@ -269,10 +269,10 @@ public class AppChooser extends Activity {
     	
     	public void setPosition (int pos) {
     		position = pos;
-    	};
-    	
-    	
-    	public String getAppName() {
+    	}
+
+
+		public String getAppName() {
     		return app_name;
     	}
     	

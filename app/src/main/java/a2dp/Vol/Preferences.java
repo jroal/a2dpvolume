@@ -39,7 +39,7 @@ public class Preferences extends PreferenceActivity {
 		SharedPreferences.Editor editor = settings.edit();
 
 		// Commit the edits!
-		editor.commit();
+		editor.apply();
 
 
 

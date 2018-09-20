@@ -213,10 +213,10 @@ public class PackagesChooser extends Activity {
 	    	
 	    	public void setPosition (int pos) {
 	    		position = pos;
-	    	};
-	    	
-	    	
-	    	public String getAppName() {
+	    	}
+
+
+			public String getAppName() {
 	    		return app_name;
 	    	}
 	    	
@@ -276,7 +276,7 @@ public class PackagesChooser extends Activity {
 
 			SharedPreferences.Editor editor = preferences.edit();
 	    	editor.putString("packages", packagelist);
-	    	editor.commit();
+	    	editor.apply();
 	    	Intent intent = new Intent();
 	    	intent.setAction("a2dp.vol.Reload");
 	    	application.sendBroadcast(intent);

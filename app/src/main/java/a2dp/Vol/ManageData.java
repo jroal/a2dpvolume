@@ -8,7 +8,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
@@ -28,9 +27,6 @@ import java.lang.reflect.Method;
 import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Vector;
-
-import static a2dp.Vol.R.string.ListName;
-import static android.R.attr.name;
 
 /**
  * @author Leveraged from an example, modified by Jim Roal This activity manages

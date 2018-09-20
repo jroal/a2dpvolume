@@ -34,7 +34,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
@@ -749,7 +748,7 @@ public class main extends Activity {
                 }
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("ReadContactsPermission", true);
-                editor.commit();
+                editor.apply();
 
                 break;
             }
@@ -768,7 +767,7 @@ public class main extends Activity {
                 }
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("LocationPermission", true);
-                editor.commit();
+                editor.apply();
 
                 break;
             }
@@ -787,7 +786,7 @@ public class main extends Activity {
                 }
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("PhonePermission", true);
-                editor.commit();
+                editor.apply();
 
                 break;
             }
@@ -806,7 +805,7 @@ public class main extends Activity {
                 }
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("SMSPermission", true);
-                editor.commit();
+                editor.apply();
 
                 break;
             }
@@ -825,7 +824,7 @@ public class main extends Activity {
                 }
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("StoragePermission", true);
-                editor.commit();
+                editor.apply();
 
                 break;
             }
@@ -836,7 +835,6 @@ public class main extends Activity {
         int ps = permission_scan();
         if(ps > 0)check_permissions(ps);
 
-        return;
     }
 
 
@@ -1223,7 +1221,7 @@ public class main extends Activity {
         SharedPreferences.Editor editor = preferences.edit();
         TTSignore = true;
         editor.putBoolean("TTSignore", true);
-        editor.commit();
+        editor.apply();
         return null;
     }
 

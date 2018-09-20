@@ -24,7 +24,6 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -352,14 +351,14 @@ public class StoreLoc extends Service {
                                 + " " + locTime + " acc="
                                 + df.format(l3.getAccuracy()) + ")", "UTF-8");
             } catch (UnsupportedEncodingException e1) {
-                urlStr = URLEncoder.encode(l3.getLatitude() + ","
+                urlStr = (l3.getLatitude() + ","
                         + l3.getLongitude() + "(" + car + " " + locTime
                         + " acc=" + df.format(l3.getAccuracy()) + ")");
                 e1.printStackTrace();
             }
             try {
                 FileOutputStream fos = openFileOutput("My_Last_Location2",
-                        Context.MODE_WORLD_READABLE);
+                        Context.MODE_PRIVATE);
                 String temp = "http://maps.google.com/maps?q=" + urlStr;
                 fos.write(temp.getBytes());
                 fos.close();
@@ -419,174 +418,172 @@ public class StoreLoc extends Service {
 
         String locTime = "";
         // store this vehicles location
-        if (true) {
-            try {
-                File exportDir = new File(a2dpDir);
+        try {
+            File exportDir = new File(a2dpDir);
 
-                if (!exportDir.exists()) {
-                    exportDir.mkdirs();
-                }
-                File file = new File(exportDir, car.replaceAll(" ", "_")
-                        + ".html");
-
-                String temp = null;
-
-                if (l4 != null) {
-                    locTime = DateUtils.formatDateTime(application,
-                            l4.getTime(), formatFlags);
-                    String urlStr;
-                    try {
-                        urlStr = URLEncoder.encode(
-                                l4.getLatitude() + "," + l4.getLongitude()
-                                        + "(" + car + " " + locTime + " acc="
-                                        + df.format(l4.getAccuracy()) + ")",
-                                "UTF-8");
-                    } catch (Exception e) {
-                        urlStr = URLEncoder.encode(l4.getLatitude() + ","
-                                + l4.getLongitude() + "(" + car + " " + locTime
-                                + " acc=" + df.format(l4.getAccuracy()) + ")");
-                        e.printStackTrace();
-                    }
-
-                    temp = "<hr /><bold><a href=\"http://maps.google.com/maps?q="
-                            + urlStr
-                            + "\">"
-                            + car
-                            + "</a></bold> Best Location<br>Time: "
-                            + locTime
-                            + "<br>"
-                            + "Location type: "
-                            + l4.getProvider()
-                            + "<br>"
-                            + "Accuracy: "
-                            + l4.getAccuracy()
-                            + " meters<br>"
-                            + "Elevation: "
-                            + l4.getAltitude()
-                            + " meters<br>"
-                            + "Lattitude: "
-                            + l4.getLatitude()
-                            + "<br>" + "Longitude: " + l4.getLongitude();
-                } else {
-
-                    locTime = DateUtils.formatDateTime(application, dtime,
-                            formatFlags);
-                    temp = "No Best Location Captured " + locTime + "<br>";
-                }
-                if (l3 != null) {
-                    locTime = DateUtils.formatDateTime(application,
-                            l3.getTime(), formatFlags);
-                    String urlStr;
-                    try {
-                        urlStr = URLEncoder.encode(
-                                l3.getLatitude() + "," + l3.getLongitude()
-                                        + "(" + car + " " + locTime + " acc="
-                                        + df.format(l3.getAccuracy()) + ")",
-                                "UTF-8");
-                    } catch (Exception e) {
-                        urlStr = URLEncoder.encode(l3.getLatitude() + ","
-                                + l3.getLongitude() + "(" + car + " " + locTime
-                                + " acc=" + df.format(l3.getAccuracy()) + ")");
-                        e.printStackTrace();
-                    }
-
-                    temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
-                            + urlStr
-                            + "\">"
-                            + car
-                            + "</a></bold> Most Accurate Location<br>Time: "
-                            + locTime
-                            + "<br>"
-                            + "Location type: "
-                            + l3.getProvider()
-                            + "<br>"
-                            + "Accuracy: "
-                            + l3.getAccuracy()
-                            + " meters<br>"
-                            + "Elevation: "
-                            + l3.getAltitude()
-                            + " meters<br>"
-                            + "Lattitude: "
-                            + l3.getLatitude()
-                            + "<br>"
-                            + "Longitude: "
-                            + l3.getLongitude();
-                } else {
-                    locTime = DateUtils.formatDateTime(application, dtime,
-                            formatFlags);
-                    temp += "No Most Accurate Location Captured " + locTime
-                            + "<br>";
-                }
-                if (l != null) {
-                    locTime = DateUtils.formatDateTime(application,
-                            l.getTime(), formatFlags);
-                    String urlStr;
-                    try {
-                        urlStr = URLEncoder.encode(
-                                l.getLatitude() + "," + l.getLongitude() + "("
-                                        + car + " " + locTime + " acc="
-                                        + df.format(l.getAccuracy()) + ")",
-                                "UTF-8");
-                    } catch (Exception e) {
-                        urlStr = URLEncoder.encode(l.getLatitude() + ","
-                                + l.getLongitude() + "(" + car + " " + locTime
-                                + " acc=" + df.format(l.getAccuracy()) + ")");
-                        e.printStackTrace();
-                    }
-
-                    temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
-                            + urlStr
-                            + "\">"
-                            + car
-                            + "</a></bold> Most Recent Location<br>Time: "
-                            + locTime
-                            + "<br>"
-                            + "Location type: "
-                            + l.getProvider()
-                            + "<br>"
-                            + "Accuracy: "
-                            + l.getAccuracy()
-                            + " meters<br>"
-                            + "Elevation: "
-                            + l.getAltitude()
-                            + " meters<br>"
-                            + "Lattitude: "
-                            + l.getLatitude()
-                            + "<br>"
-                            + "Longitude: "
-                            + l.getLongitude();
-                } else {
-                    locTime = DateUtils.formatDateTime(application, dtime,
-                            formatFlags);
-                    temp += "No Most Recent Location Captured " + locTime
-                            + "<br>";
-                }
-
-                if (!gpsEnabled)
-                    temp += "<br>GPS was not enabled";
-
-                if (local) {
-                    FileOutputStream fos = openFileOutput(file.getName(),
-                            Context.MODE_WORLD_READABLE);
-                    fos.write(temp.getBytes());
-                    fos.close();
-                } else {
-                    FileOutputStream fos = new FileOutputStream(file);
-                    fos.write(temp.getBytes());
-                    fos.close();
-                }
-
-            } catch (FileNotFoundException e) {
-                Toast.makeText(application, "FileNotFound", Toast.LENGTH_LONG)
-                        .show();
-                e.printStackTrace();
-                Log.e(LOG_TAG, "Error " + e.getMessage());
-            } catch (IOException e) {
-                Toast.makeText(application, "IOException", Toast.LENGTH_LONG)
-                        .show();
-                e.printStackTrace();
-                Log.e(LOG_TAG, "Error " + e.getMessage());
+            if (!exportDir.exists()) {
+                exportDir.mkdirs();
             }
+            File file = new File(exportDir, car.replaceAll(" ", "_")
+                    + ".html");
+
+            String temp = null;
+
+            if (l4 != null) {
+                locTime = DateUtils.formatDateTime(application,
+                        l4.getTime(), formatFlags);
+                String urlStr;
+                try {
+                    urlStr = URLEncoder.encode(
+                            l4.getLatitude() + "," + l4.getLongitude()
+                                    + "(" + car + " " + locTime + " acc="
+                                    + df.format(l4.getAccuracy()) + ")",
+                            "UTF-8");
+                } catch (Exception e) {
+                    urlStr = (l4.getLatitude() + ","
+                            + l4.getLongitude() + "(" + car + " " + locTime
+                            + " acc=" + df.format(l4.getAccuracy()) + ")");
+                    e.printStackTrace();
+                }
+
+                temp = "<hr /><bold><a href=\"http://maps.google.com/maps?q="
+                        + urlStr
+                        + "\">"
+                        + car
+                        + "</a></bold> Best Location<br>Time: "
+                        + locTime
+                        + "<br>"
+                        + "Location type: "
+                        + l4.getProvider()
+                        + "<br>"
+                        + "Accuracy: "
+                        + l4.getAccuracy()
+                        + " meters<br>"
+                        + "Elevation: "
+                        + l4.getAltitude()
+                        + " meters<br>"
+                        + "Lattitude: "
+                        + l4.getLatitude()
+                        + "<br>" + "Longitude: " + l4.getLongitude();
+            } else {
+
+                locTime = DateUtils.formatDateTime(application, dtime,
+                        formatFlags);
+                temp = "No Best Location Captured " + locTime + "<br>";
+            }
+            if (l3 != null) {
+                locTime = DateUtils.formatDateTime(application,
+                        l3.getTime(), formatFlags);
+                String urlStr;
+                try {
+                    urlStr = URLEncoder.encode(
+                            l3.getLatitude() + "," + l3.getLongitude()
+                                    + "(" + car + " " + locTime + " acc="
+                                    + df.format(l3.getAccuracy()) + ")",
+                            "UTF-8");
+                } catch (Exception e) {
+                    urlStr = (l3.getLatitude() + ","
+                            + l3.getLongitude() + "(" + car + " " + locTime
+                            + " acc=" + df.format(l3.getAccuracy()) + ")");
+                    e.printStackTrace();
+                }
+
+                temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
+                        + urlStr
+                        + "\">"
+                        + car
+                        + "</a></bold> Most Accurate Location<br>Time: "
+                        + locTime
+                        + "<br>"
+                        + "Location type: "
+                        + l3.getProvider()
+                        + "<br>"
+                        + "Accuracy: "
+                        + l3.getAccuracy()
+                        + " meters<br>"
+                        + "Elevation: "
+                        + l3.getAltitude()
+                        + " meters<br>"
+                        + "Lattitude: "
+                        + l3.getLatitude()
+                        + "<br>"
+                        + "Longitude: "
+                        + l3.getLongitude();
+            } else {
+                locTime = DateUtils.formatDateTime(application, dtime,
+                        formatFlags);
+                temp += "No Most Accurate Location Captured " + locTime
+                        + "<br>";
+            }
+            if (l != null) {
+                locTime = DateUtils.formatDateTime(application,
+                        l.getTime(), formatFlags);
+                String urlStr;
+                try {
+                    urlStr = URLEncoder.encode(
+                            l.getLatitude() + "," + l.getLongitude() + "("
+                                    + car + " " + locTime + " acc="
+                                    + df.format(l.getAccuracy()) + ")",
+                            "UTF-8");
+                } catch (Exception e) {
+                    urlStr = (l.getLatitude() + ","
+                            + l.getLongitude() + "(" + car + " " + locTime
+                            + " acc=" + df.format(l.getAccuracy()) + ")");
+                    e.printStackTrace();
+                }
+
+                temp += "<hr /><bold><a href=\"http://maps.google.com/maps?q="
+                        + urlStr
+                        + "\">"
+                        + car
+                        + "</a></bold> Most Recent Location<br>Time: "
+                        + locTime
+                        + "<br>"
+                        + "Location type: "
+                        + l.getProvider()
+                        + "<br>"
+                        + "Accuracy: "
+                        + l.getAccuracy()
+                        + " meters<br>"
+                        + "Elevation: "
+                        + l.getAltitude()
+                        + " meters<br>"
+                        + "Lattitude: "
+                        + l.getLatitude()
+                        + "<br>"
+                        + "Longitude: "
+                        + l.getLongitude();
+            } else {
+                locTime = DateUtils.formatDateTime(application, dtime,
+                        formatFlags);
+                temp += "No Most Recent Location Captured " + locTime
+                        + "<br>";
+            }
+
+            if (!gpsEnabled)
+                temp += "<br>GPS was not enabled";
+
+            if (local) {
+                FileOutputStream fos = openFileOutput(file.getName(),
+                        Context.MODE_PRIVATE);
+                fos.write(temp.getBytes());
+                fos.close();
+            } else {
+                FileOutputStream fos = new FileOutputStream(file);
+                fos.write(temp.getBytes());
+                fos.close();
+            }
+
+        } catch (FileNotFoundException e) {
+            Toast.makeText(application, "FileNotFound", Toast.LENGTH_LONG)
+                    .show();
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Error " + e.getMessage());
+        } catch (IOException e) {
+            Toast.makeText(application, "IOException", Toast.LENGTH_LONG)
+                    .show();
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Error " + e.getMessage());
         }
         // reset all the location variables
         l = null; // the most recent location

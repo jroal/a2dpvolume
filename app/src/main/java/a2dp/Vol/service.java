@@ -1,6 +1,5 @@
 package a2dp.Vol;
 
-import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
@@ -15,10 +14,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.UiModeManager;
-import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.IBluetoothA2dp;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -36,7 +33,6 @@ import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -443,7 +439,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         }
                 }
                 getConnects();
-                if (mac != "") {
+                if (!mac.equalsIgnoreCase("") ) {
                     if (notify)
                         updateNot(false, null);
                     if (!mvolsLeft)
@@ -1066,7 +1062,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         // instance starts or the service is killed and restarted
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(OLD_VOLUME, OldVol2);
-        editor.commit();
+        editor.apply();
     }
 
     // captures the phone volume so it can be later restored
@@ -1078,7 +1074,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(OLD_PH_VOL, OldVol);
         editor.putInt("oldsilent", Oldsilent);
-        editor.commit();
+        editor.apply();
     }
 
     // makes the phone volume adjustment
@@ -1332,18 +1328,16 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
 
     private void getConnects() {
-        if (true) {
-            connects = 0;
-            mvolsLeft = false;
-            pvolsLeft = false;
-            for (int i = 0; i < btdConn.length; i++) {
-                if (btdConn[i] != null) {
-                    connects++;
-                    if (btdConn[i].isSetV())
-                        mvolsLeft = true;
-                    if (btdConn[i].isSetpv())
-                        pvolsLeft = true;
-                }
+        connects = 0;
+        mvolsLeft = false;
+        pvolsLeft = false;
+        for (int i = 0; i < btdConn.length; i++) {
+            if (btdConn[i] != null) {
+                connects++;
+                if (btdConn[i].isSetV())
+                    mvolsLeft = true;
+                if (btdConn[i].isSetpv())
+                    pvolsLeft = true;
             }
         }
     }

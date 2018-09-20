@@ -1,7 +1,6 @@
 package a2dp.Vol;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,17 +8,12 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.text.TextUtils;
-import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -202,7 +196,7 @@ public class NotificationCatcher extends NotificationListenerService {
                     //if there is no ticker or strings then ignore it.
                     if (temp.isEmpty() && ticker.isEmpty() && text.isEmpty()) return null;
 
-                    if (pack == "com.google.android.apps.fireball") { // Google Allo handling
+                    if (pack.equalsIgnoreCase("com.google.android.apps.fireball") ) { // Google Allo handling
                         if (ticker != null) str = appName + ", " + ticker + ", " + text;
                         else return null;
                     }
