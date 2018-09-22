@@ -7,7 +7,8 @@
                 android:id="@+id/editDesc2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/deviceName" >
+                android:text="@string/deviceName"
+                android:inputType="">
 </EditText>
             <CheckBox android:layout_width="wrap_content" android:id="@+id/checkCaptLoc" android:text="@string/getLoc" android:layout_height="wrap_content"></CheckBox>
             <CheckBox android:layout_width="wrap_content" android:id="@+id/checkwifi" android:text="@string/wifiDisconnect" android:layout_height="wrap_content"></CheckBox>

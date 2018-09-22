@@ -118,7 +118,7 @@
     <string name="PrefsTTSOFF">Μηνύματα SMS δεν θα διαβάζονται όταν υπάρχει συνδεδεμένη συσκευή.</string>
     <string name="audioJackName">Ηχος ακουστικών</string>
     <string name="needTTS">Λείπει αρχείο TTS. Εγκατάσταση;</string>
-    <string name="msgTemplate">... Μήνυμα απο: {0} .. {1}</string>
+    <string name="msgTemplate">… Μήνυμα απο: {0} .. {1}</string>
     <string name="TTSready">Το TTS είναι έτοιμο</string>
     <string name="TTSNotReady">Δεν είναι έτοιμο το TTS</string>
     <string name="carDockName">Βάση οχήματος</string>

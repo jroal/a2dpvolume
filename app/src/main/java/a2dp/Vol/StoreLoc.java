@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Objects;
 
 import android.Manifest;
 import android.app.Service;
@@ -84,10 +85,10 @@ public class StoreLoc extends Service {
             usePass = preferences.getBoolean("usePassive", false);
             useNet = preferences.getBoolean("useNetwork", true);
 
-            Long yyy = new Long(preferences.getString("gpsTime", "15000"));
+            Long yyy = Long.valueOf(preferences.getString("gpsTime", "15000"));
             MAX_TIME = yyy;
 
-            Float xxx = new Float(preferences.getString("gpsDistance", "10"));
+            Float xxx = Float.valueOf(preferences.getString("gpsDistance", "10"));
             MAX_ACC = xxx;
 
             local = preferences.getBoolean("useLocalStorage", false);
@@ -224,7 +225,7 @@ public class StoreLoc extends Service {
 
         String car = "My Car";
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        List<String> providers = lm.getProviders(true);
+        List<String> providers = Objects.requireNonNull(lm).getProviders(true);
 
         long deltat = 9999999;
         long olddt = 9999999;
@@ -316,14 +317,15 @@ public class StoreLoc extends Service {
                                 + " " + locTime + " acc="
                                 + df.format(l4.getAccuracy()) + ")", "UTF-8");
             } catch (UnsupportedEncodingException e1) {
-                urlStr = URLEncoder.encode(l4.getLatitude() + ","
+                urlStr = "";
+                /*urlStr = URLEncoder.encode(l4.getLatitude() + ","
                         + l4.getLongitude() + "(" + car + " " + locTime
-                        + " acc=" + df.format(l4.getAccuracy()) + ")");
+                        + " acc=" + df.format(l4.getAccuracy()) + ")");*/
                 e1.printStackTrace();
             }
             try {
                 FileOutputStream fos = openFileOutput("My_Last_Location",
-                        Context.MODE_WORLD_READABLE);
+                        Context.MODE_PRIVATE);
                 String temp = "http://maps.google.com/maps?q=" + urlStr;
                 fos.write(temp.getBytes());
                 fos.close();

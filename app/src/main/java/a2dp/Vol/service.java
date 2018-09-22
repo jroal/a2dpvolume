@@ -3,6 +3,7 @@ package a2dp.Vol;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.text.MessageFormat;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -10,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -33,6 +35,7 @@ import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -50,7 +53,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import static a2dp.Vol.R.drawable.ic_launcher;
+
 public class service extends Service implements OnAudioFocusChangeListener {
+
+    private static final String CHANNEL_ID = "jims";
+    NotificationChannel channel;
 
     /*
      * (non-Javadoc)
@@ -60,6 +68,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        createNotificationChannel();
         return START_STICKY;
     }
 
@@ -150,6 +159,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
     @Override
     public IBinder onBind(Intent arg0) {
         // TODO Auto-generated method stub
+        if (channel == null) {
+            createNotificationChannel();
+        }
         return null;
     }
 
@@ -157,6 +169,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
     public void onCreate() {
 
         service.application = (MyApplication) this.getApplication();
+        if (channel == null) {
+            createNotificationChannel();
+        }
 
         // get and load preferences
 
@@ -214,37 +229,46 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         locmanager = (LocationManager) getBaseContext().getSystemService(
                 Context.LOCATION_SERVICE);
-        if (notify_pref.equalsIgnoreCase("always")
-                || notify_pref.equalsIgnoreCase("connected_only")) {
-            notify = true;
-        } else
-            notify = false;
+        notify = notify_pref.equalsIgnoreCase("always")
+                || notify_pref.equalsIgnoreCase("connected_only");
 
         if (notify) {
             // set up the notification and start foreground
             String ns = Context.NOTIFICATION_SERVICE;
             mNotificationManager = (NotificationManager) getSystemService(ns);
-
-            Intent notificationIntent = new Intent(this, main.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                    notificationIntent, 0);
-
-            Notification not;
-            not = new Notification.Builder(application)
-                    .setContentTitle(
-                            getResources().getString(R.string.app_name))
-                    .setContentIntent(contentIntent)
-                    .setSmallIcon(R.drawable.ic_launcher)
-                    .setContentText(
-                            getResources().getString(R.string.ServRunning))
-                    .setPriority(Notification.PRIORITY_MIN).build();
-
-
             if (notify_pref.equalsIgnoreCase("always")) {
-                mNotificationManager.notify(1, not);
-                this.startForeground(1, not);
+                Notification not = null;
+                Intent notificationIntent = new Intent(this, main.class);
+                PendingIntent contentIntent = PendingIntent.getActivity(
+                        this, 0, notificationIntent, 0);
+
+                String temp = getResources().getString(R.string.ServRunning);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
+                            .setContentTitle(
+                                    getResources().getString(R.string.app_name))
+                            .setContentIntent(contentIntent)
+                            .setSmallIcon(ic_launcher)
+                            .setContentText(temp)
+                            .setChannelId(CHANNEL_ID).build();
+                } else {
+                    not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
+                            .setContentTitle(
+                                    getResources().getString(R.string.app_name))
+                            .setContentIntent(contentIntent)
+                            .setSmallIcon(ic_launcher)
+                            .setContentText(temp)
+                            .setPriority(Notification.PRIORITY_MIN)
+                            .build();
+                }
+
+                if (notify_pref.equalsIgnoreCase("always")) {
+                    mNotificationManager.notify(1, not);
+                    this.startForeground(1, not);
+                }
             }
         }
+
         // set run flag to true. This is used for the GUI
         run = true;
         // if all the above works, let the user know it is started
@@ -263,18 +287,18 @@ public class service extends Service implements OnAudioFocusChangeListener {
         // test location file maker
         /*
          * FileOutputStream fos; try { fos = openFileOutput("My_Last_Location",
-		 * Context.MODE_WORLD_READABLE); String temp =
-		 * "http://maps.google.com/maps?q=40.7423612,-89.63056078333334+(Lambo 11/26/10, 05:59:46 pm acc=8)"
-		 * ; fos.write(temp.getBytes()); fos.close(); } catch
-		 * (FileNotFoundException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated
-		 * catch block e.printStackTrace(); }
-		 */
+         * Context.MODE_WORLD_READABLE); String temp =
+         * "http://maps.google.com/maps?q=40.7423612,-89.63056078333334+(Lambo 11/26/10, 05:59:46 pm acc=8)"
+         * ; fos.write(temp.getBytes()); fos.close(); } catch
+         * (FileNotFoundException e) { // TODO Auto-generated catch block
+         * e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated
+         * catch block e.printStackTrace(); }
+         */
         // end test file maker
         /*
-		 * if (enableTTS) { mTts = new TextToSpeech(application,
-		 * listenerStarted); }
-		 */
+         * if (enableTTS) { mTts = new TextToSpeech(application,
+         * listenerStarted); }
+         */
 
     }
 
@@ -439,7 +463,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         }
                 }
                 getConnects();
-                if (!mac.equalsIgnoreCase("") ) {
+                if (!mac.equalsIgnoreCase("")) {
                     if (notify)
                         updateNot(false, null);
                     if (!mvolsLeft)
@@ -511,7 +535,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                 BluetoothDevice bt;
                 try {
-                    bt = (BluetoothDevice) intent.getExtras().get(
+                    bt = (BluetoothDevice) Objects.requireNonNull(intent.getExtras()).get(
                             BluetoothDevice.EXTRA_DEVICE);
                 } catch (Exception e1) {
                     bt = null;
@@ -535,7 +559,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 {
                     try {
                         // Log.d(LOG_TAG, intent.toString());
-                        if (intent.getAction().equalsIgnoreCase(
+                        if (Objects.requireNonNull(intent.getAction()).equalsIgnoreCase(
                                 "android.app.action.ENTER_CAR_MODE")) {
                             bt2 = DB.getBTD("1"); // get car mode data
                         } else if (intent.getAction().equalsIgnoreCase(
@@ -722,7 +746,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                 BluetoothDevice bt;
                 try {
-                    bt = (BluetoothDevice) intent2.getExtras().get(
+                    bt = (BluetoothDevice) Objects.requireNonNull(intent2.getExtras()).get(
                             BluetoothDevice.EXTRA_DEVICE);
                 } catch (Exception e1) {
                     bt = null;
@@ -740,7 +764,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 } else
                     try {
                         // Log.d(LOG_TAG, intent3.toString());
-                        if (intent2.getAction().equalsIgnoreCase(
+                        if (Objects.requireNonNull(intent2.getAction()).equalsIgnoreCase(
                                 "android.app.action.EXIT_CAR_MODE"))
                             bt2 = DB.getBTD("1");
                         else if (intent2.getAction().equalsIgnoreCase(
@@ -909,8 +933,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if ((bt2 != null && bt2.isSetpv()) || bt2 == null)
             if (!pvolsLeft)
                 setPVolume(OldVol);
-        if (notify && (bt2.mac != null))
+        if (notify && (bt2.mac != null)) {
             updateNot(false, null);
+        }
         if (mTtsReady && ((bt2.isEnableTTS() || enableGTalk) || connects < 1)) {
             try {
                 if (!clearedTts) {
@@ -935,7 +960,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         }
 
-        if(tmessageRegistered) {
+        if (tmessageRegistered) {
             try {
                 application.unregisterReceiver(tmessage);
 
@@ -982,8 +1007,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
     // makes the media volume adjustment
     public static void setVolume(int inputVol, Context sender) {
 
-        if(android.os.Build.VERSION.SDK_INT > 20)
-        if(am2.isVolumeFixed())Toast.makeText(application,"Volume fixed",Toast.LENGTH_LONG).show();
+        //if(android.os.Build.VERSION.SDK_INT > 20)
+        if (am2.isVolumeFixed())
+            Toast.makeText(application, "Volume fixed", Toast.LENGTH_LONG).show();
 
         int curvol = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
         if (inputVol < 0)
@@ -1007,7 +1033,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     } catch (Exception e) {
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                             NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
-                            if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
+                            if (!Objects.requireNonNull(mNotificationManager).isNotificationPolicyAccessGranted()) {
                                 Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                                 application.startActivity(intent);
                             }
@@ -1045,7 +1071,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             } catch (Exception e) {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
-                    if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
+                    if (!Objects.requireNonNull(mNotificationManager).isNotificationPolicyAccessGranted()) {
                         Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                         application.startActivity(intent);
                     }
@@ -1102,7 +1128,27 @@ public class service extends Service implements OnAudioFocusChangeListener {
         return outVol;
     }
 
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            mNotificationManager = getSystemService(NotificationManager.class);
+            mNotificationManager.createNotificationChannel(channel);
+        }
+    }
+
     private void updateNot(boolean connect, String car) {
+
+        if (channel == null) {
+            createNotificationChannel();
+        }
 
         String temp = car;
         if (car != null)
@@ -1119,20 +1165,36 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 connect = true;
             } else
                 temp = getResources().getString(R.string.ServRunning);
+
+            car = temp;
         }
+
         if (connect) {
 
             Notification not = null;
             Intent notificationIntent = new Intent(this, main.class);
             PendingIntent contentIntent = PendingIntent.getActivity(this,
                     0, notificationIntent, 0);
-            not = new NotificationCompat.Builder(application)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
                     .setContentTitle(
                             getResources().getString(R.string.app_name))
                     .setContentIntent(contentIntent)
-                    .setSmallIcon(connectedIcon).setContentText(temp)
-                    .setPriority(Notification.PRIORITY_MIN).build();
+                    .setSmallIcon(connectedIcon)
+                    .setContentText(temp)
+                    .setChannelId(CHANNEL_ID).build();
+            }else{
+                not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
+                        .setContentTitle(
+                                getResources().getString(R.string.app_name))
+                        .setContentIntent(contentIntent)
+                        .setSmallIcon(connectedIcon)
+                        .setContentText(temp)
+                        .setPriority(Notification.PRIORITY_MIN)
+                        .build();
+            }
             mNotificationManager.notify(1, not);
+            //Toast.makeText(application, "Test on " + car, Toast.LENGTH_LONG).show();
         } else {
             mNotificationManager.cancel(1);
 
@@ -1141,14 +1203,37 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 Intent notificationIntent = new Intent(this, main.class);
                 PendingIntent contentIntent = PendingIntent.getActivity(
                         this, 0, notificationIntent, 0);
-                not = new Notification.Builder(application)
-                        .setContentTitle(
-                                getResources().getString(R.string.app_name))
-                        .setContentIntent(contentIntent)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentText(temp)
-                        .setPriority(Notification.PRIORITY_MIN).build();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                    not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
+                            .setContentTitle(
+                                    getResources().getString(R.string.app_name))
+                            .setContentIntent(contentIntent)
+                            .setSmallIcon(ic_launcher)
+                            .setContentText(temp)
+                            .setChannelId(CHANNEL_ID).build();
+                }else{
+                    not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
+                            .setContentTitle(
+                                    getResources().getString(R.string.app_name))
+                            .setContentIntent(contentIntent)
+                            .setSmallIcon(ic_launcher)
+                            .setContentText(temp)
+                            .setPriority(Notification.PRIORITY_MIN)
+                            .build();
+                }
+
+  /*                  not = new NotificationCompat.Builder(application)
+                            .setContentTitle(
+                                    getResources().getString(R.string.app_name))
+                            .setContentIntent(contentIntent)
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setContentText(temp)
+                            .setPriority(Notification.PRIORITY_MIN).build();*/
+
+                //Toast.makeText(application, "Test off " + car, Toast.LENGTH_LONG).show();
                 mNotificationManager.notify(1, not);
+
             }
         }
     }
@@ -1166,7 +1251,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             try {
                 ActivityManager act1 = (ActivityManager) this
                         .getSystemService(ACTIVITY_SERVICE);
-                act1.killBackgroundProcesses(pname);
+                Objects.requireNonNull(act1).killBackgroundProcesses(pname);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1175,7 +1260,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
             return false;
         } else if (cData.length() > 1) {
             try {
-                i = Intent.getIntent(cData);
+                //i = Intent.getIntent(cData);
+                i = Intent.parseUri(cData, 0);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
                 return false;
@@ -1198,7 +1284,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             }
         }
         try {
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Objects.requireNonNull(i).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -1227,7 +1313,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                 ActivityManager act1 = (ActivityManager) this
                         .getSystemService(ACTIVITY_SERVICE);
-                act1.killBackgroundProcesses(packageName);
+                Objects.requireNonNull(act1).killBackgroundProcesses(packageName);
                 List<ActivityManager.RunningAppProcessInfo> processes;
                 processes = act1.getRunningAppProcesses();
                 for (ActivityManager.RunningAppProcessInfo info : processes) {
@@ -1348,26 +1434,26 @@ public class service extends Service implements OnAudioFocusChangeListener {
         public void onReceive(final Context context, final Intent intent) {
             // tm = (TelephonyManager)
             // getSystemService(Context.TELEPHONY_SERVICE);
-            if (intent.getAction().equals(
+            if (Objects.requireNonNull(intent.getAction()).equals(
                     "android.provider.Telephony.SMS_RECEIVED")
                     && tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
                 // if(message starts with SMStretcher recognize BYTE)
 
-				/*
-				 * The SMS-Messages are 'hiding' within the extras of the
-				 * Intent.
-				 */
+                /*
+                 * The SMS-Messages are 'hiding' within the extras of the
+                 * Intent.
+                 */
 
                 Bundle bundle = intent.getExtras();
                 if (bundle != null) {
-					/* Get all messages contained in the Intent */
+                    /* Get all messages contained in the Intent */
                     Object[] pdusObj = (Object[]) bundle.get("pdus");
-                    SmsMessage[] messages = new SmsMessage[pdusObj.length];
+                    SmsMessage[] messages = new SmsMessage[Objects.requireNonNull(pdusObj).length];
                     for (int i = 0; i < pdusObj.length; i++) {
                         messages[i] = SmsMessage
                                 .createFromPdu((byte[]) pdusObj[i]);
                     }
-					/* Feed StringBuilder with all Messages found. */
+                    /* Feed StringBuilder with all Messages found. */
                     final StringBuilder sb = new StringBuilder();
                     for (SmsMessage currentMessage : messages) {
                         sb.append(
@@ -1394,7 +1480,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     public void TextReader(String rawinput) {
         if (mTtsReady) {
-            myHash = new HashMap<String, String>();
+            myHash = new HashMap<>();
 
             if (rawinput == null) {
                 Toast.makeText(application, "No input", Toast.LENGTH_LONG).show();
@@ -1463,10 +1549,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     @Override
                     public void onFinish() {
                         try {
+                            String h1 = myHash.get(TextToSpeech.Engine.KEY_PARAM_STREAM);
+                            Bundle b1 = new Bundle();
+                            b1.putString(TextToSpeech.Engine.KEY_PARAM_STREAM, h1);
                             numToRead.incrementAndGet();
-                            Log.d("service","numToRead = " + numToRead);
+                            String utt_id = "jimsutterance" + numToRead.toString();
+                            Log.d("service", "numToRead = " + numToRead);
 
-                            mTts.speak(str, TextToSpeech.QUEUE_ADD, myHash);
+                            mTts.speak(str, TextToSpeech.QUEUE_ADD, b1, utt_id);
                         } catch (Exception e) {
                             Toast.makeText(application, R.string.TTSNotReady,
                                     Toast.LENGTH_LONG).show();
@@ -1506,13 +1596,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
             if (A2DP_Vol.equalsIgnoreCase(uttId)) {
                 // unmute the stream
 
-                Log.d("service","utternace onDone numToRead = " + numToRead.get());
+                Log.d("service", "utternace onDone numToRead = " + numToRead.get());
                 int countRemaining = numToRead.decrementAndGet();
                 if (countRemaining > 0) {
-                    Log.d("service","still more messages to read?");
+                    Log.d("service", "still more messages to read?");
                     return;
                 } else {
-                    Log.d("service","all done - abandon audio focus");
+                    Log.d("service", "all done - abandon audio focus");
                 }
 
                 switch (SMSstream) {
@@ -1556,26 +1646,26 @@ public class service extends Service implements OnAudioFocusChangeListener {
             if (FIX_STREAM.equalsIgnoreCase(uttId)) {
                 result = am2.abandonAudioFocus(a2dp.Vol.service.this);
             }
-			/*
-			 * if (musicWasPlaying) {
-			 * 
-			 * Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON,null);
-			 * KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN,
-			 * KeyEvent.KEYCODE_MEDIA_PLAY);
-			 * downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
-			 * sendOrderedBroadcast(downIntent2, null);
-			 * 
-			 * }
-			 */
+            /*
+             * if (musicWasPlaying) {
+             *
+             * Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON,null);
+             * KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN,
+             * KeyEvent.KEYCODE_MEDIA_PLAY);
+             * downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
+             * sendOrderedBroadcast(downIntent2, null);
+             *
+             * }
+             */
 
             am2.setMode(AudioManager.MODE_NORMAL);
         }
 
         @Override
         public void onError(String utteranceId) { // TODO
-            Log.d("service","onError numToRead = " + numToRead.get());
+            Log.d("service", "onError numToRead = " + numToRead.get());
             numToRead.decrementAndGet();
-            Log.d("service","numToRead = " + numToRead.get());
+            Log.d("service", "numToRead = " + numToRead.get());
         }
 
         @Override
@@ -1651,10 +1741,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         // check permission
         int permissionCheck = ContextCompat.checkSelfPermission(application,
                 Manifest.permission.READ_CONTACTS);
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED)
-            permReadContacts = true;
-        else
-            permReadContacts = false;
+        permReadContacts = permissionCheck == PackageManager.PERMISSION_GRANTED;
 
         if (permReadContacts) {
             ContentResolver cr = getContentResolver();
@@ -1664,14 +1751,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
             Cursor c = cr.query(uri, new String[]{PhoneLookup.DISPLAY_NAME},
                     null, null, null);
 
-            if (c.moveToFirst()) {
+            if (Objects.requireNonNull(c).moveToFirst()) {
                 String name = c.getString(c
                         .getColumnIndex(PhoneLookup.DISPLAY_NAME));
                 return name;
             }
-			if (c != null) {
-				c.close();
-			}
+            if (c != null) {
+                c.close();
+            }
         }
         return number;
     }
@@ -1684,7 +1771,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             if (state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED && !clearedTts) {
                 if (!mTtsReady)
                     mTts = new TextToSpeech(application, listenerStarted);
-                HashMap<String, String> myHash2 = new HashMap<String, String>();
+                HashMap<String, String> myHash2 = new HashMap<>();
 
                 myHash2.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, FIX_STREAM);
                 am2.requestAudioFocus(a2dp.Vol.service.this, AudioManager.STREAM_MUSIC,
@@ -1745,9 +1832,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
         try {
             UiModeManager mm = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
             if (mode)
-                mm.enableCarMode(UiModeManager.ENABLE_CAR_MODE_GO_CAR_HOME);
+                Objects.requireNonNull(mm).enableCarMode(UiModeManager.ENABLE_CAR_MODE_GO_CAR_HOME);
             else
-                mm.disableCarMode(0);
+                Objects.requireNonNull(mm).disableCarMode(0);
 
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();

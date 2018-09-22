@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -17,6 +18,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -151,10 +153,10 @@ public class AppChooser extends Activity {
 	}
 
     private void initAttachViewsToVars() {
-        mListView = (ListView)findViewById(R.id.m_lv_packages);
-        mEtFilter = (EditText)findViewById(R.id.m_et_search);
-        mBtnSearch = (Button)findViewById(R.id.m_btn_search);
-        mBtnClear = (Button)findViewById(R.id.m_btn_clear);
+        mListView = findViewById(R.id.m_lv_packages);
+        mEtFilter = findViewById(R.id.m_et_search);
+        mBtnSearch = findViewById(R.id.m_btn_search);
+        mBtnClear = findViewById(R.id.m_btn_clear);
     }
     
     private void initAssignListenersAndAdapter() {
@@ -213,18 +215,19 @@ public class AppChooser extends Activity {
 
 
 
+		@NonNull
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
 			final LayoutInflater inflater = LayoutInflater.from(c);
 			View v = inflater.inflate(R.layout.app_list_item , parent, false);
 
 
-			ImageView iv_icon = (ImageView) v.findViewById(R.id.pi_iv_icon);
-			TextView tv_name = (TextView) v.findViewById(R.id.pi_tv_name);
+			ImageView iv_icon = v.findViewById(R.id.pi_iv_icon);
+			TextView tv_name = v.findViewById(R.id.pi_tv_name);
 
 			AppInfoCache ai = getItem(position);
-			iv_icon.setImageDrawable(ai.getIcon());
+			iv_icon.setImageDrawable(Objects.requireNonNull(ai).getIcon());
 			tv_name.setText(ai.getAppName());
 			return v;
 		}

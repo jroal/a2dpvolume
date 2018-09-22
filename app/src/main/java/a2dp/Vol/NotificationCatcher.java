@@ -18,6 +18,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Jim on 1/18/2016.
@@ -31,8 +32,8 @@ public class NotificationCatcher extends NotificationListenerService {
     private String packagelist;
     private MyApplication application;
     SharedPreferences preferences;
-    List<notItem> notList = new ArrayList<notItem>();
-    List<String> apps1 = new ArrayList<String>();
+    List<notItem> notList = new ArrayList<>();
+    List<String> apps1 = new ArrayList<>();
 
     public NotificationCatcher() {
         super();
@@ -154,8 +155,7 @@ public class NotificationCatcher extends NotificationListenerService {
 
                 // these apps use the TickerText properly
                 if (apps1.contains(pack)) {
-                    if (ticker != null) str += ticker;
-                    else return null;
+                    str += ticker;
                 } else {
 
                     // get the lines of the notification
@@ -176,8 +176,8 @@ public class NotificationCatcher extends NotificationListenerService {
                     // get the text string to see if there is something in it
                     String text = "";
                     if (bun.getString(Notification.EXTRA_TEXT) != null) {
-                        if (!bun.getString(Notification.EXTRA_TEXT).isEmpty())
-                            text = bun.getString(Notification.EXTRA_TEXT).toString();
+                        if (!Objects.requireNonNull(bun.getString(Notification.EXTRA_TEXT)).isEmpty())
+                            text = Objects.requireNonNull(bun.getString(Notification.EXTRA_TEXT)).toString();
                     }
 
                     // figure out which have valid strings and which we want to communicate
@@ -197,14 +197,13 @@ public class NotificationCatcher extends NotificationListenerService {
                     if (temp.isEmpty() && ticker.isEmpty() && text.isEmpty()) return null;
 
                     if (pack.equalsIgnoreCase("com.google.android.apps.fireball") ) { // Google Allo handling
-                        if (ticker != null) str = appName + ", " + ticker + ", " + text;
-                        else return null;
+                        str = appName + ", " + ticker + ", " + text;
                     }
                 }
 
 
                 // read out the message by sending it to the service
-                if (connected > 0 && str.length() > 0) {
+                if (str.length() > 0) {
                     final String IRun = "a2dp.vol.service.MESSAGE";
                     Intent intent = new Intent();
                     intent.setAction(IRun);

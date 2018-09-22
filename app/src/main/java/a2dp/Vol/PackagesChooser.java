@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +62,7 @@ public class PackagesChooser extends Activity {
         packagelist = preferences.getString("packages", "com.google.android.talk,com.android.email,com.android.calendar");	
         packages = packagelist.split(",");
         pm = getPackageManager();
-        pb = (ProgressBar) findViewById(R.id.progressBar1);
+        pb = findViewById(R.id.progressBar1);
         pb.setIndeterminate(true);
 	}
 
@@ -69,14 +71,14 @@ public class PackagesChooser extends Activity {
 	 */
 	private void setupActionBar() {
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		Objects.requireNonNull(getActionBar()).setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.packages_chooser, menu);
-		mListView = (ListView)findViewById(R.id.PackagelistView1);
+		mListView = findViewById(R.id.PackagelistView1);
 	    Thread t = new Thread(mLoadAppLoadAndSortAppList);
 	    t.start();
 	    
@@ -107,7 +109,7 @@ public class PackagesChooser extends Activity {
 	   private Runnable mLoadAppLoadAndSortAppList = new Runnable() {
 
 			public void run() {
-		        mAppList = new ArrayList<AppInfoCache>();
+		        mAppList = new ArrayList<>();
 		        AppInfoCache tmpCache;
 		        List<ApplicationInfo> installedApps = pm.getInstalledApplications(0);
 		        for (ApplicationInfo appInfo : installedApps) {
@@ -115,7 +117,7 @@ public class PackagesChooser extends Activity {
 	       			mAppList.add(tmpCache);
 		        }
 		        Collections.sort(mAppList, new AlphaComparator());
-		        mFullAppList = new ArrayList<AppInfoCache>();
+		        mFullAppList = new ArrayList<>();
 		        int i = 0;
 		        for (AppInfoCache appInfo : mAppList) {
 		        	appInfo.setPosition(i);
@@ -145,18 +147,19 @@ public class PackagesChooser extends Activity {
 			}
 
 
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
+			@NonNull
+            @Override
+			public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
 				final LayoutInflater inflater = LayoutInflater.from(c);
 				View v = inflater.inflate(R.layout.package_list_item , parent, false);
 
-				ImageView iv_icon = (ImageView) v.findViewById(R.id.pi_iv_icon);
-				TextView tv_name = (TextView) v.findViewById(R.id.pi_tv_name);
+				ImageView iv_icon = v.findViewById(R.id.pi_iv_icon);
+				TextView tv_name = v.findViewById(R.id.pi_tv_name);
 				final AppInfoCache ai = getItem(position);
-				iv_icon.setImageDrawable(ai.getIcon());
+				iv_icon.setImageDrawable(Objects.requireNonNull(ai).getIcon());
 				tv_name.setText(ai.getAppName());
-				final CheckBox box = (CheckBox) v.findViewById(R.id.checkBox1);
+				final CheckBox box = v.findViewById(R.id.checkBox1);
 				box.setChecked(ai.isChecked());
 				box.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 

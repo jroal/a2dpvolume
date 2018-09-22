@@ -65,10 +65,7 @@ public class btDevice {
 	}
 
 	public void setSetpv(int sV) {
-		if (sV > 0)
-			this.setpv = true;
-		else
-			this.setpv = false;
+        this.setpv = sV > 0;
 	}
 
 	/**
@@ -176,10 +173,7 @@ public class btDevice {
 	 *            the apprestart to set
 	 */
 	public void setApprestart(int apprestart) {
-		if (apprestart > 0)
-			this.apprestart = true;
-		else
-			this.apprestart = false;
+        this.apprestart = apprestart > 0;
 	}
 
 	/**
@@ -212,10 +206,7 @@ public class btDevice {
 	 *            the appkill to set
 	 */
 	public void setAppkill(int appkill) {
-		if (appkill > 0)
-			this.appkill = true;
-		else
-			this.appkill = false;
+        this.appkill = appkill > 0;
 	}
 
 	public long lenablegps() {
@@ -245,10 +236,7 @@ public class btDevice {
 	 *            the enablegps to set
 	 */
 	public void setEnablegps(int enablegps1) {
-		if (enablegps1 > 0)
-			this.enablegps = true;
-		else
-			this.enablegps = false;
+        this.enablegps = enablegps1 > 0;
 	}
 
 	/**
@@ -274,10 +262,7 @@ public class btDevice {
 	}
 
 	public void setEnableTTS(int value) {
-		if (value > 0)
-			this.enableTTS = true;
-		else
-			this.enableTTS = false;
+        this.enableTTS = value > 0;
 	}
 
 	/**
@@ -322,10 +307,7 @@ public class btDevice {
 	 *            the wifi to set
 	 */
 	public void setWifi(int swifi) {
-		if (swifi > 0)
-			this.wifi = true;
-		else
-			this.wifi = false;
+        this.wifi = swifi > 0;
 	}
 
 	/**
@@ -353,10 +335,7 @@ public class btDevice {
 	}
 
 	public void setGetLoc(int g) {
-		if (g >= 1)
-			this.getLoc = true;
-		else
-			this.getLoc = false;
+        this.getLoc = g >= 1;
 	}
 
 	public btDevice() {
@@ -450,10 +429,7 @@ public class btDevice {
 	 *            boolean setV variable using an integer
 	 */
 	public void setSetV(int sV) {
-		if (sV > 0)
-			this.setV = true;
-		else
-			this.setV = false;
+        this.setV = sV > 0;
 	}
 
 	/**
@@ -554,10 +530,7 @@ public class btDevice {
 	}
 
 	public void setVolramp(int ramp) {
-		if (ramp > 0)
-			volramp = true;
-		else
-			volramp = false;
+        volramp = ramp > 0;
 
 	}
 
@@ -577,10 +550,7 @@ public class btDevice {
 	}
 
 	public void setAutovol(int autovol) {
-		if (autovol > 0)
-			this.autovol = true;
-		else
-			this.autovol = false;
+        this.autovol = autovol > 0;
 
 	}
 
@@ -607,10 +577,7 @@ public class btDevice {
 	}
 	
 	public void setSilent(int silent) {
-		if(silent > 0)
-			this.silent = true;
-		else
-			this.silent = false;
+        this.silent = silent > 0;
 	}
 	
 	public long lsilent() {
@@ -701,11 +668,7 @@ public class btDevice {
 	public boolean hasIntent() {
 		if (this.pname == null || this.appdata == null)
 			return false;
-		if (this.pname.length() < 3 && this.appdata.length() < 3)
-			return false;
-		if (this.pname.equalsIgnoreCase("Custom") && this.appdata.length() < 3)
-			return false;
-		return true;
+		return (this.pname.length() >= 3 || this.appdata.length() >= 3) && (!this.pname.equalsIgnoreCase("Custom") || this.appdata.length() >= 3);
 
 	}
 
@@ -730,10 +693,7 @@ public class btDevice {
 	}
 
 	public void setSleep(int sleep1) {
-		if(sleep1 > 0)
-			this.sleep = true;
-		else
-			this.sleep = false;
+        this.sleep = sleep1 > 0;
 	}
 	/**
 	 * @return the carmode
@@ -756,9 +716,6 @@ public class btDevice {
 	}
 
 	public void setCarmode(int cm) {
-		if(cm > 0)
-			this.carmode = true;
-		else
-			this.carmode = false;
+        this.carmode = cm > 0;
 	}
 }

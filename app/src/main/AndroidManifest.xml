@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="a2dp.Vol"
     android:installLocation="internalOnly"
-    android:versionCode="140"
-    android:versionName="2.12.9.4" >
+    android:versionCode="141"
+    android:versionName="2.12.9.5">
+
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="27" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
@@ -35,26 +38,24 @@
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
-
-    <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="27" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
 
     <application
-        android:name="a2dp.Vol.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:description="@string/accessDescription"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:persistent="true"
-        android:fullBackupContent="@xml/backup_descriptor">
+        android:persistent="true">
         <activity
-            android:name="a2dp.Vol.main"
+            android:name=".main"
             android:description="@string/accessDescription"
             android:icon="@drawable/icon5"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:multiprocess="false" >
+            android:multiprocess="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -63,13 +64,12 @@
         </activity>
 
         <service
-            android:name="a2dp.Vol.service"
+            android:name=".service"
             android:enabled="true"
-            android:label="@string/app_name" >
-        </service>
+            android:label="@string/app_name" />
 
         <activity
-            android:name="a2dp.Vol.ManageData"
+            android:name=".ManageData"
             android:enabled="true"
             android:finishOnTaskLaunch="false"
             android:icon="@drawable/icon5"
@@ -77,13 +77,13 @@
             android:launchMode="singleTop"
             android:multiprocess="false" />
         <activity
-            android:name="a2dp.Vol.Preferences"
+            android:name=".Preferences"
             android:enabled="true"
             android:icon="@drawable/icon5"
             android:label="@xml/preferences"
             android:launchMode="singleInstance" />
 
-        <receiver android:name="a2dp.Vol.Starter" >
+        <receiver android:name=".Starter">
             <intent-filter>
                 <category android:name="android.intent.category.HOME" />
 
@@ -92,9 +92,9 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="a2dp.Vol.Widget"
+            android:name=".Widget"
             android:icon="@drawable/car2"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget" />
@@ -105,38 +105,50 @@
         </receiver>
 
         <service
-            android:name="a2dp.Vol.ALauncher"
+            android:name=".ALauncher"
             android:enabled="true"
             android:label="@string/app_name" />
 
-        <activity android:name="a2dp.Vol.EditDevice" />
-        <activity android:name="a2dp.Vol.AppChooser" />
-        <activity android:name="a2dp.Vol.CustomIntentMaker" />
-        <activity android:name="a2dp.Vol.ProviderList" />
+        <activity android:name=".EditDevice" />
+        <activity android:name=".AppChooser" />
+        <activity android:name=".CustomIntentMaker" />
+        <activity android:name=".ProviderList" />
 
-        <service android:name="a2dp.Vol.StoreLoc" />
+        <service android:name=".StoreLoc" />
 
         <activity
-            android:name="a2dp.Vol.PackagesChooser"
-            android:label="@string/title_activity_packages_chooser" android:parentActivityName="a2dp.Vol.main">
+            android:name=".PackagesChooser"
+            android:label="@string/title_activity_packages_chooser"
+            android:parentActivityName=".main">
             <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="a2dp.Vol.main" />
-            
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="a2dp.Vol.main" />
         </activity>
 
         <service
-            android:name="a2dp.Vol.NotificationCatcher"
+            android:name=".NotificationCatcher"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+        <!--
+     ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />-->
+            android:value="@integer/google_play_services_version" />
+        -->
+
+        <activity
+            android:name=".LocViewer"
+            android:label="@string/title_activity_loc_viewer"
+            android:parentActivityName=".main"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="a2dp.Vol.main" />
+        </activity>
     </application>
 
 </manifest>

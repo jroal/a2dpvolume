@@ -33,8 +33,8 @@ public class DeviceDB {
 					"values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public DeviceDB(Context context) {
-		DeviceDB.context = context;
-		OpenHelper openHelper = new OpenHelper(DeviceDB.context);
+		//DeviceDB.context = context;
+		OpenHelper openHelper = new OpenHelper(context);
 		
 			this.db = openHelper.getWritableDatabase();	
 			
@@ -209,7 +209,7 @@ public class DeviceDB {
 	 *         device name if blank.
 	 */
 	public List<String> selectAll() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if(!this.db.isOpen())return null;
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1",
 				"desc2" }, null, null, null, null, "desc2");
@@ -237,7 +237,7 @@ public class DeviceDB {
 	 * @return a vector of btDevices for all the data in the btDevice table.
 	 */
 	public Vector<btDevice> selectAlldb() {
-		Vector<btDevice> list = new Vector<btDevice>();
+		Vector<btDevice> list = new Vector<>();
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "desc1",
 				"desc2", "mac", "maxv", "setv", "getl", "pname" , "bdevice", "wifi", "appaction", "appdata", "apptype", 
 				"apprestart", "tts", "setpv", "phonev" , "appkill" , "enablegps", "icon", "smsdelay", "smsstream", "voldelay", 
@@ -343,7 +343,7 @@ public class DeviceDB {
 		    try {
 		        c = db.rawQuery("select * from " + DeviceDB.TABLE_NAME + " limit 1", null);
 		        if (c != null) {
-		            ar = new ArrayList<String>(Arrays.asList(c.getColumnNames()));
+		            ar = new ArrayList<>(Arrays.asList(c.getColumnNames()));
 		        }
 		    } catch (Exception e) {
 		        Log.v(DeviceDB.TABLE_NAME, e.getMessage(), e);

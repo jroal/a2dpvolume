@@ -3,6 +3,7 @@ package a2dp.Vol;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.Objects;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -183,7 +184,7 @@ public class ProviderList extends ListActivity {
 				KEY_ID + "=" + id,
 				null,
 				null);
-		c.moveToFirst();
+		Objects.requireNonNull(c).moveToFirst();
 		
 		String title = c.getString(c.getColumnIndexOrThrow(P_TITLE_KEYS[mProvider]));
 		String data = c.getString(c.getColumnIndexOrThrow(P_DATA_KEYS[mProvider]));

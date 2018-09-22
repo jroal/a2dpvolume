@@ -143,7 +143,7 @@ public class DataXmlExporter {
 
 		private final StringBuilder sb;
 
-		public XmlBuilder() throws IOException {
+		public XmlBuilder() {
 			this.sb = new StringBuilder();
 		}
 
@@ -152,7 +152,7 @@ public class DataXmlExporter {
 			this.sb.append(DB_OPEN + dbName + CLOSE_WITH_TICK);
 		}
 
-		String end() throws IOException {
+		String end() {
 			this.sb.append(DB_CLOSE);
 			return this.sb.toString();
 		}
@@ -173,7 +173,7 @@ public class DataXmlExporter {
 			this.sb.append(ROW_CLOSE);
 		}
 
-		void addColumn(final String name, final String val) throws IOException {
+		void addColumn(final String name, final String val) {
 			this.sb.append(COL_OPEN + name + CLOSE_WITH_TICK + val + COL_CLOSE);
 		}
 	}

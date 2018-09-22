@@ -1,6 +1,7 @@
 package a2dp.Vol;
 
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -33,13 +34,13 @@ public class CustomIntentMaker extends Activity {
 
 
 	private void initViews() {
-		mEtAction = (EditText)findViewById(R.id.ci_et_action);
-		mEtData = (EditText)findViewById(R.id.ci_et_data);
-		mEtType = (EditText)findViewById(R.id.ci_et_type);
+		mEtAction = findViewById(R.id.ci_et_action);
+		mEtData = findViewById(R.id.ci_et_data);
+		mEtType = findViewById(R.id.ci_et_type);
 		
-		mBtnOk = (Button)findViewById(R.id.ci_btn_ok);
-		mBtnCancel = (Button)findViewById(R.id.ci_btn_cancel);
-		mBtnTest = (Button)findViewById(R.id.ci_btn_test);
+		mBtnOk = findViewById(R.id.ci_btn_ok);
+		mBtnCancel = findViewById(R.id.ci_btn_cancel);
+		mBtnTest = findViewById(R.id.ci_btn_test);
 	}
 	
 	private void assignListeners() {
@@ -75,13 +76,11 @@ public class CustomIntentMaker extends Activity {
 			String type = mEtType.getText().toString();
 			if(action.length() < 3 && data.length() < 3 && type.length() < 3) return;
 			
-			Intent i;
+			Intent i = new Intent();
 			if (isShortcutIntent(data)) {
 				try {
-//					i = Intent.parseUri(data, Intent.URI_INTENT_SCHEME);
-					i = Intent.getIntent(data);
+					i = Intent.parseUri(data, Intent.URI_INTENT_SCHEME);
 				} catch (URISyntaxException e) {
-					i = new Intent();
 					e.printStackTrace();
 				}
 			} else {
@@ -104,7 +103,7 @@ public class CustomIntentMaker extends Activity {
 
 			if (Intent.ACTION_CALL.equals(i.getAction())) {
 				AudioManager am = (AudioManager)getBaseContext().getSystemService(AUDIO_SERVICE);
-				am.setMode(AudioManager.MODE_IN_CALL);
+				Objects.requireNonNull(am).setMode(AudioManager.MODE_IN_CALL);
 				am.setSpeakerphoneOn(true);
 				am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL), AudioManager.FLAG_SHOW_UI);
 

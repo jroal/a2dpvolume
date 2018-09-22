@@ -3,6 +3,7 @@ package a2dp.Vol;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -35,6 +36,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import static android.content.Intent.parseUri;
+
 public class EditDevice extends Activity {
 
     /*
@@ -50,9 +53,7 @@ public class EditDevice extends Activity {
         super.onBackPressed();
     }
 
-    private Button sb, cb;
-    private Button startapp;
-    private Button connbt;
+    private Button sb;
     private EditText fdesc2;
     private CheckBox fgloc;
     private CheckBox fsetvol;
@@ -122,51 +123,51 @@ public class EditDevice extends Activity {
         this.application = (MyApplication) this.getApplication();
         this.myDB = new DeviceDB(application);
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        this.sb = (Button) this.findViewById(R.id.EditDevSavebutton);
-        this.cb = (Button) this.findViewById(R.id.EditDevCancelbutton);
-        this.startapp = (Button) this.findViewById(R.id.chooseAppButton);
-        this.connbt = (Button) this.findViewById(R.id.chooseBTbutton);
-        this.fdesc2 = (EditText) this.findViewById(R.id.editDesc2);
-        this.fgloc = (CheckBox) this.findViewById(R.id.checkCaptLoc);
-        this.fsetvol = (CheckBox) this.findViewById(R.id.checkSetVol);
-        this.fvol = (SeekBar) this.findViewById(R.id.seekBarVol);
-        this.fapp = (EditText) this.findViewById(R.id.editApp);
-        this.fapprestart = (CheckBox) this
+        this.sb = this.findViewById(R.id.EditDevSavebutton);
+        Button cb = this.findViewById(R.id.EditDevCancelbutton);
+        Button startapp = this.findViewById(R.id.chooseAppButton);
+        Button connbt = this.findViewById(R.id.chooseBTbutton);
+        this.fdesc2 = this.findViewById(R.id.editDesc2);
+        this.fgloc = this.findViewById(R.id.checkCaptLoc);
+        this.fsetvol = this.findViewById(R.id.checkSetVol);
+        this.fvol = this.findViewById(R.id.seekBarVol);
+        this.fapp = this.findViewById(R.id.editApp);
+        this.fapprestart = this
                 .findViewById(R.id.appRestartCheckbox);
-        this.fappkill = (CheckBox) this.findViewById(R.id.appKillCheckbox);
-        this.fbt = (EditText) this.findViewById(R.id.editBtConnect);
-        this.fwifi = (CheckBox) this.findViewById(R.id.checkwifi);
+        this.fappkill = this.findViewById(R.id.appKillCheckbox);
+        this.fbt = this.findViewById(R.id.editBtConnect);
+        this.fwifi = this.findViewById(R.id.checkwifi);
 
-        this.fenableTTS = (CheckBox) this.findViewById(R.id.enableTTSBox);
-        this.fsetpv = (CheckBox) this.findViewById(R.id.checkSetpv);
-        this.fsilent = (CheckBox) this.findViewById(R.id.silentBox);
-        this.fphonev = (SeekBar) this.findViewById(R.id.seekPhoneVol);
-        this.fsmsdelaybar = (SeekBar) this.findViewById(R.id.SMSdelayseekBar);
-        this.fsmsdelaybox = (TextView) this.findViewById(R.id.SMSdelaytextView);
-        this.fvoldelaybar = (SeekBar) this.findViewById(R.id.VolDelaySeekBar);
-        this.fvoldelaybox = (TextView) this.findViewById(R.id.VolDelayTextView);
-        this.tv2 = (TextView) this.findViewById(R.id.textView2);
-        this.frampVol = (CheckBox) this.findViewById(R.id.rampBox);
-        this.fautoVol = (CheckBox) this.findViewById(R.id.autoVolcheckBox);
-        this.icongroup = (RadioGroup) this.findViewById(R.id.radioGroupIcon);
-        this.iconradio0 = (RadioButton) this.findViewById(R.id.iconradio0);
-        this.iconradio1 = (RadioButton) this.findViewById(R.id.iconradio1);
-        this.iconradio2 = (RadioButton) this.findViewById(R.id.iconradio2);
-        this.iconradio3 = (RadioButton) this.findViewById(R.id.iconradio3);
-        this.iconradio4 = (RadioButton) this.findViewById(R.id.iconradio4);
-        this.streamgroup = (RadioGroup) this.findViewById(R.id.radioGroupStream);
-        this.streamradio0 = (RadioButton) this.findViewById(R.id.streamradio0);
-        this.streamradio1 = (RadioButton) this.findViewById(R.id.streamradio1);
-        this.streamradio2 = (RadioButton) this.findViewById(R.id.streamradio2);
-        this.l1 = (LinearLayout) this.findViewById(R.id.LinearLayout1);
-        this.l2 = (LinearLayout) this.findViewById(R.id.LinearLayout2);
-        this.ttsdelay = (TextView) this.findViewById(R.id.textViewTTSDelay);
-        this.mediadelay = (TextView) this.findViewById(R.id.textViewMediaDelay);
-        this.tvstream = (TextView) this.findViewById(R.id.textViewStream);
-        this.tvmediavol = (TextView) this.findViewById(R.id.textViewMediaVolume);
-        this.tvincallVol = (TextView) this.findViewById(R.id.textViewInCallVol);
-        this.fsleepBox = (CheckBox) this.findViewById(R.id.checkBoxSleep);
-        this.fcarmodeBox = (CheckBox) this.findViewById(R.id.checkBoxLaunchCar);
+        this.fenableTTS = this.findViewById(R.id.enableTTSBox);
+        this.fsetpv = this.findViewById(R.id.checkSetpv);
+        this.fsilent = this.findViewById(R.id.silentBox);
+        this.fphonev = this.findViewById(R.id.seekPhoneVol);
+        this.fsmsdelaybar = this.findViewById(R.id.SMSdelayseekBar);
+        this.fsmsdelaybox = this.findViewById(R.id.SMSdelaytextView);
+        this.fvoldelaybar = this.findViewById(R.id.VolDelaySeekBar);
+        this.fvoldelaybox = this.findViewById(R.id.VolDelayTextView);
+        this.tv2 = this.findViewById(R.id.textView2);
+        this.frampVol = this.findViewById(R.id.rampBox);
+        this.fautoVol = this.findViewById(R.id.autoVolcheckBox);
+        this.icongroup = this.findViewById(R.id.radioGroupIcon);
+        this.iconradio0 = this.findViewById(R.id.iconradio0);
+        this.iconradio1 = this.findViewById(R.id.iconradio1);
+        this.iconradio2 = this.findViewById(R.id.iconradio2);
+        this.iconradio3 = this.findViewById(R.id.iconradio3);
+        this.iconradio4 = this.findViewById(R.id.iconradio4);
+        this.streamgroup = this.findViewById(R.id.radioGroupStream);
+        this.streamradio0 = this.findViewById(R.id.streamradio0);
+        this.streamradio1 = this.findViewById(R.id.streamradio1);
+        this.streamradio2 = this.findViewById(R.id.streamradio2);
+        this.l1 = this.findViewById(R.id.LinearLayout1);
+        this.l2 = this.findViewById(R.id.LinearLayout2);
+        this.ttsdelay = this.findViewById(R.id.textViewTTSDelay);
+        this.mediadelay = this.findViewById(R.id.textViewMediaDelay);
+        this.tvstream = this.findViewById(R.id.textViewStream);
+        this.tvmediavol = this.findViewById(R.id.textViewMediaVolume);
+        this.tvincallVol = this.findViewById(R.id.textViewInCallVol);
+        this.fsleepBox = this.findViewById(R.id.checkBoxSleep);
+        this.fcarmodeBox = this.findViewById(R.id.checkBoxLaunchCar);
 
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(application);
@@ -199,7 +200,7 @@ public class EditDevice extends Activity {
             setVolVisibility();
         }
 
-        fvol.setMax(am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        fvol.setMax(Objects.requireNonNull(am).getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         fvol.setProgress(device.defVol);
         fapp.setText(device.getPname());
         fbt.setText(device.getBdevice());
@@ -653,15 +654,16 @@ public class EditDevice extends Activity {
                     appdata = data.getStringExtra("alarm_custom_data");
                     apptype = data.getStringExtra("alarm_custom_type");
 
-                    if (appdata.length() > 3) {
+/*                    if (appdata.length() > 3) {
                         try {
                             pname = Intent.getIntent(pname).getComponent()
                                     .getPackageName();
+
                         } catch (URISyntaxException e) {
                             pname = "custom";
                             e.printStackTrace();
                         }
-                    }
+                    }*/
                     if (pname.equals("")) {
                         pname = "custom";
                     }
@@ -793,7 +795,7 @@ public class EditDevice extends Activity {
             pname = data.getStringExtra(ProviderList.EXTRA_PACKAGE_NAME);
         } else {
             try {
-                pname = i.getComponent().getPackageName();
+                pname = Objects.requireNonNull(i.getComponent()).getPackageName();
             } catch (Exception e) {
                 pname = "";
                 e.printStackTrace();
@@ -817,7 +819,7 @@ public class EditDevice extends Activity {
             rtr = (String) m.invoke(i,
                     Intent.class.getField("URI_INTENT_SCHEME").getInt(null));
         } catch (Exception e) {
-            rtr = i.toURI();
+           // rtr = i.toURI();
         }
         return rtr;
     }
