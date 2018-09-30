@@ -12,6 +12,8 @@
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        android:background="@android:color/background_dark"
+        android:theme="@android:style/TextAppearance.DeviceDefault"
+        android:visibility="visible" />
 
 </android.support.constraint.ConstraintLayout>

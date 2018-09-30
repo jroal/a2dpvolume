@@ -36,7 +36,7 @@
                     android:id="@+id/SMSdelaytextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5pt"
+                    android:layout_marginEnd="5pt"
                     android:layout_weight=".1"
                     android:text="10s"
                     android:textStyle="bold" android:layout_gravity="center_vertical" android:gravity="center_horizontal"/>
@@ -45,8 +45,8 @@
                     android:id="@+id/SMSdelayseekBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5pt"
-                    android:layout_marginRight="15pt"
+                    android:layout_marginStart="5pt"
+                    android:layout_marginEnd="15pt"
                     android:layout_weight=".9" android:focusable="true" android:focusableInTouchMode="true"/>
             </LinearLayout>
 
@@ -125,7 +125,7 @@
                     android:id="@+id/VolDelayTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5pt"
+                    android:layout_marginEnd="5pt"
                     android:layout_weight=".1"
                     android:text="10s"
                     android:textStyle="bold" android:gravity="center_horizontal" android:layout_gravity="center_vertical"/>
@@ -134,8 +134,8 @@
                     android:id="@+id/VolDelaySeekBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5pt"
-                    android:layout_marginRight="15pt"
+                    android:layout_marginStart="5pt"
+                    android:layout_marginEnd="15pt"
                     android:layout_weight=".9" android:focusable="true" android:focusableInTouchMode="true"/>
             </LinearLayout>
 
@@ -189,7 +189,7 @@
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
                     android:checked="true"
-                    android:drawableRight="@drawable/car2" />
+                    android:drawableEnd="@drawable/car2" />
 
                 <RadioButton
                     android:id="@+id/iconradio1"
@@ -198,7 +198,7 @@
                     android:layout_gravity="right|center_horizontal"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
-                    android:drawableRight="@drawable/headset" />
+                    android:drawableEnd="@drawable/headset" />
 
                 <RadioButton
                     android:id="@+id/iconradio2"
@@ -207,7 +207,7 @@
                     android:layout_gravity="left"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
-                    android:drawableRight="@drawable/jack" />
+                    android:drawableEnd="@drawable/jack" />
 
                 <RadioButton
                     android:id="@+id/iconradio3"
@@ -216,7 +216,7 @@
                     android:layout_gravity="right|center_horizontal"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
-                    android:drawableRight="@drawable/usb" />
+                    android:drawableEnd="@drawable/usb" />
 
                 <RadioButton
                     android:id="@+id/iconradio4"
@@ -225,7 +225,7 @@
                     android:layout_gravity="left"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
-                    android:drawableRight="@drawable/icon5" />
+                    android:drawableEnd="@drawable/icon5" />
             </RadioGroup>
 
             <LinearLayout

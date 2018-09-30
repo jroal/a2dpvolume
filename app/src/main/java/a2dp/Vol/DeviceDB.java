@@ -175,7 +175,10 @@ public class DeviceDB {
 				bt.setSilent(cs.getInt(24));
 				bt.setSleep(cs.getInt(25));
 				bt.setCarmode(cs.getInt(26));
+
 			}
+			int bticon = bt.getIcon();
+			bt.setIcon(checkIcon(bticon));
 		} catch (Exception e) {
 			bt.mac = null;
 			
@@ -185,6 +188,22 @@ public class DeviceDB {
 		return bt;
 	}
 
+	// make sure icon is valid
+	private int checkIcon(int icon){
+		ArrayList<Integer> icons =  new ArrayList<Integer>();
+        icons.add(R.drawable.car2);
+        icons.add(R.drawable.headset);
+        icons.add(R.drawable.ic_launcher);
+        icons.add(R.drawable.icon5);
+        icons.add(R.drawable.usb);
+        icons.add(R.drawable.jack);
+
+		if(icons.contains(icon)){
+			return icon;
+		}else{
+			return R.drawable.car2;
+		}
+	}
 	/**
 	 * Removes the data table from the database that stores all the btDevices.
 	 */

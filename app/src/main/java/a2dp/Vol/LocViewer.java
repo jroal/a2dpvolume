@@ -27,6 +27,8 @@ public class LocViewer extends AppCompatActivity {
         car_name = getIntent().getStringExtra("name");
         this.application = (MyApplication) this.getApplication();
 
+        // this was intended to create a home screen shortcut but I was not able to make it work.  For now I made the fab gone.
+        // if you want to get this working you need to clear the visibility of the fab in activity_loc_viewer.xml
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -540,6 +540,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 } catch (Exception e1) {
                     bt = null;
                     e1.printStackTrace();
+                    connecting = false;
+                    return;
                 }
 
                 btDevice bt2 = null;
@@ -553,6 +555,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     } catch (Exception e) {
 
                         bt2 = null;
+                        connecting = false;
+                        return;
                     }
                 } else
                 // if not a bluetooth device, must be a special device
@@ -741,7 +745,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         @Override
         public void onReceive(Context context2, Intent intent2) {
             btDevice bt2 = null;
-            if (!disconnecting) {
+            if (!disconnecting && !connecting) {
                 disconnecting = true;
 
                 BluetoothDevice bt;
@@ -751,6 +755,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 } catch (Exception e1) {
                     bt = null;
                     e1.printStackTrace();
+                    disconnecting = false;
+                    return;
                 }
 
                 if (bt != null) {
@@ -760,6 +766,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     } catch (Exception e) {
                         bt2 = null;
                         Log.e(LOG_TAG, "Error" + e.toString());
+                        disconnecting = false;
+                        return;
                     }
                 } else
                     try {
@@ -929,7 +937,19 @@ public class service extends Service implements OnAudioFocusChangeListener {
         getConnects();
         if ((bt2 != null && bt2.isSetV()) || bt2 == null)
             if (!mvolsLeft)
-                setVolume(OldVol2, application);
+                new CountDownTimer(2000,2000){
+
+                    @Override
+                    public void onTick(long l) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        setVolume(OldVol2, application);
+                    }
+                }.start();
+
         if ((bt2 != null && bt2.isSetpv()) || bt2 == null)
             if (!pvolsLeft)
                 setPVolume(OldVol);

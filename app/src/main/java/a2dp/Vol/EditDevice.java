@@ -195,7 +195,7 @@ public class EditDevice extends Activity {
         fgloc.setChecked(device.isGetLoc());
         fsetvol.setChecked(device.isSetV());
 
-        if(android.os.Build.VERSION.SDK_INT > 27){
+        if (android.os.Build.VERSION.SDK_INT > 27) {
             fsetvol.setChecked(false);
             setVolVisibility();
         }
@@ -205,7 +205,6 @@ public class EditDevice extends Activity {
         fapp.setText(device.getPname());
         fbt.setText(device.getBdevice());
         fwifi.setChecked(device.isWifi());
-
 
 
         if (device == null)
@@ -255,6 +254,7 @@ public class EditDevice extends Activity {
                 iconradio4.setChecked(true);
                 break;
             default:
+                device.setIcon(R.drawable.car2);
                 iconradio0.setChecked(true);
                 break;
         }
@@ -427,11 +427,11 @@ public class EditDevice extends Activity {
 
     }
 
-    private void setVolVisibility(){
-        if(android.os.Build.VERSION.SDK_INT > 27){
+    private void setVolVisibility() {
+        if (android.os.Build.VERSION.SDK_INT > 27) {
             fsetvol.setChecked(false);
             fsetvol.setVisibility(CheckBox.GONE);
-        } else{
+        } else {
             fsetvol.setVisibility(CheckBox.VISIBLE);
         }
         setMediaVisibility();
@@ -580,6 +580,9 @@ public class EditDevice extends Activity {
             case R.id.iconradio4:
                 device.setIcon(R.drawable.icon5);
                 break;
+
+            default:
+                device.setIcon(R.drawable.car2);
         }
 
         switch (streamgroup.getCheckedRadioButtonId()) {
@@ -635,11 +638,11 @@ public class EditDevice extends Activity {
                     pname = data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME);
                     vUpdateApp();
                     break;
-            /*
-			 * case ACTION_INPUT_LABEL: mAppItem.set(AppItem.KEY_LABEL,
-			 * data.getStringExtra(StringInputDialog.EXTRA_VALUE));
-			 * vUpdateLabel(); break;
-			 */
+                /*
+                 * case ACTION_INPUT_LABEL: mAppItem.set(AppItem.KEY_LABEL,
+                 * data.getStringExtra(StringInputDialog.EXTRA_VALUE));
+                 * vUpdateLabel(); break;
+                 */
                 case ACTION_CHOOSE_APP_CUSTOM:
                     pname = data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME);
                     vUpdateApp();
@@ -686,10 +689,10 @@ public class EditDevice extends Activity {
 
         super.onActivityResult(requestCode, resultCode, data);
 
-		/*
-		 * if(resultCode == RESULT_OK){
-		 * fapp.setText(data.getStringExtra("package_name")); }
-		 */
+        /*
+         * if(resultCode == RESULT_OK){
+         * fapp.setText(data.getStringExtra("package_name")); }
+         */
     }
 
     private DialogInterface.OnClickListener mAppTypeDialogOnClick = new DialogInterface.OnClickListener() {
@@ -782,11 +785,11 @@ public class EditDevice extends Activity {
         setAppVisibility();
     }
 
-	/*
-	 * private void checkCustomAppPackage() { if
-	 * ((mAppItem.getBool(AppItem.KEY_FORCE_RESTART)) &&
-	 * mAppItem.isCustomIntent()) { showDialog(DIALOG_WARN_STOP_APP); } }
-	 */
+    /*
+     * private void checkCustomAppPackage() { if
+     * ((mAppItem.getBool(AppItem.KEY_FORCE_RESTART)) &&
+     * mAppItem.isCustomIntent()) { showDialog(DIALOG_WARN_STOP_APP); } }
+     */
 
     private void processShortcut(Intent data) {
         Intent i = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT);
@@ -819,7 +822,7 @@ public class EditDevice extends Activity {
             rtr = (String) m.invoke(i,
                     Intent.class.getField("URI_INTENT_SCHEME").getInt(null));
         } catch (Exception e) {
-           // rtr = i.toURI();
+            // rtr = i.toURI();
         }
         return rtr;
     }
@@ -869,10 +872,11 @@ public class EditDevice extends Activity {
 
         return super.onCreateDialog(id);
     }
+
     // save the current btd value (mac) in case this activity gets killed while in background
- 	@Override
- 	protected void onSaveInstanceState(Bundle outState) {
-        		super.onSaveInstanceState(outState);
-        		outState.putString(EXTRA_BTD,btd);
-        	}
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(EXTRA_BTD, btd);
+    }
 }
