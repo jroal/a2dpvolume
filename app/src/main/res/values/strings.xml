@@ -178,12 +178,14 @@
     <string name="askContacts">The app needs access to your contects to tell who messages are from when reading messages.</string>
     <string name="askSetPerm">Set Permission</string>
     <string name="pushBtNamesButtonText">Push BT Names to Android</string>
-    <string name="channel_name">jims</string>
-    <string name="channel_description">one</string>
+    <string name="background_channel_name">A2DP Background</string>
+    <string name="background_channel_description">Background</string>
 
-    <string name="title_activity_location_viewer">LocationViewer</string>
+    <string name="title_activity_location_viewer">Location Viewer</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_loc_viewer">LocViewer</string>
+    <string name="title_activity_loc_viewer">Location Viewer</string>
+    <string name="foreground_channel_name" >A2DP Foreground</string>
+    <string name="foreground_channel_description" >Foreground</string>
 
 </resources>

@@ -57,8 +57,9 @@ import static a2dp.Vol.R.drawable.ic_launcher;
 
 public class service extends Service implements OnAudioFocusChangeListener {
 
-    private static final String CHANNEL_ID = "jims";
-    NotificationChannel channel;
+    private static final String A2DP_BACKGROUND = "a2dp_background";
+    private static final String A2DP_FOREGROUND = "a2dp_foreground";
+    NotificationChannel channel_b, channel_f;
 
     /*
      * (non-Javadoc)
@@ -159,7 +160,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     @Override
     public IBinder onBind(Intent arg0) {
         // TODO Auto-generated method stub
-        if (channel == null) {
+        if ((channel_b == null)||(channel_f == null)) {
             createNotificationChannel();
         }
         return null;
@@ -169,7 +170,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     public void onCreate() {
 
         service.application = (MyApplication) this.getApplication();
-        if (channel == null) {
+        if ((channel_b == null)||(channel_f == null)) {
             createNotificationChannel();
         }
 
@@ -250,7 +251,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                             .setContentIntent(contentIntent)
                             .setSmallIcon(ic_launcher)
                             .setContentText(temp)
-                            .setChannelId(CHANNEL_ID).build();
+                            .setChannelId(A2DP_BACKGROUND).build();
                 } else {
                     not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
                             .setContentTitle(
@@ -937,7 +938,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         getConnects();
         if ((bt2 != null && bt2.isSetV()) || bt2 == null)
             if (!mvolsLeft)
-                new CountDownTimer(2000,2000){
+                new CountDownTimer(3000,3000){
 
                     @Override
                     public void onTick(long l) {
@@ -1152,21 +1153,32 @@ public class service extends Service implements OnAudioFocusChangeListener {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
+            CharSequence name = getString(R.string.background_channel_name);
+            String description = getString(R.string.background_channel_description);
+            int importance = NotificationManager.IMPORTANCE_MIN;
+            channel_b = new NotificationChannel(A2DP_BACKGROUND, name, importance);
+            channel_b.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             mNotificationManager = getSystemService(NotificationManager.class);
-            mNotificationManager.createNotificationChannel(channel);
+            mNotificationManager.createNotificationChannel(channel_b);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.foreground_channel_name);
+            String description = getString(R.string.foreground_channel_description);
+            int importance = NotificationManager.IMPORTANCE_MIN;
+            channel_f = new NotificationChannel(A2DP_FOREGROUND, name, importance);
+            channel_f.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            mNotificationManager = getSystemService(NotificationManager.class);
+            mNotificationManager.createNotificationChannel(channel_f);
         }
     }
 
     private void updateNot(boolean connect, String car) {
 
-        if (channel == null) {
+        if ((channel_b == null)||(channel_f == null)) {
             createNotificationChannel();
         }
 
@@ -1202,7 +1214,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     .setContentIntent(contentIntent)
                     .setSmallIcon(connectedIcon)
                     .setContentText(temp)
-                    .setChannelId(CHANNEL_ID).build();
+                    .setChannelId(A2DP_FOREGROUND).build();
             }else{
                 not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
                         .setContentTitle(
@@ -1231,7 +1243,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                             .setContentIntent(contentIntent)
                             .setSmallIcon(ic_launcher)
                             .setContentText(temp)
-                            .setChannelId(CHANNEL_ID).build();
+                            .setChannelId(A2DP_BACKGROUND).build();
                 }else{
                     not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
                             .setContentTitle(
