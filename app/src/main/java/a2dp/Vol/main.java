@@ -1175,6 +1175,7 @@ public class main extends Activity {
                 case TextToSpeech.Engine.CHECK_VOICE_DATA_PASS:
                     if (toasts) Toast.makeText(application, R.string.TTSready, Toast.LENGTH_SHORT)
                             .show();
+
                     break;
 
 /*                case TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA:

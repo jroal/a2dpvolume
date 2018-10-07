@@ -2,12 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="a2dp.Vol"
     android:installLocation="internalOnly"
-    android:versionCode="143"
-    android:versionName="2.12.10.1">
-
-    <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="27" />
+    android:versionCode="144"
+    android:versionName="2.12.10.2">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
@@ -32,7 +28,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <!--<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
@@ -75,13 +71,27 @@
             android:icon="@drawable/icon5"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:multiprocess="false" />
+            android:multiprocess="false"
+            android:parentActivityName=".main">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="a2dp.Vol.main" />
+        </activity>
+
         <activity
             android:name=".Preferences"
             android:enabled="true"
             android:icon="@drawable/icon5"
             android:label="@xml/preferences"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance"
+            android:parentActivityName=".main">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="a2dp.Vol.main" />
+
+        </activity>
 
         <receiver android:name=".Starter">
             <intent-filter>
@@ -109,7 +119,13 @@
             android:enabled="true"
             android:label="@string/app_name" />
 
-        <activity android:name=".EditDevice" />
+        <activity android:name=".EditDevice"
+            android:parentActivityName=".main">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="a2dp.Vol.main" />
+        </activity>
+
         <activity android:name=".AppChooser" />
         <activity android:name=".CustomIntentMaker" />
         <activity android:name=".ProviderList" />

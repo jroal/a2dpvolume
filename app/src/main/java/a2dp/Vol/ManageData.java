@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.channels.FileChannel;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 /**
@@ -78,6 +79,9 @@ public class ManageData extends Activity {
         a2dpDir = Environment.getExternalStorageDirectory() + "/A2DPVol";
 
         this.setContentView(R.layout.managedata);
+
+        // Show the Up button in the action bar.
+        setupActionBar();
 
         this.output = findViewById(R.id.Output);
         this.path = findViewById(R.id.Path);
@@ -221,6 +225,14 @@ public class ManageData extends Activity {
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    /**
+     * Set up the {@link android.app.ActionBar}.
+     */
+    private void setupActionBar() {
+
+        Objects.requireNonNull(getActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

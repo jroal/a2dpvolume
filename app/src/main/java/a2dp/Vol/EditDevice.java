@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -51,6 +52,22 @@ public class EditDevice extends Activity {
         closedb();
         EditDevice.this.finish();
         super.onBackPressed();
+    }
+
+    @Override
+    public void onCreateNavigateUpTaskStack(TaskStackBuilder builder) {
+        Save();
+        closedb();
+        EditDevice.this.finish();
+        super.onCreateNavigateUpTaskStack(builder);
+    }
+
+    @Override
+    public boolean onNavigateUp() {
+        Save();
+        closedb();
+        EditDevice.this.finish();
+        return super.onNavigateUp();
     }
 
     private Button sb;
@@ -119,6 +136,9 @@ public class EditDevice extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.edit_item);
+
+        // Show the Up button in the action bar.
+        setupActionBar();
 
         this.application = (MyApplication) this.getApplication();
         this.myDB = new DeviceDB(application);
@@ -425,6 +445,14 @@ public class EditDevice extends Activity {
 
         });
 
+    }
+
+    /**
+     * Set up the {@link android.app.ActionBar}.
+     */
+    private void setupActionBar() {
+
+        Objects.requireNonNull(getActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
     private void setVolVisibility() {
