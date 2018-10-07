@@ -177,4 +177,15 @@
     <string name="askSms">Die App muss auf die SMS-Nachrichten zugreifen können um diese vorzulesen.</string>
     <string name="askContacts">Die App benötigt Zugriff auf die Telefonkontakte um beim Vorlesen von SMS-Nachrichten auch den Namen ausgeben zu können.</string>
     <string name="askSetPerm">Erlaube Zugriff</string>
+    <string name="pushBtNamesButtonText">Übergebe BT Namen an Android</string>
+    <string name="background_channel_name">A2DP Hintergrund</string>
+    <string name="background_channel_description">Hintergrund</string>
+
+    <string name="title_activity_location_viewer">Positionsanzeige</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_loc_viewer">Positionsanzeige</string>
+    <string name="foreground_channel_name" >A2DP Vordergrund</string>
+    <string name="foreground_channel_description" >Vordergrund</string>
+
 </resources>
