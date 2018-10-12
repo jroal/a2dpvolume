@@ -178,4 +178,16 @@
     <string name="askContacts">このアプリは、メッセージを読む際に、メッセージの送信元を取得するのに連絡先へのアクセスが必要です。</string>
     <string name="askSetPerm">権限設定</string>
     <string name="pushBtNamesButtonText">設定したBluetooth名をAndroidに反映</string>
+    <string name="background_channel_name">A2DP バックグラウンド</string>
+    <string name="background_channel_description">バックグラウンド</string>
+
+    <string name="title_activity_location_viewer">位置ビューア</string>
+<!--    <string name="dummy_button">
+Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>-->
+
+    <string name="title_activity_loc_viewer">位置ビューア</string>
+    <string name="foreground_channel_name" >A2DP フォアグラウンド</string>
+    <string name="foreground_channel_description" >フォアグラウンド</string>
+
 </resources>
