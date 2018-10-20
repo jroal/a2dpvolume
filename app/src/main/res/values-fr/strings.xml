@@ -177,4 +177,11 @@
     <string name="askSms">L\\\'application accède aux SMS (messages textes) pour la fonctionalité lecture vocale automatique.</string>
     <string name="askContacts">L\\\'application accède aux contacts afin de nommer l\'envoyeur lors de la lecture d\'un message.</string>
     <string name="askSetPerm">Définir les authorisations</string>
+    <string name="pushBtNamesButtonText">Envoi noms BT vers Android</string>
+    <string name="background_channel_name">A2DP en arrière-plan</string>
+    <string name="background_channel_description">Arrière-plan</string>
+    <string name="title_activity_location_viewer">Visualiser Localisation</string>
+    <string name="title_activity_loc_viewer">Visualiser Localisation</string>
+    <string name="foreground_channel_name">A2DP avant-plan</string>
+    <string name="foreground_channel_description">Avant-plan</string>
 </resources>

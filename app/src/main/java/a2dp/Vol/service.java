@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.text.MessageFormat;
+import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -31,6 +33,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.LocationManager;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.net.Uri;
@@ -86,7 +90,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private static boolean mvolsLeft = false;
     private static boolean pvolsLeft = false;
     private static String notify_pref = "always";
-    public static btDevice[] btdConn = new btDevice[5]; // n the devices in the
+    public static btDevice[] btdConn = new btDevice[10]; // n the devices in the
     // database that has
     // connected
     private DeviceDB DB; // database of device data stored in SQlite
@@ -111,6 +115,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private boolean bluetoothWasOff = false;
     private boolean clearedTts = true;
     private static final String FIX_STREAM = "fix_stream";
+    AudioFocusRequest afr;
 
     boolean oldwifistate = true;
     boolean oldgpsstate = true;
@@ -271,7 +276,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         // we will ignore the no notifications preference in API 25 and up since this can be managed
         // by the user now within Android
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)notify = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) notify = true;
 
         if (notify) {
             updateNot(false, null);
@@ -1193,10 +1198,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
         } else {
             str = getResources().getString(R.string.TTSNotReady);
         }
-        str=""; // remove it for now
+        str = ""; // remove it for now
 
         if (connect) {
-            if(mNotificationManager != null) mNotificationManager.cancel(1);
+            if (mNotificationManager != null) mNotificationManager.cancel(1);
             Notification not = null;
             Intent notificationIntent = new Intent(this, main.class);
             PendingIntent contentIntent = PendingIntent.getActivity(this,
@@ -1227,7 +1232,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             this.startForeground(1, not);
             //Toast.makeText(application, "Test on " + car, Toast.LENGTH_LONG).show();
         } else {
-            if(mNotificationManager != null) mNotificationManager.cancel(1);
+            if (mNotificationManager != null) mNotificationManager.cancel(1);
 
             if (notify_pref.equalsIgnoreCase("always")) {
                 Notification not = null;
@@ -1481,8 +1486,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             String format = bundle.getString("format");
                             messages[i] = SmsMessage.createFromPdu((byte[]) pdusObj[i], format);
-                        }
-                        else {
+                        } else {
                             messages[i] = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
                         }
 
@@ -1512,6 +1516,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     private AtomicInteger numToRead = new AtomicInteger(0);
 
+    @TargetApi(Build.VERSION_CODES.O)
     public void TextReader(String rawinput) {
         if (mTtsReady) {
             myHash = new HashMap<>();
@@ -1532,12 +1537,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
             }
 
             musicWasPlaying = am2.isMusicActive();
+            final Bundle b1 = new Bundle();
 
             switch (SMSstream) {
                 case IN_CALL_STREAM:
-                    if (am2.isBluetoothScoAvailableOffCall()) {
-                        am2.startBluetoothSco();
-                    }
 
                     if (musicWasPlaying) {
                         // first pause the music
@@ -1546,28 +1549,91 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         i.putExtra("command", "pause");
                         sendBroadcast(i);
                     }
-                    am2.requestAudioFocus(a2dp.Vol.service.this,
-                            AudioManager.STREAM_VOICE_CALL,
-                            AudioManager.AUDIOFOCUS_GAIN);
+
+
+                    if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+                        am2.requestAudioFocus(service.this,
+                                AudioManager.STREAM_VOICE_CALL,
+                                AudioManager.AUDIOFOCUS_GAIN);
+                    } else {
+                        AudioAttributes aa = new AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION).setLegacyStreamType(AudioManager.STREAM_VOICE_CALL)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED).build();
+
+                        afr = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                                .setAudioAttributes(aa)
+                                .build();
+                        am2.requestAudioFocus(afr);
+                    }
                     myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
                             String.valueOf(AudioManager.STREAM_VOICE_CALL));
+                    b1.putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, AudioManager.STREAM_VOICE_CALL);
                     clearedTts = false;
+
+                    if (am2.isBluetoothScoAvailableOffCall()) {
+                        am2.startBluetoothSco();
+                        am2.setSpeakerphoneOn(true);
+                    }
+
+                    // just in case something goes wrong disconnect SCO anyway
+
+/*
+                    new CountDownTimer(SMS_delay + 20000, 10000) {
+
+                        @Override
+                        public void onTick(long l) {
+                            //if(!clearedTts)clearTts();
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            if (!clearedTts) clearTts();
+                        }
+                    }.start();
+*/
+
+
                     break;
 
                 case MUSIC_STREAM:
-                    am2.requestAudioFocus(a2dp.Vol.service.this,
+                    if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+                        am2.requestAudioFocus(service.this,
+                                AudioManager.STREAM_MUSIC,
+                                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+                    } else {
+                        AudioAttributes aa = new AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION).setLegacyStreamType(AudioManager.STREAM_MUSIC)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build();
+
+                        afr = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK).setAudioAttributes(aa).build();
+                        am2.requestAudioFocus(afr);
+                    }
+                   /* am2.requestAudioFocus(a2dp.Vol.service.this,
                             AudioManager.STREAM_MUSIC,
-                            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+                            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);*/
                     myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
                             String.valueOf(AudioManager.STREAM_MUSIC));
+                    b1.putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, AudioManager.STREAM_MUSIC);
                     clearedTts = false;
                     break;
                 case ALARM_STREAM:
-                    am2.requestAudioFocus(a2dp.Vol.service.this,
-                            AudioManager.STREAM_ALARM,
-                            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+                    if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+                        am2.requestAudioFocus(service.this,
+                                AudioManager.STREAM_ALARM,
+                                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+                    } else {
+                        AudioAttributes aa = new AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION).setLegacyStreamType(AudioManager.STREAM_ALARM)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build();
+
+                        afr = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT).setAudioAttributes(aa).build();
+                        am2.requestAudioFocus(afr);
+                    }
+
                     myHash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
                             String.valueOf(AudioManager.STREAM_ALARM));
+                    b1.putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, AudioManager.STREAM_ALARM);
+
                     clearedTts = false;
                     break;
             }
@@ -1583,11 +1649,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     @Override
                     public void onFinish() {
                         try {
-                            String h1 = myHash.get(TextToSpeech.Engine.KEY_PARAM_STREAM);
-                            Bundle b1 = new Bundle();
-                            b1.putString(TextToSpeech.Engine.KEY_PARAM_STREAM, h1);
+                            //String h1 = myHash.get(TextToSpeech.Engine.KEY_PARAM_STREAM);
+
+                            //b1.putString(TextToSpeech.Engine.KEY_PARAM_STREAM, h1);
+
                             numToRead.incrementAndGet();
-                            String utt_id = "jimsutterance" + numToRead.toString();
+                            String utt_id = A2DP_Vol; // + numToRead.toString();
                             Log.d("service", "numToRead = " + numToRead);
 
                             mTts.speak(str, TextToSpeech.QUEUE_ADD, b1, utt_id);
@@ -1605,6 +1672,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     }
 
                 }.start();
+            } else {
+                clearTts();
             }
 
         }
@@ -1637,31 +1706,34 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     return;
                 } else {
                     Log.d("service", "all done - abandon audio focus");
+
                 }
 
                 switch (SMSstream) {
                     case IN_CALL_STREAM:
 
-                        if (!clearedTts) {
+                        if (!clearedTts && numToRead.intValue() < 1) {
                             // clearTts();
                             Intent c = new Intent();
                             c.setAction("a2dp.vol.service.CLEAR");
                             application.sendBroadcast(c);
+                            clearTts();
                         }
                         result = am2.abandonAudioFocus(a2dp.Vol.service.this);
-                        am2.stopBluetoothSco();
 
                         break;
                     case MUSIC_STREAM:
                         result = am2.abandonAudioFocus(a2dp.Vol.service.this);
                         break;
                     case ALARM_STREAM:
-                        if (!clearedTts) {
+                        if (!clearedTts && numToRead.intValue() < 1) {
                             // clearTts();
                             Intent c = new Intent();
                             c.setAction("a2dp.vol.service.CLEAR");
                             application.sendBroadcast(c);
+                            clearTts();
                         }
+
                         result = am2.abandonAudioFocus(a2dp.Vol.service.this);
                         break;
                 }
@@ -1675,11 +1747,17 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 result = am2.abandonAudioFocus(a2dp.Vol.service.this);
             }
 
-            am2.setMode(AudioManager.MODE_NORMAL);
+            if (numToRead.intValue() < 1) {
+                if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    am2.abandonAudioFocusRequest(afr);
+                }
+
+                am2.setMode(AudioManager.MODE_NORMAL);
+            }
         }
 
         @Override
-        public void onError(String utteranceId) { // TODO
+        public void onError(String utteranceId) {
             Log.d("service", "onError numToRead = " + numToRead.get());
             numToRead.decrementAndGet();
             Log.d("service", "numToRead = " + numToRead.get());
@@ -1693,33 +1771,66 @@ public class service extends Service implements OnAudioFocusChangeListener {
     };
 
 
+
+
+    @Override
+    public void onAudioFocusChange(int focusChange) {
+        switch (focusChange) {
+            case AudioManager.AUDIOFOCUS_GAIN:
+                if (musicWasPlaying) {
+                    // first pause the music
+                    Intent i = new Intent(
+                            "com.android.music.musicservicecommand");
+                    i.putExtra("command", "pause");
+                    sendBroadcast(i);
+                }
+
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS:
+
+                //pausePlayback();
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                /*synchronized(mFocusLock) {
+                    mResumeOnFocusGain = true;
+                    mPlaybackDelayed = false;
+                }*/
+                //pausePlayback();
+                if (musicWasPlaying) {
+                    // now toggle pause to resume
+                    Intent i = new Intent(
+                            "com.android.music.musicservicecommand");
+                    i.putExtra("command", "pause");
+                    sendBroadcast(i);
+                }
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                // ... pausing or ducking depends on your app
+                break;
+        }
+    }
+
+
     private void clearTts() {
 
         if (am2.isBluetoothScoAvailableOffCall()) {
             am2.stopBluetoothSco();
+            am2.setBluetoothScoOn(false);
+            am2.setSpeakerphoneOn(false);
         }
 
+ /*       new CountDownTimer(2000,1000){
 
-    }
+            @Override
+            public void onTick(long l) {
+                am2.stopBluetoothSco();
+            }
 
-    public void onAudioFocusChange(int focusChange) {
-        switch (focusChange) {
-            case AudioManager.AUDIOFOCUS_GAIN:
-
-                break;
-
-            case AudioManager.AUDIOFOCUS_LOSS:
-                // am2.setMode(0);
-                break;
-
-            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                // am2.setMode(0);
-                break;
-
-            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                // am2.setMode(0);
-                break;
-        }
+            @Override
+            public void onFinish() {
+                am2.stopBluetoothSco();
+            }
+        }.start();*/
 
     }
 
@@ -1755,9 +1866,15 @@ public class service extends Service implements OnAudioFocusChangeListener {
         @Override
         public void onReceive(Context arg0, Intent arg1) {
             int state = arg1.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, 0);
+
+            if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED && Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+                am2.requestAudioFocus(afr);
+            }
+
             if (state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED && !clearedTts) {
                 if (!mTtsReady)
                     mTts = new TextToSpeech(application, listenerStarted);
+
                 HashMap<String, String> myHash2 = new HashMap<>();
 
                 myHash2.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, FIX_STREAM);
@@ -1765,28 +1882,21 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
                 myHash2.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
                         String.valueOf(AudioManager.STREAM_MUSIC));
-                if (mTtsReady) {
-                    try {
-                        //mTts.speak("... Done", TextToSpeech.QUEUE_ADD, myHash2);
-                    } catch (Exception e) {
-                        Toast.makeText(application, R.string.TTSNotReady,
-                                Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    }
+
+
+                if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+                    am2.abandonAudioFocus(a2dp.Vol.service.this);
+                }else {
+                    am2.abandonAudioFocusRequest(afr);
                 }
-                am2.abandonAudioFocus(a2dp.Vol.service.this);
+
                 am2.setMode(AudioManager.MODE_NORMAL);
+
                 if (musicWasPlaying) {
-                    new CountDownTimer(1000, 6000) {
+                    new CountDownTimer(1000, 1000) {
 
                         @Override
                         public void onFinish() {
-							/*Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON,
-									null);
-							KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN,
-									KeyEvent.KEYCODE_MEDIA_PLAY);
-							downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
-							sendOrderedBroadcast(downIntent2, null);*/
 
                             Intent i = new Intent(
                                     "com.android.music.musicservicecommand");
@@ -1797,12 +1907,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                         @Override
                         public void onTick(long millisUntilFinished) {
-                            Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON,
+/*                            Intent downIntent2 = new Intent(Intent.ACTION_MEDIA_BUTTON,
                                     null);
                             KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN,
                                     KeyEvent.KEYCODE_MEDIA_PLAY);
                             downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
-                            sendOrderedBroadcast(downIntent2, null);
+                            sendOrderedBroadcast(downIntent2, null);*/
 
                         }
 
