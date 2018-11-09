@@ -1,6 +1,7 @@
 package a2dp.Vol;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -609,7 +610,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     .isProviderEnabled(LocationManager.GPS_PROVIDER);
         }
 
-        connectedIcon = bt2.getIcon();
+        connectedIcon = checkIcon(bt2.getIcon());
         SMSstream = bt2.getSmsstream();
         vol_delay = bt2.getVoldelay() * 1000;
         SMS_delay = bt2.getSmsdelay() * 1000;
@@ -1165,6 +1166,22 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
     }
 
+    // make sure icon is valid
+    private int checkIcon(int icon){
+        ArrayList<Integer> icons = new ArrayList<>();
+        icons.add(R.drawable.car2);
+        icons.add(R.drawable.headset);
+        icons.add(R.drawable.ic_launcher);
+        icons.add(R.drawable.icon5);
+        icons.add(R.drawable.usb);
+        icons.add(R.drawable.jack);
+
+        if(icons.contains(icon)){
+            return icon;
+        }else{
+            return R.drawable.ic_launcher;
+        }
+    }
     private void updateNot(boolean connect, String car) {
 
         if ((channel_b == null) || (channel_f == null)) {
@@ -1177,12 +1194,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
         else {
             if (connects > 0) {
                 String tmp = null;
+                temp = getResources().getString(R.string.connectedTo);
                 for (int k = 0; k < btdConn.length; k++)
                     if (btdConn[k] != null)
                         tmp = btdConn[k].toString();
 
-                temp = getResources().getString(R.string.connectedTo) + " "
-                        + tmp;
+                 temp += " " + tmp;
                 connect = true;
             } else
                 temp = getResources().getString(R.string.ServRunning);
@@ -1199,6 +1216,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
             str = getResources().getString(R.string.TTSNotReady);
         }
         str = ""; // remove it for now
+
+
 
         if (connect) {
             if (mNotificationManager != null) mNotificationManager.cancel(1);
