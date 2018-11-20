@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.util.Objects;
 
 import android.app.ListActivity;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -121,6 +122,9 @@ public class ProviderList extends ListActivity {
 		super.onCreate(savedInstanceState);
 		
 		mProvider = getIntent().getIntExtra(EXTRA_PROVIDER, 0);
+		if(mProvider < 0){
+
+		}
 		
 		setTitle(P_WINDOW_TITLES[mProvider]);
 		((TextView)getListView().getEmptyView()).setText(P_EMPTY_LIST_MSGS[mProvider]);
@@ -129,15 +133,17 @@ public class ProviderList extends ListActivity {
 	}
 	
 	private void loadList() {
-		Cursor c = null;
+
 		try {
-			c = managedQuery(
-				Uri.parse(P_URI_STRINGS[mProvider]), 
+			//CursorLoader c = new CursorLoader(this.getBaseContext());
+			CursorLoader c = new CursorLoader(this,
+				Uri.parse(P_URI_STRINGS[mProvider]),
 				new String[] {KEY_ID, P_TITLE_KEYS[mProvider]}, 
 				P_WHERE_KEYS[mProvider], 
 				null, 
 				P_TITLE_KEYS[mProvider]);
-			
+
+
 			
 			if (c == null) {
 				if (mProvider == PROVIDER_HOMESCREEN) {
@@ -150,12 +156,14 @@ public class ProviderList extends ListActivity {
 					loadList();
 				}
 			} else {
+
 				mListAdapter = new SimpleCursorAdapter(
-						this, 
-						R.layout.pandora_station_item, 
-						c, 
-						new String[] {P_TITLE_KEYS[mProvider]}, 
-						new int[] {R.id.psi_tv_station_name});
+						this,
+						R.layout.pandora_station_item,
+						c.loadInBackground(),
+						new String[] {P_TITLE_KEYS[mProvider]},
+						new int[] {R.id.psi_tv_station_name},0);
+
 					setListAdapter(mListAdapter);
 			}
 				

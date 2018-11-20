@@ -115,7 +115,7 @@ public class EditDevice extends Activity {
     private static final int DIALOG_WARN_STOP_APP = 5;
     private static final int DIALOG_BITLY = 6;
     private static final String[] APP_TYPE_OPTIONS = {"Choose App",
-            "Create Shortcut", "Home Screen Shortcut", "Pandora Radio Station",
+            "Create Shortcut",  "Pandora Radio Station",
             "Custom Intent", "Clear App Selection"};
     private static final int ACTION_CHOOSE_APP = 2;
     private static final int ACTION_CUSTOM_INTENT = 6;
@@ -741,34 +741,22 @@ public class EditDevice extends Activity {
                     i.putExtra(Intent.EXTRA_TITLE, "Create a Shortcut");
                     startActivityForResult(i, ACTION_CREATE_HOME_SCREEN_SHORTCUT);
                     break;
-                case 2:
+/*                case 2:
                     // Home Screen Shortcut
                     i = new Intent(getBaseContext(), ProviderList.class);
                     i.putExtra(ProviderList.EXTRA_PROVIDER,
                             ProviderList.PROVIDER_HOMESCREEN);
                     startActivityForResult(i, ACTION_CHOOSE_FROM_PROVIDER);
-                    break;
-                case 3:
+                    break;*/
+                case 2:
                     // Pandora Station
                     i = new Intent(getBaseContext(), ProviderList.class);
                     i.putExtra(ProviderList.EXTRA_PROVIDER,
                             ProviderList.PROVIDER_PANDORA);
                     startActivityForResult(i, ACTION_CHOOSE_FROM_PROVIDER);
                     break;
-                // case 4:
-                // //Google Listen Feed
-                // //TODO: Need to check out what queue looks like in db
-                // i = new Intent(getBaseContext(), CustomActionActivity.class);
-                // i.putExtra(CustomActionActivity.EXTRA_ACTION_TYPE,
-                // CustomActionActivity.ACTION_TYPE_LATEST_UNHEARD_LISTEN_PODCAST);
-                // mAlarmItem.packageName =
-                // CustomActionActivity.GOOGLE_LISTEN_PACKAGE_NAME);
-                // mAlarmItem.customAction = "Latest Podcast on Google Listen";
-                // mAlarmItem.customData = AalService.getIntentUri(i);
-                // mAlarmItem.customType = "";
-                // vUpdateApp();
-                // break;
-                case 4:
+
+                case 3:
                     // Custom Intent
                     i = new Intent(getBaseContext(), CustomIntentMaker.class);
                     i.putExtra("alarm_custom_action", appaction);
@@ -778,7 +766,7 @@ public class EditDevice extends Activity {
                     startActivityForResult(i, ACTION_CUSTOM_INTENT);
                     break;
 
-                case 5:
+                case 4:
                     // Clear App
                     pname = "";
                     appaction = "";

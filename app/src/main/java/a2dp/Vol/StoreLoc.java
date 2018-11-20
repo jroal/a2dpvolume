@@ -7,10 +7,15 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -19,15 +24,20 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import static a2dp.Vol.R.drawable.ic_launcher;
 
 public class StoreLoc extends Service {
 
@@ -54,6 +64,12 @@ public class StoreLoc extends Service {
     boolean gpsEnabled = false;
     int formatFlags;
     int formatFlags2;
+    private NotificationManager mNotificationManager = null;
+    private NotificationManagerCompat notificationManagerCompat = null;
+    private static final String A2DP_FOREGROUND = "a2dp_storeloc_foreground";
+    NotificationChannel channel_fs;
+    Notification not;
+
 
 
     /**
@@ -129,6 +145,37 @@ public class StoreLoc extends Service {
 
         // spawn the location listeners
         registerListeners();
+
+
+            //not = null;
+            Intent notificationIntent = new Intent(this, main.class);
+            PendingIntent contentIntent = PendingIntent.getActivity(
+                    this, 0, notificationIntent, 0);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                not = new NotificationCompat.Builder(application, A2DP_FOREGROUND)
+                        .setContentTitle(
+                                getResources().getString(R.string.ServRunning))
+                        .setContentIntent(contentIntent)
+                        .setSmallIcon(ic_launcher)
+                        .setCategory(Notification.CATEGORY_SERVICE)
+                        .setContentText("storing location")
+                        .setChannelId(A2DP_FOREGROUND).build();
+                notificationManagerCompat.notify(3, not);
+                //Toast.makeText(application, "Test off " + car + " " +not.getChannelId(), Toast.LENGTH_LONG).show();
+            } else {
+                not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
+                        .setContentTitle(
+                                getResources().getString(R.string.ServRunning))
+                        .setContentIntent(contentIntent)
+                        .setSmallIcon(ic_launcher)
+                        .setContentText("storing location")
+                        .setPriority(Notification.PRIORITY_MIN)
+                        .build();
+                mNotificationManager.notify(3, not);
+            }
+            this.startForeground(1, not);
+
         // start the timer
         if (MAX_TIME > 0) {
             CountDownTimer T;
@@ -146,6 +193,10 @@ public class StoreLoc extends Service {
                     clearLoc(true);
                 }
             };
+
+            if ((channel_fs == null)) {
+                createNotificationChannel();
+            }
             T.start();
         }
 
@@ -165,6 +216,10 @@ public class StoreLoc extends Service {
         formatFlags |= DateUtils.FORMAT_SHOW_DATE;
         formatFlags |= DateUtils.FORMAT_SHOW_TIME;
         formatFlags |= DateUtils.FORMAT_SHOW_YEAR;
+
+        if ((channel_fs == null)) {
+            createNotificationChannel();
+        }
     }
 
     /* (non-Javadoc)
@@ -173,6 +228,7 @@ public class StoreLoc extends Service {
     @Override
     public void onDestroy() {
         this.DB.getDb().close();
+        this.stopForeground(true);
         if (locationListener != null) {
             try {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -200,6 +256,7 @@ public class StoreLoc extends Service {
     @Override
     protected void finalize() throws Throwable {
         this.DB.getDb().close();
+        this.stopForeground(true);
         if (locationListener != null)
             try {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -592,6 +649,9 @@ public class StoreLoc extends Service {
         l3 = null; // the most accurate location
         l4 = null; // the best location
         btdConn = null;
+        mNotificationManager.cancel(3);
+
+        this.stopForeground(true);
         // capture complete, close
         this.stopSelf();
     }
@@ -631,4 +691,44 @@ public class StoreLoc extends Service {
             }
 
     }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        mNotificationManager = getSystemService(NotificationManager.class);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            notificationManagerCompat = NotificationManagerCompat.from(this);
+
+            // set up foreground notification channel
+            CharSequence name2 = getString(R.string.foreground_channel_name);
+            String description2 = getString(R.string.foreground_channel_description);
+            int importance2 = NotificationManager.IMPORTANCE_LOW;
+            channel_fs = new NotificationChannel(A2DP_FOREGROUND, name2, importance2);
+            channel_fs.setDescription(description2);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            mNotificationManager.createNotificationChannel(channel_fs);
+
+        }
+    }
+
+    // make sure icon is valid
+    private int checkIcon(int icon) {
+        ArrayList<Integer> icons = new ArrayList<>();
+        icons.add(R.drawable.car2);
+        icons.add(R.drawable.headset);
+        icons.add(R.drawable.ic_launcher);
+        icons.add(R.drawable.icon5);
+        icons.add(R.drawable.usb);
+        icons.add(R.drawable.jack);
+
+        if (icons.contains(icon)) {
+            return icon;
+        } else {
+            return R.drawable.ic_launcher;
+        }
+    }
+
 }

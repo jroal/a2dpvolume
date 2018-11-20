@@ -277,7 +277,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         // we will ignore the no notifications preference in API 25 and up since this can be managed
         // by the user now within Android
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) notify = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            notify = true;
+        }
 
         if (notify) {
             updateNot(false, null);
@@ -903,7 +905,27 @@ public class service extends Service implements OnAudioFocusChangeListener {
             Intent dolock = new Intent(a2dp.Vol.service.this, StoreLoc.class);
             dolock.putExtra("device", bt2.getMac());
             try {
-                startService(dolock);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                    startService(dolock);
+                } else {
+                    startForegroundService(dolock);
+                }
+
+                //update the notification when done storing. I could do this better by passing intent
+                // from storloc
+                Long timeout = Long.valueOf(preferences.getString("gpsTime", "15000")) + 2;
+                CountDownTimer not_update = new CountDownTimer(timeout, 10000) {
+                    @Override
+                    public void onTick(long l) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        updateNot(false, null);
+                    }
+                }.start();
+
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -1167,7 +1189,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     }
 
     // make sure icon is valid
-    private int checkIcon(int icon){
+    private int checkIcon(int icon) {
         ArrayList<Integer> icons = new ArrayList<>();
         icons.add(R.drawable.car2);
         icons.add(R.drawable.headset);
@@ -1176,13 +1198,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
         icons.add(R.drawable.usb);
         icons.add(R.drawable.jack);
 
-        if(icons.contains(icon)){
+        if (icons.contains(icon)) {
             return icon;
-        }else{
+        } else {
             return R.drawable.ic_launcher;
         }
     }
-    private void updateNot(boolean connect, String car) {
+
+    public void updateNot(boolean connect, String car) {
 
         if ((channel_b == null) || (channel_f == null)) {
             createNotificationChannel();
@@ -1199,7 +1222,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     if (btdConn[k] != null)
                         tmp = btdConn[k].toString();
 
-                 temp += " " + tmp;
+                temp += " " + tmp;
                 connect = true;
             } else
                 temp = getResources().getString(R.string.ServRunning);
@@ -1218,7 +1241,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
         str = ""; // remove it for now
 
 
-
         if (connect) {
             if (mNotificationManager != null) mNotificationManager.cancel(1);
             Notification not = null;
@@ -1230,7 +1252,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         .setContentTitle(
                                 getResources().getString(R.string.connectedTo))
                         .setContentIntent(contentIntent)
-                        .setSmallIcon(connectedIcon)
+                        .setSmallIcon(checkIcon(connectedIcon))
                         .setCategory(Notification.CATEGORY_SERVICE)
                         .setContentText(car)
                         .setChannelId(A2DP_FOREGROUND).build();
@@ -1241,7 +1263,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         .setContentTitle(
                                 getResources().getString(R.string.app_name))
                         .setContentIntent(contentIntent)
-                        .setSmallIcon(connectedIcon)
+                        .setSmallIcon(checkIcon(connectedIcon))
                         .setContentText(temp)
                         .setPriority(Notification.PRIORITY_MIN)
                         .build();
@@ -1790,8 +1812,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
     };
 
 
-
-
     @Override
     public void onAudioFocusChange(int focusChange) {
         switch (focusChange) {
@@ -1886,7 +1906,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         public void onReceive(Context arg0, Intent arg1) {
             int state = arg1.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, 0);
 
-            if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED && Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+            if (state == AudioManager.SCO_AUDIO_STATE_CONNECTED && Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 am2.requestAudioFocus(afr);
             }
 
@@ -1905,7 +1925,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                 if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
                     am2.abandonAudioFocus(a2dp.Vol.service.this);
-                }else {
+                } else {
                     am2.abandonAudioFocusRequest(afr);
                 }
 
@@ -1957,4 +1977,5 @@ public class service extends Service implements OnAudioFocusChangeListener {
             e.printStackTrace();
         }
     }
+
 }
