@@ -3,6 +3,7 @@ package a2dp.Vol;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
@@ -1173,9 +1174,9 @@ public class main extends Activity {
 
             switch (resultCode) {
                 case TextToSpeech.Engine.CHECK_VOICE_DATA_PASS:
-                    if (toasts) Toast.makeText(application, R.string.TTSready, Toast.LENGTH_SHORT)
-                            .show();
-
+/*                    if (toasts) Toast.makeText(application, R.string.TTSready, Toast.LENGTH_SHORT)
+                            .show();*/
+                    service.mTtsReady = true;
                     break;
 
 /*                case TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA:
@@ -1223,7 +1224,10 @@ public class main extends Activity {
                                 .show();
                     break;
             }
-
+            final String done = "a2dp.vol.service.NOTIFY";
+            Intent i = new Intent();
+            i.setAction(done);
+            application.sendBroadcast(i);
         }
     }
 

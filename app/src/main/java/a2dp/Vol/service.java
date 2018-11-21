@@ -305,6 +305,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
         IntentFilter clearMessage = new IntentFilter("a2dp.vol.service.CLEAR");
         this.registerReceiver(messageClear, clearMessage);
 
+        IntentFilter updateNotification = new IntentFilter("a2dp.vol.service.NOTIFY");
+        this.registerReceiver(runUpdate, updateNotification);
+
         if (carMode) {
             // Create listener for when car mode disconnects
             filter2.addAction(android.app.UiModeManager.ACTION_EXIT_CAR_MODE);
@@ -350,6 +353,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             this.unregisterReceiver(mReceiver);
             this.unregisterReceiver(mReceiver2);
             this.unregisterReceiver(btOFFReciever);
+            this.unregisterReceiver(runUpdate);
             if (headsetPlug)
                 this.unregisterReceiver(headSetReceiver);
             // this.unregisterReceiver(SMScatcher);
@@ -429,6 +433,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         }
 
+    };
+
+    private final BroadcastReceiver runUpdate = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateNot(false, null);
+        }
     };
 
     // used to clear all the Bluetooth connections if the Bluetooth adapter has
@@ -901,7 +912,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
 
         // start the location capture service
-        if (bt2 != null && bt2.isGetLoc()) {
+        if (bt2 != null && bt2.isGetLoc() && !isMyServiceRunning(StoreLoc.class)) {
             Intent dolock = new Intent(a2dp.Vol.service.this, StoreLoc.class);
             dolock.putExtra("device", bt2.getMac());
             try {
@@ -913,7 +924,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                 //update the notification when done storing. I could do this better by passing intent
                 // from storloc
-                Long timeout = Long.valueOf(preferences.getString("gpsTime", "15000")) + 2;
+                Long timeout = Long.valueOf(preferences.getString("gpsTime", "15000")) + 2000;
                 CountDownTimer not_update = new CountDownTimer(timeout, 10000) {
                     @Override
                     public void onTick(long l) {
@@ -924,7 +935,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     public void onFinish() {
                         updateNot(false, null);
                     }
-                }.start();
+                };
+
+                not_update.start();
 
             } catch (Exception e) {
                 // TODO Auto-generated catch block
@@ -1157,13 +1170,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
     }
 
     private void createNotificationChannel() {
+        mNotificationManager = getSystemService(NotificationManager.class);
+        notificationManagerCompat = NotificationManagerCompat.from(application);
+
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
-        mNotificationManager = getSystemService(NotificationManager.class);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            notificationManagerCompat = NotificationManagerCompat.from(application);
 
             // set up background notification channel
             CharSequence name = getString(R.string.background_channel_name);
@@ -1231,18 +1243,19 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
 
 
-        // Goal was to have useful feedback in background notification
+        // useful feedback in background notification
         String str;
         if (mTtsReady) {
             str = getResources().getString(R.string.TTSready);
         } else {
-            str = getResources().getString(R.string.TTSNotReady);
+            str = "";
         }
-        str = ""; // remove it for now
-
 
         if (connect) {
             if (mNotificationManager != null) mNotificationManager.cancel(1);
+            if(notificationManagerCompat != null) {
+                notificationManagerCompat.cancelAll();
+            }
             Notification not = null;
             Intent notificationIntent = new Intent(this, main.class);
             PendingIntent contentIntent = PendingIntent.getActivity(this,
@@ -1267,7 +1280,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         .setContentText(temp)
                         .setPriority(Notification.PRIORITY_MIN)
                         .build();
-                mNotificationManager.notify(1, not);
+                notificationManagerCompat.notify(1, not);
             }
 
             this.startForeground(1, not);
@@ -1275,7 +1288,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         } else {
             if (mNotificationManager != null) mNotificationManager.cancel(1);
 
-            if (notify_pref.equalsIgnoreCase("always")) {
+            if (notify_pref.equalsIgnoreCase("always") || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Notification not = null;
                 Intent notificationIntent = new Intent(this, main.class);
                 PendingIntent contentIntent = PendingIntent.getActivity(
@@ -1301,7 +1314,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                             .setContentText(str)
                             .setPriority(Notification.PRIORITY_MIN)
                             .build();
-                    mNotificationManager.notify(1, not);
+                    notificationManagerCompat.notify(1, not);
                 }
 
 
@@ -1978,4 +1991,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
     }
 
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

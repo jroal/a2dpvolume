@@ -54,6 +54,7 @@ public class StoreLoc extends Service {
     private boolean useNet = true;
     String a2dpDir = "";
     boolean local;
+    String car;
     private static final String LOG_TAG = "A2DP_Volume";
     private DeviceDB DB; // database of device data stored in SQlite
     btDevice btdConn;
@@ -66,10 +67,10 @@ public class StoreLoc extends Service {
     int formatFlags2;
     private NotificationManager mNotificationManager = null;
     private NotificationManagerCompat notificationManagerCompat = null;
-    private static final String A2DP_FOREGROUND = "a2dp_storeloc_foreground";
+    private static final String A2DP_STORLOC = "a2dp_storeloc_foreground";
     NotificationChannel channel_fs;
     Notification not;
-
+    NotificationCompat.Builder mCBuilder;
 
 
     /**
@@ -81,17 +82,17 @@ public class StoreLoc extends Service {
         return null;
     }
 
-	/*
+    /*
      * (non-Javadoc)
-	 * 
-	 * @see android.app.Service#onStart(android.content.Intent, int)
-	 */
+     *
+     * @see android.app.Service#onStart(android.content.Intent, int)
+     */
 
     /*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Service#onStartCommand(android.content.Intent, int, int)
-	 */
+     * (non-Javadoc)
+     *
+     * @see android.app.Service#onStartCommand(android.content.Intent, int, int)
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
@@ -129,6 +130,8 @@ public class StoreLoc extends Service {
         try {
             device = intent.getStringExtra("device");
             btdConn = DB.getBTD(device);
+            if (btdConn != null)
+                car = btdConn.getDesc2();
         } catch (Exception e) {
             Toast.makeText(this, "Location service failed to start. " + e.getMessage(),
                     Toast.LENGTH_LONG).show();
@@ -146,57 +149,80 @@ public class StoreLoc extends Service {
         // spawn the location listeners
         registerListeners();
 
+        if ((channel_fs == null)) {
+            createNotificationChannel();
+        }
+        //not = null;
+        Intent notificationIntent = new Intent(this, main.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this, 0, notificationIntent, 0);
 
-            //not = null;
-            Intent notificationIntent = new Intent(this, main.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(
-                    this, 0, notificationIntent, 0);
+        String car = btdConn.getDesc2();
+        if(car == null || car.isEmpty())car = "My Car";
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                not = new NotificationCompat.Builder(application, A2DP_FOREGROUND)
-                        .setContentTitle(
-                                getResources().getString(R.string.ServRunning))
-                        .setContentIntent(contentIntent)
-                        .setSmallIcon(ic_launcher)
-                        .setCategory(Notification.CATEGORY_SERVICE)
-                        .setContentText("storing location")
-                        .setChannelId(A2DP_FOREGROUND).build();
-                notificationManagerCompat.notify(3, not);
-                //Toast.makeText(application, "Test off " + car + " " +not.getChannelId(), Toast.LENGTH_LONG).show();
-            } else {
-                not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
-                        .setContentTitle(
-                                getResources().getString(R.string.ServRunning))
-                        .setContentIntent(contentIntent)
-                        .setSmallIcon(ic_launcher)
-                        .setContentText("storing location")
-                        .setPriority(Notification.PRIORITY_MIN)
-                        .build();
-                mNotificationManager.notify(3, not);
-            }
-            this.startForeground(1, not);
+        notificationManagerCompat.cancelAll();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mCBuilder = new NotificationCompat.Builder(application, A2DP_STORLOC)
+                    .setContentTitle(
+                            getString(R.string.storing_location))
+                    .setContentIntent(contentIntent)
+                    .setSmallIcon(ic_launcher)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                    .setContentText(car)
+                    .setProgress(100, 0, false)
+                    .setChannelId(A2DP_STORLOC);
+            not = mCBuilder.build();
+            notificationManagerCompat.notify(3, not);
+            //Toast.makeText(application, "Test off " + car + " " +not.getChannelId(), Toast.LENGTH_LONG).show();
+        } else {
+            mCBuilder = new NotificationCompat.Builder(application, A2DP_STORLOC)
+                    .setContentTitle(getString(R.string.storing_location))
+                    .setContentIntent(contentIntent)
+                    .setSmallIcon(ic_launcher)
+                    .setContentText(car)
+                    .setProgress((int) MAX_TIME, 0, false);
+            not = mCBuilder.build();
+            notificationManagerCompat.notify(3, not);
+        }
+        this.startForeground(1, not);
+
 
         // start the timer
         if (MAX_TIME > 0) {
             CountDownTimer T;
-            T = new CountDownTimer(MAX_TIME, 5000) {
+            T = new CountDownTimer(MAX_TIME, 2000) {
 
                 public void onTick(long millisUntilFinished) {
-                    if (toasts)
+ /*                   if (toasts)
                         Toast.makeText(
                                 application,
                                 "Time left: " + (millisUntilFinished + 20)
-                                        / 1000, Toast.LENGTH_LONG).show();
+                                        / 1000, Toast.LENGTH_LONG).show();*/
+
+                    int prog = (int) (MAX_TIME - millisUntilFinished);
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                        mCBuilder.setProgress((int) MAX_TIME, prog, false);
+                        notificationManagerCompat.notify(3, mCBuilder.build());
+                    } else {
+                        mCBuilder.setProgress((int) MAX_TIME, prog, false);
+                        notificationManagerCompat.notify(3, mCBuilder.build());
+                    }
+
                 }
 
                 public void onFinish() {
-                    clearLoc(true);
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                        mCBuilder.setProgress(0, 0, true);
+                        notificationManagerCompat.notify(3, mCBuilder.build());
+                    } else {
+                        mCBuilder.setProgress(0, 0, true);
+                        notificationManagerCompat.notify(3, mCBuilder.build());
+                    }
+                    clearLoc();
                 }
             };
 
-            if ((channel_fs == null)) {
-                createNotificationChannel();
-            }
             T.start();
         }
 
@@ -223,8 +249,8 @@ public class StoreLoc extends Service {
     }
 
     /* (non-Javadoc)
-	 * @see android.app.Service#onDestroy()
-	 */
+     * @see android.app.Service#onDestroy()
+     */
     @Override
     public void onDestroy() {
         this.DB.getDb().close();
@@ -251,8 +277,8 @@ public class StoreLoc extends Service {
     }
 
     /* (non-Javadoc)
-	 * @see android.app.Service#finalize()
-	 */
+     * @see android.app.Service#finalize()
+     */
     @Override
     protected void finalize() throws Throwable {
         this.DB.getDb().close();
@@ -280,7 +306,6 @@ public class StoreLoc extends Service {
     // get the location and write it to a file.
     void grabGPS() {
 
-        String car = "My Car";
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = Objects.requireNonNull(lm).getProviders(true);
 
@@ -350,7 +375,7 @@ public class StoreLoc extends Service {
                 if (x < MAX_ACC
                         && x > 0
                         && (System.currentTimeMillis() - l4.getTime()) < MAX_TIME)
-                    clearLoc(true);
+                    clearLoc();
             }
 
         } catch (Exception e1) {
@@ -358,9 +383,9 @@ public class StoreLoc extends Service {
         }
 
         DecimalFormat df = new DecimalFormat("#.#");
-        // figure out which device we are disconnecting from
-        if (btdConn != null)
-            car = btdConn.getDesc2();
+        // figure out which device we are disconnecting from (moved to onStartCommand)
+/*        if (btdConn != null)
+            car = btdConn.getDesc2();*/
 
         String locTime = "";
         // store the best location
@@ -456,7 +481,7 @@ public class StoreLoc extends Service {
     };
 
     // kills the location listener and writes the location file
-    private void clearLoc(boolean doGps) {
+    private void clearLoc() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -469,11 +494,11 @@ public class StoreLoc extends Service {
         }
         locationManager.removeUpdates(locationListener);
 
-        String car = "My Car";
+        //String car = "My Car";
         DecimalFormat df = new DecimalFormat("#.#");
-        // figure out which device we are disconnecting from
-        if (btdConn != null)
-            car = btdConn.getDesc2();
+        // figure out which device we are disconnecting from (moved to onStartCommand)
+/*        if (btdConn != null)
+            car = btdConn.getDesc2();*/
 
         String locTime = "";
         // store this vehicles location
@@ -649,7 +674,14 @@ public class StoreLoc extends Service {
         l3 = null; // the most accurate location
         l4 = null; // the best location
         btdConn = null;
-        mNotificationManager.cancel(3);
+
+        notificationManagerCompat.cancel(3);
+
+        // Tell the world we are done capturing location
+        final String done = "a2dp.vol.service.NOTIFY";
+        Intent i = new Intent();
+        i.setAction(done);
+        application.sendBroadcast(i);
 
         this.stopForeground(true);
         // capture complete, close
@@ -661,56 +693,54 @@ public class StoreLoc extends Service {
         // Register the listener with the Location Manager to
         // receive location updates
 
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-                gpsEnabled = true;
-            } else
-                gpsEnabled = false;
-            if (useNet
-                    && locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                locationManager.requestLocationUpdates(
-                        LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
             }
-            if (usePass
-                    && locationManager
-                    .isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
-                locationManager.requestLocationUpdates(
-                        LocationManager.PASSIVE_PROVIDER, 0, 0, locationListener);
-            }
+            locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            gpsEnabled = true;
+        } else
+            gpsEnabled = false;
+        if (useNet
+                && locationManager
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        }
+        if (usePass
+                && locationManager
+                .isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+            locationManager.requestLocationUpdates(
+                    LocationManager.PASSIVE_PROVIDER, 0, 0, locationListener);
+        }
 
     }
 
     private void createNotificationChannel() {
+        mNotificationManager = getSystemService(NotificationManager.class);
+        notificationManagerCompat = NotificationManagerCompat.from(this);
+
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
-        mNotificationManager = getSystemService(NotificationManager.class);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            notificationManagerCompat = NotificationManagerCompat.from(this);
-
             // set up foreground notification channel
-            CharSequence name2 = getString(R.string.foreground_channel_name);
-            String description2 = getString(R.string.foreground_channel_description);
+            CharSequence cname = getString(R.string.storeloc_channel_name);
+            String desc = getString(R.string.storeloc_channel_desc);
             int importance2 = NotificationManager.IMPORTANCE_LOW;
-            channel_fs = new NotificationChannel(A2DP_FOREGROUND, name2, importance2);
-            channel_fs.setDescription(description2);
+            channel_fs = new NotificationChannel(A2DP_STORLOC, cname, importance2);
+            channel_fs.setDescription(desc);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             mNotificationManager.createNotificationChannel(channel_fs);
-
         }
     }
 
