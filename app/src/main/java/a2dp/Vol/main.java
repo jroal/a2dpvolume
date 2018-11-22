@@ -924,6 +924,7 @@ public class main extends Activity {
         try {
             byte[] buff = new byte[250];
             FileInputStream fs = openFileInput("My_Last_Location");
+            if(fs == null)fs = openFileInput("My_Last_Location2");
             fs.read(buff);
             fs.close();
             String st = new String(buff).trim();

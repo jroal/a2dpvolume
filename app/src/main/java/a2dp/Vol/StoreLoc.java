@@ -71,6 +71,7 @@ public class StoreLoc extends Service {
     NotificationChannel channel_fs;
     Notification not;
     NotificationCompat.Builder mCBuilder;
+    int grabLocationCount = 0;
 
 
     /**
@@ -226,6 +227,7 @@ public class StoreLoc extends Service {
             T.start();
         }
 
+    grabLocationCount = 0;
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -283,6 +285,8 @@ public class StoreLoc extends Service {
     protected void finalize() throws Throwable {
         this.DB.getDb().close();
         this.stopForeground(true);
+        notificationManagerCompat.cancelAll();
+
         if (locationListener != null)
             try {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -411,6 +415,7 @@ public class StoreLoc extends Service {
                 String temp = "http://maps.google.com/maps?q=" + urlStr;
                 fos.write(temp.getBytes());
                 fos.close();
+                grabLocationCount++; // count stored locations
                 // Toast.makeText(a2dp.Vol.service.this, temp,
                 // Toast.LENGTH_LONG).show();
             } catch (FileNotFoundException e) {
@@ -446,6 +451,7 @@ public class StoreLoc extends Service {
                 String temp = "http://maps.google.com/maps?q=" + urlStr;
                 fos.write(temp.getBytes());
                 fos.close();
+                grabLocationCount++; // count stored locations
                 // Toast.makeText(a2dp.Vol.service.this, temp,
                 // Toast.LENGTH_LONG).show();
             } catch (FileNotFoundException e) {
@@ -669,6 +675,52 @@ public class StoreLoc extends Service {
             e.printStackTrace();
             Log.e(LOG_TAG, "Error " + e.getMessage());
         }
+
+        // make sure we store a location for the widget and button
+        if (grabLocationCount < 1) {
+
+            // Try all the locations to find a valid one, store best if possible
+            Location mlocation = l;
+            if(l3 != null && l3.hasAccuracy()) mlocation = l3;
+            if(l4 != null && l4.hasAccuracy()) mlocation = l4;
+
+            // as long as we have any location, store it
+            if (mlocation != null) {
+                locTime = DateUtils.formatDateTime(application, mlocation.getTime(),
+                        formatFlags);
+                String urlStr;
+                try {
+                    urlStr = URLEncoder.encode(
+                            mlocation.getLatitude() + "," + l3.getLongitude() + "(" + car
+                                    + " " + locTime + " acc="
+                                    + df.format(l3.getAccuracy()) + ")", "UTF-8");
+                } catch (UnsupportedEncodingException e1) {
+                    urlStr = (mlocation.getLatitude() + ","
+                            + mlocation.getLongitude() + "(" + car + " " + locTime
+                            + " acc=" + df.format(l3.getAccuracy()) + ")");
+                    e1.printStackTrace();
+                }
+                try {
+                    FileOutputStream fos = openFileOutput("My_Last_Location",
+                            Context.MODE_PRIVATE);
+                    String temp = "http://maps.google.com/maps?q=" + urlStr;
+                    fos.write(temp.getBytes());
+                    fos.close();
+                    grabLocationCount++; // count stored locations
+                    // Toast.makeText(a2dp.Vol.service.this, temp,
+                    // Toast.LENGTH_LONG).show();
+                } catch (FileNotFoundException e) {
+                    Toast.makeText(application, "FileNotFound", Toast.LENGTH_LONG)
+                            .show();
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Toast.makeText(application, "IOException", Toast.LENGTH_LONG)
+                            .show();
+                    e.printStackTrace();
+                }
+            }
+        }
+
         // reset all the location variables
         l = null; // the most recent location
         l3 = null; // the most accurate location
@@ -726,7 +778,7 @@ public class StoreLoc extends Service {
 
     private void createNotificationChannel() {
         mNotificationManager = getSystemService(NotificationManager.class);
-        notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat = NotificationManagerCompat.from(application);
 
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library

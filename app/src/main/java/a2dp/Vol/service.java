@@ -476,9 +476,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         if (!clearedTts) {
                             clearTts();
                         }
-                        mTts.shutdown();
-                        mTtsReady = false;
-                        unregisterReceiver(SMScatcher);
+                        //mTts.shutdown();
+                        //mTtsReady = false;
+                        //unregisterReceiver(SMScatcher);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -1223,25 +1223,19 @@ public class service extends Service implements OnAudioFocusChangeListener {
             createNotificationChannel();
         }
 
-        String temp = car;
-        if (car != null)
-            temp = getResources().getString(R.string.connectedTo) + " " + car;
-        else {
-            if (connects > 0) {
-                String tmp = null;
-                temp = getResources().getString(R.string.connectedTo);
-                for (int k = 0; k < btdConn.length; k++)
-                    if (btdConn[k] != null)
-                        tmp = btdConn[k].toString();
+        String temp;
 
-                temp += " " + tmp;
-                connect = true;
-            } else
-                temp = getResources().getString(R.string.ServRunning);
-
-            car = temp;
-        }
-
+        // show all connected devices in notification
+        if (connects > 0) {
+            temp = getResources().getString(R.string.connectedTo);
+            for (int k = 0; k < btdConn.length; k++)
+                if (btdConn[k] != null) {
+                    if(k > 0)temp += ",";
+                    temp += " " + btdConn[k].toString();
+                }
+            connect = true;
+        } else
+            temp = getResources().getString(R.string.ServRunning);
 
         // useful feedback in background notification
         String str;
@@ -1253,7 +1247,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         if (connect) {
             if (mNotificationManager != null) mNotificationManager.cancel(1);
-            if(notificationManagerCompat != null) {
+            if (notificationManagerCompat != null) {
                 notificationManagerCompat.cancelAll();
             }
             Notification not = null;
@@ -1267,7 +1261,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         .setContentIntent(contentIntent)
                         .setSmallIcon(checkIcon(connectedIcon))
                         .setCategory(Notification.CATEGORY_SERVICE)
-                        .setContentText(car)
+                        .setContentText(temp)
                         .setChannelId(A2DP_FOREGROUND).build();
                 notificationManagerCompat.notify(1, not);
                 //Toast.makeText(application, "Test on " + car + " " +not.getChannelId(), Toast.LENGTH_LONG).show();
