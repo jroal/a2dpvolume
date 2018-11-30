@@ -118,6 +118,7 @@ public class StoreLoc extends Service {
         } catch (NumberFormatException e) {
             MAX_ACC = 10;
             MAX_TIME = 15000;
+            car = "My Car";
             Toast.makeText(this, "prefs failed to load. " + e.getMessage(),
                     Toast.LENGTH_LONG).show();
             e.printStackTrace();
@@ -139,7 +140,7 @@ public class StoreLoc extends Service {
             this.stopSelf();
             e.printStackTrace();
         }
-
+        if(car == null || car.isEmpty())car = "My Car";
 
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this
@@ -158,8 +159,7 @@ public class StoreLoc extends Service {
         PendingIntent contentIntent = PendingIntent.getActivity(
                 this, 0, notificationIntent, 0);
 
-        String car = btdConn.getDesc2();
-        if(car == null || car.isEmpty())car = "My Car";
+
 
         notificationManagerCompat.cancelAll();
 
@@ -174,7 +174,7 @@ public class StoreLoc extends Service {
                     .setProgress(100, 0, false)
                     .setChannelId(A2DP_STORLOC);
             not = mCBuilder.build();
-            notificationManagerCompat.notify(3, not);
+            notificationManagerCompat.notify(1, not);
             //Toast.makeText(application, "Test off " + car + " " +not.getChannelId(), Toast.LENGTH_LONG).show();
         } else {
             mCBuilder = new NotificationCompat.Builder(application, A2DP_STORLOC)
@@ -184,7 +184,7 @@ public class StoreLoc extends Service {
                     .setContentText(car)
                     .setProgress((int) MAX_TIME, 0, false);
             not = mCBuilder.build();
-            notificationManagerCompat.notify(3, not);
+            notificationManagerCompat.notify(1, not);
         }
         this.startForeground(1, not);
 
@@ -204,10 +204,10 @@ public class StoreLoc extends Service {
                     int prog = (int) (MAX_TIME - millisUntilFinished);
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                         mCBuilder.setProgress((int) MAX_TIME, prog, false);
-                        notificationManagerCompat.notify(3, mCBuilder.build());
+                        notificationManagerCompat.notify(1, mCBuilder.build());
                     } else {
                         mCBuilder.setProgress((int) MAX_TIME, prog, false);
-                        notificationManagerCompat.notify(3, mCBuilder.build());
+                        notificationManagerCompat.notify(1, mCBuilder.build());
                     }
 
                 }
@@ -215,10 +215,10 @@ public class StoreLoc extends Service {
                 public void onFinish() {
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                         mCBuilder.setProgress(0, 0, true);
-                        notificationManagerCompat.notify(3, mCBuilder.build());
+                        notificationManagerCompat.notify(1, mCBuilder.build());
                     } else {
                         mCBuilder.setProgress(0, 0, true);
-                        notificationManagerCompat.notify(3, mCBuilder.build());
+                        notificationManagerCompat.notify(1, mCBuilder.build());
                     }
                     clearLoc();
                 }

@@ -392,12 +392,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             Toast.makeText(this, R.string.ServiceStopped, Toast.LENGTH_LONG)
                     .show();
         if (mIsBound) {
-            try {
-                //this.unbindService(mConnection);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+           doUnbind(this);
         }
         this.stopForeground(true);
     }
@@ -1124,24 +1119,28 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     // captures the media volume so it can be later restored
     private void getOldvol() {
-        OldVol2 = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
-        // Store the old volume in preferences so it can be extracted if another
-        // instance starts or the service is killed and restarted
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(OLD_VOLUME, OldVol2);
-        editor.apply();
+        if(!mvolsLeft) {
+            OldVol2 = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
+            // Store the old volume in preferences so it can be extracted if another
+            // instance starts or the service is killed and restarted
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt(OLD_VOLUME, OldVol2);
+            editor.apply();
+        }
     }
 
     // captures the phone volume so it can be later restored
     private void getOldPvol() {
-        OldVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
-        Oldsilent = am2.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
-        // Store the old volume in preferences so it can be extracted if another
-        // instance starts or the service is killed and restarted
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(OLD_PH_VOL, OldVol);
-        editor.putInt("oldsilent", Oldsilent);
-        editor.apply();
+        if(!pvolsLeft) {
+            OldVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+            Oldsilent = am2.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
+            // Store the old volume in preferences so it can be extracted if another
+            // instance starts or the service is killed and restarted
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt(OLD_PH_VOL, OldVol);
+            editor.putInt("oldsilent", Oldsilent);
+            editor.apply();
+        }
     }
 
     // makes the phone volume adjustment
@@ -1987,6 +1986,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        assert manager != null;
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 return true;
