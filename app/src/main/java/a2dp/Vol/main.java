@@ -564,13 +564,13 @@ public class main extends Activity {
     private int permission_scan() {
 
         int ret = 0;
-        if (!preferences.getBoolean("ReadContactsPermission", false)) ret = 1;
+//        if (!preferences.getBoolean("ReadContactsPermission", false)) ret = 1;
 
         if (!preferences.getBoolean("LocationPermission", false)) ret = 2;
 
         if (!preferences.getBoolean("PhonePermission", false)) ret = 3;
 
-        if (!preferences.getBoolean("SMSPermission", false)) ret = 4;
+//        if (!preferences.getBoolean("SMSPermission", false)) ret = 4;
 
         if (!preferences.getBoolean("StoragePermission", false)) ret = 5;
 
@@ -582,7 +582,7 @@ public class main extends Activity {
         // Check permissions
 
         switch (perm) {
-            case PERMISSION_READ_CONTACTS:
+ /*           case PERMISSION_READ_CONTACTS:
                 if (ContextCompat.checkSelfPermission(application,
                         Manifest.permission.READ_CONTACTS)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -608,7 +608,7 @@ public class main extends Activity {
                         // result of the request.
                     }
                 }
-                break;
+                break;*/
 
             case PERMISSION_LOCATION:
                 if (ContextCompat.checkSelfPermission(application,
@@ -638,7 +638,7 @@ public class main extends Activity {
                 }
                 break;
 
-            case PERMISSION_SMS:
+ /*           case PERMISSION_SMS:
                 if (ContextCompat.checkSelfPermission(application,
                         Manifest.permission.RECEIVE_SMS)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -664,7 +664,7 @@ public class main extends Activity {
                         // result of the request.
                     }
                 }
-                break;
+                break;*/
 
             case PERMISSION_PHONE:
                 if (ContextCompat.checkSelfPermission(application,

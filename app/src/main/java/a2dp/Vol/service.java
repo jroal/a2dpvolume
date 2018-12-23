@@ -1,5 +1,4 @@
 package a2dp.Vol;
-
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -364,7 +363,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     }
                     mTts.shutdown();
                     mTtsReady = false;
-                    unregisterReceiver(SMScatcher);
+                    //unregisterReceiver(SMScatcher);
                     unregisterReceiver(sco_change);
                     unregisterReceiver(tmessage);
                     // if (enableGTalk)
@@ -670,10 +669,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
             this.registerReceiver(sco_change, sco_filter);
             talk = true;
         }
-        if (bt2.isEnableTTS() && enableSMS) {
+/*        if (bt2.isEnableTTS() && enableSMS) {
             application.registerReceiver(SMScatcher, new IntentFilter(
                     "android.provider.Telephony.SMS_RECEIVED"));
-        }
+        }*/
 
         String Ireload = "a2dp.Vol.main.RELOAD_LIST";
         Intent itent = new Intent();
@@ -983,7 +982,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     unregisterReceiver(sco_change);
                     talk = false;
                 }
-                if (enableSMS) application.unregisterReceiver(SMScatcher);
+//                if (enableSMS) application.unregisterReceiver(SMScatcher);
 
                 // Toast.makeText(application, "do disconnected",
                 // Toast.LENGTH_LONG).show();
@@ -1508,7 +1507,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
     }
 
-    private final BroadcastReceiver SMScatcher = new BroadcastReceiver() {
+ /*   private final BroadcastReceiver SMScatcher = new BroadcastReceiver() {
 
         @Override
         public void onReceive(final Context context, final Intent intent) {
@@ -1519,14 +1518,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     && tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
                 // if(message starts with SMStretcher recognize BYTE)
 
-                /*
+                *//*
                  * The SMS-Messages are 'hiding' within the extras of the
                  * Intent.
-                 */
+                 *//*
 
                 Bundle bundle = intent.getExtras();
                 if (bundle != null) {
-                    /* Get all messages contained in the Intent */
+                    *//* Get all messages contained in the Intent *//*
                     Object[] pdusObj = (Object[]) bundle.get("pdus");
                     SmsMessage[] messages = new SmsMessage[Objects.requireNonNull(pdusObj).length];
                     for (int i = 0; i < pdusObj.length; i++) {
@@ -1538,7 +1537,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         }
 
                     }
-                    /* Feed StringBuilder with all Messages found. */
+                    *//* Feed StringBuilder with all Messages found. *//*
                     final StringBuilder sb = new StringBuilder();
                     for (SmsMessage currentMessage : messages) {
                         sb.append(
@@ -1560,7 +1559,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
 
     };
-
+*/
     private AtomicInteger numToRead = new AtomicInteger(0);
 
     @TargetApi(Build.VERSION_CODES.O)
