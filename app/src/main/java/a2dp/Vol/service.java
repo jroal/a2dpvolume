@@ -635,7 +635,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         // connect the selected BT device
         if (bt2.getBdevice() != null && bt2.getBdevice().length() == 17) {
-            final btDevice tempBT = bt2;
             DeviceToConnect = bt2.getBdevice();
             getIBluetoothA2dp(application);
         }
@@ -1878,6 +1877,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     }
 
+/*
     private String GetName(String number) {
 
         // check permission
@@ -1904,6 +1904,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
         return number;
     }
+*/
 
     public BroadcastReceiver sco_change = new BroadcastReceiver() {
 

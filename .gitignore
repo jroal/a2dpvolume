@@ -2,7 +2,6 @@
 ## Eclipse
 #################
 
-*.gradle
 *.pydevproject
 .project
 .metadata
@@ -19,6 +18,7 @@ local.properties
 .loadpath
 .idea
 .gradle
+keystore.properties
 
 
 # External tool builders

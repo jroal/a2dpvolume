@@ -34,7 +34,7 @@
                 android:id="@+id/enableTTSBox"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:text="@string/PrefsTTS"></CheckBox>
+                android:text="@string/PrefsGTalk"></CheckBox>
 
             <TextView
                 android:id="@+id/textViewTTSDelay"

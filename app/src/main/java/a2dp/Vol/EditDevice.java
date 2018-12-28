@@ -1,7 +1,6 @@
 package a2dp.Vol;
 
 import java.lang.reflect.Method;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
@@ -36,8 +35,6 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-
-import static android.content.Intent.parseUri;
 
 public class EditDevice extends Activity {
 
@@ -110,7 +107,7 @@ public class EditDevice extends Activity {
     private String apptype;
     private boolean apprestart;
     private boolean appkill;
-    private boolean enablegps;
+    private boolean enabletts;
     private static final int DIALOG_PICK_APP_TYPE = 3;
     private static final int DIALOG_WARN_STOP_APP = 5;
     private static final int DIALOG_BITLY = 6;
@@ -580,8 +577,8 @@ public class EditDevice extends Activity {
         device.setApprestart(apprestart);
         appkill = fappkill.isChecked();
         device.setAppkill(appkill);
-        enablegps = fenableTTS.isChecked();
-        device.setEnableTTS(enablegps);
+        enabletts = fenableTTS.isChecked();
+        device.setEnableTTS(enabletts);
         device.setSetpv(fsetpv.isChecked());
         device.setPhonev(fphonev.getProgress());
         device.setSmsdelay(fsmsdelaybar.getProgress());

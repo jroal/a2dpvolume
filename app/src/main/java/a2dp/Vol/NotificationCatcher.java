@@ -226,11 +226,13 @@ public class NotificationCatcher extends NotificationListenerService {
 
         packagelist = preferences
                 .getString("packages",
-                        "com.google.android.talk,com.android.email,com.android.calendar");
+                        "com.google.android.talk,com.android.email,com.android.calendar,com.google.android.apps.messaging");
         packages = packagelist.split(",");
 
-        apps1.add("com.google.android.talk");
-        apps1.add("com.skype.raider");
+        // apps list below are handled differently based on how they post notifications
+        apps1.add("com.google.android.talk"); // Hougouts
+        apps1.add("com.skype.raider"); // Skype
+        apps1.add("com.google.android.apps.messaging"); // Google messaging app
     }
 
     private final BroadcastReceiver reloadprefs = new BroadcastReceiver() {
