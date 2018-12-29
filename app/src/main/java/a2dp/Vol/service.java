@@ -87,8 +87,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
     public static Integer connects = 0;
     public static boolean run = false;
     public static boolean talk = false;
-    private static boolean mvolsLeft = false;
-    private static boolean pvolsLeft = false;
+    private static int mvolsLeft = 0;
+    private static int pvolsLeft = 0;
     private static String notify_pref = "always";
     public static btDevice[] btdConn = new btDevice[10]; // n the devices in the
     // database that has
@@ -459,9 +459,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 if (!mac.equalsIgnoreCase("")) {
                     if (notify)
                         updateNot(false, null);
-                    if (!mvolsLeft)
+                    if (mvolsLeft <= 1)
                         setVolume(OldVol2, application);
-                    if (!pvolsLeft)
+                    if (pvolsLeft <= 1)
                         setPVolume(OldVol);
                     dowifi(oldwifistate);
                 }
@@ -950,7 +950,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         getConnects();
         if ((bt2 != null && bt2.isSetV()) || bt2 == null)
-            if (!mvolsLeft)
+            if (mvolsLeft <=1)
                 new CountDownTimer(3000, 3000) {
 
                     @Override
@@ -965,7 +965,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 }.start();
 
         if ((bt2 != null && bt2.isSetpv()) || bt2 == null)
-            if (!pvolsLeft)
+            if (pvolsLeft <=1)
                 setPVolume(OldVol);
         if (notify && (bt2.mac != null)) {
             updateNot(false, null);
@@ -1117,7 +1117,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     // captures the media volume so it can be later restored
     private void getOldvol() {
-        if(!mvolsLeft) {
+        if(mvolsLeft <= 1) {
             OldVol2 = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
             // Store the old volume in preferences so it can be extracted if another
             // instance starts or the service is killed and restarted
@@ -1129,7 +1129,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     // captures the phone volume so it can be later restored
     private void getOldPvol() {
-        if(!pvolsLeft) {
+        if(pvolsLeft <=1) {
             OldVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
             Oldsilent = am2.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
             // Store the old volume in preferences so it can be extracted if another
@@ -1493,15 +1493,15 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     private void getConnects() {
         connects = 0;
-        mvolsLeft = false;
-        pvolsLeft = false;
+        mvolsLeft = 0;
+        pvolsLeft = 0;
         for (int i = 0; i < btdConn.length; i++) {
             if (btdConn[i] != null) {
                 connects++;
                 if (btdConn[i].isSetV())
-                    mvolsLeft = true;
+                    ++mvolsLeft;
                 if (btdConn[i].isSetpv())
-                    pvolsLeft = true;
+                    ++pvolsLeft;
             }
         }
     }
