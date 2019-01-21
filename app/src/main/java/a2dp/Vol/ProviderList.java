@@ -123,12 +123,10 @@ public class ProviderList extends ListActivity {
 		
 		mProvider = getIntent().getIntExtra(EXTRA_PROVIDER, 0);
 		if(mProvider < 0){
-
+			setTitle(P_WINDOW_TITLES[mProvider]);
+			((TextView)getListView().getEmptyView()).setText(P_EMPTY_LIST_MSGS[mProvider]);
 		}
-		
-		setTitle(P_WINDOW_TITLES[mProvider]);
-		((TextView)getListView().getEmptyView()).setText(P_EMPTY_LIST_MSGS[mProvider]);
-		
+
 		loadList();
 	}
 	

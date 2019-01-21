@@ -950,7 +950,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         getConnects();
         if ((bt2 != null && bt2.isSetV()) || bt2 == null)
-            if (mvolsLeft <=1)
+            if (mvolsLeft < 1)
                 new CountDownTimer(3000, 3000) {
 
                     @Override
@@ -965,7 +965,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 }.start();
 
         if ((bt2 != null && bt2.isSetpv()) || bt2 == null)
-            if (pvolsLeft <=1)
+            if (pvolsLeft < 1)
                 setPVolume(OldVol);
         if (notify && (bt2.mac != null)) {
             updateNot(false, null);
@@ -1367,6 +1367,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
+
+        // add exta for referrer used for apps like Spotify
+        i.putExtra(Intent.EXTRA_REFERRER,
+                Uri.parse("android-app://" + application.getPackageName()));
 
         try {
             startActivity(i);
@@ -1912,11 +1916,20 @@ public class service extends Service implements OnAudioFocusChangeListener {
         public void onReceive(Context arg0, Intent arg1) {
             int state = arg1.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, 0);
 
-            if (state == AudioManager.SCO_AUDIO_STATE_CONNECTED && Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (state == AudioManager.SCO_AUDIO_STATE_CONNECTED && Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O && arg0 == a2dp.Vol.service.this) {
+                if (afr == null) {
+                    AudioAttributes aa = new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION).setLegacyStreamType(AudioManager.STREAM_VOICE_CALL)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED).build();
+
+                    afr = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                            .setAudioAttributes(aa)
+                            .build();
+                }
                 am2.requestAudioFocus(afr);
             }
 
-            if (state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED && !clearedTts) {
+            if (state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED && !clearedTts && arg0 == a2dp.Vol.service.this) {
                 if (!mTtsReady)
                     mTts = new TextToSpeech(application, listenerStarted);
 
@@ -1932,6 +1945,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
                     am2.abandonAudioFocus(a2dp.Vol.service.this);
                 } else {
+
                     am2.abandonAudioFocusRequest(afr);
                 }
 

@@ -185,7 +185,8 @@
                 android:layout_marginLeft="15pt"
                 android:layout_marginRight="15pt"></SeekBar>
             <Button android:layout_width="wrap_content" android:id="@+id/chooseAppButton" android:layout_height="wrap_content" android:text="@string/startApp" android:layout_marginTop="8pt"></Button>
-            <EditText android:id="@+id/editApp" android:text="EditText" android:layout_width="match_parent" android:layout_marginBottom="5pt" android:layout_height="wrap_content" android:inputType="none"></EditText>
+            <EditText android:id="@+id/editApp" android:text="EditText" android:layout_width="match_parent" android:layout_marginBottom="5pt" android:layout_height="wrap_content" android:inputType="none"
+                android:importantForAutofill="no"></EditText>
 
             <CheckBox
                 android:id="@+id/appRestartCheckbox"
@@ -212,7 +213,8 @@
                 android:text="@string/launchCarMode" />
 
             <Button android:layout_width="wrap_content" android:id="@+id/chooseBTbutton" android:layout_height="wrap_content" android:text="@string/connectBT" android:layout_marginTop="5pt"></Button>
-            <EditText android:id="@+id/editBtConnect" android:text="EditText" android:layout_width="match_parent" android:layout_marginBottom="5pt" android:inputType="none" android:layout_height="wrap_content"></EditText>
+            <EditText android:id="@+id/editBtConnect" android:text="EditText" android:layout_width="match_parent" android:layout_marginBottom="5pt" android:inputType="none" android:layout_height="wrap_content"
+                android:importantForAutofill="no"></EditText>
 
             <TextView
                 android:id="@+id/textView4"

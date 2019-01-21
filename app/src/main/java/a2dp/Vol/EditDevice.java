@@ -112,7 +112,7 @@ public class EditDevice extends Activity {
     private static final int DIALOG_WARN_STOP_APP = 5;
     private static final int DIALOG_BITLY = 6;
     private static final String[] APP_TYPE_OPTIONS = {"Choose App",
-            "Create Shortcut",  "Pandora Radio Station",
+            "Create Shortcut",
             "Custom Intent", "Clear App Selection"};
     private static final int ACTION_CHOOSE_APP = 2;
     private static final int ACTION_CUSTOM_INTENT = 6;
@@ -678,9 +678,30 @@ public class EditDevice extends Activity {
                 case ACTION_CUSTOM_INTENT:
 
                     pname = "";
-                    appaction = data.getStringExtra("alarm_custom_action");
+                    if (data != null) {
+                        pname = "Intent";
+                        if (data.getAction()!= null) {
+                            appaction = data.getAction();
+                        } else {
+                            appaction = "";
+                        }
+                        if (data.getData()!= null) {
+                            appdata = data.getData().toString();
+                        } else {
+                         appdata = "";
+                        }
+                        if (data.getType()!= null) {
+                            apptype = data.getType();
+                        } else {
+                            apptype = "";
+                        }
+                    } else {
+                        break;
+                    }
+
+/*                    appaction = data.getStringExtra("alarm_custom_action");
                     appdata = data.getStringExtra("alarm_custom_data");
-                    apptype = data.getStringExtra("alarm_custom_type");
+                    apptype = data.getStringExtra("alarm_custom_type");*/
 
 /*                    if (appdata.length() > 3) {
                         try {
@@ -693,7 +714,7 @@ public class EditDevice extends Activity {
                         }
                     }*/
                     if (pname.equals("")) {
-                        pname = "custom";
+                        pname = "Intent";
                     }
                     vUpdateApp();
                     break;
@@ -745,15 +766,15 @@ public class EditDevice extends Activity {
                             ProviderList.PROVIDER_HOMESCREEN);
                     startActivityForResult(i, ACTION_CHOOSE_FROM_PROVIDER);
                     break;*/
-                case 2:
+               /* case 2:
                     // Pandora Station
                     i = new Intent(getBaseContext(), ProviderList.class);
                     i.putExtra(ProviderList.EXTRA_PROVIDER,
                             ProviderList.PROVIDER_PANDORA);
                     startActivityForResult(i, ACTION_CHOOSE_FROM_PROVIDER);
-                    break;
+                    break;*/
 
-                case 3:
+                case 2:
                     // Custom Intent
                     i = new Intent(getBaseContext(), CustomIntentMaker.class);
                     i.putExtra("alarm_custom_action", appaction);
@@ -763,7 +784,7 @@ public class EditDevice extends Activity {
                     startActivityForResult(i, ACTION_CUSTOM_INTENT);
                     break;
 
-                case 4:
+                case 3:
                     // Clear App
                     pname = "";
                     appaction = "";
