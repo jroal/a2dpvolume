@@ -369,9 +369,10 @@ public class StoreLoc extends Service {
                         }
                     }
                 }
-            } else
+            } else {
+                Log.i(LOG_TAG, "No location data available ");
                 return; // if no location data just abort here
-
+            }
 
             // If we have a good location, turn OFF the gps listener.
             if (locationListener != null && l4 != null) {

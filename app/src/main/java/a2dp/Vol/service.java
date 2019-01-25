@@ -579,6 +579,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 if (bt2 == null || bt2.getMac() == null) {
                     connecting = false;
                 } else
+                    Log.i(LOG_TAG, "Connected: " + bt2.getDesc1() + "," + bt2.getDesc2());
                     DoConnected(bt2);
 
             }
@@ -783,6 +784,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 if (bt2 == null || bt2.getMac() == null) {
                     disconnecting = false;
                 } else
+                    Log.i(LOG_TAG, "Disconnected: " + bt2.getDesc1() + "," + bt2.getDesc2());
                     DoDisconnected(bt2);
             }
         }
@@ -917,6 +919,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                 //update the notification when done storing. I could do this better by passing intent
                 // from storloc
+                //Update notification 2s after location capture done
                 Long timeout = Long.valueOf(preferences.getString("gpsTime", "15000")) + 2000;
                 CountDownTimer not_update = new CountDownTimer(timeout, 10000) {
                     @Override
@@ -926,6 +929,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                     @Override
                     public void onFinish() {
+                        notificationManagerCompat.cancel(3);
                         updateNot(false, null);
                     }
                 };
@@ -975,9 +979,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 if (!clearedTts) {
                     clearTts();
                 }
-                mTts.shutdown();
+                if (mTts != null) {
+                    mTts.shutdown();
+                }
                 mTtsReady = false;
-                if (enableGTalk) {
+                if (enableGTalk && sco_change != null) {
                     unregisterReceiver(sco_change);
                     talk = false;
                 }
@@ -1221,6 +1227,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
 
         String temp;
+        if (mNotificationManager != null){
+            mNotificationManager.cancelAll();
+        }
+        if (notificationManagerCompat != null) {
+            notificationManagerCompat.cancelAll();
+        }
 
         // show all connected devices in notification
         if (connects > 0) {

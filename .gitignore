@@ -19,6 +19,7 @@ local.properties
 .idea
 .gradle
 keystore.properties
+*.iml
 
 
 # External tool builders
