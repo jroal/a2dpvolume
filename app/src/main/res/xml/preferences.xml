@@ -28,6 +28,7 @@
         <ListPreference
             android:defaultValue="always"
             android:dialogTitle="@string/PrefsNotify"
+            android:enabled="false"
             android:entries="@array/PrefsNotifyOptions"
             android:entryValues="@array/PrefsNotifyItems"
             android:key="notify_pref"

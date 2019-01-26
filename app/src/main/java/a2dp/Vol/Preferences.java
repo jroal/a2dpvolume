@@ -68,7 +68,10 @@ public class Preferences extends PreferenceActivity {
         // Show the Up button in the action bar.
         setupActionBar();
 
-       // if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)this.findViewById(R.id.notify_pref)
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+			
+		}
 	}
     private void setupActionBar() {
 

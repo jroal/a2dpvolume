@@ -1,4 +1,5 @@
 package a2dp.Vol;
+
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,7 +91,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private static int mvolsLeft = 0;
     private static int pvolsLeft = 0;
     private static String notify_pref = "always";
-    public static btDevice[] btdConn = new btDevice[10]; // n the devices in the
+    public static btDevice[] btdConn = new btDevice[20]; // n the devices in the
     // database that has
     // connected
     private DeviceDB DB; // database of device data stored in SQlite
@@ -281,7 +282,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
 
         if (notify) {
-            updateNot(false, null);
+            updateNot();
         }
 
 
@@ -391,7 +392,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             Toast.makeText(this, R.string.ServiceStopped, Toast.LENGTH_LONG)
                     .show();
         if (mIsBound) {
-           doUnbind(this);
+            doUnbind(this);
         }
         this.stopForeground(true);
     }
@@ -403,7 +404,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         connecting = false;
         disconnecting = false;
         if (notify)
-            updateNot(false, null);
+            updateNot();
 
 
     }
@@ -432,7 +433,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private final BroadcastReceiver runUpdate = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateNot(false, null);
+            updateNot();
         }
     };
 
@@ -458,7 +459,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 getConnects();
                 if (!mac.equalsIgnoreCase("")) {
                     if (notify)
-                        updateNot(false, null);
+                        updateNot();
                     if (mvolsLeft <= 1)
                         setVolume(OldVol2, application);
                     if (pvolsLeft <= 1)
@@ -580,7 +581,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     connecting = false;
                 } else
                     Log.i(LOG_TAG, "Connected: " + bt2.getDesc1() + "," + bt2.getDesc2());
-                    DoConnected(bt2);
+                DoConnected(bt2);
 
             }
         }
@@ -641,7 +642,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
 
         if (notify)
-            updateNot(true, bt2.toString());
+            updateNot();
         if (toasts)
             Toast.makeText(application, bt2.toString(), Toast.LENGTH_LONG)
                     .show();
@@ -785,7 +786,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     disconnecting = false;
                 } else
                     Log.i(LOG_TAG, "Disconnected: " + bt2.getDesc1() + "," + bt2.getDesc2());
-                    DoDisconnected(bt2);
+                DoDisconnected(bt2);
             }
         }
     };
@@ -930,7 +931,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     @Override
                     public void onFinish() {
                         notificationManagerCompat.cancel(3);
-                        updateNot(false, null);
+                        updateNot();
                     }
                 };
 
@@ -972,7 +973,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             if (pvolsLeft < 1)
                 setPVolume(OldVol);
         if (notify && (bt2.mac != null)) {
-            updateNot(false, null);
+            updateNot();
         }
         if (mTtsReady && ((bt2.isEnableTTS() || enableGTalk) || connects < 1)) {
             try {
@@ -1123,7 +1124,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     // captures the media volume so it can be later restored
     private void getOldvol() {
-        if(mvolsLeft <= 1) {
+        if (mvolsLeft <= 1) {
             OldVol2 = am2.getStreamVolume(AudioManager.STREAM_MUSIC);
             // Store the old volume in preferences so it can be extracted if another
             // instance starts or the service is killed and restarted
@@ -1135,7 +1136,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     // captures the phone volume so it can be later restored
     private void getOldPvol() {
-        if(pvolsLeft <=1) {
+        if (pvolsLeft <= 1) {
             OldVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
             Oldsilent = am2.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
             // Store the old volume in preferences so it can be extracted if another
@@ -1220,46 +1221,58 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
     }
 
-    public void updateNot(boolean connect, String car) {
+    public void updateNot() {
 
         if ((channel_b == null) || (channel_f == null)) {
             createNotificationChannel();
         }
 
-        String temp;
-        if (mNotificationManager != null){
+
+        if (mNotificationManager != null) {
             mNotificationManager.cancelAll();
+        } else {
+            createNotificationChannel();
         }
         if (notificationManagerCompat != null) {
             notificationManagerCompat.cancelAll();
+        } else {
+            createNotificationChannel();
         }
 
         // show all connected devices in notification
+        boolean connect = false;
+        String temp;   // name of connected devices to display
         if (connects > 0) {
             temp = getResources().getString(R.string.connectedTo);
-            for (int k = 0; k < btdConn.length; k++)
+            for (int k = 0; k < btdConn.length; k++) {
                 if (btdConn[k] != null) {
-                    if(k > 0)temp += ",";
+                    if (k > 0) temp += ",";
                     temp += " " + btdConn[k].toString();
                 }
-            connect = true;
+            }
+            if (btdConn.length < 1) {
+                connect = false;
+            } else {
+                connect = true;
+            }
         } else
             temp = getResources().getString(R.string.ServRunning);
 
         // useful feedback in background notification
-        String str;
+        String str; // String to use if there are no connected devices
         if (mTtsReady) {
             str = getResources().getString(R.string.TTSready);
         } else {
             str = "";
         }
 
+        Notification not = null;
         if (connect) {
             if (mNotificationManager != null) mNotificationManager.cancel(1);
             if (notificationManagerCompat != null) {
                 notificationManagerCompat.cancelAll();
             }
-            Notification not = null;
+
             Intent notificationIntent = new Intent(this, main.class);
             PendingIntent contentIntent = PendingIntent.getActivity(this,
                     0, notificationIntent, 0);
@@ -1292,7 +1305,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             if (mNotificationManager != null) mNotificationManager.cancel(1);
 
             if (notify_pref.equalsIgnoreCase("always") || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Notification not = null;
+
                 Intent notificationIntent = new Intent(this, main.class);
                 PendingIntent contentIntent = PendingIntent.getActivity(
                         this, 0, notificationIntent, 0);
@@ -1522,21 +1535,21 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
     }
 
- /*   private final BroadcastReceiver SMScatcher = new BroadcastReceiver() {
+    /*   private final BroadcastReceiver SMScatcher = new BroadcastReceiver() {
 
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            // tm = (TelephonyManager)
-            // getSystemService(Context.TELEPHONY_SERVICE);
-            if (Objects.requireNonNull(intent.getAction()).equals(
-                    "android.provider.Telephony.SMS_RECEIVED")
-                    && tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
-                // if(message starts with SMStretcher recognize BYTE)
+           @Override
+           public void onReceive(final Context context, final Intent intent) {
+               // tm = (TelephonyManager)
+               // getSystemService(Context.TELEPHONY_SERVICE);
+               if (Objects.requireNonNull(intent.getAction()).equals(
+                       "android.provider.Telephony.SMS_RECEIVED")
+                       && tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
+                   // if(message starts with SMStretcher recognize BYTE)
 
-                *//*
-                 * The SMS-Messages are 'hiding' within the extras of the
-                 * Intent.
-                 *//*
+                   *//*
+     * The SMS-Messages are 'hiding' within the extras of the
+     * Intent.
+     *//*
 
                 Bundle bundle = intent.getExtras();
                 if (bundle != null) {
