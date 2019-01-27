@@ -248,6 +248,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if (toasts)
             Toast.makeText(this, R.string.ServiceStarted, Toast.LENGTH_LONG)
                     .show();
+
         // Tell the world we are running
         final String IRun = "a2dp.vol.service.RUNNING";
         Intent i = new Intent();
@@ -257,6 +258,20 @@ public class service extends Service implements OnAudioFocusChangeListener {
         tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
         mPackageManager = getPackageManager();
+
+        notify = notify_pref.equalsIgnoreCase("always")
+                || notify_pref.equalsIgnoreCase("connected_only");
+
+        // we will ignore the no notifications preference in API 25 and up since this can be managed
+        // by the user now within Android
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            notify = true;
+        }
+
+        if (notify) {
+            updateNot();
+        }
+
         // test location file maker
         /*
          * FileOutputStream fos; try { fos = openFileOutput("My_Last_Location",
@@ -272,20 +287,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
          * if (enableTTS) { mTts = new TextToSpeech(application,
          * listenerStarted); }
          */
-        notify = notify_pref.equalsIgnoreCase("always")
-                || notify_pref.equalsIgnoreCase("connected_only");
-
-        // we will ignore the no notifications preference in API 25 and up since this can be managed
-        // by the user now within Android
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            notify = true;
-        }
-
-        if (notify) {
-            updateNot();
-        }
-
-
     }
 
     private void registerRecievers() {
@@ -346,6 +347,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     public void onDestroy() {
         // let the GUI know we closed
         run = false;
+        Log.i(LOG_TAG, "Service stopped");
         // in case the location listener is running, stop it
         stopService(new Intent(application, StoreLoc.class));
         // close the database
@@ -406,7 +408,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if (notify)
             updateNot();
 
-
+        Log.i(LOG_TAG, "Service started");
     }
 
 
@@ -447,25 +449,19 @@ public class service extends Service implements OnAudioFocusChangeListener {
             int state2 = android.bluetooth.BluetoothAdapter.STATE_TURNING_OFF;
             BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
             String mac = "";
-            if (mBTA.getState() == state1 || mBTA.getState() == state2) {
+            if (mBTA.getState() == state1) {
 
-                for (int j = 0; j < btdConn.length; j++) {
-                    if (btdConn[j] != null)
-                        if (btdConn[j].getMac().length() > 2) {
-                            mac = btdConn[j].getMac();
-                            btdConn[j] = null;
-                        }
-                }
+                if (btdConn != null)
+                    for (int j = 0; j < btdConn.length; j++) {
+                        if (btdConn[j] != null)
+                            if (btdConn[j].getMac().length() > 2) {
+                                mac = btdConn[j].getMac();
+                                DoDisconnected(btdConn[j]);
+                                btdConn[j] = null;
+                            }
+                    }
                 getConnects();
-                if (!mac.equalsIgnoreCase("")) {
-                    if (notify)
-                        updateNot();
-                    if (mvolsLeft <= 1)
-                        setVolume(OldVol2, application);
-                    if (pvolsLeft <= 1)
-                        setPVolume(OldVol);
-                    dowifi(oldwifistate);
-                }
+
                 if (mTtsReady) {
                     try {
                         if (!clearedTts) {
@@ -483,6 +479,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 itent.setAction(Ireload);
                 itent.putExtra("disconnect", mac);
                 application.sendBroadcast(itent);
+
+                Log.i(LOG_TAG, "Bluetooth turned OFF broadcast receiver " + mac);
             }
         }
     };
@@ -508,7 +506,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     DoConnected(bt2);
                 }
             }
-
+            Log.i(LOG_TAG, "Headset received " + state);
         }
 
     };
@@ -535,7 +533,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     bt = null;
                     e1.printStackTrace();
                     connecting = false;
-                    return;
+                    //return;
                 }
 
                 btDevice bt2 = null;
@@ -550,7 +548,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                         bt2 = null;
                         connecting = false;
-                        return;
+                        //return;
                     }
                 } else
                 // if not a bluetooth device, must be a special device
@@ -579,9 +577,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 // if it is none of the devices in the database, exit here
                 if (bt2 == null || bt2.getMac() == null) {
                     connecting = false;
-                } else
-                    Log.i(LOG_TAG, "Connected: " + bt2.getDesc1() + "," + bt2.getDesc2());
-                DoConnected(bt2);
+                    Log.i(LOG_TAG, "Unknown device received, ignoring");
+                } else {
+                    Log.i(LOG_TAG, "Broadcast received: " + bt2.getDesc1() + ", " + bt2.getDesc2());
+                    DoConnected(bt2);
+                }
 
             }
         }
@@ -641,8 +641,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             getIBluetoothA2dp(application);
         }
 
-        if (notify)
-            updateNot();
+
         if (toasts)
             Toast.makeText(application, bt2.toString(), Toast.LENGTH_LONG)
                     .show();
@@ -725,6 +724,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             set_car_mode(true);
         }
 
+        updateNot();
     }
 
     // device disconnected
@@ -784,6 +784,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 // if it is none of the devices in the database, exit here
                 if (bt2 == null || bt2.getMac() == null) {
                     disconnecting = false;
+                    Log.i(LOG_TAG, "Unknown device disconnect received, ignoring");
                 } else
                     Log.i(LOG_TAG, "Disconnected: " + bt2.getDesc1() + "," + bt2.getDesc2());
                 DoDisconnected(bt2);
@@ -947,13 +948,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
             dowifi(oldwifistate);
         }
 
-
+        // Remove disconnected device from connected devices array
         for (int k = 0; k < btdConn.length; k++)
             if (btdConn[k] != null)
                 if (bt2.getMac().equalsIgnoreCase(btdConn[k].getMac()))
                     btdConn[k] = null;
 
         getConnects();
+
         if ((bt2 != null && bt2.isSetV()) || bt2 == null)
             if (mvolsLeft < 1)
                 new CountDownTimer(3000, 3000) {
@@ -1131,6 +1133,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putInt(OLD_VOLUME, OldVol2);
             editor.apply();
+            Log.i(LOG_TAG, "Captured volume " + OldVol2);
         }
     }
 
@@ -1145,6 +1148,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             editor.putInt(OLD_PH_VOL, OldVol);
             editor.putInt("oldsilent", Oldsilent);
             editor.apply();
+            Log.i(LOG_TAG, "Captured phone volume " + OldVol);
         }
     }
 
@@ -1223,6 +1227,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     public void updateNot() {
 
+
         if ((channel_b == null) || (channel_f == null)) {
             createNotificationChannel();
         }
@@ -1245,18 +1250,17 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if (connects > 0) {
             temp = getResources().getString(R.string.connectedTo);
             for (int k = 0; k < btdConn.length; k++) {
-                if (btdConn[k] != null) {
+                if (btdConn[k] != null && btdConn[k].mac != null) {
+                    connect = true;
                     if (k > 0) temp += ",";
                     temp += " " + btdConn[k].toString();
                 }
             }
-            if (btdConn.length < 1) {
-                connect = false;
-            } else {
-                connect = true;
-            }
+
         } else
             temp = getResources().getString(R.string.ServRunning);
+
+        Log.i(LOG_TAG, "UpdateNot: " + temp);
 
         // useful feedback in background notification
         String str; // String to use if there are no connected devices
@@ -1519,7 +1523,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
     }
 
-
+    // Update the connected devices array
     private void getConnects() {
         connects = 0;
         mvolsLeft = 0;
@@ -1533,6 +1537,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     ++pvolsLeft;
             }
         }
+        Log.i(LOG_TAG, "getConnects " + connects);
     }
 
     /*   private final BroadcastReceiver SMScatcher = new BroadcastReceiver() {

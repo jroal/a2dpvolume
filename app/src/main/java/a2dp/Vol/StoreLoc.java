@@ -55,13 +55,13 @@ public class StoreLoc extends Service {
     String a2dpDir = "";
     boolean local;
     String car;
-    private static final String LOG_TAG = "A2DP_Volume";
+    private static final String LOG_TAG = "A2DP_Volume_StoreLoc";
     private DeviceDB DB; // database of device data stored in SQlite
     btDevice btdConn;
     Long dtime = null;
-    Location l = null; // the most recent location
-    Location l3 = null; // the most accurate location
-    Location l4 = null; // the best location
+    Location l = null, lstore = null; // the most recent location
+    Location l3 = null, l3store = null; // the most accurate location
+    Location l4 = null, l4store = null; // the best location
     boolean gpsEnabled = false;
     int formatFlags;
     int formatFlags2;
@@ -119,7 +119,7 @@ public class StoreLoc extends Service {
             MAX_ACC = 10;
             MAX_TIME = 15000;
             car = "My Car";
-            Toast.makeText(this, "prefs failed to load. " + e.getMessage(),
+            Toast.makeText(this, "prefs failed to load. " + e.getLocalizedMessage(),
                     Toast.LENGTH_LONG).show();
             e.printStackTrace();
             Log.e(LOG_TAG, "prefs failed to load " + e.getMessage());
@@ -135,12 +135,15 @@ public class StoreLoc extends Service {
             if (btdConn != null)
                 car = btdConn.getDesc2();
         } catch (Exception e) {
-            Toast.makeText(this, "Location service failed to start. " + e.getMessage(),
+            Toast.makeText(this, "Location service failed to start. " + e.getLocalizedMessage(),
                     Toast.LENGTH_LONG).show();
+            Log.i(LOG_TAG, "Location service failed to start: " + e.getMessage());
             this.stopSelf();
             e.printStackTrace();
         }
-        if(car == null || car.isEmpty())car = "My Car";
+        if (car == null || car.isEmpty()) car = "My Car";
+
+        Log.i(LOG_TAG, "Storing location for " + car);
 
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this
@@ -158,7 +161,6 @@ public class StoreLoc extends Service {
         Intent notificationIntent = new Intent(this, main.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 this, 0, notificationIntent, 0);
-
 
 
         notificationManagerCompat.cancelAll();
@@ -227,7 +229,7 @@ public class StoreLoc extends Service {
             T.start();
         }
 
-    grabLocationCount = 0;
+        grabLocationCount = 0;
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -320,14 +322,19 @@ public class StoreLoc extends Service {
         Location l2 = null; // the temporary last known location
 
         if (l4 != null)
-            if (l4.hasAccuracy())
+            if (l4.hasAccuracy()) {
                 bestacc = l4.getAccuracy();
+                //l4store = l4;
+            }
         if (l3 != null)
-            if (l3.hasAccuracy())
+            if (l3.hasAccuracy()) {
                 oldacc = l3.getAccuracy();
-        if (l != null)
+                //l3store = l3;
+            }
+        if (l != null) {
             olddt = System.currentTimeMillis() - l.getTime();
-
+            //lstore = l;
+        }
         try {
 
             if (!providers.isEmpty()) {
@@ -366,6 +373,7 @@ public class StoreLoc extends Service {
                         if (deltat < olddt) // get the most recent update
                         {
                             l = l2;
+                            lstore = l;
                         }
                     }
                 }
@@ -395,6 +403,7 @@ public class StoreLoc extends Service {
         String locTime = "";
         // store the best location
         if (l4 != null) {
+            l4store = l4;
             locTime = DateUtils.formatDateTime(application, l4.getTime(),
                     formatFlags);
             String urlStr;
@@ -432,6 +441,7 @@ public class StoreLoc extends Service {
 
         // store most accurate location
         if (l3 != null) {
+            l3store = l3;
             locTime = DateUtils.formatDateTime(application, l3.getTime(),
                     formatFlags);
             String urlStr;
@@ -520,20 +530,20 @@ public class StoreLoc extends Service {
 
             String temp = null;
 
-            if (l4 != null) {
+            if (l4store != null) {
                 locTime = DateUtils.formatDateTime(application,
-                        l4.getTime(), formatFlags);
+                        l4store.getTime(), formatFlags);
                 String urlStr;
                 try {
                     urlStr = URLEncoder.encode(
-                            l4.getLatitude() + "," + l4.getLongitude()
+                            l4store.getLatitude() + "," + l4store.getLongitude()
                                     + "(" + car + " " + locTime + " acc="
-                                    + df.format(l4.getAccuracy()) + ")",
+                                    + df.format(l4store.getAccuracy()) + ")",
                             "UTF-8");
                 } catch (Exception e) {
-                    urlStr = (l4.getLatitude() + ","
-                            + l4.getLongitude() + "(" + car + " " + locTime
-                            + " acc=" + df.format(l4.getAccuracy()) + ")");
+                    urlStr = (l4store.getLatitude() + ","
+                            + l4store.getLongitude() + "(" + car + " " + locTime
+                            + " acc=" + df.format(l4store.getAccuracy()) + ")");
                     e.printStackTrace();
                 }
 
@@ -545,37 +555,37 @@ public class StoreLoc extends Service {
                         + locTime
                         + "<br>"
                         + "Location type: "
-                        + l4.getProvider()
+                        + l4store.getProvider()
                         + "<br>"
                         + "Accuracy: "
-                        + l4.getAccuracy()
+                        + l4store.getAccuracy()
                         + " meters<br>"
                         + "Elevation: "
-                        + l4.getAltitude()
+                        + l4store.getAltitude()
                         + " meters<br>"
                         + "Lattitude: "
-                        + l4.getLatitude()
+                        + l4store.getLatitude()
                         + "<br>" + "Longitude: " + l4.getLongitude();
             } else {
 
                 locTime = DateUtils.formatDateTime(application, dtime,
                         formatFlags);
-                temp = "No Best Location Captured " + locTime + "<br>";
+                temp = "<hr />No Best Location Captured " + locTime + "<br>";
             }
-            if (l3 != null) {
+            if (l3store != null) {
                 locTime = DateUtils.formatDateTime(application,
-                        l3.getTime(), formatFlags);
+                        l3store.getTime(), formatFlags);
                 String urlStr;
                 try {
                     urlStr = URLEncoder.encode(
-                            l3.getLatitude() + "," + l3.getLongitude()
+                            l3store.getLatitude() + "," + l3store.getLongitude()
                                     + "(" + car + " " + locTime + " acc="
-                                    + df.format(l3.getAccuracy()) + ")",
+                                    + df.format(l3store.getAccuracy()) + ")",
                             "UTF-8");
                 } catch (Exception e) {
-                    urlStr = (l3.getLatitude() + ","
-                            + l3.getLongitude() + "(" + car + " " + locTime
-                            + " acc=" + df.format(l3.getAccuracy()) + ")");
+                    urlStr = (l3store.getLatitude() + ","
+                            + l3store.getLongitude() + "(" + car + " " + locTime
+                            + " acc=" + df.format(l3store.getAccuracy()) + ")");
                     e.printStackTrace();
                 }
 
@@ -587,39 +597,39 @@ public class StoreLoc extends Service {
                         + locTime
                         + "<br>"
                         + "Location type: "
-                        + l3.getProvider()
+                        + l3store.getProvider()
                         + "<br>"
                         + "Accuracy: "
-                        + l3.getAccuracy()
+                        + l3store.getAccuracy()
                         + " meters<br>"
                         + "Elevation: "
-                        + l3.getAltitude()
+                        + l3store.getAltitude()
                         + " meters<br>"
                         + "Lattitude: "
-                        + l3.getLatitude()
+                        + l3store.getLatitude()
                         + "<br>"
                         + "Longitude: "
-                        + l3.getLongitude();
+                        + l3store.getLongitude();
             } else {
                 locTime = DateUtils.formatDateTime(application, dtime,
                         formatFlags);
-                temp += "No Most Accurate Location Captured " + locTime
+                temp += "<hr />No Most Accurate Location Captured " + locTime
                         + "<br>";
             }
-            if (l != null) {
+            if (lstore != null) {
                 locTime = DateUtils.formatDateTime(application,
-                        l.getTime(), formatFlags);
+                        lstore.getTime(), formatFlags);
                 String urlStr;
                 try {
                     urlStr = URLEncoder.encode(
-                            l.getLatitude() + "," + l.getLongitude() + "("
+                            lstore.getLatitude() + "," + lstore.getLongitude() + "("
                                     + car + " " + locTime + " acc="
-                                    + df.format(l.getAccuracy()) + ")",
+                                    + df.format(lstore.getAccuracy()) + ")",
                             "UTF-8");
                 } catch (Exception e) {
-                    urlStr = (l.getLatitude() + ","
-                            + l.getLongitude() + "(" + car + " " + locTime
-                            + " acc=" + df.format(l.getAccuracy()) + ")");
+                    urlStr = (lstore.getLatitude() + ","
+                            + lstore.getLongitude() + "(" + car + " " + locTime
+                            + " acc=" + df.format(lstore.getAccuracy()) + ")");
                     e.printStackTrace();
                 }
 
@@ -631,23 +641,23 @@ public class StoreLoc extends Service {
                         + locTime
                         + "<br>"
                         + "Location type: "
-                        + l.getProvider()
+                        + lstore.getProvider()
                         + "<br>"
                         + "Accuracy: "
-                        + l.getAccuracy()
+                        + lstore.getAccuracy()
                         + " meters<br>"
                         + "Elevation: "
-                        + l.getAltitude()
+                        + lstore.getAltitude()
                         + " meters<br>"
                         + "Lattitude: "
-                        + l.getLatitude()
+                        + lstore.getLatitude()
                         + "<br>"
                         + "Longitude: "
-                        + l.getLongitude();
+                        + lstore.getLongitude();
             } else {
                 locTime = DateUtils.formatDateTime(application, dtime,
                         formatFlags);
-                temp += "No Most Recent Location Captured " + locTime
+                temp += "<hr />No Most Recent Location Captured " + locTime
                         + "<br>";
             }
 
@@ -682,8 +692,8 @@ public class StoreLoc extends Service {
 
             // Try all the locations to find a valid one, store best if possible
             Location mlocation = l;
-            if(l3 != null && l3.hasAccuracy()) mlocation = l3;
-            if(l4 != null && l4.hasAccuracy()) mlocation = l4;
+            if (l3 != null && l3.hasAccuracy()) mlocation = l3;
+            if (l4 != null && l4.hasAccuracy()) mlocation = l4;
 
             // as long as we have any location, store it
             if (mlocation != null) {
@@ -735,6 +745,8 @@ public class StoreLoc extends Service {
         Intent i = new Intent();
         i.setAction(done);
         application.sendBroadcast(i);
+
+        Log.i(LOG_TAG, "Location capture done");
 
         this.stopForeground(true);
         // capture complete, close
