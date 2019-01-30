@@ -403,7 +403,7 @@ public class main extends Activity {
                                     e1.printStackTrace();
                                 }*/
                                 intent.putExtra("filestr", st);
-                                intent.putExtra("name", car );
+                                intent.putExtra("name", car);
                                 startActivity(intent);
 
                                 try {
@@ -745,7 +745,7 @@ public class main extends Activity {
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case PERMISSION_READ_CONTACTS: {
+ /*           case PERMISSION_READ_CONTACTS: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -763,7 +763,7 @@ public class main extends Activity {
                 editor.apply();
 
                 break;
-            }
+            }*/
             case PERMISSION_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
@@ -802,7 +802,7 @@ public class main extends Activity {
 
                 break;
             }
-            case PERMISSION_SMS: {
+ /*           case PERMISSION_SMS: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -820,7 +820,7 @@ public class main extends Activity {
                 editor.apply();
 
                 break;
-            }
+            }*/
             case PERMISSION_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
@@ -924,7 +924,7 @@ public class main extends Activity {
         try {
             byte[] buff = new byte[250];
             FileInputStream fs = openFileInput("My_Last_Location");
-            if(fs == null)fs = openFileInput("My_Last_Location2");
+            if (fs == null) fs = openFileInput("My_Last_Location2");
             fs.read(buff);
             fs.close();
             String st = new String(buff).trim();

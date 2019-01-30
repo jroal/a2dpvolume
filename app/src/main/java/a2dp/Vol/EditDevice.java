@@ -3,6 +3,7 @@ package a2dp.Vol;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -21,6 +22,7 @@ import android.media.AudioManager;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -622,11 +624,23 @@ public class EditDevice extends Activity {
                 break;
         }
 
-        // if the user want TTS but it was not enabled
+        // if the user wants TTS but it was not enabled
         if (!TTsEnabled && fenableTTS.isChecked()) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("enableTTS", true);
             editor.apply();
+
+            // If the user enabled reading notifications, check settings and launch setting dialog if its not enabled
+            Set<String> list = NotificationManagerCompat.getEnabledListenerPackages(getBaseContext());
+            Boolean listenerEnabled = false;
+            for (String item : list) {
+                if (item.equalsIgnoreCase("a2dp.Vol")) listenerEnabled = true;
+            }
+
+            if (!listenerEnabled) {
+                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                startActivity(intent);
+            }
         }
 
         sb.setText("Saving");

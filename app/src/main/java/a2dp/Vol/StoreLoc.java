@@ -197,12 +197,6 @@ public class StoreLoc extends Service {
             T = new CountDownTimer(MAX_TIME, 2000) {
 
                 public void onTick(long millisUntilFinished) {
- /*                   if (toasts)
-                        Toast.makeText(
-                                application,
-                                "Time left: " + (millisUntilFinished + 20)
-                                        / 1000, Toast.LENGTH_LONG).show();*/
-
                     int prog = (int) (MAX_TIME - millisUntilFinished);
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                         mCBuilder.setProgress((int) MAX_TIME, prog, false);
@@ -324,16 +318,16 @@ public class StoreLoc extends Service {
         if (l4 != null)
             if (l4.hasAccuracy()) {
                 bestacc = l4.getAccuracy();
-                //l4store = l4;
+                if(l4store == null) l4store = l4;
             }
         if (l3 != null)
             if (l3.hasAccuracy()) {
                 oldacc = l3.getAccuracy();
-                //l3store = l3;
+                if(l3store == null)l3store = l3;
             }
         if (l != null) {
             olddt = System.currentTimeMillis() - l.getTime();
-            //lstore = l;
+            if(lstore == null)lstore = l;
         }
         try {
 
@@ -396,9 +390,6 @@ public class StoreLoc extends Service {
         }
 
         DecimalFormat df = new DecimalFormat("#.#");
-        // figure out which device we are disconnecting from (moved to onStartCommand)
-/*        if (btdConn != null)
-            car = btdConn.getDesc2();*/
 
         String locTime = "";
         // store the best location
@@ -513,9 +504,6 @@ public class StoreLoc extends Service {
 
         //String car = "My Car";
         DecimalFormat df = new DecimalFormat("#.#");
-        // figure out which device we are disconnecting from (moved to onStartCommand)
-/*        if (btdConn != null)
-            car = btdConn.getDesc2();*/
 
         String locTime = "";
         // store this vehicles location
@@ -565,7 +553,7 @@ public class StoreLoc extends Service {
                         + " meters<br>"
                         + "Lattitude: "
                         + l4store.getLatitude()
-                        + "<br>" + "Longitude: " + l4.getLongitude();
+                        + "<br>" + "Longitude: " + l4store.getLongitude();
             } else {
 
                 locTime = DateUtils.formatDateTime(application, dtime,

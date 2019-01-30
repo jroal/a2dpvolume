@@ -117,6 +117,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private boolean clearedTts = true;
     private static final String FIX_STREAM = "fix_stream";
     AudioFocusRequest afr;
+    private String LastMessage;
 
     boolean oldwifistate = true;
     boolean oldgpsstate = true;
@@ -364,9 +365,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     if (!clearedTts) {
                         clearTts();
                     }
-                    mTts.shutdown();
+                    if (mTts != null)
+                        mTts.shutdown();
                     mTtsReady = false;
                     //unregisterReceiver(SMScatcher);
+
                     unregisterReceiver(sco_change);
                     unregisterReceiver(tmessage);
                     // if (enableGTalk)
@@ -589,6 +592,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     protected void DoConnected(btDevice bt2) {
         boolean done = false;
+
         int l = 0;
 
         for (int k = 0; k < btdConn.length; k++) {
@@ -1133,7 +1137,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putInt(OLD_VOLUME, OldVol2);
             editor.apply();
-            Log.i(LOG_TAG, "Captured volume " + OldVol2);
+            Log.i(LOG_TAG, "Captured media volume " + OldVol2);
         }
     }
 
@@ -1191,6 +1195,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             int importance = NotificationManager.IMPORTANCE_MIN;
             channel_b = new NotificationChannel(A2DP_BACKGROUND, name, importance);
             channel_b.setDescription(description);
+            //channel_b.setImportance(NotificationManager.IMPORTANCE_MIN);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             mNotificationManager.createNotificationChannel(channel_b);
@@ -1227,11 +1232,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     public void updateNot() {
 
-
         if ((channel_b == null) || (channel_f == null)) {
             createNotificationChannel();
         }
-
 
         if (mNotificationManager != null) {
             mNotificationManager.cancelAll();
@@ -1294,11 +1297,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
             } else {
                 not = new NotificationCompat.Builder(application, LAUNCHER_APPS_SERVICE)
                         .setContentTitle(
-                                getResources().getString(R.string.app_name))
+                                getResources().getString(R.string.connectedTo))
                         .setContentIntent(contentIntent)
                         .setSmallIcon(checkIcon(connectedIcon))
                         .setContentText(temp)
-                        .setPriority(Notification.PRIORITY_MIN)
+                        .setPriority(Notification.PRIORITY_LOW)
                         .build();
                 notificationManagerCompat.notify(1, not);
             }
@@ -1597,13 +1600,28 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     @TargetApi(Build.VERSION_CODES.O)
     public void TextReader(String rawinput) {
-        if (mTtsReady) {
-            myHash = new HashMap<>();
 
-            if (rawinput == null) {
-                Toast.makeText(application, "No input", Toast.LENGTH_LONG).show();
-                return;
+        boolean repeat = false;
+        boolean mgood = false;
+
+        if (rawinput == null) {
+            Toast.makeText(application, "No input", Toast.LENGTH_LONG).show();
+        } else {
+            mgood = true;
+        }
+
+        if (LastMessage == null || LastMessage.isEmpty()) {
+            LastMessage = rawinput;
+        } else {
+            if (rawinput.equals(LastMessage)) {
+                Log.i(LOG_TAG, "repeat message received in message reader");
+                repeat = true;
             }
+            LastMessage = rawinput;
+        }
+
+        if (mTtsReady && !repeat && mgood) {
+            myHash = new HashMap<>();
 
             String input = rawinput.replaceAll("http.*? ", ", URL, ");
 

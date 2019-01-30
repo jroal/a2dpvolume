@@ -15,6 +15,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -118,7 +119,7 @@ public class NotificationCatcher extends NotificationListenerService {
                         .getApplicationLabel(appInfo) : pack);
 
 
-                // abort if we can get the notification
+                // abort if we can't get the notification
                 Notification notification = sbn.getNotification();
                 if (notification == null) return null;
                 // get the time this notification was posted
@@ -130,6 +131,7 @@ public class NotificationCatcher extends NotificationListenerService {
                 Boolean found = false;
                 while (itr.hasNext()) {
                     notItem element = itr.next();
+
                     if (element.getNot().equals(pack)) {
                         if ((element.getNottime() + 1000) < when) {
                             notList.set(notList.indexOf(element), item);  // if the package sent a new notification update the last time
@@ -196,7 +198,7 @@ public class NotificationCatcher extends NotificationListenerService {
                     //if there is no ticker or strings then ignore it.
                     if (temp.isEmpty() && ticker.isEmpty() && text.isEmpty()) return null;
 
-                    if (pack.equalsIgnoreCase("com.google.android.apps.fireball") ) { // Google Allo handling
+                    if (pack.equalsIgnoreCase("com.google.android.apps.fireball")) { // Google Allo handling
                         str = appName + ", " + ticker + ", " + text;
                     }
                 }
@@ -226,13 +228,14 @@ public class NotificationCatcher extends NotificationListenerService {
 
         packagelist = preferences
                 .getString("packages",
-                        "com.google.android.talk,com.android.email,com.android.calendar,com.google.android.apps.messaging");
+                        "com.google.android.talk,com.android.email,com.android.calendar,com.google.android.apps.messaging,com.skype.raider");
         packages = packagelist.split(",");
 
         // apps list below are handled differently based on how they post notifications
-        apps1.add("com.google.android.talk"); // Hougouts
+        apps1.add("com.google.android.talk"); // Hangouts
         apps1.add("com.skype.raider"); // Skype
         apps1.add("com.google.android.apps.messaging"); // Google messaging app
+        apps1.add("com.google.android.apps.tachyon"); // Google Duo
     }
 
     private final BroadcastReceiver reloadprefs = new BroadcastReceiver() {
@@ -254,7 +257,7 @@ public class NotificationCatcher extends NotificationListenerService {
     };
 
     /*This class stores the packages that have posted notifications, and the last time they posted
-    * it is used to make sure notifications are not read multiple times.*/
+     * it is used to make sure notifications are not read multiple times.*/
 
     private class notItem {
         String not;
