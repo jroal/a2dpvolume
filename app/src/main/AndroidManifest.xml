@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="a2dp.Vol"
     android:installLocation="internalOnly"
-    android:versionCode="156"
-    android:versionName="2.12.11.7">
+    android:versionCode="157"
+    android:versionName="2.12.11.8">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission

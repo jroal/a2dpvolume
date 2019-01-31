@@ -789,9 +789,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 if (bt2 == null || bt2.getMac() == null) {
                     disconnecting = false;
                     Log.i(LOG_TAG, "Unknown device disconnect received, ignoring");
-                } else
+                } else {
                     Log.i(LOG_TAG, "Disconnected: " + bt2.getDesc1() + "," + bt2.getDesc2());
-                DoDisconnected(bt2);
+                    DoDisconnected(bt2);
+                }
             }
         }
     };
@@ -953,10 +954,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
 
         // Remove disconnected device from connected devices array
-        for (int k = 0; k < btdConn.length; k++)
-            if (btdConn[k] != null)
-                if (bt2.getMac().equalsIgnoreCase(btdConn[k].getMac()))
-                    btdConn[k] = null;
+        if (bt2 != null)
+            for (int k = 0; k < btdConn.length; k++)
+                if (btdConn[k] != null)
+                    if (bt2.getMac().equalsIgnoreCase(btdConn[k].getMac()))
+                        btdConn[k] = null;
 
         getConnects();
 
@@ -1914,49 +1916,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
             am2.setSpeakerphoneOn(false);
         }
 
- /*       new CountDownTimer(2000,1000){
-
-            @Override
-            public void onTick(long l) {
-                am2.stopBluetoothSco();
-            }
-
-            @Override
-            public void onFinish() {
-                am2.stopBluetoothSco();
-            }
-        }.start();*/
-
     }
 
-/*
-    private String GetName(String number) {
-
-        // check permission
-        int permissionCheck = ContextCompat.checkSelfPermission(application,
-                Manifest.permission.READ_CONTACTS);
-        permReadContacts = permissionCheck == PackageManager.PERMISSION_GRANTED;
-
-        if (permReadContacts) {
-            ContentResolver cr = getContentResolver();
-
-            Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI,
-                    Uri.encode(number));
-            Cursor c = cr.query(uri, new String[]{PhoneLookup.DISPLAY_NAME},
-                    null, null, null);
-
-            if (Objects.requireNonNull(c).moveToFirst()) {
-                String name = c.getString(c
-                        .getColumnIndex(PhoneLookup.DISPLAY_NAME));
-                return name;
-            }
-            if (c != null) {
-                c.close();
-            }
-        }
-        return number;
-    }
-*/
 
     public BroadcastReceiver sco_change = new BroadcastReceiver() {
 
