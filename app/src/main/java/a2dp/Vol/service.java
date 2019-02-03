@@ -41,6 +41,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -264,7 +265,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if (notify) {
             updateNot();
         }
-
+        getConnects();
+        if (connects < 1) {
+            getOldvol();
+        }
         // test location file maker
         /*
          * FileOutputStream fos; try { fos = openFileOutput("My_Last_Location",
@@ -409,6 +413,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
         disconnecting = false;
         if (notify)
             updateNot();
+        getConnects();
+        if (connects < 1) {
+            getOldvol();
+        }
 
         Log.i(LOG_TAG, "Service started");
     }
@@ -615,7 +623,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
         getConnects();
         if (connects <= 1) {
-            getOldvol();
+            //getOldvol();
             getOldPvol();
             oldwifistate = wifiManager.isWifiEnabled();
             oldgpsstate = locmanager
@@ -805,12 +813,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
             // if music is playing, pause it
             if (am2.isMusicActive()) {
                 // first pause the music so it removes the notify icon
-                Intent i = new Intent("com.android.music.musicservicecommand");
+                /*Intent i = new Intent("com.android.music.musicservicecommand");
                 i.putExtra("command", "pause");
-                sendBroadcast(i);
+                sendBroadcast(i);*/
                 // Try telling the system the headset just disconnected to stop
                 // other players
-                Intent j = new Intent("android.intent.action.HEADSET_PLUG");
+/*                Intent j = new Intent("android.intent.action.HEADSET_PLUG");
                 j.putExtra("state", 0);
                 try {
                     sendBroadcast(j);
@@ -824,7 +832,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 KeyEvent downEvent2 = new KeyEvent(KeyEvent.ACTION_DOWN,
                         KeyEvent.KEYCODE_MEDIA_STOP);
                 downIntent2.putExtra(Intent.EXTRA_KEY_EVENT, downEvent2);
-                sendOrderedBroadcast(downIntent2, null);
+                sendOrderedBroadcast(downIntent2, null);*/
             }
 
             // if we opened a package for this device, try to close it now
@@ -843,7 +851,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     public void onFinish() {
                         if (am2.isMusicActive()) {
                             // first pause the music so it removes the notify
-                            // icon
+/*                            // icon
                             Intent i = new Intent(
                                     "com.android.music.musicservicecommand");
                             i.putExtra("command", "pause");
@@ -867,7 +875,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                                     KeyEvent.KEYCODE_MEDIA_STOP);
                             downIntent2.putExtra(Intent.EXTRA_KEY_EVENT,
                                     downEvent2);
-                            sendOrderedBroadcast(downIntent2, null);
+                            sendOrderedBroadcast(downIntent2, null);*/
                         }
                         try {
                             stopApp(kpackage);
@@ -884,7 +892,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         if (am2.isMusicActive()) {
                             // first pause the music so it removes the notify
                             // icon
-                            Intent i = new Intent(
+/*                            Intent i = new Intent(
                                     "com.android.music.musicservicecommand");
                             i.putExtra("command", "pause");
                             sendBroadcast(i);
@@ -897,7 +905,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                                     KeyEvent.KEYCODE_MEDIA_STOP);
                             downIntent2.putExtra(Intent.EXTRA_KEY_EVENT,
                                     downEvent2);
-                            sendOrderedBroadcast(downIntent2, null);
+                            sendOrderedBroadcast(downIntent2, null);*/
                         }
 
                         try {
@@ -1551,6 +1559,9 @@ public class service extends Service implements OnAudioFocusChangeListener {
             }
         }
         Log.i(LOG_TAG, "getConnects " + connects);
+        if (connects < 1 && connecting && Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            getOldvol();
+        }
     }
 
     /*   private final BroadcastReceiver SMScatcher = new BroadcastReceiver() {
@@ -1620,6 +1631,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             mgood = true;
         }
 
+        // created to eliminate double reading same message but may no longer be needed
         if (LastMessage == null || LastMessage.isEmpty()) {
             LastMessage = rawinput;
         } else {
@@ -1649,10 +1661,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
             switch (MessageStream) {
                 case IN_CALL_STREAM:
 
-                    if (musicWasPlaying) {
+                    if (musicWasPlaying && false) {
                         // first pause the music
-                        Intent i = new Intent(
-                                "com.android.music.musicservicecommand");
+                        Intent i = new Intent();
+                        i.setAction("com.android.music.musicservicecommand");
                         i.putExtra("command", "pause");
                         sendBroadcast(i);
                     }
@@ -1786,6 +1798,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
     }
 
+    private void MusicCommand(int command) {
+        KeyEvent event = new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY);
+        am2.dispatchMediaKeyEvent(event);
+        Log.i(LOG_TAG, "Music resumed");
+    }
+
     public TextToSpeech.OnInitListener listenerStarted = new TextToSpeech.OnInitListener() {
         // TTS engine now running so start the message receivers
 
@@ -1809,11 +1827,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 Log.d("service", "utterance onDone numToRead = " + numToRead.get());
                 int countRemaining = numToRead.decrementAndGet();
                 if (countRemaining > 0) {
-                    Log.d("service", "still more messages to read?");
+                    Log.d(LOG_TAG, "still more messages to read?");
                     return;
                 } else {
-                    Log.d("service", "all done - abandon audio focus");
-
+                    Log.d(LOG_TAG, "all done - abandon audio focus");
+                    if (musicWasPlaying) {
+                        // now toggle pause to resume
+                        MusicCommand(1);
+                    }
                 }
 
                 switch (MessageStream) {
@@ -1882,32 +1903,24 @@ public class service extends Service implements OnAudioFocusChangeListener {
     public void onAudioFocusChange(int focusChange) {
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
-                if (musicWasPlaying) {
+/*                if (musicWasPlaying) {
                     // first pause the music
                     Intent i = new Intent(
                             "com.android.music.musicservicecommand");
                     i.putExtra("command", "pause");
                     sendBroadcast(i);
-                }
+                }*/
 
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
-
-                //pausePlayback();
-                break;
-            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                /*synchronized(mFocusLock) {
-                    mResumeOnFocusGain = true;
-                    mPlaybackDelayed = false;
-                }*/
-                //pausePlayback();
                 if (musicWasPlaying) {
                     // now toggle pause to resume
-                    Intent i = new Intent(
-                            "com.android.music.musicservicecommand");
-                    i.putExtra("command", "pause");
-                    sendBroadcast(i);
+                    MusicCommand(1);
                 }
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+
+
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                 // ... pausing or ducking depends on your app
