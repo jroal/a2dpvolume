@@ -228,11 +228,11 @@ public class NotificationCatcher extends NotificationListenerService {
 
         packagelist = preferences
                 .getString("packages",
-                        "com.google.android.ScoRegistered,com.android.email,com.android.calendar,com.google.android.apps.messaging,com.skype.raider");
+                        "com.google.android.talk,com.android.email,com.android.calendar,com.google.android.apps.messaging,com.skype.raider");
         packages = packagelist.split(",");
 
         // apps list below are handled differently based on how they post notifications
-        apps1.add("com.google.android.ScoRegistered"); // Hangouts
+        apps1.add("com.google.android.talk"); // Hangouts
         apps1.add("com.skype.raider"); // Skype
         apps1.add("com.google.android.apps.messaging"); // Google messaging app
         apps1.add("com.google.android.apps.tachyon"); // Google Duo

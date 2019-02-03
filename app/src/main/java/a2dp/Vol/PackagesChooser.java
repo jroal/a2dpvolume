@@ -59,7 +59,7 @@ public class PackagesChooser extends Activity {
         this.application = (MyApplication) this.getApplication();
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(this.application);
-        packagelist = preferences.getString("packages", "com.google.android.apps.messaging,com.google.android.ScoRegistered,com.google.android.apps.tachyon,com.android.calendar,com.skype.raider,com.google.android.calendar");
+        packagelist = preferences.getString("packages", "com.google.android.apps.messaging,com.google.android.talk,com.google.android.apps.tachyon,com.android.calendar,com.skype.raider,com.google.android.calendar");
         packages = packagelist.split(",");
         pm = getPackageManager();
         pb = findViewById(R.id.progressBar1);
