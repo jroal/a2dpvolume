@@ -25,15 +25,6 @@
             android:summaryOff="@string/PrefsToastsOFF"
             android:summaryOn="@string/PrefsToastsON"
             android:title="@string/PrefsToasts"></CheckBoxPreference>
-        <ListPreference
-            android:defaultValue="always"
-            android:dialogTitle="@string/PrefsNotify"
-            android:enabled="false"
-            android:entries="@array/PrefsNotifyOptions"
-            android:entryValues="@array/PrefsNotifyItems"
-            android:key="notify_pref"
-            android:summary="@string/PrefsNotificationSummary"
-            android:title="@string/PrefsNotifyTitle" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="useLocalStorage"

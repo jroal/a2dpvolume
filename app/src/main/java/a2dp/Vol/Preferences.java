@@ -69,9 +69,6 @@ public class Preferences extends PreferenceActivity {
         setupActionBar();
 
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-			
-		}
 	}
     private void setupActionBar() {
 

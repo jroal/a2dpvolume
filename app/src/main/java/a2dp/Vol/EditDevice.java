@@ -214,10 +214,10 @@ public class EditDevice extends Activity {
         fgloc.setChecked(device.isGetLoc());
         fsetvol.setChecked(device.isSetV());
 
-        if (android.os.Build.VERSION.SDK_INT > 27) {
+      /*  if (android.os.Build.VERSION.SDK_INT > 27) {
             fsetvol.setChecked(false);
             setVolVisibility();
-        }
+        }*/
 
         fvol.setMax(Objects.requireNonNull(am).getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         fvol.setProgress(device.defVol);
@@ -455,12 +455,16 @@ public class EditDevice extends Activity {
     }
 
     private void setVolVisibility() {
-        if (android.os.Build.VERSION.SDK_INT > 27) {
+
+        // This was created for Android 9 since this feature should be obselete but people want it anyway
+/*        if (android.os.Build.VERSION.SDK_INT > 27) {
             fsetvol.setChecked(false);
             fsetvol.setVisibility(CheckBox.GONE);
         } else {
             fsetvol.setVisibility(CheckBox.VISIBLE);
-        }
+        }*/
+
+        fsetvol.setVisibility(CheckBox.VISIBLE);
         setMediaVisibility();
     }
 
@@ -694,17 +698,17 @@ public class EditDevice extends Activity {
                     pname = "";
                     if (data != null) {
                         pname = "Intent";
-                        if (data.getAction()!= null) {
+                        if (data.getAction() != null) {
                             appaction = data.getAction();
                         } else {
                             appaction = "";
                         }
-                        if (data.getData()!= null) {
+                        if (data.getData() != null) {
                             appdata = data.getData().toString();
                         } else {
-                         appdata = "";
+                            appdata = "";
                         }
-                        if (data.getType()!= null) {
+                        if (data.getType() != null) {
                             apptype = data.getType();
                         } else {
                             apptype = "";

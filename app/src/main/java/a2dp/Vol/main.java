@@ -22,11 +22,13 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -54,10 +56,6 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.Vector;
 
-//import com.google.android.gms.appindexing.Action;
-//import com.google.android.gms.appindexing.AppIndex;
-//import com.google.android.gms.appindexing.Thing;
-//import com.google.android.gms.common.api.GoogleApiClient;
 
 public class main extends Activity {
 
@@ -87,7 +85,7 @@ public class main extends Activity {
     boolean toasts = true;
     boolean TTSignore = false;
     private String a2dpDir = "";
-    private static final String LOG_TAG = "A2DP_Volume";
+    private static final String LOG_TAG = "A2DP_Volume_main";
     private static int resourceID = android.R.layout.simple_list_item_1;
     private final int PERMISSION_READ_CONTACTS = 1;
     private final int PERMISSION_LOCATION = 2;
@@ -171,6 +169,19 @@ public class main extends Activity {
             case R.id.help: // launches help website
                 String st = "https://github.com/jroal/a2dpvolume/wiki";
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(st)));
+                return true;
+
+            case R.id.Notifications: // launch notification settings
+                Intent intent = new Intent();
+                if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
+                    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                    intent.putExtra("android.provider.extra.APP_PACKAGE", application.getPackageName());;
+                } else  {
+                    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                    intent.putExtra("app_package", application.getPackageName());
+                    intent.putExtra("app_uid", application.getApplicationInfo().uid);
+                }
+                startActivity(intent);
                 return true;
         }
         return false;
