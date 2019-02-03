@@ -6,11 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.text.MessageFormat;
-import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -25,14 +22,12 @@ import android.bluetooth.IBluetoothA2dp;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.LocationManager;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
@@ -47,13 +42,10 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract.PhoneLookup;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
-import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -87,7 +79,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private static Integer Oldsilent;
     public static Integer connects = 0;
     public static boolean run = false;
-    public static boolean talk = false;
+    //public boolean talk = false; // not used
     private static int mvolsLeft = 0;
     private static int pvolsLeft = 0;
     private static String notify_pref = "always";
@@ -103,7 +95,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private boolean headsetPlug = false;
     private boolean power = false;
     private boolean enableGTalk = false;
-    private boolean enableSMS = false;
+    //private boolean enableSMS = false;  // not used
     private static boolean ramp_vol = false;
     HashMap<String, String> myHash;
     private boolean toasts = true;
@@ -111,17 +103,18 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private static boolean hideVolUi = false;
     private NotificationManager mNotificationManager = null;
     private NotificationManagerCompat notificationManagerCompat = null;
-    private boolean speakerPhoneWasOn = true;
+    //private boolean speakerPhoneWasOn = true; // not used
     private boolean musicWasPlaying = false;
     private boolean bluetoothWasOff = false;
     private boolean clearedTts = true;
     private static final String FIX_STREAM = "fix_stream";
-    AudioFocusRequest afr;
-    private String LastMessage;
+    private AudioFocusRequest afr;
+    //private String LastMessage;
 
-    boolean oldwifistate = true;
-    boolean oldgpsstate = true;
-    boolean tmessageRegistered = false; // tracks state of the message reader receiver
+    private boolean oldwifistate = true;
+    //private boolean oldgpsstate = true; // not used
+    private boolean tmessageRegistered = false; // tracks state of the message reader receiver
+    private  boolean scoChangeRegistered = false;
     WifiManager wifiManager;
     LocationManager locmanager;
     String a2dpDir = "";
@@ -139,14 +132,14 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private PackageManager mPackageManager;
     public static final String PREFS_NAME = "btVol";
     private int MAX_MESSAGE_LENGTH = 350;
-    float MAX_ACC = 10; // worst acceptable location in meters
-    long MAX_TIME = 20000; // gps listener timout time in milliseconds and
+    //private float MAX_ACC = 10; // worst acceptable location in meters    // not used
+    // private long MAX_TIME = 20000; // gps listener timout time in milliseconds and // not used
     private long SMS_delay = 3000; // delay before reading SMS
     private int SMSstream = 0;
     private long vol_delay = 5000; // delay time between the device connection
     // and the volume adjustment
 
-    SharedPreferences preferences;
+    private SharedPreferences preferences;
     private static MyApplication application;
 
     private volatile boolean connecting = false;
@@ -154,12 +147,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private int connectedIcon;
     private TelephonyManager tm; // Context.getSystemService(Context.TELEPHONY_SERVICE);
 
+    // not used
     // permissions status flags
-    Boolean permReadContacts = true;
-    Boolean permLocation = true;
-    Boolean permPhone = true;
-    Boolean permSMS = true;
-    Boolean permStorage = true;
+//    Boolean permReadContacts = true;
+//    Boolean permLocation = true;
+//    Boolean permPhone = true;
+//    Boolean permSMS = true;
+//    Boolean permStorage = true;
 
 
     /*
@@ -178,7 +172,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     @Override
     public void onCreate() {
 
-        service.application = (MyApplication) this.getApplication();
+        application = (MyApplication) this.getApplication();
 /*
         if ((channel_b == null)||(channel_f == null)) {
             createNotificationChannel();
@@ -197,16 +191,16 @@ public class service extends Service implements OnAudioFocusChangeListener {
             power = preferences.getBoolean("power", false);
             toasts = preferences.getBoolean("toasts", true);
             // notify = preferences.getBoolean("notify1", true);
-            enableSMS = preferences.getBoolean("enableTTS", false);
+            //enableSMS = preferences.getBoolean("enableTTS", false);
             enableGTalk = preferences.getBoolean("enableGTalk", true);
             notify_pref = preferences.getString("notify_pref", "always");
             hideVolUi = preferences.getBoolean("hideVolUi", false);
             // Long yyy = new Long(preferences.getString("gpsTime", "15000"));
-            MAX_TIME = Long.valueOf(preferences.getString("gpsTime", "15000"));
+            //MAX_TIME = Long.valueOf(preferences.getString("gpsTime", "15000"));
 
             // Float xxx = new Float(preferences.getString("gpsDistance",
             // "10"));
-            MAX_ACC = Float.valueOf(preferences.getString("gpsDistance", "10"));
+            // MAX_ACC = Float.valueOf(preferences.getString("gpsDistance", "10"));
 
             local = preferences.getBoolean("useLocalStorage", false);
             if (local)
@@ -220,8 +214,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
             Oldsilent = preferences.getInt("oldsilent", 10);
 
         } catch (NumberFormatException e) {
-            MAX_ACC = 10;
-            MAX_TIME = 15000;
+            //MAX_ACC = 10;
+            //MAX_TIME = 15000;
             Toast.makeText(this, "prefs failed to load ", Toast.LENGTH_LONG)
                     .show();
             e.printStackTrace();
@@ -370,8 +364,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     mTtsReady = false;
                     //unregisterReceiver(SMScatcher);
 
-                    unregisterReceiver(sco_change);
-                    unregisterReceiver(tmessage);
                     // if (enableGTalk)
                     // stopTalk();
                 } catch (Exception e) {
@@ -383,6 +375,16 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if (scoChangeRegistered) {
+            unregisterReceiver(sco_change);
+            scoChangeRegistered = false;
+        }
+
+        if (tmessageRegistered) {
+            unregisterReceiver(tmessage);
+            tmessageRegistered = false;
         }
 
         // Tell the world we are not running
@@ -619,8 +621,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
             getOldvol();
             getOldPvol();
             oldwifistate = wifiManager.isWifiEnabled();
-            oldgpsstate = locmanager
-                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+//            oldgpsstate = locmanager
+//                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
         }
 
         connectedIcon = checkIcon(bt2.getIcon());
@@ -662,16 +664,20 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 runApp(bt2);
         }
 
-
         if (enableGTalk && bt2.isEnableTTS()) {
             mTts = new TextToSpeech(application, listenerStarted);
             IntentFilter messageFilter = new IntentFilter(
                     "a2dp.vol.service.MESSAGE");
-            application.registerReceiver(tmessage, messageFilter);
-            tmessageRegistered = true;
+            if (!tmessageRegistered) {
+                registerReceiver(tmessage, messageFilter);
+                tmessageRegistered = true;
+            }
             IntentFilter sco_filter = new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED);
-            this.registerReceiver(sco_change, sco_filter);
-            talk = true;
+            if (!scoChangeRegistered) {
+                registerReceiver(sco_change, sco_filter);
+                scoChangeRegistered = true;
+            }
+            //talk = true;
         }
 /*        if (bt2.isEnableTTS() && enableSMS) {
             application.registerReceiver(SMScatcher, new IntentFilter(
@@ -988,13 +994,17 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 if (!clearedTts) {
                     clearTts();
                 }
+
                 if (mTts != null) {
                     mTts.shutdown();
                 }
                 mTtsReady = false;
-                if (enableGTalk && sco_change != null) {
-                    unregisterReceiver(sco_change);
-                    talk = false;
+                if (enableGTalk) {
+                    if (scoChangeRegistered) {
+                        unregisterReceiver(sco_change);
+                        scoChangeRegistered = false;
+                    }
+                    //talk = false;
                 }
 //                if (enableSMS) application.unregisterReceiver(SMScatcher);
 
@@ -1010,13 +1020,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
 
         if (tmessageRegistered) {
-            try {
-                application.unregisterReceiver(tmessage);
-
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            unregisterReceiver(tmessage);
             tmessageRegistered = false;
         }
 
@@ -1612,6 +1616,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
             mgood = true;
         }
 
+        // hopefully not needed any longer since this was a workaround for messages being read twice :)
+        /*
         if (LastMessage == null || LastMessage.isEmpty()) {
             LastMessage = rawinput;
         } else {
@@ -1621,6 +1627,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             }
             LastMessage = rawinput;
         }
+        */
 
         if (mTtsReady && !repeat && mgood) {
             myHash = new HashMap<>();
@@ -1798,14 +1805,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
             if (A2DP_Vol.equalsIgnoreCase(uttId)) {
                 // unmute the stream
 
-                Log.d("service", "utternace onDone numToRead = " + numToRead.get());
+                Log.d("service", "utterance onDone numToRead = " + numToRead.get());
                 int countRemaining = numToRead.decrementAndGet();
                 if (countRemaining > 0) {
                     Log.d("service", "still more messages to read?");
                     return;
                 } else {
                     Log.d("service", "all done - abandon audio focus");
-
                 }
 
                 switch (SMSstream) {
