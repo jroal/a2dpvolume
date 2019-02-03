@@ -331,8 +331,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
             IntentFilter filter7 = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
             this.registerReceiver(headSetReceiver, filter7);
         }
-        this.registerReceiver(mReceiver, filter);
-        this.registerReceiver(mReceiver2, filter2);
+        application.registerReceiver(mReceiver, filter);
+        application.registerReceiver(mReceiver2, filter2);
 
     }
 
@@ -346,12 +346,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
         stopService(new Intent(application, StoreLoc.class));
         // close the database
         try {
-            this.unregisterReceiver(mReceiver);
-            this.unregisterReceiver(mReceiver2);
-            this.unregisterReceiver(btOFFReciever);
-            this.unregisterReceiver(runUpdate);
+            application.unregisterReceiver(mReceiver);
+            application.unregisterReceiver(mReceiver2);
+            application.unregisterReceiver(btOFFReciever);
+            application.unregisterReceiver(runUpdate);
             if (headsetPlug)
-                this.unregisterReceiver(headSetReceiver);
+                application.unregisterReceiver(headSetReceiver);
 
             if (mTtsReady) {
                 try {
@@ -363,12 +363,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     mTtsReady = false;
 
                     if (ScoRegistered) {
-                        unregisterReceiver(sco_change);
+                        application.unregisterReceiver(sco_change);
                         ScoRegistered = false;
                     }
 
                     if (tmessageRegistered) {
-                        unregisterReceiver(tmessage);
+                        application.unregisterReceiver(tmessage);
                         tmessageRegistered = false;
                     }
 
@@ -377,7 +377,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 }
             }
             DB.getDb().close();
-            this.unregisterReceiver(messageClear);
+            application.unregisterReceiver(messageClear);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -998,7 +998,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             //mTtsReady = false;
             if (ScoRegistered && sco_change != null) {
                 try {
-                    unregisterReceiver(sco_change);
+                    application.unregisterReceiver(sco_change);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
