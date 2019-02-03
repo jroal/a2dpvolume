@@ -294,13 +294,13 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         IntentFilter btNotEnabled = new IntentFilter(
                 android.bluetooth.BluetoothAdapter.ACTION_STATE_CHANGED);
-        this.registerReceiver(btOFFReciever, btNotEnabled);
+        application.registerReceiver(btOFFReciever, btNotEnabled);
 
         IntentFilter clearMessage = new IntentFilter("a2dp.vol.service.CLEAR");
-        this.registerReceiver(messageClear, clearMessage);
+        application.registerReceiver(messageClear, clearMessage);
 
         IntentFilter updateNotification = new IntentFilter("a2dp.vol.service.NOTIFY");
-        this.registerReceiver(runUpdate, updateNotification);
+        application.registerReceiver(runUpdate, updateNotification);
 
         if (carMode) {
             // Create listener for when car mode disconnects
@@ -329,7 +329,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if (headsetPlug) {
             // create listener for headset plug
             IntentFilter filter7 = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-            this.registerReceiver(headSetReceiver, filter7);
+            application.registerReceiver(headSetReceiver, filter7);
         }
         application.registerReceiver(mReceiver, filter);
         application.registerReceiver(mReceiver2, filter2);
@@ -1402,8 +1402,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
 
         // add exta for referrer used for apps like Spotify
-        i.putExtra(Intent.EXTRA_REFERRER,
-                Uri.parse("android-app://" + application.getPackageName()));
+        try {
+            i.putExtra(Intent.EXTRA_REFERRER,
+                    Uri.parse("android-app://" + application.getPackageName()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             startActivity(i);
