@@ -350,9 +350,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
             application.unregisterReceiver(mReceiver2);
             application.unregisterReceiver(btOFFReciever);
             application.unregisterReceiver(runUpdate);
-            if (headsetPlug)
+            if (headsetPlug) {
                 application.unregisterReceiver(headSetReceiver);
-
+                headsetPlug = false;
+            }
             if (mTtsReady) {
                 try {
                     if (!clearedTts) {
@@ -1020,7 +1021,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
 
         if (bt2.isSilent())
-            am2.setStreamVolume(AudioManager.STREAM_NOTIFICATION, Oldsilent, 0);
+            try {
+                am2.setStreamVolume(AudioManager.STREAM_NOTIFICATION, Oldsilent, 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         if (bt2.getBdevice() != null && bt2.getBdevice().length() == 17) {
             BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
