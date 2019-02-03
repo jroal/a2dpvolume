@@ -94,7 +94,7 @@ image:http://jimroal.com/A2DPScreens/EditDevice.png["Edit Device",height=500,flo
 Click link:../../wiki/ScreenShots[here]
 for more screen shots.
 
-Click http://www.youtube.com/watch?v=3sy_pCbJHA0&list=PL8B87E2415E38D95E&feature=plpp_play_all[here] for the video.
+Click https://www.youtube.com/playlist?list=PL8B87E2415E38D95E[here] for the video.
 
 
 You can find the app on the Google Play Store 
