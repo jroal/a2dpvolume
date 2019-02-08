@@ -175,8 +175,9 @@ public class main extends Activity {
                 Intent intent = new Intent();
                 if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
                     intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                    intent.putExtra("android.provider.extra.APP_PACKAGE", application.getPackageName());;
-                } else  {
+                    intent.putExtra("android.provider.extra.APP_PACKAGE", application.getPackageName());
+                    ;
+                } else {
                     intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
                     intent.putExtra("app_package", application.getPackageName());
                     intent.putExtra("app_uid", application.getApplicationInfo().uid);
@@ -211,10 +212,10 @@ public class main extends Activity {
         // get "Application" object for shared state or creating of expensive
         // resources - like DataHelper
         // (this is not recreated as often as each Activity)
-        this.application = (MyApplication) this.getApplication();
+        application = (MyApplication) this.getApplication();
 
         preferences = PreferenceManager
-                .getDefaultSharedPreferences(this.application);
+                .getDefaultSharedPreferences(application);
 
         try {
             boolean local = preferences.getBoolean("useLocalStorage", false);
@@ -251,7 +252,7 @@ public class main extends Activity {
         // state
         IntentFilter filter3 = new IntentFilter("a2dp.vol.service.RUNNING");
         try {
-            this.registerReceiver(sRunning, filter3);
+            application.registerReceiver(sRunning, filter3);
         } catch (Exception e2) {
             // TODO Auto-generated catch block
             e2.printStackTrace();
@@ -260,7 +261,7 @@ public class main extends Activity {
         IntentFilter filter4 = new IntentFilter(
                 "a2dp.vol.service.STOPPED_RUNNING");
         try {
-            this.registerReceiver(sRunning, filter4);
+            application.registerReceiver(sRunning, filter4);
         } catch (Exception e2) {
             // TODO Auto-generated catch block
             e2.printStackTrace();
@@ -269,10 +270,10 @@ public class main extends Activity {
         // this reciever is used to tell this main activity about devices
         // connecting and disconnecting.
         IntentFilter filter5 = new IntentFilter("a2dp.Vol.main.RELOAD_LIST");
-        this.registerReceiver(mReceiver5, filter5);
+        application.registerReceiver(mReceiver5, filter5);
 
         IntentFilter filter6 = new IntentFilter("a2dp.vol.preferences.UPDATED");
-        this.registerReceiver(mReceiver6, filter6);
+        application.registerReceiver(mReceiver6, filter6);
 
         lstring = new String[]{res.getString(R.string.NoData)};
 
@@ -312,8 +313,7 @@ public class main extends Activity {
             }
 
             startService(new Intent(a2dp.Vol.main.this, NotificationCatcher.class));
-//			Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-//			startActivity(intent);
+
         }
 
         this.ladapt = new ArrayAdapter<>(application, resourceID, lstring);
@@ -575,13 +575,9 @@ public class main extends Activity {
     private int permission_scan() {
 
         int ret = 0;
-//        if (!preferences.getBoolean("ReadContactsPermission", false)) ret = 1;
-
         if (!preferences.getBoolean("LocationPermission", false)) ret = 2;
 
         if (!preferences.getBoolean("PhonePermission", false)) ret = 3;
-
-//        if (!preferences.getBoolean("SMSPermission", false)) ret = 4;
 
         if (!preferences.getBoolean("StoragePermission", false)) ret = 5;
 
@@ -593,33 +589,6 @@ public class main extends Activity {
         // Check permissions
 
         switch (perm) {
- /*           case PERMISSION_READ_CONTACTS:
-                if (ContextCompat.checkSelfPermission(application,
-                        Manifest.permission.READ_CONTACTS)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-                    // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                            Manifest.permission.READ_CONTACTS)) {
-                        askPermission(R.string.askContacts, PERMISSION_READ_CONTACTS, Manifest.permission.READ_CONTACTS);
-                        // Show an explanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
-
-                    } else {
-
-                        // No explanation needed, we can request the permission.
-
-                        ActivityCompat.requestPermissions(this,
-                                new String[]{Manifest.permission.READ_CONTACTS},
-                                PERMISSION_READ_CONTACTS);
-
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
-                    }
-                }
-                break;*/
 
             case PERMISSION_LOCATION:
                 if (ContextCompat.checkSelfPermission(application,
@@ -642,40 +611,9 @@ public class main extends Activity {
                                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                 PERMISSION_LOCATION);
 
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
                     }
                 }
                 break;
-
- /*           case PERMISSION_SMS:
-                if (ContextCompat.checkSelfPermission(application,
-                        Manifest.permission.RECEIVE_SMS)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-                    // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                            Manifest.permission.RECEIVE_SMS)) {
-                        askPermission(R.string.askSms, PERMISSION_SMS, Manifest.permission.RECEIVE_SMS);
-                        // Show an explanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
-
-                    } else {
-
-                        // No explanation needed, we can request the permission.
-
-                        ActivityCompat.requestPermissions(this,
-                                new String[]{Manifest.permission.RECEIVE_SMS},
-                                PERMISSION_SMS);
-
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
-                    }
-                }
-                break;*/
 
             case PERMISSION_PHONE:
                 if (ContextCompat.checkSelfPermission(application,
@@ -699,9 +637,6 @@ public class main extends Activity {
                                 new String[]{Manifest.permission.READ_PHONE_STATE},
                                 PERMISSION_PHONE);
 
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
                     }
                 }
                 break;
@@ -727,9 +662,6 @@ public class main extends Activity {
                                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                 PERMISSION_STORAGE);
 
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
                     }
                 }
                 break;
@@ -756,25 +688,7 @@ public class main extends Activity {
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
- /*           case PERMISSION_READ_CONTACTS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("ReadContactsPermission", true);
-                editor.apply();
-
-                break;
-            }*/
             case PERMISSION_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
@@ -813,25 +727,7 @@ public class main extends Activity {
 
                 break;
             }
- /*           case PERMISSION_SMS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("SMSPermission", true);
-                editor.apply();
-
-                break;
-            }*/
             case PERMISSION_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
@@ -883,9 +779,9 @@ public class main extends Activity {
     @Override
     protected void onDestroy() {
         try {
-            this.unregisterReceiver(sRunning);
-            this.unregisterReceiver(mReceiver5);
-            this.unregisterReceiver(mReceiver6);
+            application.unregisterReceiver(sRunning);
+            application.unregisterReceiver(mReceiver5);
+            application.unregisterReceiver(mReceiver6);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1032,6 +928,7 @@ public class main extends Activity {
             if (fbt2.mac == null) {
                 fbt.setGetLoc(false);
                 fbt.setIcon(R.drawable.jack);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) fbt.setSetV(false);
                 a2dp.Vol.main.this.myDB.insert(fbt);
                 vec.add(fbt);
             } else
@@ -1114,8 +1011,11 @@ public class main extends Activity {
                                 device,
                                 name,
                                 am.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-
-                        bt.setSetV(true);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            bt.setSetV(false);
+                        } else {
+                            bt.setSetV(true);
+                        }
 
                         btDevice bt2 = myDB.getBTD(bt.mac);
 

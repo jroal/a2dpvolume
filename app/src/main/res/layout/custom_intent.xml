@@ -8,7 +8,7 @@
 
 	<LinearLayout
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="48dp"
 		android:orientation="horizontal">
 
 		<TextView
@@ -35,7 +35,7 @@
 
 	<LinearLayout
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="48dp"
 		android:orientation="horizontal">
 
 		<TextView
@@ -61,7 +61,7 @@
 
 	<LinearLayout
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="48dp"
 		android:orientation="horizontal">
 
 		<TextView
@@ -87,28 +87,28 @@
 
 	<LinearLayout
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="85dp"
 		android:gravity="center|fill_vertical"
 		android:orientation="horizontal">
 
 		<Button
 			android:id="@+id/ci_btn_ok"
 			android:layout_width="100dip"
-			android:layout_height="wrap_content"
+			android:layout_height="48dp"
 			android:layout_margin="5dip"
 			android:text="@string/OK"></Button>
 
 		<Button
 			android:id="@+id/ci_btn_test"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_height="48dp"
 			android:layout_margin="5dip"
 			android:text="Test"></Button>
 
 		<Button
 			android:id="@+id/ci_btn_cancel"
 			android:layout_width="100dip"
-			android:layout_height="wrap_content"
+			android:layout_height="48dp"
 			android:layout_margin="5dip"
 			android:text="Cancel"></Button>
 	</LinearLayout>

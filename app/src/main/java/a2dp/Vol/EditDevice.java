@@ -681,18 +681,12 @@ public class EditDevice extends Activity {
                     pname = data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME);
                     vUpdateApp();
                     break;
-                /*
-                 * case ACTION_INPUT_LABEL: mAppItem.set(AppItem.KEY_LABEL,
-                 * data.getStringExtra(StringInputDialog.EXTRA_VALUE));
-                 * vUpdateLabel(); break;
-                 */
+
                 case ACTION_CHOOSE_APP_CUSTOM:
                     pname = data.getStringExtra(AppChooser.EXTRA_PACKAGE_NAME);
                     vUpdateApp();
                     break;
-                case ACTION_CHOOSE_FROM_PROVIDER:
-                    processShortcut(data);
-                    break;
+
                 case ACTION_CUSTOM_INTENT:
 
                     pname = "";
@@ -717,20 +711,7 @@ public class EditDevice extends Activity {
                         break;
                     }
 
-/*                    appaction = data.getStringExtra("alarm_custom_action");
-                    appdata = data.getStringExtra("alarm_custom_data");
-                    apptype = data.getStringExtra("alarm_custom_type");*/
 
-/*                    if (appdata.length() > 3) {
-                        try {
-                            pname = Intent.getIntent(pname).getComponent()
-                                    .getPackageName();
-
-                        } catch (URISyntaxException e) {
-                            pname = "custom";
-                            e.printStackTrace();
-                        }
-                    }*/
                     if (pname.equals("")) {
                         pname = "Intent";
                     }
@@ -740,23 +721,13 @@ public class EditDevice extends Activity {
                 case ACTION_CREATE_HOME_SCREEN_SHORTCUT:
                     startActivityForResult(data, FETCH_HOME_SCREEN_SHORTCUT);
                     break;
-                case FETCH_HOME_SCREEN_SHORTCUT:
-                    processShortcut(data);
-                    if (pname.length() < 3 || pname.equalsIgnoreCase("Custom"))
-                        showDialog(DIALOG_WARN_STOP_APP);
-                    break;
+
             }
 
         } else {
 
         }
-
         super.onActivityResult(requestCode, resultCode, data);
-
-        /*
-         * if(resultCode == RESULT_OK){
-         * fapp.setText(data.getStringExtra("package_name")); }
-         */
     }
 
     private DialogInterface.OnClickListener mAppTypeDialogOnClick = new DialogInterface.OnClickListener() {
@@ -777,20 +748,6 @@ public class EditDevice extends Activity {
                     i.putExtra(Intent.EXTRA_TITLE, "Create a Shortcut");
                     startActivityForResult(i, ACTION_CREATE_HOME_SCREEN_SHORTCUT);
                     break;
-/*                case 2:
-                    // Home Screen Shortcut
-                    i = new Intent(getBaseContext(), ProviderList.class);
-                    i.putExtra(ProviderList.EXTRA_PROVIDER,
-                            ProviderList.PROVIDER_HOMESCREEN);
-                    startActivityForResult(i, ACTION_CHOOSE_FROM_PROVIDER);
-                    break;*/
-               /* case 2:
-                    // Pandora Station
-                    i = new Intent(getBaseContext(), ProviderList.class);
-                    i.putExtra(ProviderList.EXTRA_PROVIDER,
-                            ProviderList.PROVIDER_PANDORA);
-                    startActivityForResult(i, ACTION_CHOOSE_FROM_PROVIDER);
-                    break;*/
 
                 case 2:
                     // Custom Intent
@@ -837,35 +794,6 @@ public class EditDevice extends Activity {
         setAppVisibility();
     }
 
-    /*
-     * private void checkCustomAppPackage() { if
-     * ((mAppItem.getBool(AppItem.KEY_FORCE_RESTART)) &&
-     * mAppItem.isCustomIntent()) { showDialog(DIALOG_WARN_STOP_APP); } }
-     */
-
-    private void processShortcut(Intent data) {
-        Intent i = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT);
-        appdata = getIntentUri(i);
-        if (data.hasExtra(ProviderList.EXTRA_PACKAGE_NAME)) {
-            pname = data.getStringExtra(ProviderList.EXTRA_PACKAGE_NAME);
-        } else {
-            try {
-                pname = Objects.requireNonNull(i.getComponent()).getPackageName();
-            } catch (Exception e) {
-                pname = "";
-                e.printStackTrace();
-            }
-
-        }
-
-        if (pname.length() < 3) {
-            pname = "custom";
-        }
-        appaction = data.getStringExtra(Intent.EXTRA_SHORTCUT_NAME);
-        apptype = "";
-        vUpdateApp();
-    }
-
     public static String getIntentUri(Intent i) {
         String rtr = "";
         try {
@@ -879,51 +807,6 @@ public class EditDevice extends Activity {
         return rtr;
     }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-
-            case DIALOG_PICK_APP_TYPE:
-                AlertDialog.Builder adb2 = new AlertDialog.Builder(this);
-                adb2.setTitle(R.string.ea_ti_app);
-                adb2.setItems(APP_TYPE_OPTIONS, mAppTypeDialogOnClick);
-                return adb2.create();
-
-            case DIALOG_BITLY:
-                ProgressDialog pd = new ProgressDialog(this);
-                pd.setIndeterminate(true);
-                pd.setMessage("Shortenting Url with Bit.ly...");
-                pd.setCancelable(false);
-                return pd;
-            case DIALOG_WARN_STOP_APP:
-                AlertDialog.Builder adb4 = new AlertDialog.Builder(this);
-                adb4.setTitle(R.string.ae_stop_app_warning_title);
-                adb4.setMessage(R.string.ae_stop_app_warning_message);
-                adb4.setCancelable(false);
-                adb4.setPositiveButton("Select App",
-                        new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent i = new Intent(getBaseContext(),
-                                        AppChooser.class);
-                                startActivityForResult(i, ACTION_ADD_PACKAGE);
-                            }
-
-                        });
-                adb4.setNegativeButton("Ignore",
-                        new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-
-                        });
-                return adb4.create();
-
-        }
-
-        return super.onCreateDialog(id);
-    }
 
     // save the current btd value (mac) in case this activity gets killed while in background
     @Override

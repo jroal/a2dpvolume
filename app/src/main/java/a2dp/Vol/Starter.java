@@ -14,6 +14,7 @@ public class Starter extends BroadcastReceiver {
     SharedPreferences preferences;
 
     public static final String PREFS_NAME = "a2dp.Vol_preferences";
+    //private MyApplication application;
 
     @Override
     public void onReceive(Context context, Intent arg1) {

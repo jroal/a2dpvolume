@@ -134,7 +134,11 @@ public class NotificationCatcher extends NotificationListenerService {
 
                     if (element.getNot().equals(pack)) {
                         if ((element.getNottime() + 1000) < when) {
-                            notList.set(notList.indexOf(element), item);  // if the package sent a new notification update the last time
+                            try {
+                                notList.set(notList.indexOf(element), item);  // if the package sent a new notification update the last time
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         } else {
                             return null; // if this is not new, exit here to stop repeating notifications
                         }

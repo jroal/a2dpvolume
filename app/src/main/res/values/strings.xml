@@ -113,9 +113,9 @@
     <string name="PrefsHeadsetON">Respond to Audio Jack</string>
     <string name="PrefsHeadset">Respond to Audio Jack?</string>
     <string name="PrefsHeadsetOFF">Do not respond to Audio Jack</string>
-    <string name="PrefsTTSON">Text messages can be read when device is connected</string>
-    <string name="PrefsTTS">Enable Reading Text Messages?</string>
-    <string name="PrefsTTSOFF">Text messages will not be read</string>
+    <string name="PrefsTTSON">Notification messages can be read when device is connected</string>
+    <string name="PrefsTTS">Enable Reading Notification Messages?</string>
+    <string name="PrefsTTSOFF">Notification messages will not be read</string>
     <string name="audioJackName">Audio Jack</string>
     <string name="needTTS">TTS data missing.  Install it now?</string>
     <string name="msgTemplate">… Message From: {0} .. {1}</string>
@@ -131,7 +131,7 @@
     <string name="NotBonded">Not Bonded</string>
     <string name="Bonding">Bonding</string>
     <string name="Class">Class</string>
-    <string name="SMS_Stream_desc">Select a path for the text message sound to travel</string>
+    <string name="SMS_Stream_desc">Select a path for the message sound to travel</string>
     <string name="PrefsVolAdjDelaySummary">Delay between the device connection and the volume adjusting up.</string>
     <string name="PrefsVolRampTitle">Ramp volume up?</string>
     <string name="app_kill">Stop app on disconnect?</string>

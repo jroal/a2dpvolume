@@ -28,7 +28,7 @@ public class btDevice {
     public String apptype; // app type string
     public boolean apprestart; // app restart flag
     public boolean appkill; // kill app on disconnect flag
-    public boolean enablegps; // enable GPS while connected
+    public boolean enablegps; // enable GPS while connected - obselete this no longer works
     public boolean setpv; // whether to adjust phone volume or not
     public int phonev; // what to adjust phone volume to
     public int icon; // icon to show when connected
