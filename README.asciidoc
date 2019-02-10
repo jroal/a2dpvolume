@@ -80,7 +80,7 @@ No warranties or liabilities expressed or implied.  This is a free open source p
 
 There are clones being sold on the Play Store.  At least one of these is charging for an older version.  Avoid these scams!
 
-If you would like to become a alpha/beta tester please join this https://plus.google.com/u/0/communities/110152746998730594422[group].
+If you would like to become a alpha/beta tester please join this https://play.google.com/apps/testing/a2dp.Vol[group].
 
 Use a bar code scanner in your Android device to scan the image below.  This will find the application on the Android Market for you.
 
