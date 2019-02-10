@@ -141,7 +141,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     private int MAX_MESSAGE_LENGTH = 350;
     float MAX_ACC = 10; // worst acceptable location in meters
     long MAX_TIME = 20000; // gps listener timout time in milliseconds and
-    private long SMS_delay = 3000; // delay before reading SMS
+    private long Message_delay = 3000; // delay before reading SMS
     private int MessageStream = 0;
     private long vol_delay = 5000; // delay time between the device connection
     // and the volume adjustment
@@ -779,7 +779,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         connectedIcon = checkIcon(bt2.getIcon());
         MessageStream = bt2.getSmsstream();
         vol_delay = bt2.getVoldelay() * 1000;
-        SMS_delay = bt2.getSmsdelay() * 1000;
+        Message_delay = bt2.getSmsdelay() * 1000;
         ramp_vol = bt2.isVolramp();
 
         if (bt2.wifi) {
@@ -1314,7 +1314,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 e.printStackTrace();
             }
         }
-        Log.i(LOG_TAG, "Volume adjusted to " + inputVol);
+        Log.i(LOG_TAG, "Media volume adjusted to " + inputVol);
     }
 
     // captures the media volume so it can be later restored
@@ -1367,7 +1367,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             }
         }
         outVol = am2.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
-        Log.i(LOG_TAG, "Phone Volume set to " + outVol);
+        Log.i(LOG_TAG, "Phone volume set to " + outVol);
         return outVol;
     }
 
@@ -1597,6 +1597,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     Uri.parse("android-app://" + application.getPackageName()));
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e(LOG_TAG, "Cannot add app referrer extra to intent " + e.getLocalizedMessage());
         }
 
         try {
@@ -1655,7 +1656,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if (context.bindService(i, mConnection, Context.BIND_AUTO_CREATE)) {
             //Toast.makeText(context, "started service connection", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context, "start service connection failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Bluetooth start service connection failed", Toast.LENGTH_SHORT).show();
             Log.e(LOG_TAG, "Could not bind to Bluetooth A2DP Service");
         }
 
@@ -1752,7 +1753,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             mgood = true;
         }
 
-        // created to eliminate double reading same message but may no longer be needed
+        // created to eliminate double reading same message
         if (LastMessage == null || LastMessage.isEmpty()) {
             LastMessage = rawinput;
         } else {
@@ -1766,7 +1767,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if (mTtsReady && !repeat && mgood) {
             myHash = new HashMap<>();
 
-            String input = rawinput.replaceAll("http.*? ", ", URL, ");
+            // so the reader explains its a URL rather than spelling out http://
+            String input = rawinput.replaceAll("http://", ", URL, ");
 
             myHash.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, A2DP_Vol);
 
@@ -1858,7 +1860,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
             if (tm.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
 
-                new CountDownTimer(SMS_delay, SMS_delay / 2) {
+                new CountDownTimer(Message_delay, Message_delay / 2) {
 
                     @Override
                     public void onFinish() {
@@ -1897,6 +1899,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
         am2.dispatchMediaKeyEvent(downevent);
         KeyEvent upevent = new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY);
         am2.dispatchMediaKeyEvent(upevent);
+        // play in the case where the above does not work
+        Intent i = new Intent("com.android.music.musicservicecommand");
+        i.putExtra("command", "play");
+        sendBroadcast(i);
         Log.i(LOG_TAG, "Music resumed");
     }
 
@@ -1928,10 +1934,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                     return;
                 } else {
                     Log.i(LOG_TAG, "all done - abandon audio focus");
-                    if (musicWasPlaying) {
-                        // now toggle pause to resume
-                        MusicCommand(1);
-                    }
+
                 }
 
                 switch (MessageStream) {
@@ -1945,7 +1948,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
                             clearTts();
                         }
                         result = am2.abandonAudioFocus(service.this);
-
+                        if (musicWasPlaying) {
+                            // now toggle pause to resume
+                            MusicCommand(1);
+                        }
                         break;
                     case MUSIC_STREAM:
                         result = am2.abandonAudioFocus(service.this);
@@ -2003,7 +2009,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
-                if (musicWasPlaying) {
+                if (musicWasPlaying && MessageStream == IN_CALL_STREAM) {
                     // now toggle pause to resume
                     MusicCommand(1);
                 }
@@ -2014,6 +2020,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                 // ... pausing or ducking depends on your app
+                if (musicWasPlaying && MessageStream == IN_CALL_STREAM) {
+                    // now toggle pause to resume
+                    MusicCommand(1);
+                }
                 break;
         }
     }
@@ -2071,10 +2081,10 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                 am2.setMode(AudioManager.MODE_NORMAL);
 
-                if (musicWasPlaying) {
+/*                if (musicWasPlaying) {
                     MusicCommand(1);
 
-                }
+                }*/
                 clearedTts = true;
             }
         }

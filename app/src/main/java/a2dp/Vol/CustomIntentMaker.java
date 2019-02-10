@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 public class CustomIntentMaker extends Activity {
 
+    private static final String LOG_TAG = "Custom Intent maker" ;
     private EditText mEtAction, mEtData, mEtType;
     private Button mBtnOk, mBtnCancel, mBtnTest;
     private String mAction, mData, mType;
@@ -113,25 +115,6 @@ public class CustomIntentMaker extends Activity {
                 }
             }
 
-            // add extra for referrer used for apps like Spotify
-            i.putExtra(Intent.EXTRA_REFERRER,
-                    Uri.parse("android-app://" + application.getPackageName()));
-
-/*			if (Intent.ACTION_CALL.equals(i.getAction())) {
-				AudioManager am = (AudioManager)getBaseContext().getSystemService(AUDIO_SERVICE);
-				Objects.requireNonNull(am).setMode(AudioManager.MODE_IN_CALL);
-				am.setSpeakerphoneOn(true);
-				am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL), AudioManager.FLAG_SHOW_UI);
-
-				
-			}*/
-
-            //TEST CODE
-//			i = new Intent(Intent.ACTION_VIEW);
-//			i.setData(Uri.parse("http://woxy.lala.com/stream/vintage-mpg64.pls"));
-//			i.setComponent(new ComponentName("com.streamfurious.android.pro", "com.streamfurious.android.activities.PlayerActivity"));
-//			i.putExtra(mEtAction.getText().toString(), true);
-//			mEtData.setText(i.toUri(Intent.URI_INTENT_SCHEME));
 
             // Verify that the intent will resolve to an activity
             if (i.resolveActivity(getPackageManager()) != null) {

@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	tools:orientation="vertical"
-	android:orientation="vertical">
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:orientation="vertical">
 
 	<LinearLayout
 		android:layout_width="fill_parent"
-		android:layout_height="48dp"
+		android:layout_height="100dp"
 		android:orientation="horizontal">
 
 		<TextView
@@ -21,21 +21,17 @@
 
 		<EditText
 			android:id="@+id/ci_et_action"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_height="100dp"
 			android:layout_weight="1"
+			android:inputType="textMultiLine"
 			android:maxLines="3"
 			android:singleLine="false"></EditText>
 	</LinearLayout>
 
-	<View
-		android:layout_width="fill_parent"
-		android:layout_height="1dip"
-		android:background="@android:drawable/divider_horizontal_dark"></View>
-
 	<LinearLayout
 		android:layout_width="fill_parent"
-		android:layout_height="48dp"
+		android:layout_height="100dp"
 		android:orientation="horizontal">
 
 		<TextView
@@ -48,20 +44,16 @@
 
 		<EditText
 			android:id="@+id/ci_et_data"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_height="100dp"
 			android:layout_weight="1"
+			android:inputType="textMultiLine"
 			android:maxLines="3"></EditText>
 	</LinearLayout>
 
-	<View
-		android:layout_width="fill_parent"
-		android:layout_height="1dip"
-		android:background="@android:drawable/divider_horizontal_dark"></View>
-
 	<LinearLayout
 		android:layout_width="fill_parent"
-		android:layout_height="48dp"
+		android:layout_height="100dp"
 		android:orientation="horizontal">
 
 		<TextView
@@ -74,21 +66,17 @@
 
 		<EditText
 			android:id="@+id/ci_et_type"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_height="100dp"
 			android:layout_weight="1"
+			android:inputType="textMultiLine"
 			android:maxLines="3"></EditText>
 	</LinearLayout>
-
-	<View
-		android:layout_width="fill_parent"
-		android:layout_height="1dip"
-		android:background="@android:drawable/divider_horizontal_dark"></View>
 
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="85dp"
-		android:gravity="center|fill_vertical"
+		android:gravity="center|center_vertical"
 		android:orientation="horizontal">
 
 		<Button
