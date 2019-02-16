@@ -77,6 +77,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
         tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         createNotificationChannel();
+        updateNot();
         return START_STICKY;
     }
 
@@ -1266,10 +1267,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         am2.setStreamVolume(AudioManager.STREAM_MUSIC, minputVol,
                                 ui);
                     } catch (Exception e) {
+                        Log.e(LOG_TAG,"Failed to set volume " + e.getLocalizedMessage());
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                             NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
                             if (!Objects.requireNonNull(mNotificationManager).isNotificationPolicyAccessGranted()) {
                                 Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 application.startActivity(intent);
                             }
                         }
@@ -1290,7 +1293,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         am2.setStreamVolume(AudioManager.STREAM_MUSIC, newvol,
                                 ui);
                     } catch (Exception e) {
-
+                        Log.e(LOG_TAG,"Failed to set volume " + e.getLocalizedMessage());
                         e.printStackTrace();
                     }
                 }
@@ -1304,10 +1307,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol,
                         ui);
             } catch (Exception e) {
+                Log.e(LOG_TAG,"Failed to set volume " + e.getLocalizedMessage());
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
                     if (!Objects.requireNonNull(mNotificationManager).isNotificationPolicyAccessGranted()) {
                         Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         application.startActivity(intent);
                     }
                 }

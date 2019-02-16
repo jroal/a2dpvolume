@@ -12,12 +12,14 @@ import java.util.List;
 import java.util.Objects;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -33,6 +35,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -151,9 +154,6 @@ public class StoreLoc extends Service {
 
         dtime = System.currentTimeMillis(); // catch the time we disconnected
 
-        // spawn the location listeners
-        registerListeners();
-
         if ((channel_fs == null)) {
             createNotificationChannel();
         }
@@ -173,7 +173,7 @@ public class StoreLoc extends Service {
                     .setSmallIcon(ic_launcher)
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .setContentText(car)
-                    .setProgress(100, 0, false)
+                    .setProgress((int)MAX_TIME, 0, false)
                     .setChannelId(A2DP_STORLOC);
             not = mCBuilder.build();
             notificationManagerCompat.notify(1, not);
@@ -188,8 +188,11 @@ public class StoreLoc extends Service {
             not = mCBuilder.build();
             notificationManagerCompat.notify(1, not);
         }
+
         this.startForeground(1, not);
 
+        // spawn the location listeners
+        registerListeners();
 
         // start the timer
         if (MAX_TIME > 0) {
@@ -225,6 +228,7 @@ public class StoreLoc extends Service {
 
         grabLocationCount = 0;
 
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -244,7 +248,9 @@ public class StoreLoc extends Service {
         if ((channel_fs == null)) {
             createNotificationChannel();
         }
+
     }
+
 
     /* (non-Javadoc)
      * @see android.app.Service#onDestroy()

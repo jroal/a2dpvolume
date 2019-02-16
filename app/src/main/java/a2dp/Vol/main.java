@@ -87,23 +87,12 @@ public class main extends Activity {
     private String a2dpDir = "";
     private static final String LOG_TAG = "A2DP_Volume_main";
     private static int resourceID = android.R.layout.simple_list_item_1;
-    private final int PERMISSION_READ_CONTACTS = 1;
+
     private final int PERMISSION_LOCATION = 2;
     private final int PERMISSION_PHONE = 3;
-    private final int PERMISSION_SMS = 4;
     private final int PERMISSION_STORAGE = 5;
     Resources res;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    //private GoogleApiClient client;
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    //private com.google.android.gms.common.api.GoogleApiClient client2;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -299,7 +288,12 @@ public class main extends Activity {
             // will report when the service has
             // started and toggle button text
 
-            startService(new Intent(a2dp.Vol.main.this, service.class));
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                startService(new Intent(application, service.class));
+            } else {
+                startForegroundService(new Intent(application, service.class));
+            }
+
             if (enableTTS) {
                 // Fire off an intent to check if a TTS engine is installed
                 try {

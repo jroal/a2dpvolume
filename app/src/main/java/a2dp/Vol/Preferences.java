@@ -45,17 +45,20 @@ public class Preferences extends PreferenceActivity {
 		// Commit the edits!
 		editor.apply();
 
-
+		this.application = (MyApplication) this.getApplication();
 
 		// restart the service
-		startService(new Intent(a2dp.Vol.Preferences.this, service.class));
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+			startService(new Intent(application, service.class));
+		} else {
+			startForegroundService(new Intent(application, service.class));
+		}
 		// Tell the world we updated preferences
-		this.application = (MyApplication) this.getApplication();
+
 		final String IRun = "a2dp.vol.preferences.UPDATED";
 		Intent i = new Intent();
 		i.setAction(IRun);
 		this.application.sendBroadcast(i);
-
 
 		super.onDestroy();
 	}
@@ -67,7 +70,7 @@ public class Preferences extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
         // Show the Up button in the action bar.
         setupActionBar();
-
+		this.application = (MyApplication) this.getApplication();
 
 	}
     private void setupActionBar() {

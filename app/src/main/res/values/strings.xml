@@ -39,7 +39,7 @@
     <string name="GetLocButtonString">Stored Location</string>
     <string name="StartService">Start Service</string>
     <string name="StopService">Stop Service</string>
-    <string name="FindDevices">Find Devices</string>
+    <string name="FindDevices">Load Devices</string>
     <string name="MediaVolume">Media Volume</string>
     <string name="ServiceStarted">A2DP Volume Service Started</string>
     <string name="ServiceStopped">A2DP Volume Service Stopped</string>
