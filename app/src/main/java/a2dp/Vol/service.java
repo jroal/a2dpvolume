@@ -571,6 +571,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 application.sendBroadcast(itent);
 
                 Log.i(LOG_TAG, "Bluetooth turned OFF broadcast receiver " + mac);
+                //updateA2DPconnect2();
             }
         }
     };
@@ -676,6 +677,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 }
 
             }
+            //updateA2DPconnect2();
         }
     };
 
@@ -745,6 +747,19 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
     };
 
+    //This is used to update A2DP Connect2 widget if it exists
+    private void updateA2DPconnect2() {
+        try {
+            Intent intent = new Intent();
+            intent.setComponent((new ComponentName("a2dp.connect2", "a2dp.connect2.RunUpdate")));
+            if (intent != null) {
+                application.startService(intent);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     protected void DoConnected(btDevice bt2) {
         boolean done = false;
@@ -1267,7 +1282,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         am2.setStreamVolume(AudioManager.STREAM_MUSIC, minputVol,
                                 ui);
                     } catch (Exception e) {
-                        Log.e(LOG_TAG,"Failed to set volume " + e.getLocalizedMessage());
+                        Log.e(LOG_TAG, "Failed to set volume " + e.getLocalizedMessage());
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                             NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
                             if (!Objects.requireNonNull(mNotificationManager).isNotificationPolicyAccessGranted()) {
@@ -1293,7 +1308,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                         am2.setStreamVolume(AudioManager.STREAM_MUSIC, newvol,
                                 ui);
                     } catch (Exception e) {
-                        Log.e(LOG_TAG,"Failed to set volume " + e.getLocalizedMessage());
+                        Log.e(LOG_TAG, "Failed to set volume " + e.getLocalizedMessage());
                         e.printStackTrace();
                     }
                 }
@@ -1307,7 +1322,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
                 am2.setStreamVolume(AudioManager.STREAM_MUSIC, inputVol,
                         ui);
             } catch (Exception e) {
-                Log.e(LOG_TAG,"Failed to set volume " + e.getLocalizedMessage());
+                Log.e(LOG_TAG, "Failed to set volume " + e.getLocalizedMessage());
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
                     if (!Objects.requireNonNull(mNotificationManager).isNotificationPolicyAccessGranted()) {
