@@ -70,7 +70,7 @@ public class main extends Activity {
     private MyApplication application;
     SharedPreferences preferences;
     public static final String PREFS_NAME = "btVol";
-    String[] lstring = null; // string array used for the listview
+    public String[] lstring = null; // string array used for the listview
     ArrayAdapter<String> ladapt; // listview adapter
     int connects;
     static final int ENABLE_BLUETOOTH = 1;

@@ -39,6 +39,21 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:persistent="true">
+        <receiver android:name=".ConnectWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/connect_widget_info" />
+        </receiver>
+
+        <activity android:name=".ConnectWidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".main"
             android:description="@string/accessDescription"
@@ -67,12 +82,10 @@
             android:launchMode="singleTop"
             android:multiprocess="false"
             android:parentActivityName=".main">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="a2dp.Vol.main" />
         </activity>
-
         <activity
             android:name=".Preferences"
             android:enabled="true"
@@ -80,11 +93,9 @@
             android:label="@xml/preferences"
             android:launchMode="singleInstance"
             android:parentActivityName=".main">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="a2dp.Vol.main" />
-
         </activity>
 
         <receiver android:name=".Starter">
@@ -113,6 +124,8 @@
             android:enabled="true"
             android:label="@string/app_name" />
 
+        <service android:name=".Connector"/>
+
         <activity
             android:name=".EditDevice"
             android:parentActivityName=".main">
@@ -120,11 +133,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="a2dp.Vol.main" />
         </activity>
-
         <activity android:name=".AppChooser" />
-        <activity android:name=".CustomIntentMaker" />
-        <!--<activity android:name=".ProviderList" />-->
-
+        <activity android:name=".CustomIntentMaker" /> <!-- <activity android:name=".ProviderList" /> -->
         <service android:name=".StoreLoc" />
 
         <activity
@@ -150,7 +160,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         -->
-
         <activity
             android:name=".LocViewer"
             android:label="@string/title_activity_loc_viewer"

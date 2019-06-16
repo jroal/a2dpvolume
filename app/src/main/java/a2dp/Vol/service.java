@@ -17,6 +17,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.UiModeManager;
+import android.appwidget.AppWidgetManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.IBluetoothA2dp;
@@ -51,6 +52,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import static a2dp.Vol.R.drawable.ic_launcher;
@@ -139,6 +141,8 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
     private PackageManager mPackageManager;
     public static final String PREFS_NAME = "btVol";
+    private static final String CON_PREFS_NAME = "a2dp.Vol.ConnectWidget";
+    private static final String PREF_PREFIX_KEY = "appwidget_";
     private int MAX_MESSAGE_LENGTH = 350;
     float MAX_ACC = 10; // worst acceptable location in meters
     long MAX_TIME = 20000; // gps listener timout time in milliseconds and
@@ -747,19 +751,6 @@ public class service extends Service implements OnAudioFocusChangeListener {
         }
     };
 
-    //This is used to update A2DP Connect2 widget if it exists
-    private void updateA2DPconnect2() {
-        try {
-            Intent intent = new Intent();
-            intent.setComponent((new ComponentName("a2dp.connect2", "a2dp.connect2.RunUpdate")));
-            if (intent != null) {
-                application.startService(intent);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     protected void DoConnected(btDevice bt2) {
         boolean done = false;
@@ -1556,8 +1547,46 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
             }
         }
+        UpdateConnectWidgets();
     }
 
+    public void UpdateConnectWidgets() {
+        Intent intent = new Intent(application, ConnectWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+        SharedPreferences prefs = application.getSharedPreferences(CON_PREFS_NAME, 0);
+
+        AppWidgetManager awm = AppWidgetManager.getInstance(getApplication());
+        RemoteViews views = new RemoteViews(application.getPackageName(),
+                R.layout.connect_widget);
+        int[] ids = awm.getAppWidgetIds(new ComponentName(getApplication(), ConnectWidget.class));
+
+        if (ids.length > 0)
+            for (int id : ids) {
+                String bt_mac_pref = prefs.getString(PREF_PREFIX_KEY + Integer.toString(id), "O");
+                String bt_mac = bt_mac_pref.substring(bt_mac_pref.length() - 17);
+
+                boolean connected = false;
+                if (btdConn != null)
+                    for (btDevice device : btdConn) {
+                        String mac = "";
+                        if (device != null) mac = device.getMac();
+                        if (mac.length() == 17 && bt_mac.equalsIgnoreCase(device.mac))
+                            connected = true;
+                    }
+                if (connected) {
+                    views.setInt(R.id.WidgetButton, "setBackgroundResource", R.drawable.icon);
+
+                } else {
+                    views.setInt(R.id.WidgetButton, "setBackgroundResource", R.drawable.icon2);
+
+                }
+                awm.updateAppWidget(id, views);
+            }
+
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        sendBroadcast(intent);
+    }
 
     private boolean runApp(btDevice bt) {
 

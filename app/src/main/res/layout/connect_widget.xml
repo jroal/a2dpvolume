@@ -1,0 +1,27 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="72dp"
+    android:layout_height="72dp"
+    android:padding="@dimen/widget_margin">
+    <!--android:background="#09C"-->
+
+    <Button
+        android:id="@+id/WidgetButton"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:background="@drawable/icon2"
+        android:gravity="center_vertical|center_horizontal"
+        android:minWidth="40dp"
+        android:minHeight="40dp"
+        android:shadowColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        android:text="@string/ButtonString"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:textStyle="bold">
+
+    </Button>
+
+</RelativeLayout>

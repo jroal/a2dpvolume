@@ -182,13 +182,22 @@
     <string name="background_channel_description">Background</string>
 
     <string name="title_activity_location_viewer">Location Viewer</string>
-<!--    <string name="dummy_button">Dummy Button</string>
+    <!--    <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>-->
     <string name="title_activity_loc_viewer">Location Viewer</string>
-    <string name="foreground_channel_name" >A2DP Foreground</string>
-    <string name="foreground_channel_description" >Foreground</string>
+    <string name="foreground_channel_name">A2DP Foreground</string>
+    <string name="foreground_channel_description">Foreground</string>
     <string name="storeloc_channel_name">A2DP Storing Location</string>
     <string name="storeloc_channel_desc">Location Storage</string>
     <string name="storing_location">Storing Location</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="BuilderTitle">Bluetooth Device</string>
+    <string name="ButtonString">Connect</string>
+    <string name="Connecting">Connecting</string>
+    <string name="Disconnecting">Disconnecting</string>
+    <string name="InvalidDevice">Invalid Device</string>
+    <string name="NullDevice">Null Device</string>
 
 </resources>
