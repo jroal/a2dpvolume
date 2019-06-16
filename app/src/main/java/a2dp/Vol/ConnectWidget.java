@@ -28,6 +28,7 @@ public class ConnectWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.connect_widget);
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
+
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
