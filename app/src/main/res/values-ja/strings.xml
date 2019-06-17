@@ -36,10 +36,10 @@
         <item>30</item>
     </string-array>
     <string name="ListName">Bluetoothデバイス</string>
-    <string name="GetLocButtonString">保存した場所</string>
+    <string name="GetLocButtonString">保存した位置</string>
     <string name="StartService">サービス開始</string>
     <string name="StopService">サービス停止</string>
-    <string name="FindDevices">デバイス検索</string>
+    <string name="FindDevices">デバイス読み込み</string>
     <string name="MediaVolume">メディアボリューム</string>
     <string name="ServiceStarted">A2DP Volumeサービスを開始しました</string>
     <string name="ServiceStopped">A2DP Volumeサービスを停止しました</string>
@@ -92,7 +92,7 @@
     <string name="btNotOn">デバイス情報が利用できません</string>
     <string name="app_not_found">アプリケーションが見つかりません</string>
     <string name="deviceName">デバイスの名前</string>
-    <string name="getLoc">切断時の場所を保存しますか?</string>
+    <string name="getLoc">切断時の位置を保存しますか?</string>
     <string name="setVol">接続時にメディアボリュームを設定</string>
     <string name="connectBT">同時に接続するBluetoothデバイス</string>
     <string name="startApp">接続時に起動するアプリ</string>
@@ -113,9 +113,9 @@
     <string name="PrefsHeadsetON">オーディオジャックに反応します</string>
     <string name="PrefsHeadset">オーディオジャックへの反応</string>
     <string name="PrefsHeadsetOFF">オーディオジャックに反応しません</string>
-    <string name="PrefsTTSON">デバイス接続時にテキストメッセージを読み上げます</string>
-    <string name="PrefsTTS">テキストメッセージの読み上げ</string>
-    <string name="PrefsTTSOFF">テキストメッセージを読み上げません</string>
+    <string name="PrefsTTSON">デバイス接続時に通知メッセージを読み上げます</string>
+    <string name="PrefsTTS">通知メッセージの読み上げを有効にしますか?</string>
+    <string name="PrefsTTSOFF">通知メッセージを読み上げません</string>
     <string name="audioJackName">オーディオジャック</string>
     <string name="needTTS">読み上げデータがありません。すぐにインストールしますか?</string>
     <string name="msgTemplate">… Message From: {0} .. {1}</string>
@@ -131,7 +131,7 @@
     <string name="NotBonded">未ペアリング</string>
     <string name="Bonding">ペアリング中</string>
     <string name="Class">クラス</string>
-    <string name="SMS_Stream_desc">テキストメッセージを読み上げる経路</string>
+    <string name="SMS_Stream_desc">メッセージを読み上げる経路を選択してください</string>
     <string name="PrefsVolAdjDelaySummary">デバイス接続してからボリューム変更までの遅延</string>
     <string name="PrefsVolRampTitle">徐々にボリュームアップ</string>
     <string name="app_kill">切断時にアプリ停止</string>
@@ -172,8 +172,8 @@
     <string name="PrefsHideVolUiOFF">ボリュームポップアップを表示します。</string>
     <string name="needStorage">外部ストレージが利用できません</string>
     <string name="askPhone">通話中にメッセージリーダーが動作しないようにするために電話へのアクセスを使用します。</string>
-    <string name="askStorage">このアプリは、保存した場所やバックアップデータを書き出す権限が必要です。</string>
-    <string name="askLocation">このアプリは、デバイスを切断した場所を保存するために、位置情報へのアクセスが必要です。</string>
+    <string name="askStorage">このアプリは、保存した位置やバックアップデータを書き出す権限が必要です。</string>
+    <string name="askLocation">このアプリは、デバイスを切断した位置を保存するために、位置情報へのアクセスが必要です。</string>
     <string name="askSms">このアプリは、テストメッセージ読込機能のために、SMS (テキストメッセージ) を読む必要があります。</string>
     <string name="askContacts">このアプリは、メッセージを読む際に、メッセージの送信元を取得するのに連絡先へのアクセスが必要です。</string>
     <string name="askSetPerm">権限設定</string>
@@ -185,9 +185,21 @@
 <!--    <string name="dummy_button">
 Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>-->
-
+    
     <string name="title_activity_loc_viewer">位置ビューア</string>
-    <string name="foreground_channel_name" >A2DP フォアグラウンド</string>
-    <string name="foreground_channel_description" >フォアグラウンド</string>
+    <string name="foreground_channel_name">A2DP フォアグラウンド</string>
+    <string name="foreground_channel_description">フォアグラウンド</string>
+    <string name="storeloc_channel_name">A2DP位置保存</string>
+    <string name="storeloc_channel_desc">位置保存</string>
+    <string name="storing_location">位置の保存中</string>
+    <string name="appwidget_text">接続</string>
+    <string name="configure">設定</string>
+    <string name="add_widget">ウィジェットを追加</string>
+    <string name="BuilderTitle">Bluetoothデバイス</string>
+    <string name="ButtonString">接続</string>
+    <string name="Connecting">接続中</string>
+    <string name="Disconnecting">切断中</string>
+    <string name="InvalidDevice">無効なデバイス</string>
+    <string name="NullDevice">空デバイス</string>
 
 </resources>
