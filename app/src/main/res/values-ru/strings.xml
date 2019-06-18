@@ -138,13 +138,22 @@
     <string name="background_channel_description">Фон</string>
 
     <string name="title_activity_location_viewer">Просмотр местоположений</string>
-    <!--
-        -->
+    <!--    
+    -->
     <string name="title_activity_loc_viewer">Просмотр местоположений</string>
-    <string name="foreground_channel_name" >A2DP передний план</string>
-    <string name="foreground_channel_description" >Передний план</string>
+    <string name="foreground_channel_name">A2DP передний план</string>
+    <string name="foreground_channel_description">Передний план</string>
     <string name="storeloc_channel_name">A2DP хранение местоположений</string>
     <string name="storeloc_channel_desc">Хранилище местоположений</string>
     <string name="storing_location">Хранение местоположений</string>
+    <string name="appwidget_text">Соединиться</string>
+    <string name="configure">Конфигурировать</string>
+    <string name="add_widget">Добавить виджет</string>
+    <string name="BuilderTitle">Bluetooth устройство</string>
+    <string name="ButtonString">Соединиться</string>
+    <string name="Connecting">Соединение</string>
+    <string name="Disconnecting">Отсоединение</string>
+    <string name="InvalidDevice">Неверное устройство</string>
+    <string name="NullDevice">Несуществующее устройство</string>
 
 </resources>
