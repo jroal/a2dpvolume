@@ -190,4 +190,14 @@
     <string name="storeloc_channel_name">A2DP Positionsspeicherung</string>
     <string name="storeloc_channel_desc">Positionsspeicherung</string>
     <string name="storing_location">Speichere Position</string>
+    <string name="appwidget_text">Verbinde</string>
+    <string name="configure">Konfiguration</string>
+    <string name="add_widget">Widget hinzufügen</string>
+    <string name="BuilderTitle">Bluetooth Gerät</string>
+    <string name="ButtonString">Verbinde</string>
+    <string name="Connecting">Verbinde</string>
+    <string name="Disconnecting">Trenne</string>
+    <string name="InvalidDevice">Ungültiges Gerät</string>
+    <string name="NullDevice">Nullgerät</string>
+
 </resources>
