@@ -33,7 +33,7 @@ I keep a blog for major changes link:http://a2dpvolume.blogspot.com/[http://a2dp
 
 . Pair device using the Android settings screen.  +[menu key] -> [Settings] -> [Wireless & networks] -> [Bluetooth settings] -> [Scan for devices]+.  Your device will need to show connected on this screen.  http://www.youtube.com/watch?v=8-wuRA9I0RM[Here] is a video explaining it.  
 . Install my app from the Android Market or this website. 
-. In my app, click +[Find Devices]+.  This should return a list of paired Bluetooth devices.  Your Bluetooth will need to be ON for this to work.  That means the Bluetooth symbol should be in the status bar area.  If it is not ON this app will attempt to turn it ON when finding devices.  If you plan to use this app with home dock, car dock, or the audio jack, you need to first select that in the preferences.  See manual for details.
+. In my app, click +[Load Devices]+.  This should return a list of paired Bluetooth devices.  Your Bluetooth will need to be ON for this to work.  That means the Bluetooth symbol should be in the status bar area.  If it is not ON this app will attempt to turn it ON when finding devices.  If you plan to use this app with home dock, car dock, or the audio jack, you need to first select that in the preferences.  See manual for details.
 . Select each Bluetooth device from the list in my app.  Short click on the device in the list will open a dialog box so you can configure it.  
 . Click the +[Edit]+ (center button) and you can now edit the specific settings for the Bluetooth device.  Here is where you set options you want for this specific device.  See the manual for more details. 
 . Click the +[Save]+ button when complete. 
@@ -50,6 +50,8 @@ Please submit any bug reports or ideas for future enhancements in the issues lis
 
 = Additional Features
 You can name each Bluetooth device with a more meaningful name.  Android native gets the device name from the remote device and does not let you rename it (until Android 4.0 and up).  If you have more than one of those devices, they all look the same in Android except for the MAC address.
+
+The A2DP Connect widget has now (since version 2.13.0.0) been integrated into this app.  This allows you to place Bluetooth device connect/disconnect toggle buttons on your hoescreen to allow simple one-click connecting to a Bluetooth A2DP sink.  More detials here: https://github.com/jroal/a2dp-connect2
 
 Allows you to configure each device separately to:  
 
