@@ -14,8 +14,6 @@ This app does not pair Bluetooth devices.  Follow the instructions for your devi
 
 This app was created for use by the developers.  We make no money from it at all.  It is free, open source, contains no ads, and collects no data. Once we created it we simply felt others could benefit from it as well so why not give it away.  We have other day jobs.  This is just a hobby.
 
-Test versions can be downloaded by joining the https://plus.google.com/u/0/communities/110152746998730594422[testers community] on g+.
-
 == User Information
 The wiki is located link:../../wiki[here].
 
