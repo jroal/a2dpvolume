@@ -51,7 +51,7 @@ Please submit any bug reports or ideas for future enhancements in the issues lis
 = Additional Features
 You can name each Bluetooth device with a more meaningful name.  Android native gets the device name from the remote device and does not let you rename it (until Android 4.0 and up).  If you have more than one of those devices, they all look the same in Android except for the MAC address.
 
-The A2DP Connect widget has now (since version 2.13.0.0) been integrated into this app.  This allows you to place Bluetooth device connect/disconnect toggle buttons on your hoescreen to allow simple one-click connecting to a Bluetooth A2DP sink.  More detials here: https://github.com/jroal/a2dp-connect2
+The A2DP Connect widget has now (since version 2.13.0.0) been integrated into this app.  This allows you to place Bluetooth device connect/disconnect toggle buttons on your homescreen to allow simple one-click connecting to a Bluetooth A2DP sink.  More detials here: https://github.com/jroal/a2dp-connect2
 
 Allows you to configure each device separately to:  
 
