@@ -190,7 +190,7 @@
     <string name="storeloc_channel_name">A2DP Storing Location</string>
     <string name="storeloc_channel_desc">Location Storage</string>
     <string name="storing_location">Storing Location</string>
-    <string name="appwidget_text">Connect</string>
+    <string name="appwidget_text">EXAMPLE</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
     <string name="BuilderTitle">Bluetooth Device</string>
