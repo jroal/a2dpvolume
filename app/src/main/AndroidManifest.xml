@@ -2,13 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="a2dp.Vol"
     android:installLocation="internalOnly"
-<<<<<<< HEAD
+
     android:versionCode="166"
     android:versionName="2.13.0.1">
-=======
-    android:versionCode="164"
-    android:versionName="2.12.12.5">
->>>>>>> parent of 68fccc4... 2.13.0.0 interim
+
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
