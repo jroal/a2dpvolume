@@ -82,7 +82,7 @@ There are clones being sold on the Play Store.  At least one of these is chargin
 
 Use a bar code scanner in your Android device to scan the image below.  This will find the application on the Android Market for you.
 
-image:http://jimroal.com/exe/QR.png["market://search?q=pname:a2dp.Vol",link="market://search?q=pname:a2dp.Vol"]
+image:http://jimroal.com/exe/QR.png["https://play.google.com/store/apps/details?id=a2dp.Vol",link="https://play.google.com/store/apps/details?id=a2dp.Vol"]
 
 Here are a few screen shots:
 
@@ -96,6 +96,6 @@ Click https://www.youtube.com/playlist?list=PL8B87E2415E38D95E[here] for the vid
 
 
 You can find the app on the Google Play Store 
-https://market.android.com/details?id=a2dp.Vol&feature=search_result[here].
+https://play.google.com/store/apps/details?id=a2dp.Vol[here].
 
 I created a simple tester app that can be used to invoke Car Mode and for sending text strings to A2DP Volume simulating a message from an app.  You can get it link:../../wiki/Notification-tester-app[here].
