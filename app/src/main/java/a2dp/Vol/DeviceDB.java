@@ -47,6 +47,7 @@ public class DeviceDB {
 	 *            is the bluetooth btDevice device to update in the database
 	 */
 	public void update(btDevice bt) {
+
 		ContentValues vals = new ContentValues();
 		vals.put("desc2", bt.getDesc2());
 		vals.put("maxv", (long) bt.getDefVol());

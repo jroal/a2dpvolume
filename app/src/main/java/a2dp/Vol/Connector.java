@@ -369,7 +369,11 @@ public class Connector extends Service {
             }
         }
 
-        mNotificationManager.cancel(1);
+        try {
+            mNotificationManager.cancel(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mNotificationManager.cancelAll();
         notificationManagerCompat.cancelAll();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

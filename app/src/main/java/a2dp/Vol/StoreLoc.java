@@ -173,7 +173,7 @@ public class StoreLoc extends Service {
                     .setSmallIcon(ic_launcher)
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .setContentText(car)
-                    .setProgress((int)MAX_TIME, 0, false)
+                    .setProgress((int) MAX_TIME, 0, false)
                     .setChannelId(A2DP_STORLOC);
             not = mCBuilder.build();
             notificationManagerCompat.notify(1, not);
@@ -248,6 +248,36 @@ public class StoreLoc extends Service {
         if ((channel_fs == null)) {
             createNotificationChannel();
         }
+
+
+        Intent notificationIntent = new Intent(this, main.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this, 0, notificationIntent, 0);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mCBuilder = new NotificationCompat.Builder(application, A2DP_STORLOC)
+                    .setContentTitle(
+                            getString(R.string.storing_location))
+                    .setContentIntent(contentIntent)
+                    .setSmallIcon(ic_launcher)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                    .setContentText(car)
+                    .setProgress((int) MAX_TIME, 0, false)
+                    .setChannelId(A2DP_STORLOC);
+            not = mCBuilder.build();
+            notificationManagerCompat.notify(1, not);
+            //Toast.makeText(application, "Test off " + car + " " +not.getChannelId(), Toast.LENGTH_LONG).show();
+        } else {
+            mCBuilder = new NotificationCompat.Builder(application, A2DP_STORLOC)
+                    .setContentTitle(getString(R.string.storing_location))
+                    .setContentIntent(contentIntent)
+                    .setSmallIcon(ic_launcher)
+                    .setContentText(car)
+                    .setProgress((int) MAX_TIME, 0, false);
+            not = mCBuilder.build();
+            notificationManagerCompat.notify(1, not);
+        }
+        this.startForeground(1, not);
 
     }
 
@@ -324,16 +354,16 @@ public class StoreLoc extends Service {
         if (l4 != null)
             if (l4.hasAccuracy()) {
                 bestacc = l4.getAccuracy();
-                if(l4store == null) l4store = l4;
+                if (l4store == null) l4store = l4;
             }
         if (l3 != null)
             if (l3.hasAccuracy()) {
                 oldacc = l3.getAccuracy();
-                if(l3store == null)l3store = l3;
+                if (l3store == null) l3store = l3;
             }
         if (l != null) {
             olddt = System.currentTimeMillis() - l.getTime();
-            if(lstore == null)lstore = l;
+            if (lstore == null) lstore = l;
         }
         try {
 
@@ -777,8 +807,20 @@ public class StoreLoc extends Service {
         if (usePass
                 && locationManager
                 .isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+            if (ActivityCompat.checkSelfPermission(application, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             locationManager.requestLocationUpdates(
                     LocationManager.PASSIVE_PROVIDER, 0, 0, locationListener);
+        } else {
+            usePass = false;
         }
 
     }

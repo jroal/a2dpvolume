@@ -1564,24 +1564,28 @@ public class service extends Service implements OnAudioFocusChangeListener {
         if (ids.length > 0)
             for (int id : ids) {
                 String bt_mac_pref = prefs.getString(PREF_PREFIX_KEY + Integer.toString(id), "O");
-                String bt_mac = bt_mac_pref.substring(bt_mac_pref.length() - 17);
+                String bt_mac;
+                if (bt_mac_pref != null)
+                    if (bt_mac_pref.length() > 17) {
+                        bt_mac = bt_mac_pref.substring(bt_mac_pref.length() - 17);
 
-                boolean connected = false;
-                if (btdConn != null)
-                    for (btDevice device : btdConn) {
-                        String mac = "";
-                        if (device != null) mac = device.getMac();
-                        if (mac.length() == 17 && bt_mac.equalsIgnoreCase(device.mac))
-                            connected = true;
+                        boolean connected = false;
+                        if (btdConn != null)
+                            for (btDevice device : btdConn) {
+                                String mac = "";
+                                if (device != null) mac = device.getMac();
+                                if (mac.length() == 17 && bt_mac.equalsIgnoreCase(device.mac))
+                                    connected = true;
+                            }
+                        if (connected) {
+                            views.setInt(R.id.WidgetButton, "setBackgroundResource", R.drawable.icon);
+
+                        } else {
+                            views.setInt(R.id.WidgetButton, "setBackgroundResource", R.drawable.icon2);
+
+                        }
+                        awm.updateAppWidget(id, views);
                     }
-                if (connected) {
-                    views.setInt(R.id.WidgetButton, "setBackgroundResource", R.drawable.icon);
-
-                } else {
-                    views.setInt(R.id.WidgetButton, "setBackgroundResource", R.drawable.icon2);
-
-                }
-                awm.updateAppWidget(id, views);
             }
 
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
