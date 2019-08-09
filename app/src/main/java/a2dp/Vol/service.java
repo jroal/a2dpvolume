@@ -1563,11 +1563,11 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         if (ids.length > 0)
             for (int id : ids) {
-                String bt_mac_pref = prefs.getString(PREF_PREFIX_KEY + Integer.toString(id), "O");
-                String bt_mac;
-                if (bt_mac_pref != null)
-                    if (bt_mac_pref.length() > 17) {
-                        bt_mac = bt_mac_pref.substring(bt_mac_pref.length() - 17);
+                String bt_mac = prefs.getString(PREF_PREFIX_KEY + Integer.toString(id), "O");
+
+                if (bt_mac != null)
+                    if (bt_mac.length() == 17) {
+                        //bt_mac = bt_mac_pref.substring(bt_mac_pref.length() - 17);
 
                         boolean connected = false;
                         if (btdConn != null)
