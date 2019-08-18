@@ -21,6 +21,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
@@ -291,11 +292,23 @@ public class Connector extends Service {
 
         @Override
         protected void onPostExecute(Boolean result) {
-/*
-            Intent intent = new Intent(application, RunUpdate.class);
-            intent.putExtra("BT", btd);
-            application.startService(intent);
-*/
+
+            //in case the device fails to connect, clear the notification.
+            new CountDownTimer(20000,10000){
+
+                @Override
+                public void onTick(long l) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    final String notupdate = "a2dp.vol.service.NOTIFY";
+                    Intent intent = new Intent();
+                    intent.setAction(notupdate);
+                    application.sendBroadcast(intent);
+                }
+            }.start();
 
             done();
             super.onPostExecute(result);
@@ -324,9 +337,7 @@ public class Connector extends Service {
                 return false;
 
             btd = device.getAddress();
-            /*
-             * mBTA.cancelDiscovery(); mBTA.startDiscovery();
-             */
+
             IBluetoothA2dp ibta = ibta2;
 
             try {
