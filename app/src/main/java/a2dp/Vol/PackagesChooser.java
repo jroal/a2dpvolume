@@ -197,7 +197,7 @@ public class PackagesChooser extends Activity {
             package_name = pName;
             class_name = cName;
             position = -1;
-            setChecked(false);
+            this.checked = false;
         }
 
         public Drawable getIcon() {
