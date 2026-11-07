@@ -20,6 +20,7 @@ local.properties
 .gradle
 keystore.properties
 *.iml
+DigitalAssetLinks.json
 
 
 # External tool builders

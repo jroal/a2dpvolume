@@ -14,6 +14,7 @@ import android.service.notification.StatusBarNotification;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import androidx.core.content.ContextCompat;
 
 import java.sql.Time;
 import java.util.ArrayList;
@@ -52,9 +53,9 @@ public class NotificationCatcher extends NotificationListenerService {
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(this.application);
         IntentFilter reloadmessage = new IntentFilter("a2dp.vol.Reload");
-        this.registerReceiver(reloadprefs, reloadmessage);
+        ContextCompat.registerReceiver(this, reloadprefs, reloadmessage, ContextCompat.RECEIVER_EXPORTED);
         IntentFilter clearFilter = new IntentFilter("a2dp.Vol.Clear");
-        this.registerReceiver(clear, clearFilter);
+        ContextCompat.registerReceiver(this, clear, clearFilter, ContextCompat.RECEIVER_EXPORTED);
         LoadPrefs();
 
 

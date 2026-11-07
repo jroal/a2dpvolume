@@ -1,5 +1,7 @@
 package a2dp.Vol;
 
+import static android.Manifest.permission.BLUETOOTH_CONNECT;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,10 +32,13 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -57,9 +62,10 @@ import java.util.Set;
 import java.util.Vector;
 
 
-public class main extends Activity {
+public class main extends androidx.appcompat.app.AppCompatActivity {
 
-    static AudioManager am = (AudioManager) null;
+    static AudioManager am;
+
     Button serv;
     boolean servrun = false;
     ListView lvl = null; // listview used on main screen for showing devices
@@ -91,6 +97,8 @@ public class main extends Activity {
     private final int PERMISSION_LOCATION = 2;
     private final int PERMISSION_PHONE = 3;
     private final int PERMISSION_STORAGE = 5;
+
+    private final int PERMISSION_BLUETOOTH = 7;
     Resources res;
 
     @Override
@@ -182,18 +190,29 @@ public class main extends Activity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        Locationbtn();
+                    } else {
+                        onPermissionDenied();
+                    }
+                }
+        );
 
         res = getResources();
         setContentView(R.layout.main);
         ComponentName comp = new ComponentName("a2dp.Vol", "main");
-        PackageInfo pinfo;
-        String ver = null;
+        String ver;
         try {
-            pinfo = getPackageManager()
+            PackageInfo pinfo = getPackageManager()
                     .getPackageInfo(comp.getPackageName(), 0);
             ver = pinfo.versionName;
         } catch (NameNotFoundException e) {
             Log.e(LOG_TAG, "error" + e.getMessage());
+            ver = "Unknown";
         }
 
         setTitle(res.getString(R.string.app_name) + " Version: "
@@ -241,7 +260,7 @@ public class main extends Activity {
         // state
         IntentFilter filter3 = new IntentFilter("a2dp.vol.service.RUNNING");
         try {
-            application.registerReceiver(sRunning, filter3);
+            ContextCompat.registerReceiver(application, sRunning, filter3, ContextCompat.RECEIVER_EXPORTED);
         } catch (Exception e2) {
             // TODO Auto-generated catch block
             e2.printStackTrace();
@@ -250,7 +269,7 @@ public class main extends Activity {
         IntentFilter filter4 = new IntentFilter(
                 "a2dp.vol.service.STOPPED_RUNNING");
         try {
-            application.registerReceiver(sRunning, filter4);
+            ContextCompat.registerReceiver(application, sRunning, filter4, ContextCompat.RECEIVER_EXPORTED);
         } catch (Exception e2) {
             // TODO Auto-generated catch block
             e2.printStackTrace();
@@ -259,10 +278,10 @@ public class main extends Activity {
         // this reciever is used to tell this main activity about devices
         // connecting and disconnecting.
         IntentFilter filter5 = new IntentFilter("a2dp.Vol.main.RELOAD_LIST");
-        application.registerReceiver(mReceiver5, filter5);
+        ContextCompat.registerReceiver(application, mReceiver5, filter5, ContextCompat.RECEIVER_EXPORTED);
 
         IntentFilter filter6 = new IntentFilter("a2dp.vol.preferences.UPDATED");
-        application.registerReceiver(mReceiver6, filter6);
+        ContextCompat.registerReceiver(application, mReceiver6, filter6, ContextCompat.RECEIVER_EXPORTED);
 
         lstring = new String[]{res.getString(R.string.NoData)};
 
@@ -321,19 +340,29 @@ public class main extends Activity {
             }
         });
 
+
         // This shows the details of the bluetooth device
         lvl.setOnItemLongClickListener(new OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, final View view,
                                            int position, long id) {
 
                 if (vec.isEmpty())
-                    return false;
+                    return true;
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(a2dp.Vol.main.this, BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT);
+
+                    return true; // <--- Fails here, returns false, and does not show the dialog or any log
+                }
                 BluetoothAdapter mBTA = BluetoothAdapter.getDefaultAdapter();
 
                 btDevice bt = new btDevice();
                 bt = vec.get(position);
                 BluetoothDevice btd = null;
                 if (mBTA != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(a2dp.Vol.main.this, BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        return true;
+                    }
                     Set<BluetoothDevice> pairedDevices = mBTA
                             .getBondedDevices();
                     for (BluetoothDevice device : pairedDevices) {
@@ -382,33 +411,27 @@ public class main extends Activity {
 
                                 if (!exportDir.exists())
                                     return;
-                                // String file =
-                                // "content://com.android.htmlfileprovider"
-                                String file = "file:////" + exportDir.getPath()
-                                        + "/" + car.replaceAll(" ", "_")
-                                        + ".html";
-                                String st = file.trim();
+                                
+                                File locFile = new File(exportDir, car.replaceAll(" ", "_") + ".html");
+                                if (!locFile.exists()) {
+                                    Toast.makeText(application, R.string.NoData, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
 
-                                Uri uri = Uri.parse(st);
- /*                               android.net.Uri aUri = Uri.fromFile(exportDir);
-                                uri = Uri.withAppendedPath(aUri, car.replaceAll(" ", "_")
-                                        + ".html" );*/
-                                Intent intent = new Intent(application, LocViewer.class);
-                                //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-/*
-                                intent.setAction(Intent.ACTION_VIEW);
-                                intent.setDataAndType(uri, "text/html");
+                                Uri uri;
                                 try {
-                                    PackageInfo pi = getPackageManager().getPackageInfo("com.android.chrome", 0);
-                                    intent.setClassName("com.android.chrome",
-                                            "com.google.android.apps.chrome.Main");
-                                } catch (NameNotFoundException e1) {
-                                    intent.setClassName("com.android.browser",
-                                            "com.android.browser.BrowserActivity");
-                                    e1.printStackTrace();
-                                }*/
-                                intent.putExtra("filestr", st);
+                                    uri = androidx.core.content.FileProvider.getUriForFile(
+                                            a2dp.Vol.main.this,
+                                            getPackageName() + ".fileprovider",
+                                            locFile);
+                                } catch (Exception e) {
+                                    uri = Uri.fromFile(locFile);
+                                }
+
+                                Intent intent = new Intent(application, LocViewer.class);
+                                intent.putExtra("filestr", uri.toString());
                                 intent.putExtra("name", car);
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                 startActivity(intent);
 
                                 try {
@@ -562,7 +585,7 @@ public class main extends Activity {
         int ps = permission_scan();
         if (ps > 0) check_permissions(ps);
 
-        super.onCreate(savedInstanceState);
+        //super.onCreate(savedInstanceState);
     }
 
 
@@ -659,6 +682,31 @@ public class main extends Activity {
                     }
                 }
                 break;
+
+            case PERMISSION_BLUETOOTH:
+                if (ContextCompat.checkSelfPermission(application,
+                        BLUETOOTH_CONNECT)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            BLUETOOTH_CONNECT)) {
+                        askPermission(R.string.askBluetooth, PERMISSION_BLUETOOTH , Manifest.permission.BLUETOOTH_CONNECT);
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    } else {
+
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{BLUETOOTH_CONNECT},
+                                PERMISSION_BLUETOOTH);
+
+                    }
+                }
+                break;
         }
 
     }
@@ -681,20 +729,14 @@ public class main extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-
             case PERMISSION_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
+                    // granted
                 } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    // denied
                 }
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("LocationPermission", true);
@@ -737,6 +779,26 @@ public class main extends Activity {
                 }
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("StoragePermission", true);
+                editor.apply();
+
+                break;
+            }
+
+            case PERMISSION_BLUETOOTH: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("BluetoothPermission", true);
                 editor.apply();
 
                 break;
@@ -962,6 +1024,9 @@ public class main extends Activity {
                 Intent enableBluetooth = new Intent(
                         BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 try {
+                    if (ActivityCompat.checkSelfPermission(a2dp.Vol.main.this, BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        return 0;
+                    }
                     startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -969,6 +1034,10 @@ public class main extends Activity {
                 // Now implement the onActivityResult() and wait for it to
                 // be invoked with ENABLE_BLUETOOTH
                 // onActivityResult(ENABLE_BLUETOOTH, result, enableBluetooth);
+                return 0;
+            }
+            if (ActivityCompat.checkSelfPermission(a2dp.Vol.main.this, BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(a2dp.Vol.main.this, new String[]{BLUETOOTH_CONNECT}, 100);
                 return 0;
             }
             Set<BluetoothDevice> pairedDevices = mBTA.getBondedDevices();
@@ -1030,7 +1099,9 @@ public class main extends Activity {
     }
 
     // Listen for results.
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         // See which child activity is calling us back.
 
         if (resultCode == RESULT_OK) {
@@ -1194,7 +1265,7 @@ public class main extends Activity {
             e.printStackTrace();
             return 0;
         }
-        if (vec.isEmpty() || vec == null)
+        if (vec.isEmpty())
             return 0;
 
         return vec.size();
@@ -1309,14 +1380,26 @@ public class main extends Activity {
         String temp = "";
         if (btd == null)
             return temp;
+        if (ActivityCompat.checkSelfPermission(a2dp.Vol.main.this, BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return temp;
+        }
+        if (ActivityCompat.checkSelfPermission(a2dp.Vol.main.this, BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return temp;
+        }
         if (btd.getBluetoothClass().hasService(BluetoothClass.Service.AUDIO))
             temp = "Audio, ";
         if (btd.getBluetoothClass()
                 .hasService(BluetoothClass.Service.TELEPHONY))
             temp += "Telophony, ";
+        if (ActivityCompat.checkSelfPermission(a2dp.Vol.main.this, BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return temp;
+        }
         if (btd.getBluetoothClass().hasService(
                 BluetoothClass.Service.INFORMATION))
             temp += "Information, ";
+        if (ActivityCompat.checkSelfPermission(a2dp.Vol.main.this, BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return temp;
+        }
         if (btd.getBluetoothClass().hasService(
                 BluetoothClass.Service.LIMITED_DISCOVERABILITY))
             temp += "Limited Discoverability, ";
@@ -1351,6 +1434,9 @@ public class main extends Activity {
         String temp = "";
         if (btd == null)
             return temp;
+        if (ActivityCompat.checkSelfPermission(a2dp.Vol.main.this, BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return temp;
+        }
         if (btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_CAR_AUDIO)
             temp = "Car Audio, ";
         if (btd.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_HANDSFREE)
@@ -1429,6 +1515,9 @@ public class main extends Activity {
         String temp = "";
         if (btd == null)
             return temp;
+        if (ActivityCompat.checkSelfPermission(a2dp.Vol.main.this, BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return temp;
+        }
         if (btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.AUDIO_VIDEO)
             temp = "Audio Video, ";
         if (btd.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.COMPUTER)
@@ -1492,5 +1581,56 @@ public class main extends Activity {
         }
         return ibta;
     }
+// new stuff to handle permissions and errors with loading location files.
+    // Define launcher at Activity class level
+    private ActivityResultLauncher<String> requestPermissionLauncher;
 
+    private void checkAndRequestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Locationbtn();
+            } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Show custom explanation dialog before re-requesting
+                showRationaleDialog();
+            } else {
+                // Request permission directly
+                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+        } else {
+            Locationbtn();
+        }
+    }
+    private void showRationaleDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Required")
+                .setMessage("Storage permission is needed to load the location file.")
+                .setPositiveButton("Grant", (dialog, which) -> {
+                    requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void resetToDefaultLocation() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("StoragePermission", false);
+        editor.apply();
+    }
+
+    private void onPermissionDenied() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Required")
+                .setMessage("Access to the location file is required to load custom settings. Please enable storage permissions in Settings.")
+                .setPositiveButton("Open Settings", (dialog, which) -> {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    resetToDefaultLocation();
+                })
+                .show();
+    }
 }

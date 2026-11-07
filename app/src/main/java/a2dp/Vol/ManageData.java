@@ -10,9 +10,9 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,10 +35,7 @@ import java.util.Vector;
  *         the database used to store devices
  */
 public class ManageData extends Activity {
-    //private DeviceDB myDB; // database of device data stored in SQlite
-    /* (non-Javadoc)
-     * @see android.app.Activity#finish()
-	 */
+
     @Override
     public void finish() {
         Intent i = new Intent();
@@ -49,9 +46,6 @@ public class ManageData extends Activity {
     String a2dpDir;
     private DeviceDB myDB; // database of device data stored in SQlite
 
-    /* (non-Javadoc)
-     * @see android.app.Activity#onDestroy()
-     */
     @Override
     protected void onDestroy() {
         Intent i = new Intent();
@@ -75,57 +69,31 @@ public class ManageData extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.application = (MyApplication) this.getApplication();
-        a2dpDir = Environment.getExternalStorageDirectory() + "/A2DPVol";
-
         this.setContentView(R.layout.managedata);
+
+        // 1. Always initialize application reference first to prevent NPEs
+        this.application = (MyApplication) this.getApplication();
 
         // Show the Up button in the action bar.
         setupActionBar();
 
+        // 2. Bind all UI components unconditionally before binding listeners or changing states
         this.output = findViewById(R.id.Output);
         this.path = findViewById(R.id.Path);
-        // initially populate "output" view from database
+        this.pushNamesButton = this.findViewById(R.id.pushNamesButton);
+        this.exportDbToSdButton = this.findViewById(R.id.exportdbtosdbutton);
+        this.exportDbXmlToSdButton = this.findViewById(R.id.exportdbxmltosdbutton);
+        this.importDB = this.findViewById(R.id.ImportDBButton);
+        this.exportLoc = this.findViewById(R.id.ExportLoc);
+
+        // Populate initial database view
         new SelectDataTask().execute();
 
-        // Request permissions
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                //Toast.makeText(application,"permission check fail, show reason",Toast.LENGTH_LONG).show();
-
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS);
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-                //Toast.makeText(application,"permission check fail, don't show",Toast.LENGTH_LONG).show();
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        MY_PERMISSIONS);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-
-        } else {
-            //Toast.makeText(application, "permission check OK", Toast.LENGTH_LONG).show();
-        }
-
-
-        this.pushNamesButton = this.findViewById(R.id.pushNamesButton);
+        // Internal feature listener: Bluetooth alias push operates independently of storage state
         this.pushNamesButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Vector<btDevice> vec = new Vector<btDevice>(); // vector of bluetooth
+                Vector<btDevice> vec = new Vector<btDevice>();
                 BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 
                 try {
@@ -151,75 +119,91 @@ public class ManageData extends Activity {
                             //Log.d(TAG, "error renaming device:" + e.getMessage());
                         }
                 }
-                Toast.makeText(ManageData.this, getString(R.string.ListName) + " - " + count,Toast.LENGTH_LONG).show();
+                Toast.makeText(ManageData.this, getString(R.string.ListName) + " - " + count, Toast.LENGTH_LONG).show();
             }
         });
 
-        this.exportDbToSdButton = this
-                .findViewById(R.id.exportdbtosdbutton);
+        // Register storage task listeners with explicit availability checks
         this.exportDbToSdButton.setOnClickListener(new OnClickListener() {
             public void onClick(final View v) {
                 if (ManageData.this.isExternalStorageAvail()) {
                     new ExportDatabaseFileTask().execute();
                 } else {
-                    Toast
-                            .makeText(
-                                    ManageData.this,
-                                    R.string.needStorage,
-                                    Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageData.this, R.string.needStorage, Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        this.exportDbXmlToSdButton = this
-                .findViewById(R.id.exportdbxmltosdbutton);
         this.exportDbXmlToSdButton.setOnClickListener(new OnClickListener() {
             public void onClick(final View v) {
                 if (ManageData.this.isExternalStorageAvail()) {
-                    new ExportDataAsXmlTask()
-                            .execute("devices", "A2DPDevices");
+                    new ExportDataAsXmlTask().execute("devices", "A2DPDevices");
                 } else {
-                    Toast
-                            .makeText(
-                                    ManageData.this,
-                                    R.string.needStorage,
-                                    Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageData.this, R.string.needStorage, Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        this.importDB = this.findViewById(R.id.ImportDBButton);
         this.importDB.setOnClickListener(new OnClickListener() {
             public void onClick(final View v) {
                 if (ManageData.this.isExternalStorageAvail()) {
-                    new ImportDatabaseFileTask().execute("devices",
-                            a2dpDir);
+                    new ImportDatabaseFileTask().execute("devices", a2dpDir);
                 } else {
-                    Toast
-                            .makeText(
-                                    ManageData.this,
-                                    R.string.needStorage,
-                                    Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageData.this, R.string.needStorage, Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        this.exportLoc = this.findViewById(R.id.ExportLoc);
         this.exportLoc.setOnClickListener(new OnClickListener() {
             public void onClick(final View v) {
                 if (ManageData.this.isExternalStorageAvail()) {
-                    new ExportLocationTask().execute("My_Last_Location",
-                            a2dpDir);
+                    new ExportLocationTask().execute("My_Last_Location", a2dpDir);
                 } else {
-                    Toast
-                            .makeText(
-                                    ManageData.this,
-                                    R.string.needStorage,
-                                    Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageData.this, R.string.needStorage, Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        // 3. Configure storage paths and update UI feature states safely
+        updateStorageFeatureState();
+    }
+
+    private void updateStorageFeatureState() {
+        boolean available = isExternalStorageAvail();
+
+        if (available) {
+            // Attempt to resolve secondary physical SD card first, fallback to primary external storage
+            File[] externalDirs = ContextCompat.getExternalFilesDirs(this, null);
+            if (externalDirs.length > 1 && externalDirs[1] != null) {
+                a2dpDir = externalDirs[1].getAbsolutePath() + "/A2DPVol";
+            } else {
+                a2dpDir = Environment.getExternalStorageDirectory() + "/A2DPVol";
+            }
+
+            if ((ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED)) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            MY_PERMISSIONS);
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            MY_PERMISSIONS);
+                }
+            }
+        } else {
+            Toast.makeText(this, R.string.needStorage, Toast.LENGTH_LONG).show();
+        }
+
+        // Enable/Disable external storage reliant controls dynamically
+        if (exportDbToSdButton != null) exportDbToSdButton.setEnabled(available);
+        if (exportDbXmlToSdButton != null) exportDbXmlToSdButton.setEnabled(available);
+        if (importDB != null) importDB.setEnabled(available);
+        if (exportLoc != null) exportLoc.setEnabled(available);
     }
 
     @Override
@@ -227,11 +211,7 @@ public class ManageData extends Activity {
         super.onPause();
     }
 
-    /**
-     * Set up the {@link android.app.ActionBar}.
-     */
     private void setupActionBar() {
-
         Objects.requireNonNull(getActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
@@ -240,23 +220,20 @@ public class ManageData extends Activity {
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
-                    // permission was granted, yay!
-
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                if (!granted) {
                     Toast.makeText(application, R.string.needStorage, Toast.LENGTH_LONG).show();
-                    this.finish();
                 }
+
+                // Toggle storage button state on permission result without ending Activity
+                if (exportDbToSdButton != null) exportDbToSdButton.setEnabled(granted);
+                if (exportDbXmlToSdButton != null) exportDbXmlToSdButton.setEnabled(granted);
+                if (importDB != null) importDB.setEnabled(granted);
+                if (exportLoc != null) exportLoc.setEnabled(granted);
+
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
@@ -280,17 +257,12 @@ public class ManageData extends Activity {
         private final ProgressDialog dialog = new ProgressDialog(
                 ManageData.this);
 
-        // can use UI thread here
         protected void onPreExecute() {
             this.dialog.setMessage("Exporting database...");
             this.dialog.show();
         }
 
-        // automatically done on worker thread (separate from UI thread)
         protected Boolean doInBackground(final String... args) {
-
-            // File dbFile = new File(Environment.getDataDirectory() +
-            // "/data/a2dp.vol/databases/btdevices.db");
             File dbFile = new File(application.getDeviceDB().getDb().getPath());
             File exportDir = new File(a2dpDir);
 
@@ -309,7 +281,6 @@ public class ManageData extends Activity {
             }
         }
 
-        // can use UI thread here
         protected void onPostExecute(final Boolean success) {
             if (this.dialog.isShowing()) {
                 this.dialog.dismiss();
@@ -336,20 +307,17 @@ public class ManageData extends Activity {
                 outChannel.close();
             }
         }
-
     }
 
     private class ExportDataAsXmlTask extends AsyncTask<String, Void, String> {
         private final ProgressDialog dialog = new ProgressDialog(
                 ManageData.this);
 
-        // can use UI thread here
         protected void onPreExecute() {
             this.dialog.setMessage("Exporting database as XML...");
             this.dialog.show();
         }
 
-        // automatically done on worker thread (separate from UI thread)
         protected String doInBackground(final String... args) {
             DataXmlExporter dm = new DataXmlExporter(
                     ManageData.this.application.getDeviceDB().getDb());
@@ -365,7 +333,6 @@ public class ManageData extends Activity {
             return null;
         }
 
-        // can use UI thread here
         protected void onPostExecute(final String errMsg) {
             if (this.dialog.isShowing()) {
                 this.dialog.dismiss();
@@ -386,13 +353,11 @@ public class ManageData extends Activity {
         private final ProgressDialog dialog = new ProgressDialog(
                 ManageData.this);
 
-        // can use UI thread here
         protected void onPreExecute() {
             this.dialog.setMessage("Selecting data...");
             this.dialog.show();
         }
 
-        // automatically done on worker thread (separate from UI thread)
         protected String doInBackground(final String... args) {
             List<String> names = ManageData.this.application.getDeviceDB()
                     .selectAll();
@@ -403,7 +368,6 @@ public class ManageData extends Activity {
             return sb.toString();
         }
 
-        // can use UI thread here
         protected void onPostExecute(final String result) {
             if (this.dialog.isShowing()) {
                 this.dialog.dismiss();
@@ -413,27 +377,18 @@ public class ManageData extends Activity {
         }
     }
 
-    // import database
     private class ImportDatabaseFileTask extends
             AsyncTask<String, Void, Boolean> {
         private final ProgressDialog dialog = new ProgressDialog(
                 ManageData.this);
 
-        // can use UI thread here
         protected void onPreExecute() {
-            // close the database
-            //application.getDeviceDB().getDb().close();
             this.dialog.setMessage("Importing database...");
             this.dialog.show();
         }
 
-        // automatically done on worker thread (separate from UI thread)
         protected Boolean doInBackground(final String... args) {
-
-            // File dbFile = new File(Environment.getDataDirectory() +
-            // "/data/a2dp.vol/databases/btdevices.db");
             File dbFile = new File(application.getDeviceDB().getDb().getPath());
-
             File exportDir = new File(a2dpDir);
 
             if (!exportDir.exists()) {
@@ -451,18 +406,12 @@ public class ManageData extends Activity {
             }
         }
 
-        // can use UI thread here
         protected void onPostExecute(final Boolean success) {
             if (this.dialog.isShowing()) {
                 this.dialog.dismiss();
             }
             if (success) {
-                // Toast.makeText(ManageData.this, "Import successful!",
-                // Toast.LENGTH_SHORT).show();
                 ManageData.this.path.setText("Imported from: " + pathstr);
-                // reopen the database
-                //myDB = new DeviceDB(application);
-                //Reload the device list in the main page
                 final String Ireload = "a2dp.vol.Main.RELOAD_LIST";
                 Intent itent = new Intent();
                 itent.setAction(Ireload);
@@ -470,7 +419,6 @@ public class ManageData extends Activity {
                 application.sendBroadcast(itent);
                 Toast.makeText(ManageData.this, R.string.ImportCompletedText,
                         Toast.LENGTH_SHORT).show();
-
             } else {
                 Toast.makeText(ManageData.this, "Import failed",
                         Toast.LENGTH_SHORT).show();
@@ -489,26 +437,19 @@ public class ManageData extends Activity {
                 outChannel.close();
             }
         }
-
     }
 
-
-    // export location
     private class ExportLocationTask extends AsyncTask<String, Void, Boolean> {
         private final ProgressDialog dialog = new ProgressDialog(
                 ManageData.this);
 
-        // can use UI thread here
         protected void onPreExecute() {
             this.dialog.setMessage("Exporting location data...");
             this.dialog.show();
         }
 
-        // automatically done on worker thread (separate from UI thread)
         protected Boolean doInBackground(final String... args) {
-
             File LocFile = application.getFileStreamPath(args[0]);
-
             File exportDir = new File(a2dpDir);
 
             if (!exportDir.exists()) {
@@ -526,18 +467,14 @@ public class ManageData extends Activity {
             }
         }
 
-        // can use UI thread here
         protected void onPostExecute(final Boolean success) {
             if (this.dialog.isShowing()) {
                 this.dialog.dismiss();
             }
             if (success) {
-
                 ManageData.this.path.setText("Exported to: " + pathstr);
-
                 Toast.makeText(ManageData.this, "Location data exported",
                         Toast.LENGTH_LONG).show();
-
             } else {
                 Toast.makeText(ManageData.this, "Export failed",
                         Toast.LENGTH_SHORT).show();
@@ -556,7 +493,5 @@ public class ManageData extends Activity {
                 outChannel.close();
             }
         }
-
     }
-
 }

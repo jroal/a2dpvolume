@@ -217,7 +217,7 @@ public class ConnectWidgetConfigureActivity extends Activity {
         Intent intent = new Intent(application, Connector.class);
         intent.putExtra(PREF_PREFIX_KEY + "ID", mAppWidgetId);
         PendingIntent pendingIntent = PendingIntent.getService(application,
-                mAppWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                mAppWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         // Get the layout for the App Widget and attach an on-click listener
         // to the button

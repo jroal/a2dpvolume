@@ -49,10 +49,10 @@ public class ConnectWidget extends AppWidgetProvider {
             PendingIntent pendingIntent;
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 pendingIntent = PendingIntent.getService(context,
-                        appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             } else {
                 pendingIntent = PendingIntent.getForegroundService(context,
-                        appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             }
 
 

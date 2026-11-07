@@ -199,5 +199,6 @@
     <string name="Disconnecting">Disconnecting</string>
     <string name="InvalidDevice">Invalid Device</string>
     <string name="NullDevice">Null Device</string>
+    <string name="askBluetooth">Bluetooth permission needed</string>
 
 </resources>

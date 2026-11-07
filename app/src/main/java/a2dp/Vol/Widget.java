@@ -32,7 +32,7 @@ public class Widget extends AppWidgetProvider {
 			// Create an Intent to launch
 			Intent intent = new Intent(context, ALauncher.class);
 			PendingIntent pendingIntent = PendingIntent.getService(context, 0,
-					intent, 0);
+					intent, PendingIntent.FLAG_IMMUTABLE);
 
 			// Get the layout for the App Widget and attach an on-click listener
 			// to the button

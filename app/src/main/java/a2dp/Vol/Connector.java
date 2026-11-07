@@ -24,8 +24,9 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -135,7 +136,7 @@ public class Connector extends Service {
                 if (!receiverRegistered) {
                     String filter_1_string = "a2dp.connect2.Connector.INTERFACE";
                     IntentFilter filter1 = new IntentFilter(filter_1_string);
-                    application.registerReceiver(receiver, filter1);
+                    ContextCompat.registerReceiver(application, receiver, filter1, ContextCompat.RECEIVER_EXPORTED);
                     receiverRegistered = true;
                 }
 
@@ -206,7 +207,7 @@ public class Connector extends Service {
         if (!receiverRegistered) {
             String filter_1_string = "a2dp.connect2.Connector.INTERFACE";
             IntentFilter filter1 = new IntentFilter(filter_1_string);
-            application.registerReceiver(receiver, filter1);
+            ContextCompat.registerReceiver(application, receiver, filter1, ContextCompat.RECEIVER_EXPORTED);
             receiverRegistered = true;
         }
         Log.i(LOG_TAG, "Connector on create");

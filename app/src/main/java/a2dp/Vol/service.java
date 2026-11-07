@@ -46,9 +46,10 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -309,22 +310,22 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
         IntentFilter btNotEnabled = new IntentFilter(
                 android.bluetooth.BluetoothAdapter.ACTION_STATE_CHANGED);
-        application.registerReceiver(btOFFReciever, btNotEnabled);
+        ContextCompat.registerReceiver(application, btOFFReciever, btNotEnabled, ContextCompat.RECEIVER_EXPORTED);
 
         IntentFilter clearMessage = new IntentFilter("a2dp.vol.service.CLEAR");
-        application.registerReceiver(messageClear, clearMessage);
+        ContextCompat.registerReceiver(application, messageClear, clearMessage, ContextCompat.RECEIVER_EXPORTED);
 
         IntentFilter updateNotification = new IntentFilter("a2dp.vol.service.NOTIFY");
-        application.registerReceiver(runUpdate, updateNotification);
+        ContextCompat.registerReceiver(application, runUpdate, updateNotification, ContextCompat.RECEIVER_EXPORTED);
 
-        application.registerReceiver(mReceiver, filter);
-        application.registerReceiver(mReceiver2, filter2);
+        ContextCompat.registerReceiver(application, mReceiver, filter, ContextCompat.RECEIVER_EXPORTED);
+        ContextCompat.registerReceiver(application, mReceiver2, filter2, ContextCompat.RECEIVER_EXPORTED);
 
         if (carMode) {
             // Create listener for when car mode disconnects
             IntentFilter carExit = new IntentFilter(android.app.UiModeManager.ACTION_EXIT_CAR_MODE);
             if (!carExitReceiverRegistered) {
-                application.registerReceiver(CarExitReceiver, carExit);
+                ContextCompat.registerReceiver(application, CarExitReceiver, carExit, ContextCompat.RECEIVER_EXPORTED);
                 carExitReceiverRegistered = true;
                 Log.i(LOG_TAG, "Car Mode exit receiver registered");
             }
@@ -332,7 +333,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             // Create listener for when car mode connects
             IntentFilter carEnter = new IntentFilter(android.app.UiModeManager.ACTION_ENTER_CAR_MODE);
             if (!carEnterReceiverRegistered) {
-                application.registerReceiver(CarEnterReceiver, carEnter);
+                ContextCompat.registerReceiver(application, CarEnterReceiver, carEnter, ContextCompat.RECEIVER_EXPORTED);
                 carEnterReceiverRegistered = true;
                 Log.i(LOG_TAG, "Car Mode enter receiver registered");
             }
@@ -342,7 +343,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             // Create listener for when car mode disconnects
             IntentFilter homeExit = new IntentFilter(android.app.UiModeManager.ACTION_EXIT_DESK_MODE);
             if (!homeExitRegistered) {
-                application.registerReceiver(HomeExitReceiver, homeExit);
+                ContextCompat.registerReceiver(application, HomeExitReceiver, homeExit, ContextCompat.RECEIVER_EXPORTED);
                 homeExitRegistered = true;
                 Log.i(LOG_TAG, "Home Dock exit receiver registered");
             }
@@ -350,7 +351,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             // Create listener for when car mode connects
             IntentFilter homeEnter = new IntentFilter(android.app.UiModeManager.ACTION_ENTER_DESK_MODE);
             if (!homeEnterRegistered) {
-                application.registerReceiver(HomeEnterReceiver, homeEnter);
+                ContextCompat.registerReceiver(application, HomeEnterReceiver, homeEnter, ContextCompat.RECEIVER_EXPORTED);
                 homeEnterRegistered = true;
                 Log.i(LOG_TAG, "Home Dock enter receiver registered");
             }
@@ -360,7 +361,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             // Create listener for when power disconnects
             IntentFilter powerExit = new IntentFilter(Intent.ACTION_POWER_DISCONNECTED);
             if (!powerExitRegistered) {
-                application.registerReceiver(PowerExitReceiver, powerExit);
+                ContextCompat.registerReceiver(application, PowerExitReceiver, powerExit, ContextCompat.RECEIVER_EXPORTED);
                 powerExitRegistered = true;
                 Log.i(LOG_TAG, "Power exit receiver registered");
             }
@@ -368,7 +369,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             // Create listener for when power connects
             IntentFilter powerEnter = new IntentFilter(Intent.ACTION_POWER_CONNECTED);
             if (!powerEnterRegistered) {
-                application.registerReceiver(PowerEnterReceiver, powerEnter);
+                ContextCompat.registerReceiver(application, PowerEnterReceiver, powerEnter, ContextCompat.RECEIVER_EXPORTED);
                 powerEnterRegistered = true;
                 Log.i(LOG_TAG, "Power enter receiver registered");
             }
@@ -378,7 +379,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
             // create listener for headset plug
             IntentFilter filter7 = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
             if (!headSetPlugReciverRegistered) {
-                application.registerReceiver(headSetReceiver, filter7);
+                ContextCompat.registerReceiver(application, headSetReceiver, filter7, ContextCompat.RECEIVER_EXPORTED);
                 headSetPlugReciverRegistered = true;
                 Log.i(LOG_TAG, "Audio Jack receiver registered");
             }
@@ -828,12 +829,12 @@ public class service extends Service implements OnAudioFocusChangeListener {
             IntentFilter messageFilter = new IntentFilter(
                     "a2dp.vol.service.MESSAGE");
             if (!tmessageRegistered) {
-                application.registerReceiver(tmessage, messageFilter);
+                ContextCompat.registerReceiver(application, tmessage, messageFilter, ContextCompat.RECEIVER_EXPORTED);
                 tmessageRegistered = true;
             }
             IntentFilter sco_filter = new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED);
             if (!ScoRegistered && am2.isBluetoothScoAvailableOffCall()) {
-                application.registerReceiver(sco_change, sco_filter);
+                ContextCompat.registerReceiver(application, sco_change, sco_filter, ContextCompat.RECEIVER_EXPORTED);
                 ScoRegistered = true;
             }
         }
@@ -1484,7 +1485,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
             Intent notificationIntent = new Intent(this, main.class);
             PendingIntent contentIntent = PendingIntent.getActivity(this,
-                    0, notificationIntent, 0);
+                    0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 not = new NotificationCompat.Builder(application, A2DP_FOREGROUND)
                         .setContentTitle(
@@ -1517,7 +1518,7 @@ public class service extends Service implements OnAudioFocusChangeListener {
 
                 Intent notificationIntent = new Intent(this, main.class);
                 PendingIntent contentIntent = PendingIntent.getActivity(
-                        this, 0, notificationIntent, 0);
+                        this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     not = new NotificationCompat.Builder(application, A2DP_BACKGROUND)

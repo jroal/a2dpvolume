@@ -32,10 +32,10 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -160,7 +160,7 @@ public class StoreLoc extends Service {
         //not = null;
         Intent notificationIntent = new Intent(this, main.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
-                this, 0, notificationIntent, 0);
+                this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
 
         notificationManagerCompat.cancelAll();
@@ -252,7 +252,7 @@ public class StoreLoc extends Service {
 
         Intent notificationIntent = new Intent(this, main.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
-                this, 0, notificationIntent, 0);
+                this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mCBuilder = new NotificationCompat.Builder(application, A2DP_STORLOC)
